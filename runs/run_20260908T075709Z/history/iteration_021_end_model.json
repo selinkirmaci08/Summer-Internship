@@ -1,0 +1,169 @@
+{
+  "iteration": 21,
+  "node": "end_model",
+  "timestamp": "2026-09-09",
+  "schema_version": "2026-09-04",
+  "type": "end_model",
+  "run_id": "run_20260908T075709Z",
+  "summary": "Final model training for Aernoudt Bakery branch 01. All 6 horizons evaluated. ML LightGBM beats CV floor for h=1,7,14,30,90. h=60 uses naive predictor. All models retrained on full historical data (train+val, COVID excluded). Feature set: iteration_019_feature_engineering.csv (90 cols, FE4). All models use objective='regression_l1'.",
+  "cv_results": {
+    "1": {
+      "cv_mae": 29.834944003914295,
+      "cv_floor": 54.41489361702128,
+      "cv_n": 94,
+      "beats_cv_floor": true,
+      "baseline_floor": 31.263,
+      "model_path": "lgbm_h1_final.pkl",
+      "target": "ratio_correct_h1",
+      "anchor": "anchor_correct_h1",
+      "n_final_train": 2280
+    },
+    "7": {
+      "cv_mae": 33.01955591374416,
+      "cv_floor": 34.125,
+      "cv_n": 88,
+      "beats_cv_floor": true,
+      "baseline_floor": 31.263,
+      "model_path": "lgbm_h7_final.pkl",
+      "target": "ratio_h7",
+      "anchor": "naive_h7_seasonal_median_w4",
+      "n_final_train": 2670
+    },
+    "14": {
+      "cv_mae": 37.79702617516694,
+      "cv_floor": 38.11592592592592,
+      "cv_n": 81,
+      "beats_cv_floor": true,
+      "baseline_floor": 32.846,
+      "model_path": "lgbm_h14_final.pkl",
+      "target": "bread_quantity_h14",
+      "anchor": null,
+      "n_final_train": 2649
+    },
+    "30": {
+      "cv_mae": 37.95536627133785,
+      "cv_floor": 40.261538461538464,
+      "cv_n": 65,
+      "beats_cv_floor": true,
+      "baseline_floor": 35.913,
+      "model_path": "lgbm_h30_final.pkl",
+      "target": "ratio_correct_h30",
+      "anchor": "anchor_correct_h30",
+      "n_final_train": 2194
+    },
+    "60": {
+      "cv_mae": 71.88571428571429,
+      "cv_floor": 71.88571428571429,
+      "cv_n": 35,
+      "beats_cv_floor": false,
+      "baseline_floor": 40.042,
+      "model_path": "NAIVE: naive_h60_seasonal_median_w26",
+      "target": null,
+      "anchor": null,
+      "note": "ML did not beat baseline floor 40.042. Use naive_h60_seasonal_median_w26."
+    },
+    "90": {
+      "cv_mae": 79.01986767228307,
+      "cv_floor": 91.9,
+      "cv_n": 5,
+      "pooled_mae": 56.76690216092188,
+      "pooled_floor": 75.93732142857142,
+      "beats_cv_floor": true,
+      "beats_pooled": true,
+      "baseline_floor": 42.143,
+      "model_path": "lgbm_h90_final.pkl",
+      "target": "bread_quantity_h90",
+      "anchor": null,
+      "per_fold_multifold": {
+        "1": {
+          "mae": 30.05609805660381,
+          "floor": 57.60294117647059,
+          "n": 68,
+          "beats": true
+        },
+        "2": {
+          "mae": 82.21570591520282,
+          "floor": 93.35410447761193,
+          "n": 67,
+          "beats": true
+        },
+        "3": {
+          "mae": 79.01986767228307,
+          "floor": 91.9,
+          "n": 5,
+          "beats": true
+        }
+      },
+      "n_final_train": 2129
+    }
+  },
+  "final_models": {
+    "1": {
+      "path": "artifacts/training/final/lgbm_h1_final.pkl",
+      "target": "ratio_correct_h1",
+      "anchor": "anchor_correct_h1",
+      "cv_mae_fold3": 29.834944003914295,
+      "beats_cv_floor": true
+    },
+    "7": {
+      "path": "artifacts/training/final/lgbm_h7_final.pkl",
+      "target": "ratio_h7",
+      "anchor": "naive_h7_seasonal_median_w4",
+      "cv_mae_fold3": 33.01955591374416,
+      "beats_cv_floor": true
+    },
+    "14": {
+      "path": "artifacts/training/final/lgbm_h14_final.pkl",
+      "target": "bread_quantity_h14",
+      "anchor": null,
+      "cv_mae_fold3": 37.79702617516694,
+      "beats_cv_floor": true
+    },
+    "30": {
+      "path": "artifacts/training/final/lgbm_h30_final.pkl",
+      "target": "ratio_correct_h30",
+      "anchor": "anchor_correct_h30",
+      "cv_mae_fold3": 37.95536627133785,
+      "beats_cv_floor": true
+    },
+    "60": {
+      "path": "NAIVE",
+      "target": null,
+      "anchor": null,
+      "cv_mae_fold3": 71.88571428571429,
+      "beats_cv_floor": false
+    },
+    "90": {
+      "path": "artifacts/training/final/lgbm_h90_final.pkl",
+      "target": "bread_quantity_h90",
+      "anchor": null,
+      "cv_mae_fold3": 79.01986767228307,
+      "beats_cv_floor": true
+    }
+  },
+  "serving_instructions": {
+    "fe_csv_for_prediction": "data/iteration_019_feature_engineering.csv",
+    "feature_pool": "All numeric cols except: date, bread_quantity, is_covid_lockdown_period, day_of_week, _split, _fold_*, bread_quantity_h*, ratio_h*, ratio_correct_h*, anchor_correct_h*",
+    "fillna": "0 for all feature NaN",
+    "h1_predict": "preds_ratio = clip(model.predict(X), 0.05, 5.0); preds_units = preds_ratio * anchor_correct_h1",
+    "h7_predict": "preds_ratio = clip(model.predict(X), 0.05, 5.0); preds_units = preds_ratio * naive_h7_seasonal_median_w4",
+    "h14_predict": "preds_units = model.predict(X) directly (raw-units target)",
+    "h30_predict": "preds_ratio = clip(model.predict(X), 0.05, 5.0); preds_units = preds_ratio * anchor_correct_h30",
+    "h60_predict": "preds_units = naive_h60_seasonal_median_w26 (no ML model)",
+    "h90_predict": "preds_units = model.predict(X) directly (raw-units target)"
+  },
+  "report_html": "reports/iteration_021_end_model.html",
+  "handoff": {
+    "written_by": "end_model",
+    "iteration": 21,
+    "context_clearable": true,
+    "run_complete": true,
+    "durable_rules": [
+      "All LightGBM models must use objective='regression_l1' (MAE loss)",
+      "h=60: use naive_h60_seasonal_median_w26 \u2014 ML never beat 40.042 floor",
+      "h=90: use pooled multi-fold for evaluation (fold-3 has only 5 rows)",
+      "Feature set: use iter019 FE CSV (90 cols) with fillna(0)",
+      "COVID lockdown rows (is_covid_lockdown_period==1) excluded from training"
+    ]
+  }
+}

@@ -1,0 +1,184 @@
+{
+  "iteration": 7,
+  "node": "training",
+  "timestamp": "2026-09-08T20:46:18.598623",
+  "status": "complete",
+  "ts_approach": "classical_statistical",
+  "ts_approach_gap": null,
+  "mode": "initial",
+  "input_csv": "data\\iteration_005_feature_engineering.csv",
+  "seasonal_period_m": 6,
+  "adf_test": {
+    "statistic": -3.9162,
+    "pvalue": 0.001919,
+    "d_order": 1,
+    "conclusion": "stationary_with_trend_d1"
+  },
+  "mase_denom": 43.1118,
+  "arima": {
+    "best_order": [
+      2,
+      1,
+      2
+    ],
+    "aic": 30853.59,
+    "val_mae_by_horizon": {
+      "1": 70.8592,
+      "7": 71.233,
+      "14": 72.2121,
+      "30": 70.4043,
+      "60": 68.5815,
+      "90": 86.8386
+    },
+    "model_path": "artifacts\\training\\sarima\\arima_best.pkl"
+  },
+  "sarima_full": {
+    "best_order": [
+      2,
+      1,
+      1
+    ],
+    "best_seasonal_order": [
+      0,
+      1,
+      1,
+      6
+    ],
+    "aic": 29591.72,
+    "val_mae_by_horizon": {
+      "1": 77.1535,
+      "7": 77.5587,
+      "14": 78.3523,
+      "30": 77.3055,
+      "60": 76.8986,
+      "90": 97.1078
+    },
+    "model_path": "artifacts\\training\\sarima\\sarima_full_best.pkl"
+  },
+  "sarima_precovid": {
+    "best_order": [
+      1,
+      1,
+      1
+    ],
+    "best_seasonal_order": [
+      0,
+      1,
+      1,
+      6
+    ],
+    "aic": 28197.42,
+    "training_cutoff": "2020-03-18",
+    "val_mae_by_horizon": {
+      "1": 112.5802,
+      "7": 114.2031,
+      "14": 114.2202,
+      "30": 111.7105,
+      "60": 111.7411,
+      "90": 115.9403
+    },
+    "model_path": "artifacts\\training\\sarima\\sarima_precovid_best.pkl"
+  },
+  "champion_ts_by_horizon": {
+    "1": {
+      "model": "ARIMA(2, 1, 2)",
+      "val_mae": 70.8592,
+      "beats_floor": false,
+      "beats_lgbm": false
+    },
+    "7": {
+      "model": "ARIMA(2, 1, 2)",
+      "val_mae": 71.233,
+      "beats_floor": false,
+      "beats_lgbm": false
+    },
+    "14": {
+      "model": "ARIMA(2, 1, 2)",
+      "val_mae": 72.2121,
+      "beats_floor": false,
+      "beats_lgbm": false
+    },
+    "30": {
+      "model": "ARIMA(2, 1, 2)",
+      "val_mae": 70.4043,
+      "beats_floor": false,
+      "beats_lgbm": false
+    },
+    "60": {
+      "model": "ARIMA(2, 1, 2)",
+      "val_mae": 68.5815,
+      "beats_floor": false,
+      "beats_lgbm": false
+    },
+    "90": {
+      "model": "ARIMA(2, 1, 2)",
+      "val_mae": 86.8386,
+      "beats_floor": false,
+      "beats_lgbm": false
+    }
+  },
+  "lgbm_val_mae_by_horizon": {
+    "1": 39.36,
+    "7": 39.391,
+    "14": 40.189,
+    "30": 43.227,
+    "60": 50.08,
+    "90": 79.218
+  },
+  "baseline_floor_by_horizon": {
+    "1": 31.263,
+    "7": 31.263,
+    "14": 32.846,
+    "30": 35.913,
+    "60": 40.042,
+    "90": 42.143
+  },
+  "pooled_ts_val_mae": 73.3548,
+  "pooled_lgbm_val_mae": 48.5775,
+  "pooled_baseline_floor": 35.5783,
+  "ts_beats_floor_count": 0,
+  "ts_beats_lgbm_count": 0,
+  "champion_approach": "ml_as_regression",
+  "finding": "LightGBM beats SARIMA pooled MAE; classical TS slot fulfilled as ablation",
+  "durable_rules": [
+    "classical_statistical slot now filled \u2014 ts_approach_gap=null",
+    "Both ml_as_regression (iter006) and classical_statistical (iter007) fitted \u2014 run may now stop if floor beat",
+    "Pre-COVID SARIMA tested as ablation (training truncated at 2020-03-18)",
+    "All SARIMA fitted on raw bread_quantity (no FE features) as pure time series models",
+    "Seasonal period m=6 (6 trading days/week pre-regime; dominant_acf_lag=6 from EDA)"
+  ],
+  "clarifications": [
+    {
+      "id": "CQ-TS-001",
+      "severity": "non_blocking",
+      "question": "SARIMA uses m=6 (pre-regime 6 trading days/week). Post-regime validation (Oct-Dec 2020) has 7 trading days/week. Should SARIMA be retrained with m=7 or m=6.7 (post-regime period) in future iterations?",
+      "recommendation": "Refit with m=7 if post-regime performance is unsatisfactory; current m=6 is the dominant historical pattern."
+    },
+    {
+      "id": "CQ-TS-002",
+      "severity": "non_blocking",
+      "question": "Hyperparameter search for LightGBM not yet done (iter006 ts_approach_gap remained). Now that classical slot is filled, Optuna search (n_trials>=50) should run before run can close.",
+      "recommendation": "Next iteration: LightGBM Optuna search. Champions from both approaches compete after search completes."
+    }
+  ],
+  "next_iteration_contract": {
+    "node": "training",
+    "iteration": 8,
+    "why_this_node": "Hyperparameter search (Optuna n_trials>=50) required for LightGBM before run may close per training.md guardrail. Both TS approaches now filled.",
+    "read_this_first": "Run Optuna hyperparameter search for LightGBM on each horizon. Compare final LightGBM to SARIMA champion from iteration_007. Select per-horizon champions. Document stop recommendation in next_iteration_contract."
+  },
+  "artifacts": {
+    "plots": [
+      "artifacts/training/sarima/plot1_training_series.png",
+      "artifacts/training/sarima/plot2_forecast_vs_actual.png",
+      "artifacts/training/sarima/plot3_mae_comparison.png",
+      "artifacts/training/sarima/plot4_sarima_residuals.png"
+    ],
+    "models": [
+      "artifacts\\training\\sarima\\arima_best.pkl",
+      "artifacts\\training\\sarima\\sarima_full_best.pkl",
+      "artifacts\\training\\sarima\\sarima_precovid_best.pkl"
+    ],
+    "forecasts": "artifacts/training/sarima/forecasts_full_training.csv"
+  }
+}

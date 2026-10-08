@@ -1,0 +1,37 @@
+﻿# Whitelist: ignore everything at the top level, then re-include the published parts
+/*
+!/.gitignore
+!/skills/
+!/tools/
+!/automl-runs/
+!/mlflow_prototype/
+!/presentation/
+!/graph/
+!/conventions/
+!/contracts/
+!/holdout_eval/
+!/runs/
+
+# Only the latest pipeline run
+/runs/*
+!/runs/run_20260908T075709Z/
+
+# Only the final presentation, no backups
+/presentation/*
+!/presentation/agents-for-ml.html
+!/presentation/mlflow/
+
+# Local databases, generated models, caches and crash dumps
+*.db
+*.pkl
+__pycache__/
+*.pyc
+*.stackdump
+*.bak
+
+# Data stays private: no CSVs (raw data, features, predictions)
+*.csv
+
+# Saved model files in other formats, and backups
+/runs/*/artifacts/training/models/
+*.backup-*

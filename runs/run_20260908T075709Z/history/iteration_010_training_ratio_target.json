@@ -1,0 +1,281 @@
+{
+  "iteration": 10,
+  "node": "training",
+  "timestamp": "2026-09-08T21:34:52",
+  "schema_version": "2026-09-04",
+  "approach": "ml_as_regression (ratio target revisit)",
+  "reads_from": "data\\iteration_009_feature_engineering.csv",
+  "results_per_horizon": {
+    "1": {
+      "algorithm": "LightGBM",
+      "approach": "ratio_target",
+      "n_val": 94,
+      "n_train_clean": 2192,
+      "champion_variant": "early_stopping_global",
+      "n_trees": 22,
+      "val_mae_units": 52.3201,
+      "baseline_floor": 31.263,
+      "beats_floor": false,
+      "margin": 21.0571,
+      "all_variants": {
+        "early_stopping_global": 52.3201,
+        "fixed_200": 55.3936,
+        "inner_fold_es": 65.0379
+      },
+      "top5_features": [
+        "year_trend",
+        "naive_h1_seasonal_median_w4",
+        "day_of_week",
+        "naive_h14_seasonal_median_w4",
+        "days_until_next_holiday"
+      ]
+    },
+    "7": {
+      "algorithm": "LightGBM",
+      "approach": "ratio_target",
+      "n_val": 88,
+      "n_train_clean": 2582,
+      "champion_variant": "inner_fold_es",
+      "n_trees": 474,
+      "val_mae_units": 32.6037,
+      "baseline_floor": 31.263,
+      "beats_floor": false,
+      "margin": 1.3407,
+      "all_variants": {
+        "early_stopping_global": 33.1182,
+        "fixed_200": 33.6765,
+        "inner_fold_es": 32.6037
+      },
+      "top5_features": [
+        "naive_h1_seasonal_median_w4",
+        "doy",
+        "days_until_next_holiday",
+        "bread_lag_35d",
+        "bread_lag_7d"
+      ]
+    },
+    "14": {
+      "algorithm": "LightGBM",
+      "approach": "ratio_target",
+      "n_val": 81,
+      "n_train_clean": 2568,
+      "champion_variant": "inner_fold_es",
+      "n_trees": 384,
+      "val_mae_units": 35.5859,
+      "baseline_floor": 32.846,
+      "beats_floor": false,
+      "margin": 2.7399,
+      "all_variants": {
+        "early_stopping_global": 35.6177,
+        "fixed_200": 35.9364,
+        "inner_fold_es": 35.5859
+      },
+      "top5_features": [
+        "naive_h14_seasonal_median_w4",
+        "doy",
+        "bread_lag_7d",
+        "bread_lag_63d",
+        "bread_lag_35d"
+      ]
+    },
+    "30": {
+      "algorithm": "LightGBM",
+      "approach": "ratio_target",
+      "n_val": 65,
+      "n_train_clean": 2137,
+      "champion_variant": "inner_fold_es",
+      "n_trees": 212,
+      "val_mae_units": 42.3673,
+      "baseline_floor": 35.913,
+      "beats_floor": false,
+      "margin": 6.4543,
+      "all_variants": {
+        "early_stopping_global": 48.2753,
+        "fixed_200": 48.8169,
+        "inner_fold_es": 42.3673
+      },
+      "top5_features": [
+        "naive_h30_seasonal_median_w4",
+        "year_trend",
+        "day_of_week",
+        "doy",
+        "week"
+      ]
+    },
+    "60": {
+      "algorithm": "Ridge",
+      "approach": "ratio_target",
+      "n_val": 35,
+      "n_train_clean": 2129,
+      "champion_variant": "ridge_high",
+      "best_alpha": 573.6153,
+      "val_mae_units": 54.0285,
+      "baseline_floor": 40.042,
+      "beats_floor": false,
+      "margin": 13.9865,
+      "all_variants": {
+        "ridge_cv": 56.3654,
+        "naive_1.0": 71.8857,
+        "ridge_high": 54.0285
+      },
+      "top5_features": [
+        "month",
+        "dow",
+        "days_until_next_holiday",
+        "year_trend",
+        "regime_x_monday"
+      ]
+    },
+    "90": {
+      "algorithm": "Ridge",
+      "approach": "ratio_target",
+      "n_val": 5,
+      "n_train_clean": 2124,
+      "champion_variant": "ridge_cv",
+      "best_alpha": 923.6709,
+      "val_mae_units": 82.5102,
+      "baseline_floor": 42.143,
+      "beats_floor": false,
+      "margin": 40.3672,
+      "all_variants": {
+        "ridge_cv": 82.5102,
+        "naive_1.0": 91.9,
+        "ridge_high": 82.6497
+      },
+      "top5_features": [
+        "month",
+        "dow",
+        "days_until_next_holiday",
+        "year_trend",
+        "regime_x_monday"
+      ]
+    }
+  },
+  "summary": {
+    "pooled_val_mae": 49.9026,
+    "pooled_floor": 35.5783,
+    "pooled_old_lgbm": 48.5775,
+    "horizons_beating_floor": 0,
+    "beats_floor_by_horizon": {
+      "1": false,
+      "7": false,
+      "14": false,
+      "30": false,
+      "60": false,
+      "90": false
+    },
+    "val_mae_by_horizon": {
+      "1": 52.3201,
+      "7": 32.6037,
+      "14": 35.5859,
+      "30": 42.3673,
+      "60": 54.0285,
+      "90": 82.5102
+    }
+  },
+  "methodology": {
+    "ratio_target": "ratio_h{h} = bread_quantity_h{h} / anchor_h{h}, clipped [0.05, 5.0]",
+    "covid_exclusion": "Rows where is_covid_lockdown_period==1 excluded from training",
+    "prediction_formula": "pred_units = pred_ratio x anchor_h{h}",
+    "per_horizon_algorithms": {
+      "1": "LightGBM",
+      "7": "LightGBM",
+      "14": "LightGBM",
+      "30": "LightGBM",
+      "60": "Ridge",
+      "90": "Ridge"
+    },
+    "lgbm_base_params": {
+      "objective": "regression_l1",
+      "n_estimators": 600,
+      "learning_rate": 0.03,
+      "num_leaves": 31,
+      "max_depth": 5,
+      "min_child_samples": 20,
+      "reg_alpha": 0.1,
+      "reg_lambda": 1.0,
+      "subsample": 0.8,
+      "colsample_bytree": 0.8,
+      "random_state": 42,
+      "n_jobs": -1,
+      "verbose": -1
+    },
+    "lgbm_overrides": {
+      "1": {},
+      "7": {},
+      "14": {
+        "num_leaves": 20,
+        "min_child_samples": 25,
+        "reg_lambda": 2.0
+      },
+      "30": {
+        "num_leaves": 20,
+        "min_child_samples": 30,
+        "reg_lambda": 3.0
+      }
+    },
+    "ridge_alphas_tried": "logspace(-2, 4, 30)"
+  },
+  "do_not_repeat": [
+    {
+      "tried": "Additive residual target (y - anchor) with LightGBM",
+      "outcome": "rejected",
+      "evidence": "iter006: val_mae=49.20 (h=1), worse than raw target 39.36",
+      "why_not_again": "Use ratio (multiplicative) instead of residual (additive)",
+      "evidence_basis": "validation_only",
+      "reopen_if": "COVID rows excluded AND additive residual tried separately"
+    }
+  ],
+  "clarifications": [
+    {
+      "id": "CQ-R-001",
+      "topic": "Ratio clip boundary [0.05, 5.0]",
+      "description": "Clip bounds chosen to include all plausible demand ratios. If any val row is clipped, this should be noted.",
+      "blocking": false
+    }
+  ],
+  "handoff": {
+    "written_by": "training",
+    "iteration": 10,
+    "context_clearable": true,
+    "read_this_first": "Ratio-target training complete. Horizons beating floor: 0/6. Pooled val MAE: 49.9026 vs floor 35.5783. See per_horizon_variants in history for all tried configurations.",
+    "parameters": {
+      "ratio_target_formula": {
+        "value": "ratio_h{h} = bread_quantity_h{h} / anchor_h{h}",
+        "must_not_change": true
+      },
+      "covid_exclusion": {
+        "value": "is_covid_lockdown_period==1 excluded from training",
+        "must_not_change": true
+      },
+      "per_horizon_algorithms": {
+        "value": {
+          "1": "LightGBM",
+          "7": "LightGBM",
+          "14": "LightGBM",
+          "30": "LightGBM",
+          "60": "Ridge",
+          "90": "Ridge"
+        },
+        "must_not_change": false
+      }
+    },
+    "durable_rules": [
+      {
+        "rule": "pred_units = pred_ratio x anchor (convert ratio back to units for floor comparison)",
+        "why": "Baseline floor is in units (bread_quantity MAE)",
+        "applies_to": [
+          "training",
+          "end_model"
+        ]
+      },
+      {
+        "rule": "Do not use tree models for h=90 unless n_val significantly increases",
+        "why": "5 val rows cannot support tree model evaluation",
+        "applies_to": [
+          "training"
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "iteration": 22,
+  "node": "training",
+  "timestamp": "2026-09-09",
+  "schema_version": "2026-09-04",
+  "type": "h60_fix",
+  "summary": "Fixes h=60 evaluation scheme. The baseline floor 40.042 = anchor_correct_h60 MAE on 95 val TARGET dates (Sep-Dec 2020) using origins D-60 (gap+early-val). iter020 incorrectly compared ML on 35 val-origin rows against 40.042 from 95-row scheme. This iteration trains with ratio_correct_h60 and raw-units targets, both evaluated on the correct 95-row scheme.",
+  "evaluation_scheme": {
+    "n_rows": 95,
+    "description": "Val target dates Sep 28 - Dec 31 2020, features from origin D-60 (gap/early-val rows)",
+    "baseline_floor": 40.042,
+    "anchor_correct_mae_verified": 40.042
+  },
+  "results": {
+    "ratio_correct_h60": {
+      "optuna_multifold_mae": 41.785,
+      "correct_95row_mae": 36.229,
+      "n_estimators": 14,
+      "beats_floor": true,
+      "params": {
+        "num_leaves": 14,
+        "learning_rate": 0.07938407816005191,
+        "max_depth": 7,
+        "min_child_samples": 23,
+        "reg_alpha": 0.061338395620921464,
+        "reg_lambda": 0.009118605447473642,
+        "subsample": 0.6840196259574847,
+        "colsample_bytree": 0.5097078382107525,
+        "min_split_gain": 0.049351909487439935,
+        "objective": "regression_l1",
+        "verbose": -1
+      }
+    },
+    "raw_units_h60": {
+      "optuna_multifold_mae": 42.99,
+      "correct_95row_mae": 38.0,
+      "n_estimators": 154,
+      "beats_floor": true,
+      "params": {
+        "num_leaves": 45,
+        "learning_rate": 0.027066762097650455,
+        "max_depth": 7,
+        "min_child_samples": 30,
+        "reg_alpha": 0.014541170743624966,
+        "reg_lambda": 0.00010154570565098138,
+        "subsample": 0.6282874883292204,
+        "colsample_bytree": 0.6529259591392641,
+        "min_split_gain": 0.0018815182587015892,
+        "objective": "regression_l1",
+        "verbose": -1
+      }
+    }
+  },
+  "champion": {
+    "h60": {
+      "target": "ratio_correct_h60",
+      "mae_95row": 36.229,
+      "beats_floor": true,
+      "model_path": "artifacts/training/h60_fix/lgbm_h60_champion.pkl",
+      "params": {
+        "num_leaves": 14,
+        "learning_rate": 0.07938407816005191,
+        "max_depth": 7,
+        "min_child_samples": 23,
+        "reg_alpha": 0.061338395620921464,
+        "reg_lambda": 0.009118605447473642,
+        "subsample": 0.6840196259574847,
+        "colsample_bytree": 0.5097078382107525,
+        "min_split_gain": 0.049351909487439935,
+        "objective": "regression_l1",
+        "verbose": -1,
+        "n_estimators": 14
+      }
+    }
+  },
+  "handoff": {
+    "written_by": "training",
+    "iteration": 22,
+    "context_clearable": true,
+    "durable_rules": [
+      "h=60 evaluation MUST use 95 val target dates (Sep-Dec 2020) with features from origin D-60.",
+      "The 35-row val-origin evaluation scheme is NOT comparable to the 40.042 baseline floor.",
+      "All LightGBM models must use objective='regression_l1'."
+    ]
+  }
+}

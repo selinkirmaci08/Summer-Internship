@@ -1,0 +1,180 @@
+{
+  "declared_departures": [
+    {
+      "id": "pos_before_dedup",
+      "what": "POS 001 is selected before the newest-export-per-date rule, not after.",
+      "why": "The run's order is equivalent on training data (POS 001 is the only till) but drops 12 dates in 2021 where the second till's export is newer.",
+      "affects": "holdout_primary, holdout_stress"
+    },
+    {
+      "id": "holiday_years",
+      "what": "Belgian public holidays computed for 2010-2024 instead of the run's range(2010, 2021).",
+      "why": "Same Gregorian-Easter algorithm, more years. Verbatim replay flags zero holidays anywhere in the holdout, which would misprice every holiday closure.",
+      "affects": "holdout_primary, holdout_stress"
+    },
+    {
+      "id": "imputation_pinned_to_train",
+      "what": "Weather month-medians, competitor fills and lag/rolling NaN fills stay fitted on the run's own train rows (date <= 2018-10-04).",
+      "why": "Refitting them over holdout rows would let holdout values reach the model's inputs.",
+      "affects": "all"
+    }
+  ],
+  "windows": {
+    "holdout_primary": {
+      "window": [
+        "2021-01-01",
+        "2021-12-31"
+      ],
+      "data_roots": [
+        "C:/Users/selin/OneDrive/Desktop/alldata/aernoudt_split/train",
+        "C:/Users/selin/OneDrive/Desktop/HOLDOUT_DO_NOT_GIVE_TO_PIPELINE\\holdout_primary"
+      ],
+      "frame_rows": 3259,
+      "sales_stats": {
+        "files_seen": 3592,
+        "superseded_dropped": 97,
+        "dropped_wrong_pos": 12,
+        "unparseable": [
+          {
+            "date": "20211102",
+            "file": "PT_Sales_002001_20211102_20211103093150.xml",
+            "error": "unclosed token: line 1225, column 0"
+          }
+        ],
+        "dates": 3482
+      },
+      "target_dates_in_window": 362,
+      "grid_rows": 2172,
+      "calendar_origin_missing": 15,
+      "row_origin_missing": 0,
+      "refit": {
+        "1": {
+          "rows": 2896,
+          "n_estimators": 185,
+          "last_origin": "2020-12-30",
+          "last_target": "2020-12-31"
+        },
+        "7": {
+          "rows": 2890,
+          "n_estimators": 141,
+          "last_origin": "2020-12-24",
+          "last_target": "2020-12-31"
+        },
+        "14": {
+          "rows": 2883,
+          "n_estimators": 274,
+          "last_origin": "2020-12-17",
+          "last_target": "2020-12-31"
+        },
+        "30": {
+          "rows": 2867,
+          "n_estimators": 119,
+          "last_origin": "2020-12-01",
+          "last_target": "2020-12-31"
+        },
+        "60": {
+          "rows": 2837,
+          "n_estimators": 52,
+          "last_origin": "2020-11-01",
+          "last_target": "2020-12-31"
+        },
+        "90": {
+          "rows": 2807,
+          "n_estimators": 69,
+          "last_origin": "2020-10-02",
+          "last_target": "2020-12-31"
+        }
+      }
+    },
+    "holdout_stress": {
+      "window": [
+        "2022-01-01",
+        "2023-02-08"
+      ],
+      "data_roots": [
+        "C:/Users/selin/OneDrive/Desktop/alldata/aernoudt_split/train",
+        "C:/Users/selin/OneDrive/Desktop/HOLDOUT_DO_NOT_GIVE_TO_PIPELINE\\holdout_primary",
+        "C:/Users/selin/OneDrive/Desktop/HOLDOUT_DO_NOT_GIVE_TO_PIPELINE\\holdout_stress"
+      ],
+      "frame_rows": 3390,
+      "sales_stats": {
+        "files_seen": 3809,
+        "superseded_dropped": 97,
+        "dropped_wrong_pos": 98,
+        "unparseable": [
+          {
+            "date": "20211102",
+            "file": "PT_Sales_002001_20211102_20211103093150.xml",
+            "error": "unclosed token: line 1225, column 0"
+          }
+        ],
+        "dates": 3613
+      },
+      "target_dates_in_window": 131,
+      "grid_rows": 786,
+      "calendar_origin_missing": 462,
+      "row_origin_missing": 0,
+      "refit": {
+        "1": {
+          "rows": 2896,
+          "n_estimators": 185,
+          "last_origin": "2020-12-30",
+          "last_target": "2020-12-31"
+        },
+        "7": {
+          "rows": 2890,
+          "n_estimators": 141,
+          "last_origin": "2020-12-24",
+          "last_target": "2020-12-31"
+        },
+        "14": {
+          "rows": 2883,
+          "n_estimators": 274,
+          "last_origin": "2020-12-17",
+          "last_target": "2020-12-31"
+        },
+        "30": {
+          "rows": 2867,
+          "n_estimators": 119,
+          "last_origin": "2020-12-01",
+          "last_target": "2020-12-31"
+        },
+        "60": {
+          "rows": 2837,
+          "n_estimators": 52,
+          "last_origin": "2020-11-01",
+          "last_target": "2020-12-31"
+        },
+        "90": {
+          "rows": 2807,
+          "n_estimators": 69,
+          "last_origin": "2020-10-02",
+          "last_target": "2020-12-31"
+        }
+      }
+    }
+  },
+  "pinned_n_estimators": {
+    "1": 185,
+    "7": 141,
+    "14": 274,
+    "30": 119,
+    "60": 52,
+    "90": 69
+  },
+  "hyperparameters": {
+    "objective": "regression_l1",
+    "metric": "mae",
+    "learning_rate": 0.03,
+    "num_leaves": 31,
+    "min_child_samples": 20,
+    "feature_fraction": 0.8,
+    "bagging_fraction": 0.8,
+    "bagging_freq": 5,
+    "reg_alpha": 0.05,
+    "reg_lambda": 0.1,
+    "verbose": -1,
+    "random_state": 42
+  },
+  "refit_note": "per contracts/end_model.json refit_champion_on_all_data: identical features, identical hyperparameters, n_estimators pinned to the early-stopped value, fitted through 2020-12-31. Never scored on validation - only on the holdout."
+}

@@ -1,0 +1,126 @@
+{
+  "note": "Reference example for the infeasible case — demonstrates that a false feasibility verdict must not leave other fields null, and that leakage alone never causes infeasibility.",
+  "input": {
+    "dataset_path": "data/aernoudt_bread_daily.csv",
+    "goal": "predict daily bread demand (units of bread-group products sold per day) for branch 001",
+    "target_column": "bread_quantity",
+    "iteration": 1,
+    "context": []
+  },
+  "output": {
+    "schema_version": "2026-08-11",
+    "dataset_overview": {
+      "rows": 34,
+      "cols": 15,
+      "memory_mb": 0.0045,
+      "duplicate_rows_pct": 0.0,
+      "duplicate_clustering_note": null,
+      "dtype_breakdown": {"numeric": 13, "categorical": 1, "datetime": 1, "text": 0, "boolean": 0},
+      "overall_missing_pct": 0.0,
+      "time_coverage": {
+        "range": "2010-11-16 to 2010-12-24",
+        "gaps": ["5 calendar day(s) with no sales file in range — first missing: 2010-11-22"],
+        "collection_shift_note": null
+      }
+    },
+    "feasibility": {
+      "trainable": false,
+      "reasoning": "only 34 daily observations (~4.9 weeks) — too few for a time-series regression to learn seasonal/weekly demand patterns or to hold out a meaningful validation split; a single unusual day (bread_quantity=618 vs. median 394.5) can dominate any model fit at this sample size. This is a row-count blocker, not a leakage problem — leakage is separately noted in flags and is independently fixable by dropping the affected columns."
+    },
+    "target": {
+      "name": "bread_quantity",
+      "task_type": "regression",
+      "range": {"min": 263.0, "max": 618.0, "median": 394.5},
+      "distribution_notes": "real variation exists (263–618), but 34 points is too short a series to separate signal (weekday/weekend, pre-holiday demand) from noise",
+      "definition_check": "single consistent numeric unit across all rows, no ambiguity",
+      "segment_breakdown": {"metric": "mean_target", "segments": []},
+      "temporal_drift": {"checked": false, "note": "insufficient history (single ~6-week window) to assess drift"},
+      "recommended_metric": {
+        "primary": "mae",
+        "secondary": ["rmse"],
+        "reasoning": "regression task on a small, right-skewed-prone daily count; MAE is more robust to the single high outlier day (618) than RMSE alone"
+      }
+    },
+    "feature_stats_summary": {
+      "numeric": {"count": 13, "avg_missing_pct": 0.0, "high_skew_count": 0},
+      "categorical": {"count": 1, "avg_cardinality": 1, "high_cardinality_count": 0},
+      "datetime": {"count": 1, "range": "2010-11-16 to 2010-12-24"}
+    },
+    "top_features": [
+      {"name": "bread_revenue", "dtype": "float", "missing_pct": 0.0, "skew": 0.4, "outliers": 1, "target_corr": 0.99, "target_mi": 0.91},
+      {"name": "day_of_week", "dtype": "categorical", "missing_pct": 0.0, "cardinality": 6, "target_corr": null, "target_cramers_v": 0.62}
+    ],
+    "top_correlated_pairs": [
+      {"pair": ["bread_revenue", "bread_quantity"], "corr": 0.99},
+      {"pair": ["num_items_sold", "bread_quantity"], "corr": 1.0}
+    ],
+    "multicollinearity": {
+      "high_pairs": [
+        {"pair": ["num_items_sold", "non_bread_quantity"], "corr": 1.0, "suggested_action": "num_items_sold is an exact algebraic sum involving the target and non_bread_quantity — not real multicollinearity, this is the same leakage noted in flags"}
+      ]
+    },
+    "missingness": {"overall_missing_pct": 0.0, "columns_with_missing": [], "correlated_missingness_pairs": []},
+    "data_quality_issues": {"inconsistent_categories": [], "out_of_range_values": [], "mixed_units": [], "label_noise": {"checked": true, "conflict_rate": 0.0, "note": "no conflicting labels found, though 34 rows is too few to draw a strong conclusion either way"}},
+    "flags": {
+      "high_cardinality": [],
+      "possible_leakage": [
+        {"name": "num_items_sold", "note": "exact algebraic identity: num_items_sold = bread_quantity + non_bread_quantity — not an independent feature"},
+        {"name": "non_bread_quantity", "note": "same order stream as the target; used in the identity above"},
+        {"name": "bread_revenue", "note": "0.99 correlation with target — likely quantity × price, a near-deterministic transform rather than an independent predictor"}
+      ],
+      "possible_temporal_leakage": [],
+      "high_missing": [],
+      "near_constant": [],
+      "dominant_value": [],
+      "underrepresented_categories": [],
+      "pii_sensitive": [
+        {"name": "referencewaitress", "note": "present in raw XML source, excluded from this aggregated table — not a column in this dataset"}
+      ]
+    },
+    "recommended_strategy": {
+      "narrative": "Do not attempt to train on this slice as-is. First, pull additional history from the same branch's archive (2010–2023 available) to support a train/validation split spanning multiple seasons. Second, drop num_items_sold, non_bread_quantity, and bread_revenue as features — they are mechanically tied to the target, not independent predictors. Third, once more history exists, engineer real predictors (day-of-week, is_holiday, rolling prior-week average, month) rather than same-day order aggregates, since same-day counts/revenue are outcomes of the same shopping event as bread demand, not causes of it.",
+      "confidence": "high"
+    },
+    "key_findings": [
+      "Feasibility failed on sample size: 34 daily rows is too few for a time-series model to learn seasonal or weekly demand patterns",
+      "Two columns (num_items_sold, non_bread_quantity) are algebraically derived from the target itself; a third (bread_revenue) is quantity × price — all three must be dropped as features before any modeling attempt, independent of the sample size issue",
+      "Target ranges 263–618 units/day (median 394.5) — real variation exists, but too short a window to separate signal from noise",
+      "The date range (Nov 16 – Dec 24, 2010) covers a single pre-holiday season for one branch — even with more days added from this same window, a model still couldn't learn a typical annual pattern"
+    ],
+    "limitations": [
+      "No external features (weather, local events, promotions) were available to explain observed demand swings, e.g. bread_quantity=618 on 2010-11-21",
+      "Missing calendar days (no XML file present) were not treated as zero-demand days and are simply absent — this could bias day-of-week patterns if closures aren't random"
+    ],
+    "clarification_needed": [
+      {
+        "question": "Should EDA re-run once more historical days (e.g. the full 2010–2023 range available for branch 01) are pulled in, or is a single ~6-week window intentional for this test?",
+        "context": "the dataset as given cannot support a trainable model regardless of feature engineering choices, purely due to sample size for a daily-granularity time series",
+        "blocking": true,
+        "confidence": "high",
+        "recommendation": "pull the full available history for branch 01 and re-run EDA before any modelling node is invoked",
+        "recommendation_reasoning": "no downstream choice can be made well on ~6 weeks of daily data - the split alone would leave a validation window too short to distinguish a model from noise, so every number produced afterwards would be uninterpretable",
+        "impact_if_wrong": "if the short window is deliberate (a plumbing test), the cost of pulling more data is one re-run of EDA; the cost of proceeding on it is an entire run whose conclusions mean nothing"
+      },
+      {
+        "question": "Are the missing calendar days (no XML file present) genuine store closures, or a gap in data collection/export?",
+        "context": "affects whether those days should be treated as zero-demand rows once a larger dataset is assembled",
+        "blocking": false,
+        "confidence": "low",
+        "recommendation": "treat absent calendar days as closures (zero-demand rows) unless the shop's own records say otherwise",
+        "recommendation_reasoning": "the absent days cluster on Sundays and public holidays, which matches a closure pattern rather than an export failure",
+        "impact_if_wrong": "if they are export gaps, imputing zeros teaches the model a demand pattern that never happened - recoverable by re-running Preprocess, but it silently biases every seasonality feature until then"
+      }
+    ],
+    "issues": [],
+    "artifact_paths": {
+      "plots": [
+        {
+          "path": "artifacts/eda/iteration_001_eda_target_over_time.png",
+          "data_path": "artifacts/eda/iteration_001_eda_target_over_time.csv",
+          "reason": "only 34 points — worth visualizing the full series directly rather than binning, to show the single outlier day"
+        }
+      ],
+      "full_correlation_matrix": "artifacts/eda/iteration_001_eda_full_corr_matrix.csv"
+    }
+  }
+}

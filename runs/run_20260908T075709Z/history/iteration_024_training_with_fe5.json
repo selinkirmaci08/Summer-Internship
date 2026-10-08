@@ -1,0 +1,89 @@
+{
+  "iteration": 24,
+  "node": "training",
+  "timestamp": "2026-09-09",
+  "schema_version": "2026-09-04",
+  "type": "training_with_fe5",
+  "summary": "Retrains all 6 horizons with FE5 features (92 cols, 64 features). Pinned hyperparams from iter020/iter022. Only saves model if improved vs prior. FE5 adds days_since_last_holiday and temperature_zscore_seasonal.",
+  "fe_csv": "data/iteration_023_feature_engineering.csv",
+  "results": {
+    "1": {
+      "mae": 30.679206853849966,
+      "floor": 54.41489361702128,
+      "beats_floor": true,
+      "prior_mae": 29.835,
+      "improved": false,
+      "n": 94
+    },
+    "7": {
+      "mae": 33.01563654780632,
+      "floor": 34.125,
+      "beats_floor": true,
+      "prior_mae": 33.02,
+      "improved": true,
+      "n": 88
+    },
+    "14": {
+      "mae": 38.37703354790353,
+      "floor": 38.11592592592592,
+      "beats_floor": false,
+      "prior_mae": 37.797,
+      "improved": false,
+      "n": 81
+    },
+    "30": {
+      "mae": 36.62996784807826,
+      "floor": 65.54276923076922,
+      "beats_floor": true,
+      "prior_mae": 37.955,
+      "improved": true,
+      "n": 65
+    },
+    "60": {
+      "mae": 38.13718849081658,
+      "floor": 40.042,
+      "beats_floor": true,
+      "prior_mae": 36.229,
+      "improved": false,
+      "n": 95
+    },
+    "90": {
+      "pooled_mae": 57.05017365569346,
+      "pooled_floor": 75.93732142857142,
+      "beats_floor": true,
+      "prior_mae": 56.767,
+      "improved": false,
+      "per_fold": {
+        "1": {
+          "mae": 30.358360408219824,
+          "floor": 57.60294117647059,
+          "n": 68
+        },
+        "2": {
+          "mae": 82.335281355927,
+          "floor": 93.35410447761193,
+          "n": 67
+        },
+        "3": {
+          "mae": 81.23839063820557,
+          "floor": 91.9,
+          "n": 5
+        }
+      }
+    }
+  },
+  "saved_models": {
+    "7": "lgbm_h7_fe5.pkl",
+    "30": "lgbm_h30_fe5.pkl"
+  },
+  "handoff": {
+    "written_by": "training",
+    "iteration": 24,
+    "context_clearable": true,
+    "durable_rules": [
+      "All LightGBM models must use objective='regression_l1'.",
+      "h=60 eval: 95 val target dates (Sep-Dec 2020), features from origin D-60.",
+      "h=90 eval: pooled multi-fold (fold-3 alone has only 5 rows)."
+    ]
+  }
+}

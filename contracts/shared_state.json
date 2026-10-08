@@ -1,0 +1,83 @@
+{
+  "current": {
+    "goal": "predict readmission risk",
+    "dataset_path": "path/to/data.csv",
+    "target_column": "outcome",
+    "run_config": {
+      "conventions_version": "2026-09-04",
+      "holdout": "external - removed before the run began and scored after the pipeline finishes; no partition in this dataset is held out",
+      "metrics_scope": "every metric recorded anywhere in this run is a validation metric",
+      "data_sources": [
+        {"path": "path/to/data.csv", "format": "csv", "size_kb": 18400},
+        {"path": "path/to/region_lookup.csv", "format": "csv", "size_kb": 4}
+      ]
+    },
+    "run_status": "running",
+    "eda_summary_ref": "history/iteration_1_eda.json",
+    "features_processed": [
+      "blood_sugar",
+      "diagnosis_code",
+      "region"
+    ],
+    "features_engineered": [
+      "bmi_blood_sugar_interaction"
+    ],
+    "latest_model_path": "models/model_iter3.pkl",
+    "latest_metrics": {
+      "recall": 0.56,
+      "auc": 0.7
+    },
+    "current_hypothesis": {
+      "statement": "adding diagnosis_code and region should improve recall",
+      "confidence": "medium",
+      "status": "being tested"
+    },
+    "prior_hypotheses_tried": [],
+    "baseline_floor": {
+      "established_at_iteration": 3,
+      "baseline_type": "majority_class",
+      "pooled": {"recall": 0.0, "auc": 0.5},
+      "per_segment": {"east": {"recall": 0.0}, "west": {"recall": 0.0}}
+    },
+    "assumptions": [],
+    "stop_condition_met": false,
+    "stop_justification": null
+  },
+  "history": [
+    {
+      "iteration": 1,
+      "node": "eda",
+      "timestamp": "2026-08-10T09:00:00Z",
+      "summary": "250k rows, target imbalanced (0.32). Recommended metric: recall. Strategy: start with blood_sugar.",
+      "full_output_path": "history/iteration_1_eda.json"
+    },
+    {
+      "iteration": 2,
+      "node": "preprocess",
+      "timestamp": "2026-08-10T09:05:00Z",
+      "summary": "Processed blood_sugar (median impute, IQR clip, scaled). Dropped visit_id (leakage), patient_name (PII).",
+      "full_output_path": "history/iteration_2_preprocess.json"
+    },
+    {
+      "iteration": 3,
+      "node": "feature_engineering",
+      "timestamp": "2026-08-10T09:08:00Z",
+      "summary": "Created bmi_blood_sugar_interaction (corr 0.38). Dropped years_since_first_visit (multicollinear with age).",
+      "full_output_path": "history/iteration_3_feature_eng.json"
+    },
+    {
+      "iteration": 4,
+      "node": "train",
+      "timestamp": "2026-08-10T09:12:00Z",
+      "summary": "Trained gradient boosted trees on 2 features. Validation recall 0.58, AUC 0.71.",
+      "full_output_path": "history/iteration_4_train.json"
+    },
+    {
+      "iteration": 5,
+      "node": "diagnosis",
+      "timestamp": "2026-08-10T09:16:00Z",
+      "summary": "Validation recall 0.56, generalizes well vs train. Region=east underperforms (0.44 recall). Stop condition not met. Root cause: underfitting, only 2/87 features used. Hypothesis: add diagnosis_code + region. Confidence: medium.",
+      "full_output_path": "history/iteration_5_diagnosis.json"
+    }
+  ]
+}

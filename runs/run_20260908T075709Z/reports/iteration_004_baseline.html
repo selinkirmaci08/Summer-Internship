@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>element61 · Baseline · Iteration 004</title>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Open+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+:root{
+  --e61-orange-red:#FC5B00;--e61-orange:#FC9808;--e61-yellow:#FCBA08;
+  --e61-magenta:#9D1D56;--e61-purple:#301D56;
+  --e61-ink:#1A1230;--e61-ink-2:#301D56;--e61-ink-3:#5B5070;--e61-ink-4:#8B8298;
+  --e61-line:#E6E2EC;--e61-line-2:#D8D2E0;--e61-surface:#FFFFFF;
+  --e61-bg:#FAF8F5;--e61-bg-warm:#FFF6EC;--e61-bg-cool:#F2EEF6;
+  --e61-success:#2F8F5C;--e61-warning:#FCBA08;--e61-danger:#C0294A;--e61-info:#2F6BB3;
+  --font-display:"Montserrat","Helvetica Neue",system-ui,sans-serif;
+  --font-body:"Open Sans","Helvetica Neue",Arial,system-ui,sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:24px;--space-6:32px;--space-7:48px;
+  --radius-sm:4px;--radius-md:8px;--radius-lg:14px;--radius-xl:22px;--radius-pill:999px;
+  --shadow-1:0 1px 2px rgba(48,29,86,.06),0 1px 1px rgba(48,29,86,.04);
+  --shadow-2:0 4px 16px rgba(48,29,86,.08),0 1px 2px rgba(48,29,86,.04);
+  --shadow-3:0 10px 28px rgba(48,29,86,.12),0 2px 6px rgba(48,29,86,.06);
+  --shadow-focus:0 0 0 3px rgba(184,122,26,.28);
+  --ease-standard:cubic-bezier(0.2,0.7,0.2,1);--dur-fast:120ms;--dur-base:200ms;
+  --accent:#B87A1A;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--e61-bg);color:var(--e61-ink-2);font-family:var(--font-body);line-height:1.6;scroll-snap-type:y proximity;height:100%;overflow-y:auto;scroll-behavior:smooth}
+h1,h2,h3,h4{font-family:var(--font-display);color:var(--e61-ink);margin:0 0 .5em;font-weight:700;text-wrap:balance}
+p{margin:0 0 1em}
+a{color:var(--accent)}
+.mono{font-family:var(--font-mono)}
+img{max-width:100%;display:block}
+.topbar{position:fixed;top:0;left:0;right:0;height:3px;background:var(--e61-line);z-index:201}
+.topbar-fill{height:100%;background:linear-gradient(135deg,var(--e61-yellow) 0%,var(--accent) 100%);width:0;transition:width .25s}
+.dotnav{position:fixed;right:20px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:9px;z-index:200}
+.dotnav button{width:9px;height:9px;border-radius:50%;border:none;background:var(--e61-line-2);cursor:pointer;padding:0;transition:background .2s,transform .2s}
+.dotnav button.active{background:var(--accent);transform:scale(1.5)}
+.dotnav button:hover{background:var(--e61-orange)}
+.navbar{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:14px;background:rgba(26,18,48,.88);backdrop-filter:blur(6px);border-radius:999px;padding:9px 18px;z-index:200;box-shadow:var(--shadow-3)}
+.navbar button{background:none;border:none;color:#fff;font-size:1rem;cursor:pointer;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.navbar button:hover{background:rgba(255,255,255,.15)}
+.navbar button:disabled{opacity:.3;cursor:default}
+.navbar .counter{font-family:var(--font-mono);font-size:.72rem;color:rgba(255,255,255,.85);min-width:52px;text-align:center}
+.slide{min-height:100vh;scroll-snap-align:start;display:flex;flex-direction:column;justify-content:center;padding:88px 64px 96px;position:relative;border-bottom:1px solid var(--e61-line);box-sizing:border-box}
+.slide-inner{max-width:1180px;margin:0 auto;width:100%}
+.slide-num{position:absolute;top:28px;left:64px;font-family:var(--font-mono);font-size:.72rem;letter-spacing:.1em;color:var(--e61-ink-4);text-transform:uppercase}
+.slide-tag{position:absolute;top:28px;right:64px;font-family:var(--font-mono);font-size:.72rem;color:var(--e61-ink-4)}
+@media(max-width:700px){.slide{padding:72px 24px 80px}.slide-num,.slide-tag{left:24px;right:24px}}
+.cover{min-height:100vh;scroll-snap-align:start;background:var(--e61-bg);color:var(--e61-ink);display:flex;flex-direction:column;justify-content:center;padding:64px 64px 64px 68px;position:relative;overflow:hidden;box-sizing:border-box;border-left:6px solid var(--accent)}
+.cover-inner{position:relative;max-width:980px;margin:0 auto;width:100%}
+.cover .logo{font-family:var(--font-display);font-weight:800;font-size:1rem;letter-spacing:.02em;color:var(--accent);margin-bottom:40px}
+.cover h1{font-family:var(--font-display);font-weight:700;font-size:2.6rem;color:var(--e61-purple);line-height:1.15;margin:0 0 18px}
+.cover .sub{font-size:1.05rem;color:var(--e61-ink-3);max-width:680px;margin-bottom:34px}
+@media(max-width:700px){.cover h1{font-size:1.9rem}}
+.slide.dark{background:var(--e61-bg-cool);border-left:6px solid var(--e61-purple)}
+.slide.dark h1,.slide.dark h2,.slide.dark h3,.slide.dark h4{color:var(--e61-purple)}
+.slide.warm{background:var(--e61-bg-warm);border-left:6px solid var(--accent)}
+.slide.warm h1,.slide.warm h2,.slide.warm h3{color:var(--e61-ink)}
+.eyebrow{font-family:var(--font-body);font-size:.8125rem;font-weight:600;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);margin-bottom:10px;display:block}
+.kpi-row,.kpi-row-lt{display:flex;gap:14px;flex-wrap:wrap;margin-top:20px}
+.kpi{background:#fff;border:1px solid var(--e61-line);border-radius:14px;box-shadow:var(--shadow-1);padding:16px 22px;min-width:150px}
+.kpi-val{font-family:var(--font-display);font-size:1.7rem;font-weight:700;color:var(--e61-purple)}
+.kpi-lbl{font-size:.72rem;margin-top:4px;color:var(--e61-ink-3)}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:8px 22px;border-radius:999px;font-family:var(--font-display);font-weight:700;font-size:.9rem;margin-bottom:10px}
+.pill-ok{background:var(--e61-success);color:#fff}
+.badge{display:inline-block;font-family:var(--font-display);font-size:.62rem;font-weight:700;padding:3px 9px;border-radius:5px;letter-spacing:.05em;text-transform:uppercase}
+.b-hi{background:var(--e61-success);color:#fff}.b-med{background:var(--e61-warning);color:var(--e61-ink)}
+.b-lo{background:var(--e61-magenta);color:#fff}.b-lk{background:var(--e61-danger);color:#fff}
+.b-nc{background:var(--e61-line);color:var(--e61-ink-3)}.b-ok{background:#D1FAE5;color:#065F46}
+.b-win{background:var(--accent);color:#fff}
+.card{background:var(--e61-surface);border:1px solid var(--e61-line);border-radius:16px;padding:22px 24px;box-shadow:var(--shadow-1)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.grid-lead{display:grid;grid-template-columns:2fr 1fr;gap:18px;align-items:start}
+@media(max-width:900px){.grid-2,.grid-3,.grid-4,.grid-lead{grid-template-columns:1fr}}
+.finding-card{background:#fff;border-left:4px solid var(--accent);border-radius:0 14px 14px 0;padding:18px 20px;box-shadow:var(--shadow-1);font-size:.92rem;color:var(--e61-ink-2);line-height:1.6}
+.kpi-mini-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media(max-width:900px){.kpi-mini-row{grid-template-columns:1fr 1fr}}
+.kpi-mini{background:#fff;border:1px solid var(--e61-line);border-radius:12px;box-shadow:var(--shadow-1);padding:16px 18px}
+.kpi-mini-label{font-size:.7rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--e61-ink-3);margin-bottom:4px}
+.kpi-mini-val{font-family:var(--font-display);font-size:1.25rem;font-weight:700;color:var(--accent)}
+.kpi-mini-note{font-size:.72rem;color:var(--e61-ink-3);margin-top:4px;line-height:1.4}
+table{width:100%;border-collapse:collapse;font-size:.84rem}
+th{text-align:left;padding:9px 12px;font-family:var(--font-display);font-size:.7rem;color:var(--e61-ink-3);border-bottom:2px solid var(--e61-line);font-weight:600;background:var(--e61-bg-cool);text-transform:uppercase;letter-spacing:.04em}
+td{padding:9px 12px;border-bottom:1px solid var(--e61-line);color:var(--e61-ink-2);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr.ok-row td:first-child{border-left:3px solid var(--e61-success)}
+tr.warn-row td:first-child{border-left:3px solid var(--e61-warning)}
+tr.win-row td:first-child{border-left:3px solid var(--accent)}
+/* Bar chart */
+.bar-wrap{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.bar-label{font-family:var(--font-mono);font-size:.75rem;width:110px;flex-shrink:0;color:var(--e61-ink-3)}
+.bar-track{flex:1;height:18px;background:var(--e61-line);border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;background:var(--accent);transition:width .4s}
+.bar-fill.best{background:var(--e61-success)}
+.bar-val{font-family:var(--font-mono);font-size:.75rem;width:46px;flex-shrink:0;text-align:right;color:var(--e61-ink-2)}
+.chip{background:var(--e61-bg-cool);border:1px solid var(--e61-line-2);border-radius:8px;padding:5px 12px;font-size:.78rem;font-family:var(--font-mono);color:var(--e61-ink-3);display:inline-block;margin:3px}
+.chip span{color:var(--e61-purple);font-weight:500}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+@media print{.dotnav,.navbar,.topbar{display:none}.slide,.cover{min-height:0;page-break-after:always}}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="topbar-fill" id="topbarFill"></div></div>
+<div class="dotnav" id="dotnav"></div>
+<div class="navbar">
+  <button id="prevBtn" title="Previous">&#8249;</button>
+  <span class="counter" id="counter">1 / 6</span>
+  <button id="nextBtn" title="Next">&#8250;</button>
+</div>
+
+<!-- SLIDE 0 — COVER -->
+<section class="cover slide-item" data-title="Cover">
+  <div class="cover-inner">
+    <div class="logo">element61 &nbsp;&middot;&nbsp; pipeline</div>
+    <span class="eyebrow">BASELINE REPORT &nbsp;&middot;&nbsp; ITERATION 004 &nbsp;&middot;&nbsp; run_20260908T075709Z</span>
+    <h1>Baseline Forecasting — 22-Candidate Naive Grid</h1>
+    <p class="sub">Systematic evaluation of 22 naive forecasting candidates on rolling-origin cross-validation to establish per-horizon baseline floors and select naive predictor features for downstream ML models. Aernoudt Bakery Branch 01 &middot; 2026-09-08. All numbers from <span class="mono">history/iteration_004_baseline.json</span>.</p>
+    <div class="kpi-row-lt">
+      <div class="kpi"><div class="kpi-val">22</div><div class="kpi-lbl">Candidates evaluated</div></div>
+      <div class="kpi"><div class="kpi-val">3</div><div class="kpi-lbl">CV folds</div></div>
+      <div class="kpi"><div class="kpi-val">6</div><div class="kpi-lbl">Forecast horizons</div></div>
+      <div class="kpi"><div class="kpi-val">35.58</div><div class="kpi-lbl">Pooled floor MAE</div></div>
+      <div class="kpi"><div class="kpi-val">smedian</div><div class="kpi-lbl">Dominant family</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 1 — AGENDA -->
+<section class="slide slide-item" data-title="Agenda">
+  <div class="slide-num">01 / 06</div><div class="slide-tag">Agenda</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Contents</span>
+    <h2>Report Structure</h2>
+    <div class="grid-3" style="margin-top:24px">
+      <div class="card"><b class="mono" style="color:var(--accent)">02</b><br><b>Baseline Floor Summary</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">Per-horizon winners from the 22-candidate Part A evaluation on held-out validation rows; pooled floor MAE</span></div>
+      <div class="card"><b class="mono" style="color:var(--accent)">03</b><br><b>Candidate Comparison</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">Visual ranking of top candidates for h=1 and h=90 on fold-3 validation; why short vs long horizons prefer different window widths</span></div>
+      <div class="card"><b class="mono" style="color:var(--accent)">04</b><br><b>Part B — Predictor Selection</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">Naive predictor columns kept per horizon after training-row search and correlation de-duplication (r &gt; 0.98 threshold)</span></div>
+      <div class="card"><b class="mono" style="color:var(--accent)">05</b><br><b>Methodology &amp; Rules</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">Seasonal parameters, zero-demand handling, fold priority, and the 22-candidate set</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 2 — BASELINE FLOOR SUMMARY -->
+<section class="slide slide-item" data-title="Baseline Floors">
+  <div class="slide-num">02 / 06</div><div class="slide-tag">Baseline Floors</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Part A &mdash; Best-of-22 on Validation Rows</span>
+    <h2>Seasonal Median Sets the Per-Horizon Floor</h2>
+    <div class="kpi-mini-row" style="margin-bottom:24px">
+      <div class="kpi-mini"><div class="kpi-mini-label">Candidates tested</div><div class="kpi-mini-val">22</div><div class="kpi-mini-note">Grid incl. smedian, smean, drift, tmean, tmed, ddrift</div></div>
+      <div class="kpi-mini"><div class="kpi-mini-label">Pooled floor MAE</div><div class="kpi-mini-val">35.58</div><div class="kpi-mini-note">Simple mean of 6 per-horizon floor MAEs</div></div>
+      <div class="kpi-mini"><div class="kpi-mini-label">Primary fold</div><div class="kpi-mini-val">Fold 3</div><div class="kpi-mini-note">Most recent; n=95 val rows; fold 1&amp;2 used only for h=90</div></div>
+      <div class="kpi-mini"><div class="kpi-mini-label">Winner family</div><div class="kpi-mini-val">smedian</div><div class="kpi-mini-note">Seasonal median beats mean, drift, trailing stats at all horizons</div></div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Horizon</th>
+          <th>Winner</th>
+          <th>Val MAE</th>
+          <th>Fold / n</th>
+          <th>vs. seasonal naive</th>
+          <th>EDA provisional</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="win-row"><td><b>h = 1</b></td><td><span class="badge b-win">smedian_4</span></td><td><b>31.263</b></td><td>Fold 3 (n=95)</td><td>&#8722;7.65</td><td>38.01</td></tr>
+        <tr class="win-row"><td><b>h = 7</b></td><td><span class="badge b-win">smedian_4</span></td><td><b>31.263</b></td><td>Fold 3 (n=95)</td><td>&#8722;7.65</td><td>40.73</td></tr>
+        <tr class="win-row"><td><b>h = 14</b></td><td><span class="badge b-win">smedian_4</span></td><td><b>32.846</b></td><td>Fold 3 (n=95)</td><td>&#8722;7.33</td><td>42.67</td></tr>
+        <tr class="win-row"><td><b>h = 30</b></td><td><span class="badge b-win">smedian_4</span></td><td><b>35.913</b></td><td>Fold 3 (n=95)</td><td>&#8722;12.71</td><td>44.14</td></tr>
+        <tr class="ok-row"><td><b>h = 60</b></td><td><span class="badge b-hi">smedian_26</span></td><td><b>40.042</b></td><td>Fold 3 (n=95)</td><td>&#8722;16.06</td><td>45.14</td></tr>
+        <tr class="ok-row"><td><b>h = 90</b></td><td><span class="badge b-hi">smedian_26</span></td><td><b>42.143</b></td><td>Pooled (n=257)</td><td>&#8722;25.28</td><td>47.54</td></tr>
+      </tbody>
+    </table>
+    <div style="margin-top:18px;background:var(--e61-bg-warm);border-left:4px solid var(--accent);border-radius:0 12px 12px 0;padding:14px 20px">
+      <p style="font-size:.88rem;color:var(--e61-ink-2);margin:0"><b>Pattern:</b> smedian_w4 dominates h=1&ndash;30 — the 4 most recent same-DOW observations adapt quickly to level changes, including the post-COVID-regime demand shift. smedian_w26 wins at h=60&ndash;90, where a wider 26-week window averages over local volatility and captures the annual seasonal pattern. h=90 is pooled across all 3 folds because fold 3 alone contains only 5 scoreable h=90 validation rows (the dataset ends 2020-12-31).</p>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 3 — CANDIDATE COMPARISON -->
+<section class="slide slide-item" data-title="Candidate Ranking">
+  <div class="slide-num">03 / 06</div><div class="slide-tag">Candidate Ranking</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Part A &mdash; Fold-3 Val Candidate Rankings</span>
+    <h2>Seasonal Median Consistently Wins; Window Width Matters at h=90</h2>
+    <div class="grid-2" style="margin-top:20px">
+      <div class="card">
+        <h3 style="margin-bottom:16px">h = 1 — Fold 3 (n=95)</h3>
+        <div class="bar-wrap">
+          <span class="bar-label">smedian_4</span>
+          <div class="bar-track"><div class="bar-fill best" style="width:53%"></div></div>
+          <span class="bar-val">31.26 <span class="badge b-win" style="font-size:.5rem">WINNER</span></span>
+        </div>
+        <div class="bar-wrap">
+          <span class="bar-label">smedian_8</span>
+          <div class="bar-track"><div class="bar-fill" style="width:54%"></div></div>
+          <span class="bar-val">31.55</span>
+        </div>
+        <div class="bar-wrap">
+          <span class="bar-label">smedian_13</span>
+          <div class="bar-track"><div class="bar-fill" style="width:57%"></div></div>
+          <span class="bar-val">33.35</span>
+        </div>
+        <div class="bar-wrap">
+          <span class="bar-label">smedian_26</span>
+          <div class="bar-track"><div class="bar-fill" style="width:62%"></div></div>
+          <span class="bar-val">36.57</span>
+        </div>
+        <div class="bar-wrap">
+          <span class="bar-label">seasonal_naive</span>
+          <div class="bar-track"><div class="bar-fill" style="width:66%"></div></div>
+          <span class="bar-val">38.92</span>
+        </div>
+        <div class="bar-wrap">
+          <span class="bar-label">smedian_52</span>
+          <div class="bar-track"><div class="bar-fill" style="width:68%"></div></div>
+          <span class="bar-val">40.09</span>
+        </div>
+        <div class="bar-wrap">
+          <span class="bar-label">last_value</span>
+          <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
+          <span class="bar-val">59.96</span>
+        </div>
+        <p style="font-size:.78rem;color:var(--e61-ink-3);margin-top:12px;margin-bottom:0">Bars scaled relative to last_value (59.96). Green = winner.</p>
+      </div>
+      <div class="card">
+        <h3 style="margin-bottom:16px">h = 90 — Fold 3 (n=95, pooled for final)</h3>
+        <div class="bar-wrap">
+          <span class="bar-label">smedian_13</span>
+          <div class="bar-track"><div class="bar-fill best" style="width:46%"></div></div>
+          <span class="bar-val">42.02 <span class="badge b-hi" style="font-size:.5rem">BEST F3</span></span>
+        </div>
+        <div class="bar-wrap">
+          <span class="bar-label">smedian_26</span>
+          <div class="bar-track"><div class="bar-fill best" style="width:46%"></div></div>
+          <span class="bar-val">42.11</span>
+        </div>
+        <div class="bar-wrap">
+          <span class="bar-label">smedian_52</span>
+          <div class="bar-track"><div class="bar-fill" style="width:47%"></div></div>
+          <span class="bar-val">43.01</span>
+        </div>
+        <div class="bar-wrap">
+          <span class="bar-label">smedian_8</span>
+          <div class="bar-track"><div class="bar-fill" style="width:47%"></div></div>
+          <span class="bar-val">43.44</span>
+        </div>
+        <div class="bar-wrap">
+          <span class="bar-label">smean_13</span>
+          <div class="bar-track"><div class="bar-fill" style="width:51%"></div></div>
+          <span class="bar-val">46.94</span>
+        </div>
+        <div class="bar-wrap">
+          <span class="bar-label">seasonal_naive</span>
+          <div class="bar-track"><div class="bar-fill" style="width:80%"></div></div>
+          <span class="bar-val">73.90</span>
+        </div>
+        <div class="bar-wrap">
+          <span class="bar-label">last_value</span>
+          <div class="bar-track"><div class="bar-fill" style="width:96%"></div></div>
+          <span class="bar-val">88.08</span>
+        </div>
+        <p style="font-size:.78rem;color:var(--e61-ink-3);margin-top:12px;margin-bottom:0">Bars scaled relative to last_value (88.08). Pooled winner is smedian_26 (MAE=42.143 across 3 folds). smedian_13 leads on fold 3 alone.</p>
+      </div>
+    </div>
+    <div style="margin-top:18px;background:var(--e61-bg-cool);border-left:4px solid var(--e61-purple);border-radius:0 12px 12px 0;padding:14px 20px">
+      <p style="font-size:.88rem;color:var(--e61-ink-2);margin:0"><b>Why windows diverge across horizons:</b> At h=1&ndash;30, a narrow w=4 window (the last 4 same-DOW observations) adapts quickly to the post-regime level and excludes stale pre-COVID observations. At h=90, the 90-day forecast gap means the 4-window lookback is computed from observations taken 90 days earlier; a wider window (w=26) is more stable because it averages over the full seasonal cycle rather than reacting to local noise 90 days prior.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 4 — PART B — PREDICTOR SELECTION -->
+<section class="slide slide-item" data-title="Predictor Selection">
+  <div class="slide-num">04 / 06</div><div class="slide-tag">Predictor Selection</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Part B &mdash; Naive Predictors for Feature Engineering</span>
+    <h2>3 Predictors Kept Per Horizon After De-duplication</h2>
+    <p style="max-width:780px;color:var(--e61-ink-3);margin-bottom:20px">Part B re-runs the 22-candidate grid on fold-3 <b>training rows only</b> (n&asymp;2,650&ndash;2,713 per horizon) to select naive predictor columns for downstream feature engineering. Candidates with Pearson r &gt; 0.98 against an already-kept predictor are dropped to avoid near-duplicate feature columns inflating model complexity.</p>
+    <table style="margin-bottom:20px">
+      <thead>
+        <tr>
+          <th>Horizon</th>
+          <th>Predictors kept (train-row rank order)</th>
+          <th>Train MAE (best kept)</th>
+          <th>De-dup dropped</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="ok-row"><td><b>h = 1</b></td><td><span class="badge b-win">smedian_4</span> <span class="badge b-hi">smedian_13</span> <span class="badge b-hi">smedian_26</span></td><td>33.319</td><td>smedian_8 (r=0.980 with w13)</td></tr>
+        <tr class="ok-row"><td><b>h = 7</b></td><td><span class="badge b-win">smedian_4</span> <span class="badge b-hi">smedian_13</span> <span class="badge b-hi">smedian_26</span></td><td>33.321</td><td>smedian_8 (r=0.980 with w13)</td></tr>
+        <tr class="ok-row"><td><b>h = 14</b></td><td><span class="badge b-win">smedian_4</span> <span class="badge b-hi">smedian_13</span> <span class="badge b-hi">smedian_26</span></td><td>33.973</td><td>smedian_8 (r=0.980 with w13)</td></tr>
+        <tr class="ok-row"><td><b>h = 30</b></td><td><span class="badge b-win">smedian_26</span> <span class="badge b-hi">smedian_8</span> <span class="badge b-hi">smedian_4</span></td><td>35.296</td><td>none dropped</td></tr>
+        <tr class="ok-row"><td><b>h = 60</b></td><td><span class="badge b-win">smedian_26</span> <span class="badge b-hi">smean_52</span> <span class="badge b-hi">smedian_8</span></td><td>36.308</td><td>smedian_52, smean_26, smedian_13 (all r&gt;0.98 with w26)</td></tr>
+        <tr class="ok-row"><td><b>h = 90</b></td><td><span class="badge b-win">smedian_26</span> <span class="badge b-hi">smean_52</span> <span class="badge b-hi">smean_13</span></td><td>36.915</td><td>smedian_52, smedian_13, smean_26 (all r&gt;0.98)</td></tr>
+      </tbody>
+    </table>
+    <div class="grid-2">
+      <div style="background:var(--e61-bg-warm);border-left:4px solid var(--accent);border-radius:0 12px 12px 0;padding:14px 18px">
+        <b style="font-size:.82rem;display:block;margin-bottom:6px">Why training rows, not validation rows?</b>
+        <p style="font-size:.82rem;color:var(--e61-ink-3);margin:0">Part B selects feature columns that will be used by the ML model during training. Scoring on training rows reflects the feature's usefulness to the model — not its standalone predictive accuracy. Scoring on validation rows would introduce leakage: the model could implicitly select features that happen to be good on the val set.</p>
+      </div>
+      <div style="background:var(--e61-bg-cool);border-left:4px solid var(--e61-purple);border-radius:0 12px 12px 0;padding:14px 18px">
+        <b style="font-size:.82rem;display:block;margin-bottom:6px">De-duplication rationale</b>
+        <p style="font-size:.82rem;color:var(--e61-ink-3);margin:0">smedian_8 is consistently dropped at h=1&ndash;14 because it correlates r&gt;0.98 with smedian_13. Keeping near-identical columns adds noise to tree-split decisions without new information. At h=60&ndash;90, multiple candidates cluster near smedian_26 and are similarly pruned.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 5 — METHODOLOGY -->
+<section class="slide dark slide-item" data-title="Methodology">
+  <div class="slide-num">05 / 06</div><div class="slide-tag">Methodology</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Seasonal Parameters &amp; Protocol</span>
+    <h2>Methodology and Key Rules</h2>
+    <div class="grid-2" style="margin-top:20px">
+      <div>
+        <div class="card" style="margin-bottom:16px">
+          <h3 style="margin-bottom:12px">Seasonal Parameters</h3>
+          <div class="chips">
+            <div class="chip">P = <span>7</span> (weekly period)</div>
+            <div class="chip">S = <span>52</span> same-DOW slots/year</div>
+            <div class="chip">ACF source: EDA lag-6 = 0.582</div>
+          </div>
+          <p style="font-size:.84rem;color:var(--e61-ink-2);margin-bottom:0">P=7 is set from the EDA dominant ACF lag (6, pre-regime weekly). S=52 means one seasonal year equals 52 same-DOW season-slots. A window of w=52 therefore corresponds to exactly one year of same-DOW observations — the widest seasonally-meaningful window. smedian_w52 performs second-best at h=90 in fold 3 (42.105) before pooling, confirming the annual cycle is present.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-bottom:12px">Zero Handling</h3>
+          <p style="font-size:.84rem;color:var(--e61-ink-2);margin-bottom:0">Zero-demand days (50 over 10 years — public holidays and voluntary closures) are <b>included as valid observations</b> in same-DOW slot statistics. They reflect true shop-level demand and must not be imputed or excluded: a model that learns the season must also learn that some same-DOW slots have zero demand.</p>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="margin-bottom:16px">
+          <h3 style="margin-bottom:12px">22-Candidate Set</h3>
+          <div class="chips">
+            <div class="chip">last_value</div>
+            <div class="chip">seasonal_naive</div>
+            <div class="chip">smedian_4 / 8 / 13 / 26 / 52</div>
+            <div class="chip">smean_4 / 8 / 13 / 26 / 52</div>
+            <div class="chip">drift</div>
+            <div class="chip">train_mean</div>
+            <div class="chip">tmean_7 / 14 / 28 / 56</div>
+            <div class="chip">tmed_7 / 28</div>
+            <div class="chip">ddrift_0.25 / 0.5</div>
+          </div>
+          <p style="font-size:.84rem;color:var(--e61-ink-3);margin-bottom:0">Trailing mean/median (tmean, tmed) and damped drift (ddrift) consistently underperform seasonal median by 5&ndash;30 units. They do not capture weekly seasonality and are not carried forward as feature candidates.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-bottom:12px">Fold Priority</h3>
+          <p style="font-size:.84rem;color:var(--e61-ink-2);margin-bottom:8px">Part A primary evaluation uses <b>fold 3 validation rows</b> (most recent, most representative of the 2021+ holdout period). Folds 1 and 2 are used only for h=90, where fold 3 alone has just 5 scoreable rows — too few for a reliable MAE estimate.</p>
+          <p style="font-size:.84rem;color:var(--e61-ink-2);margin-bottom:0">Part B uses fold-3 <b>training rows exclusively</b>. Using any validation rows in Part B would constitute test leakage into the feature selection process.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+(function(){
+  const items=document.querySelectorAll('.slide-item');
+  const n=items.length;
+  const dotnav=document.getElementById('dotnav');
+  const counter=document.getElementById('counter');
+  const prevBtn=document.getElementById('prevBtn');
+  const nextBtn=document.getElementById('nextBtn');
+  const topbarFill=document.getElementById('topbarFill');
+  let cur=0;
+  items.forEach((_,i)=>{
+    const b=document.createElement('button');
+    b.title=items[i].dataset.title||('Slide '+(i+1));
+    b.addEventListener('click',()=>goTo(i));
+    dotnav.appendChild(b);
+  });
+  function update(){
+    counter.textContent=(cur+1)+' / '+n;
+    prevBtn.disabled=(cur===0);
+    nextBtn.disabled=(cur===n-1);
+    topbarFill.style.width=(((cur)/(n-1))*100)+'%';
+    dotnav.querySelectorAll('button').forEach((b,i)=>b.classList.toggle('active',i===cur));
+  }
+  function goTo(i){cur=Math.max(0,Math.min(n-1,i));items[cur].scrollIntoView({behavior:'smooth'});update();}
+  prevBtn.addEventListener('click',()=>goTo(cur-1));
+  nextBtn.addEventListener('click',()=>goTo(cur+1));
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'||e.key==='ArrowRight')goTo(cur+1);
+    else if(e.key==='ArrowUp'||e.key==='ArrowLeft')goTo(cur-1);
+  });
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){cur=[...items].indexOf(e.target);update();}});
+  },{threshold:0.5});
+  items.forEach(s=>obs.observe(s));
+  update();
+})();
+</script>
+</body>
+</html>

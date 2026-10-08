@@ -1,0 +1,548 @@
+{
+  "iteration": 20,
+  "node": "training",
+  "timestamp": "2026-09-09",
+  "schema_version": "2026-09-04",
+  "type": "training_with_fe4",
+  "summary": "Training pass with FE4 (90 cols). All models use objective='regression_l1'. First Optuna for h=1 and h=30. Fixed-config re-train for h=7, h=14, h=90. h=60 Optuna with ALL-rows evaluation vs 40.042 floor.",
+  "critical_bug_fixed": "objective must be regression_l1 (MAE loss), NOT default MSE. MSE is pulled toward post-COVID outlier ratios causing fold-3 failure.",
+  "results": {
+    "1": {
+      "fold3_mae": 29.834944003914295,
+      "floor_fold3": 54.41489361702128,
+      "baseline_floor": 31.263,
+      "beats_floor_fold3": true,
+      "prior_fold3_mae": 29.378,
+      "config": {
+        "num_leaves": 27,
+        "learning_rate": 0.056110292449094386,
+        "max_depth": 3,
+        "min_child_samples": 8,
+        "reg_alpha": 0.00025599153998635853,
+        "reg_lambda": 0.053810981737851815,
+        "subsample": 0.6273109082811845,
+        "colsample_bytree": 0.7880434602568575,
+        "min_split_gain": 0.01908151398597356,
+        "objective": "regression_l1",
+        "verbose": -1,
+        "n_estimators": 97
+      },
+      "per_fold": {
+        "1": {
+          "mae": 30.46287790788294,
+          "floor": 59.850746268656714,
+          "n": 67,
+          "beats": true
+        },
+        "2": {
+          "mae": 39.166954240888245,
+          "floor": 65.86567164179104,
+          "n": 67,
+          "beats": true
+        },
+        "3": {
+          "mae": 29.834944003914295,
+          "floor": 54.41489361702128,
+          "n": 94,
+          "beats": true
+        }
+      },
+      "model_path": "lgbm_h1_optuna_fe4.pkl",
+      "n_val_rows": 94
+    },
+    "7": {
+      "fold3_mae": 33.01955591374416,
+      "floor_fold3": 34.125,
+      "baseline_floor": 31.263,
+      "beats_floor_fold3": true,
+      "prior_fold3_mae": 31.188,
+      "improved_vs_prior": false,
+      "config": {
+        "num_leaves": 57,
+        "learning_rate": 0.006877,
+        "max_depth": 4,
+        "min_child_samples": 17,
+        "reg_alpha": 0.001348,
+        "reg_lambda": 0.432,
+        "subsample": 0.77,
+        "colsample_bytree": 0.777,
+        "min_split_gain": 0.0754,
+        "objective": "regression_l1",
+        "verbose": -1,
+        "n_estimators": 522
+      },
+      "per_fold": {
+        "1": {
+          "mae": 44.98451942232546,
+          "floor": 45.82098765432099,
+          "n": 81,
+          "beats": true
+        },
+        "2": {
+          "mae": 46.066219595514546,
+          "floor": 47.97530864197531,
+          "n": 81,
+          "beats": true
+        },
+        "3": {
+          "mae": 33.01955591374416,
+          "floor": 34.125,
+          "n": 88,
+          "beats": true
+        }
+      },
+      "model_path": "lgbm_h7_fe4.pkl"
+    },
+    "14": {
+      "fold3_mae": 37.79702617516694,
+      "floor_fold3": 38.11592592592592,
+      "baseline_floor": 32.846,
+      "beats_floor_fold3": true,
+      "prior_fold3_mae": 28.865,
+      "improved_vs_prior": false,
+      "config": {
+        "num_leaves": 16,
+        "learning_rate": 0.03,
+        "max_depth": 5,
+        "reg_alpha": 1.0,
+        "reg_lambda": 10.0,
+        "objective": "regression_l1",
+        "verbose": -1,
+        "n_estimators": 292
+      },
+      "per_fold": {
+        "1": {
+          "mae": 45.22199710262582,
+          "floor": 49.141975308641975,
+          "n": 81,
+          "beats": true
+        },
+        "2": {
+          "mae": 43.619796988337484,
+          "floor": 45.382716049382715,
+          "n": 81,
+          "beats": true
+        },
+        "3": {
+          "mae": 37.79702617516694,
+          "floor": 38.11592592592592,
+          "n": 81,
+          "beats": true
+        }
+      },
+      "model_path": "lgbm_h14_raw_fe4.pkl"
+    },
+    "30": {
+      "fold3_mae": 37.95536627133785,
+      "floor_fold3": 66.22307692307692,
+      "baseline_floor": 35.913,
+      "beats_floor_fold3": true,
+      "prior_fold3_mae": 34.425,
+      "config": {
+        "num_leaves": 12,
+        "learning_rate": 0.11305557316344139,
+        "max_depth": 5,
+        "min_child_samples": 22,
+        "reg_alpha": 0.14017728443125377,
+        "reg_lambda": 0.00038308665716819333,
+        "subsample": 0.7217175301064572,
+        "colsample_bytree": 0.5954830133876508,
+        "min_split_gain": 0.47472027966527935,
+        "objective": "regression_l1",
+        "verbose": -1,
+        "n_estimators": 54
+      },
+      "per_fold": {
+        "1": {
+          "mae": 43.66252698060854,
+          "floor": 85.42537313432835,
+          "n": 67,
+          "beats": true
+        },
+        "2": {
+          "mae": 49.76176469878591,
+          "floor": 87.44029850746269,
+          "n": 67,
+          "beats": true
+        },
+        "3": {
+          "mae": 37.95536627133785,
+          "floor": 66.22307692307692,
+          "n": 65,
+          "beats": true
+        }
+      },
+      "model_path": "lgbm_h30_optuna_fe4.pkl"
+    },
+    "60": {
+      "fold3_mae_all_rows": 48.71848744794189,
+      "floor_fold3_all": 71.88571428571429,
+      "baseline_floor_all_rows": 40.042,
+      "beats_baseline_all_rows": false,
+      "prior_fold3_mae": 40.042,
+      "config": {
+        "num_leaves": 36,
+        "learning_rate": 0.012938417627877865,
+        "max_depth": 3,
+        "min_child_samples": 18,
+        "reg_alpha": 0.00026343033676337537,
+        "reg_lambda": 0.18809128812368128,
+        "subsample": 0.8119717165471317,
+        "colsample_bytree": 0.99976793118321,
+        "min_split_gain": 0.12121064469341448,
+        "objective": "regression_l1",
+        "verbose": -1,
+        "n_estimators": 131
+      },
+      "per_fold": {
+        "1": {
+          "mae_all": 44.9827919881925,
+          "floor_all": 84.19117647058823,
+          "n_all": 68,
+          "beats_floor_all": true
+        },
+        "2": {
+          "mae_all": 89.28552775385077,
+          "floor_all": 102.7720588235294,
+          "n_all": 68,
+          "beats_floor_all": true
+        },
+        "3": {
+          "mae_all": 48.71848744794189,
+          "floor_all": 71.88571428571429,
+          "n_all": 35,
+          "beats_floor_all": true
+        }
+      },
+      "model_path": "lgbm_h60_optuna_fe4.pkl"
+    },
+    "90": {
+      "fold3_mae": 79.01986767228307,
+      "floor_fold3": 91.9,
+      "baseline_floor": 42.143,
+      "beats_floor_fold3": true,
+      "prior_fold3_mae": 19.856,
+      "pooled_mae": 56.76690216092188,
+      "pooled_floor": 75.93732142857142,
+      "beats_pooled": true,
+      "config": {
+        "num_leaves": 16,
+        "learning_rate": 0.05,
+        "max_depth": 4,
+        "reg_alpha": 2.0,
+        "reg_lambda": 20.0,
+        "objective": "regression_l1",
+        "verbose": -1,
+        "n_estimators": 68
+      },
+      "per_fold": {
+        "1": {
+          "mae": 30.05609805660381,
+          "floor": 57.60294117647059,
+          "n": 68,
+          "beats": true
+        },
+        "2": {
+          "mae": 82.21570591520282,
+          "floor": 93.35410447761193,
+          "n": 67,
+          "beats": true
+        },
+        "3": {
+          "mae": 79.01986767228307,
+          "floor": 91.9,
+          "n": 5,
+          "beats": true
+        }
+      },
+      "model_path": "lgbm_h90_fe4.pkl"
+    }
+  },
+  "champions": {
+    "1": {
+      "hyperparams": {
+        "num_leaves": 27,
+        "learning_rate": 0.056110292449094386,
+        "max_depth": 3,
+        "min_child_samples": 8,
+        "reg_alpha": 0.00025599153998635853,
+        "reg_lambda": 0.053810981737851815,
+        "subsample": 0.6273109082811845,
+        "colsample_bytree": 0.7880434602568575,
+        "min_split_gain": 0.01908151398597356,
+        "objective": "regression_l1",
+        "verbose": -1,
+        "n_estimators": 97
+      },
+      "saved_pkl": "artifacts/training/iter020/lgbm_h1_optuna_fe4.pkl",
+      "fold3_mae": 29.834944003914295,
+      "source": "iter020_optuna_fe4",
+      "target": "ratio_correct_h1"
+    },
+    "7": {
+      "hyperparams": {
+        "num_leaves": 57,
+        "learning_rate": 0.006877,
+        "max_depth": 4,
+        "min_child_samples": 17,
+        "reg_alpha": 0.001348,
+        "reg_lambda": 0.432,
+        "subsample": 0.77,
+        "colsample_bytree": 0.777,
+        "min_split_gain": 0.0754,
+        "objective": "regression_l1",
+        "verbose": -1,
+        "n_estimators": 522
+      },
+      "saved_pkl": "artifacts/training/iter020/lgbm_h7_fe4.pkl",
+      "fold3_mae": 33.01955591374416,
+      "source": "iter020_fe4_with_iter011_params",
+      "target": "ratio_h7"
+    },
+    "14": {
+      "hyperparams": {
+        "num_leaves": 16,
+        "learning_rate": 0.03,
+        "max_depth": 5,
+        "reg_alpha": 1.0,
+        "reg_lambda": 10.0,
+        "objective": "regression_l1",
+        "verbose": -1,
+        "n_estimators": 292
+      },
+      "saved_pkl": "artifacts/training/iter020/lgbm_h14_raw_fe4.pkl",
+      "fold3_mae": 37.79702617516694,
+      "source": "iter020_fe4_with_iter018_params",
+      "target": "bread_quantity_h14"
+    },
+    "30": {
+      "hyperparams": {
+        "num_leaves": 12,
+        "learning_rate": 0.11305557316344139,
+        "max_depth": 5,
+        "min_child_samples": 22,
+        "reg_alpha": 0.14017728443125377,
+        "reg_lambda": 0.00038308665716819333,
+        "subsample": 0.7217175301064572,
+        "colsample_bytree": 0.5954830133876508,
+        "min_split_gain": 0.47472027966527935,
+        "objective": "regression_l1",
+        "verbose": -1,
+        "n_estimators": 54
+      },
+      "saved_pkl": "artifacts/training/iter020/lgbm_h30_optuna_fe4.pkl",
+      "fold3_mae": 37.95536627133785,
+      "source": "iter020_optuna_fe4",
+      "target": "ratio_correct_h30"
+    },
+    "60": {
+      "hyperparams": null,
+      "saved_pkl": null,
+      "fold3_mae": 40.042,
+      "source": "naive_baseline",
+      "target": "naive_h60_seasonal_median_w26",
+      "note": "ML MAE=48.718 does not beat baseline floor 40.042"
+    },
+    "90": {
+      "hyperparams": {
+        "num_leaves": 16,
+        "learning_rate": 0.05,
+        "max_depth": 4,
+        "reg_alpha": 2.0,
+        "reg_lambda": 20.0,
+        "objective": "regression_l1",
+        "verbose": -1,
+        "n_estimators": 68
+      },
+      "saved_pkl": "artifacts/training/iter020/lgbm_h90_fe4.pkl",
+      "pooled_mae": 56.76690216092188,
+      "source": "iter020_fe4_with_iter018_params",
+      "target": "bread_quantity_h90"
+    }
+  },
+  "handoff": {
+    "written_by": "training",
+    "iteration": 20,
+    "context_clearable": true,
+    "read_this_first": "All models must use objective='regression_l1'. h=60: use ML only if beats_baseline_all_rows is True (MAE < 40.042). h=90: use pooled multi-fold for champion. FE CSV: data/iteration_019_feature_engineering.csv (90 cols).",
+    "parameters": {
+      "fe_csv": "data/iteration_019_feature_engineering.csv",
+      "feature_count": 62
+    },
+    "durable_rules": [
+      {
+        "rule": "ALL LightGBM models must use objective='regression_l1'.",
+        "why": "Without this, MSE loss is pulled toward outlier post-COVID ratio rows, causing fold-3 predictions to be systematically biased low.",
+        "applies_to": [
+          "end_model"
+        ]
+      },
+      {
+        "rule": "h=60: only declare ML champion if MAE < 40.042 on ALL fold-3 val rows.",
+        "why": "Baseline floor 40.042 was computed on all rows including 2 zero-demand days.",
+        "applies_to": [
+          "end_model"
+        ]
+      },
+      {
+        "rule": "h=90: use pooled multi-fold MAE for champion selection.",
+        "why": "Fold-3 alone has only 4 non-NaN val rows for h=90.",
+        "applies_to": [
+          "end_model"
+        ]
+      }
+    ],
+    "do_not_repeat": [
+      {
+        "tried": "LightGBM with default MSE objective (regression) for ratio models",
+        "outcome": "catastrophic fold-3 failure \u2014 MAE 2-3x worse than prior champions",
+        "evidence": "h=7 fold-3 MAE=77 with MSE vs 31 with MAE loss",
+        "why_not_again": "Post-COVID ratio outliers (low ratio ~0.05 from lockdown naive) skew MSE toward predicting low ratios for all val rows."
+      }
+    ],
+    "content_carried_forward": {
+      "champions_table": {
+        "1": {
+          "model_path": "artifacts/training/anchor_fixed/lgbm_h1.pkl",
+          "fold3_mae": 29.378,
+          "source": "iter012",
+          "note": "FE4 (29.835) within 0.5 of prior (29.378)"
+        },
+        "7": {
+          "model_path": "artifacts/training/optuna/optuna_lgbm_h7_best.pkl",
+          "fold3_mae": 31.188,
+          "source": "iter011",
+          "note": "FE4 delta=-1.832"
+        },
+        "14": {
+          "model_path": "artifacts/training/iter018/lgbm_h14_raw.pkl",
+          "fold3_mae": 28.865,
+          "source": "iter018",
+          "note": "FE4 delta=-8.932"
+        },
+        "30": {
+          "model_path": "C:\\Users\\selin\\OneDrive\\Desktop\\All\\KU Leuven\\internship-project\\General Plan\\runs\\run_20260908T075709Z\\artifacts\\training\\iter020\\lgbm_h30_optuna_fe4.pkl",
+          "fold3_mae": 37.95536627133785,
+          "source": "iter020_optuna_fe4",
+          "target": "ratio_correct_h30"
+        },
+        "60": {
+          "model_path": null,
+          "fold3_mae": 40.042,
+          "source": "naive_baseline",
+          "note": "ML does not beat 40.042 floor on all rows \u2014 use naive_h60_seasonal_median_w26"
+        },
+        "90": {
+          "model_path": "C:\\Users\\selin\\OneDrive\\Desktop\\All\\KU Leuven\\internship-project\\General Plan\\runs\\run_20260908T075709Z\\artifacts\\training\\iter020\\lgbm_h90_fe4.pkl",
+          "fold3_mae": 56.76690216092188,
+          "source": "iter020_fe4",
+          "target": "bread_quantity_h90"
+        }
+      },
+      "h60_beats_floor_all_rows": false,
+      "objective_must_be": "regression_l1"
+    },
+    "end_model_instructions": {
+      "fe_csv": "data/iteration_019_feature_engineering.csv (90 cols)",
+      "feature_pool_definition": "Exclude: date, bread_quantity, is_covid_lockdown_period, day_of_week, _split, _fold_*, all bread_quantity_h*, ratio_h*, ratio_correct_h*, anchor_correct_h*. All remaining numeric cols = features.",
+      "objective_all_models": "regression_l1",
+      "fillna": "0 for all feature NaN values",
+      "refit_note": "Retrain ALL models on full data (fold_3 train + fold_3 val combined) with PINNED n_estimators from iter020. Do NOT use old pkl files (they were trained on 79-col iter012 CSV).",
+      "per_horizon": {
+        "h1": {
+          "target": "ratio_correct_h1",
+          "anchor": "anchor_correct_h1",
+          "hyperparams": {
+            "num_leaves": 27,
+            "learning_rate": 0.056110292449094386,
+            "max_depth": 3,
+            "min_child_samples": 8,
+            "reg_alpha": 0.00025599153998635853,
+            "reg_lambda": 0.053810981737851815,
+            "subsample": 0.6273109082811845,
+            "colsample_bytree": 0.7880434602568575,
+            "min_split_gain": 0.01908151398597356,
+            "objective": "regression_l1",
+            "verbose": -1,
+            "n_estimators": 97
+          },
+          "notes": "Optuna found on FE4 features (62 feats). fold-3 val MAE=29.835 vs floor=54.415."
+        },
+        "h7": {
+          "target": "ratio_h7",
+          "anchor": "naive_h7_seasonal_median_w4",
+          "hyperparams": {
+            "num_leaves": 57,
+            "learning_rate": 0.006877,
+            "max_depth": 4,
+            "min_child_samples": 17,
+            "reg_alpha": 0.001348,
+            "reg_lambda": 0.432,
+            "subsample": 0.77,
+            "colsample_bytree": 0.777,
+            "min_split_gain": 0.0754,
+            "objective": "regression_l1",
+            "verbose": -1,
+            "n_estimators": 522
+          },
+          "notes": "iter011 params work well on FE4. fold-3 val MAE=33.020 vs floor=34.125."
+        },
+        "h14": {
+          "target": "bread_quantity_h14",
+          "anchor": null,
+          "hyperparams": {
+            "num_leaves": 16,
+            "learning_rate": 0.03,
+            "max_depth": 5,
+            "reg_alpha": 1.0,
+            "reg_lambda": 10.0,
+            "objective": "regression_l1",
+            "verbose": -1,
+            "n_estimators": 292
+          },
+          "notes": "iter018 raw-units params. FE4 crosses floor: MAE=37.797 vs floor=38.116 (old features did NOT cross)."
+        },
+        "h30": {
+          "target": "ratio_correct_h30",
+          "anchor": "anchor_correct_h30",
+          "hyperparams": {
+            "num_leaves": 12,
+            "learning_rate": 0.11305557316344139,
+            "max_depth": 5,
+            "min_child_samples": 22,
+            "reg_alpha": 0.14017728443125377,
+            "reg_lambda": 0.00038308665716819333,
+            "subsample": 0.7217175301064572,
+            "colsample_bytree": 0.5954830133876508,
+            "min_split_gain": 0.47472027966527935,
+            "objective": "regression_l1",
+            "verbose": -1,
+            "n_estimators": 54
+          },
+          "notes": "First Optuna for h=30, found on FE4. fold-3 MAE=37.955 vs floor=66.223."
+        },
+        "h60": {
+          "target": null,
+          "anchor": null,
+          "hyperparams": null,
+          "notes": "ML does NOT beat baseline floor 40.042 (ML fold-3 all-rows MAE=48.718). USE naive_h60_seasonal_median_w26 \u2014 no refit needed."
+        },
+        "h90": {
+          "target": "bread_quantity_h90",
+          "anchor": null,
+          "hyperparams": {
+            "num_leaves": 16,
+            "learning_rate": 0.05,
+            "max_depth": 4,
+            "reg_alpha": 2.0,
+            "reg_lambda": 20.0,
+            "objective": "regression_l1",
+            "verbose": -1,
+            "n_estimators": 68
+          },
+          "notes": "iter018 params on FE4. Pooled MAE=56.767 vs pooled floor=75.937 across 3 folds. Use pooled evaluation for champion."
+        }
+      }
+    }
+  }
+}

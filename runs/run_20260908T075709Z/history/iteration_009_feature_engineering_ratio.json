@@ -1,0 +1,282 @@
+{
+  "iteration": 9,
+  "node": "feature_engineering",
+  "timestamp": "2026-09-08T21:30:43",
+  "schema_version": "2026-09-04",
+  "incremental": true,
+  "reads_from": "data/iteration_005_feature_engineering.csv",
+  "writes_to": "data\\iteration_009_feature_engineering.csv",
+  "what_was_added": {
+    "ratio_columns": [
+      "ratio_h1",
+      "ratio_h7",
+      "ratio_h14",
+      "ratio_h30",
+      "ratio_h60",
+      "ratio_h90"
+    ],
+    "formula": "ratio_h{h} = bread_quantity_h{h} / anchor_h{h}, clipped to [0.05, 5.0]",
+    "anchor_mapping": {
+      "1": "naive_h1_seasonal_median_w4",
+      "7": "naive_h7_seasonal_median_w4",
+      "14": "naive_h14_seasonal_median_w4",
+      "30": "naive_h30_seasonal_median_w4",
+      "60": "naive_h60_seasonal_median_w26",
+      "90": "naive_h90_seasonal_median_w26"
+    },
+    "nan_handling": "NaN where bread_quantity_h{h} is NaN; anchor=0 rows also get NaN",
+    "clip_range": [
+      0.05,
+      5.0
+    ]
+  },
+  "ratio_stats": {
+    "1": {
+      "ratio_col": "ratio_h1",
+      "anchor_col": "naive_h1_seasonal_median_w4",
+      "n_anchor_zero": 0,
+      "n_target_nan": 488,
+      "train_noncovid": {
+        "n": 2192,
+        "mean": 1.0623,
+        "std": 0.2992
+      },
+      "train_covid": {
+        "n": 34,
+        "mean": 1.1226,
+        "std": 0.5632
+      },
+      "val": {
+        "n": 94,
+        "mean": 0.9734,
+        "std": 0.2265
+      }
+    },
+    "7": {
+      "ratio_col": "ratio_h7",
+      "anchor_col": "naive_h7_seasonal_median_w4",
+      "n_anchor_zero": 0,
+      "n_target_nan": 97,
+      "train_noncovid": {
+        "n": 2582,
+        "mean": 0.997,
+        "std": 0.2305
+      },
+      "train_covid": {
+        "n": 41,
+        "mean": 0.9939,
+        "std": 0.5473
+      },
+      "val": {
+        "n": 88,
+        "mean": 0.9593,
+        "std": 0.1804
+      }
+    },
+    "14": {
+      "ratio_col": "ratio_h14",
+      "anchor_col": "naive_h14_seasonal_median_w4",
+      "n_anchor_zero": 0,
+      "n_target_nan": 118,
+      "train_noncovid": {
+        "n": 2568,
+        "mean": 0.9947,
+        "std": 0.2183
+      },
+      "train_covid": {
+        "n": 41,
+        "mean": 1.093,
+        "std": 0.803
+      },
+      "val": {
+        "n": 81,
+        "mean": 0.9605,
+        "std": 0.1935
+      }
+    },
+    "30": {
+      "ratio_col": "ratio_h30",
+      "anchor_col": "naive_h30_seasonal_median_w4",
+      "n_anchor_zero": 0,
+      "n_target_nan": 571,
+      "train_noncovid": {
+        "n": 2137,
+        "mean": 1.0162,
+        "std": 0.3982
+      },
+      "train_covid": {
+        "n": 35,
+        "mean": 1.3169,
+        "std": 0.929
+      },
+      "val": {
+        "n": 65,
+        "mean": 1.0006,
+        "std": 0.2963
+      }
+    },
+    "60": {
+      "ratio_col": "ratio_h60",
+      "anchor_col": "naive_h60_seasonal_median_w26",
+      "n_anchor_zero": 0,
+      "n_target_nan": 605,
+      "train_noncovid": {
+        "n": 2129,
+        "mean": 1.0178,
+        "std": 0.3085
+      },
+      "train_covid": {
+        "n": 39,
+        "mean": 0.9666,
+        "std": 0.4187
+      },
+      "val": {
+        "n": 35,
+        "mean": 0.996,
+        "std": 0.3373
+      }
+    },
+    "90": {
+      "ratio_col": "ratio_h90",
+      "anchor_col": "naive_h90_seasonal_median_w26",
+      "n_anchor_zero": 0,
+      "n_target_nan": 638,
+      "train_noncovid": {
+        "n": 2124,
+        "mean": 0.9339,
+        "std": 0.2454
+      },
+      "train_covid": {
+        "n": 41,
+        "mean": 0.8073,
+        "std": 0.3509
+      },
+      "val": {
+        "n": 5,
+        "mean": 0.9629,
+        "std": 0.5352
+      }
+    }
+  },
+  "stability_verdict": {
+    "1": "STABLE",
+    "7": "STABLE",
+    "14": "STABLE",
+    "30": "STABLE",
+    "60": "STABLE",
+    "90": "STABLE"
+  },
+  "do_not_repeat": [
+    {
+      "tried": "Additive residual target (y - anchor)",
+      "outcome": "rejected",
+      "evidence": "iter006: residual approach gave val_mae=49.20 for h=1 (worse than raw target 39.36). Train/val mean residual asymmetry persisted.",
+      "why_not_again": "Additive residual does not remove level shift. Multiplicative ratio does."
+    }
+  ],
+  "next_iteration_contract": {
+    "node": "training",
+    "iteration": 10,
+    "why_this_node": "Train per-horizon models on ratio_h{h} target using non-COVID training rows. Select algorithm per horizon.",
+    "read_this_first": "For each horizon h: train on train_mask & ~is_covid_lockdown_period rows, predicting ratio_h{h}. Convert predictions to units: pred_units = pred_ratio x anchor. Compare pred_units val MAE to baseline floor. Algorithm selection per horizon: h=1,7 -> LightGBM (regression_l1 or huber); h=14,30 -> LightGBM with heavier regularization OR Ridge; h=60 -> Ridge/ElasticNet (only 35 val rows); h=90 -> Ridge or anchor multiplier only (5 val rows, tree models not learnable). Feature set: use all features from iter009 FE CSV except other ratio_h{h2} columns and bread_quantity_h{h2} columns for h2 != h.",
+    "required_state_fields": [
+      "feature_engineering_output_path",
+      "baseline_floor",
+      "scoreable_val_rows"
+    ],
+    "context": {
+      "feature_engineering_output_path": "data\\iteration_009_feature_engineering.csv",
+      "ratio_target_cols": {
+        "1": "ratio_h1",
+        "7": "ratio_h7",
+        "14": "ratio_h14",
+        "30": "ratio_h30",
+        "60": "ratio_h60",
+        "90": "ratio_h90"
+      },
+      "anchor_cols": {
+        "1": "naive_h1_seasonal_median_w4",
+        "7": "naive_h7_seasonal_median_w4",
+        "14": "naive_h14_seasonal_median_w4",
+        "30": "naive_h30_seasonal_median_w4",
+        "60": "naive_h60_seasonal_median_w26",
+        "90": "naive_h90_seasonal_median_w26"
+      },
+      "covid_filter": "is_covid_lockdown_period == 0 (filter in Training)",
+      "prediction_formula": "pred_units = pred_ratio x anchor_h{h}",
+      "baseline_floor": {
+        "1": 31.263,
+        "7": 31.263,
+        "14": 32.846,
+        "30": 35.913,
+        "60": 40.042,
+        "90": 42.143
+      },
+      "per_horizon_algorithm_guidance": {
+        "h1": "LightGBM regression_l1 or huber, Optuna or manual tuning",
+        "h7": "LightGBM regression_l1 or huber",
+        "h14": "LightGBM with higher min_child_samples/L2, or Ridge",
+        "h30": "LightGBM with heavier regularization, or Ridge/ElasticNet",
+        "h60": "Ridge or ElasticNet with CV alpha (35 val rows, prefer linear)",
+        "h90": "Ridge with 2-3 features only, or constant anchor (5 val rows)"
+      },
+      "clip_range": [
+        0.05,
+        5.0
+      ]
+    }
+  },
+  "handoff": {
+    "written_by": "feature_engineering",
+    "iteration": 9,
+    "context_clearable": true,
+    "read_this_first": "Ratio target columns added: ratio_h{h} = bread_quantity_h{h} / anchor_h{h} clipped to [0.05, 5.0]. Training filters COVID rows (is_covid_lockdown_period==1). Use per-horizon algorithm selection (LightGBM for h<=14, Ridge/ElasticNet for h>=60). Convert ratio predictions back to units for floor comparison.",
+    "parameters": {
+      "ratio_clip": {
+        "value": [
+          0.05,
+          5.0
+        ],
+        "must_not_change": false
+      },
+      "anchor_cols": {
+        "value": {
+          "1": "naive_h1_seasonal_median_w4",
+          "7": "naive_h7_seasonal_median_w4",
+          "14": "naive_h14_seasonal_median_w4",
+          "30": "naive_h30_seasonal_median_w4",
+          "60": "naive_h60_seasonal_median_w26",
+          "90": "naive_h90_seasonal_median_w26"
+        },
+        "must_not_change": true
+      },
+      "covid_filter_column": {
+        "value": "is_covid_lockdown_period",
+        "must_not_change": true
+      }
+    },
+    "durable_rules": [
+      {
+        "rule": "Use multiplicative ratio (y/anchor), NOT additive residual (y-anchor).",
+        "why": "Additive residual failed in iter006. Ratio removes level shift multiplicatively.",
+        "applies_to": [
+          "training"
+        ]
+      },
+      {
+        "rule": "Convert ratio predictions back to bread_quantity units before floor comparison: pred_units = pred_ratio x anchor.",
+        "why": "Baseline floor is in units (MAE of bread_quantity). Ratio MAE is not comparable.",
+        "applies_to": [
+          "training"
+        ]
+      },
+      {
+        "rule": "Select algorithm per horizon; do not use LightGBM for h=60 and h=90.",
+        "why": "h=60 has only 35 scoreable val rows; h=90 has only 5. Tree models cannot generalize on such small samples.",
+        "applies_to": [
+          "training"
+        ]
+      }
+    ]
+  }
+}

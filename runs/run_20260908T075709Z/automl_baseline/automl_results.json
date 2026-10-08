@@ -1,0 +1,93 @@
+{
+  "run": "automl_baseline",
+  "tool": "FLAML",
+  "flaml_version": "2.6.0",
+  "time_budget_per_horizon_s": 120,
+  "features_used": [
+    "year",
+    "month",
+    "day",
+    "dayofweek",
+    "week",
+    "dayofyear",
+    "wx_Maximum_Temperature",
+    "wx_Minimum_Temperature",
+    "wx_Temperature",
+    "wx_Precipitation",
+    "wx_Snow_depth",
+    "wx_Wind_Speed",
+    "wx_Wind_Gust",
+    "wx_Cloud_Cover",
+    "wx_Relative_Humidity",
+    "comp_n_closed"
+  ],
+  "n_features": 16,
+  "results": {
+    "1": {
+      "best_model": "rf",
+      "best_val_mae": 33.437004470397554,
+      "n_train": 2853,
+      "primary_mae": 67.30799847676421,
+      "primary_n": 359,
+      "stress_mae": 128.83998222446024,
+      "stress_n": 83,
+      "lgbm_primary_mae": 39.313,
+      "lgbm_stress_mae": 102.397
+    },
+    "7": {
+      "best_model": "lgbm",
+      "best_val_mae": 33.48560997470567,
+      "n_train": 2976,
+      "primary_mae": 66.99764894226524,
+      "primary_n": 352,
+      "stress_mae": 124.00784287276196,
+      "stress_n": 83,
+      "lgbm_primary_mae": 41.187,
+      "lgbm_stress_mae": 112.56
+    },
+    "14": {
+      "best_model": "lgbm",
+      "best_val_mae": 33.93077623470233,
+      "n_train": 2956,
+      "primary_mae": 69.43175010160833,
+      "primary_n": 345,
+      "stress_mae": 123.11677647620031,
+      "stress_n": 82,
+      "lgbm_primary_mae": 44.892,
+      "lgbm_stress_mae": 129.852
+    },
+    "30": {
+      "best_model": "xgb_limitdepth",
+      "best_val_mae": 36.03373602433595,
+      "n_train": 2763,
+      "primary_mae": 59.140954156777056,
+      "primary_n": 329,
+      "stress_mae": 123.61160337563717,
+      "stress_n": 66,
+      "lgbm_primary_mae": 42.95,
+      "lgbm_stress_mae": 105.4
+    },
+    "60": {
+      "best_model": "rf",
+      "best_val_mae": 35.77552585414665,
+      "n_train": 2730,
+      "primary_mae": 63.82643494318584,
+      "primary_n": 300,
+      "stress_mae": 125.37227338979065,
+      "stress_n": 55,
+      "lgbm_primary_mae": 46.303,
+      "lgbm_stress_mae": 111.956
+    },
+    "90": {
+      "best_model": "rf",
+      "best_val_mae": 33.69155809664901,
+      "n_train": 2692,
+      "primary_mae": 61.438660523243904,
+      "primary_n": 270,
+      "stress_mae": 125.70915077252725,
+      "stress_n": 47,
+      "lgbm_primary_mae": 64.924,
+      "lgbm_stress_mae": 134.741
+    }
+  }
+}

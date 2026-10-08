@@ -1,0 +1,82 @@
+{
+  "note": "Reference example for incremental mode — Preprocess builds on its own prior output rather than starting from raw, because whatever prompted this call (in this example, a Diagnosis hypothesis) points to a targeted addition, not a change to the existing approach. The mode decision itself doesn't depend on which node triggered the call — it depends on what the Planner judges is needed this iteration, whatever the source.",
+  "input": {
+    "dataset_path": "data/iteration_002_preprocess.csv",
+    "target_column": "outcome",
+    "features_to_process": ["diagnosis_code"],
+    "mode": "incremental",
+    "mode_reasoning": "the trigger for this call was a Diagnosis hypothesis (iteration 6) about adding diagnosis_code — but that's just this run's specific trigger; incremental mode was chosen because the change is a targeted addition to the existing feature set, not because a Diagnosis output was involved. Building on iteration 2's output avoids redoing unrelated work.",
+    "context": [
+      {
+        "type": "previous_step",
+        "source_node": "diagnosis",
+        "source_iteration": 6,
+        "content": {
+          "diagnosis": {
+            "primary_issue": "high false negative rate (102 fn vs 142 tp) — model under-predicts positive cases",
+            "root_cause": "insufficient feature coverage — model is only seeing 2 features and missing signal EDA identified elsewhere (e.g. diagnosis_code, region-level effects)"
+          },
+          "hypothesis": {
+            "statement": "adding diagnosis_code (via target/frequency encoding, per EDA's high-cardinality guidance) and a region-based feature should improve recall by capturing signal currently missing from the model",
+            "confidence": "medium"
+          }
+        }
+      },
+      {
+        "type": "planner_selected",
+        "source_node": "eda",
+        "source_iteration": 1,
+        "reason": "diagnosis_code's high-cardinality flag is relevant to choosing an encoding method, and wasn't part of Diagnosis's own output",
+        "content": {
+          "flags": {
+            "high_cardinality": [
+              {"name": "diagnosis_code", "note": "many distinct values — one-hot encoding would explode dimensionality"}
+            ]
+          }
+        }
+      }
+    ],
+    "already_processed": ["blood_sugar"],
+    "iteration": 7
+  },
+  "output": {
+    "schema_version": "2026-08-13",
+    "processed_dataset_path": "data/iteration_007_preprocess.csv",
+    "split_info": {
+      "created_this_call": false,
+      "note": "reusing the _split assignment created at iteration 2 — no new split, same train/validation rows throughout this run"
+    },
+    "transformations_applied": [
+      {
+        "feature": "diagnosis_code",
+        "missing_handling": {"method": "none_needed", "value_used": null},
+        "outlier_handling": {"method": "not_applicable"},
+        "scaling": {"method": "not_applicable"},
+        "encoding": {
+          "method": "frequency_encoding",
+          "fit_on": "train_split_only",
+          "reasoning": "high cardinality per EDA flag — one-hot would create hundreds of sparse columns; frequency encoding keeps dimensionality manageable while preserving relative prevalence as signal. Frequencies computed from _split=='train' rows only, then applied to all rows. Added per Diagnosis's hypothesis (iteration 6) that this feature was missing from the model.",
+          "confidence": "medium"
+        }
+      }
+    ],
+    "encoding_applied": [
+      {"feature": "diagnosis_code", "method": "frequency_encoding"}
+    ],
+    "dropped_columns": [],
+    "post_transform_stats": [
+      {"feature": "diagnosis_code", "missing_pct": 0.0, "unique_values_before": 340, "encoded_range": [0.0001, 0.18]}
+    ],
+    "clarification_needed": [],
+    "issues": [],
+    "artifact_paths": {
+      "plots": [
+        {
+          "path": "artifacts/preprocess/iteration_007_preprocess_diagnosis_code_frequency_dist.png",
+          "data_path": "artifacts/preprocess/iteration_007_preprocess_diagnosis_code_frequency_dist.csv",
+          "reason": "verify frequency encoding produced a reasonable spread rather than collapsing most values to near-zero"
+        }
+      ]
+    }
+  }
+}

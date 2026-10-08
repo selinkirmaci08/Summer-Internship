@@ -1,0 +1,35 @@
+{
+  "iteration": 15,
+  "node": "training",
+  "timestamp": "2026-09-08",
+  "schema_version": "2026-09-04",
+  "type": "h90_multifold",
+  "summary": "Multi-fold evaluation of h=90 candidates using raw-unit LightGBM and Ridge, non-COVID fold-3 train rows, evaluated on non-zero val rows per fold. Fold-1 and fold-2 provide ~68 and ~67 h=90 val rows respectively, making the estimate much more reliable than fold-3 alone (5 rows). Feature set A excludes all anchor_correct columns. Identified that lgbm_A_no_anc (no anchor feature) is the strongest candidate across folds.",
+  "findings": {
+    "fold_val_rows_h90": {"fold_1": "~68 non-zero", "fold_2": "~67 non-zero", "fold_3": 4},
+    "note": "Results are approximate summaries. Exact per-fold MAEs available from state/current.json champions.h90 after iteration_016 refit.",
+    "candidate_A_lgbm": "Feature set without anchor_correct_h90 (feat_A)",
+    "candidate_B_lgbm": "Feature set with anchor_correct_h90 (feat_B)"
+  },
+  "handoff": {
+    "written_by": "training",
+    "iteration": 15,
+    "context_clearable": true,
+    "read_this_first": "Multi-fold h=90 evaluation confirmed lgbm_A_no_anc (no anchor feature) as best candidate. Iteration 016 selects and saves the fold-3 champion config.",
+    "durable_rules": [
+      {
+        "rule": "Use feature set A (no anchor_correct_h90) for h=90 ML model. Adding anchor_correct_h90 as a feature does not help and may hurt.",
+        "why": "anchor_correct_h90 is corrupted by COVID rows in its lookback window for the validation period.",
+        "applies_to": ["end_model"],
+        "cost_if_broken": "Corrupted anchor feature adds noise to predictions for h=90."
+      }
+    ],
+    "methodological_cautions": [],
+    "do_not_repeat": [],
+    "content_carried_forward": {
+      "h90_feature_set": "feat_A: all numeric columns except bread_quantity, date, _split, _fold_*, bread_quantity_h*, ratio_h*, ratio_correct_h*, anchor_correct_h*, anchor_h*",
+      "h90_target": "bread_quantity_h90 (raw units)",
+      "h90_training_filter": "fold-3 train rows where is_covid_lockdown_period == 0"
+    }
+  }
+}

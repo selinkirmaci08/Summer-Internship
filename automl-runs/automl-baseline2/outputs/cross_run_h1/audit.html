@@ -1,0 +1,1355 @@
+<title>Nineteen Runs, One Baseline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root {
+    --ground:      #F4F6F8;
+    --surface:     #FFFFFF;
+    --surface-alt: #EDF0F4;
+    --ink:         #13181F;
+    --ink-2:       #3D4653;
+    --muted:       #667082;
+    --line:        #DCE1E8;
+    --line-soft:   #E8ECF1;
+    --accent:      #1C5C77;
+    --accent-soft: #D3E4EC;
+    --pass:        #1A6B4E;
+    --warn:        #8A5712;
+    --fail:        #A3382E;
+    --bar:         #2E7A98;
+    --bar-ref:     #97A3B2;
+
+    /* Series hues, fixed order: agentic / naive / AutoML-on-agent-features.
+       Validated for CVD separation and contrast against each mode's surface. */
+    --s-agentic: #0F7B9D;
+    --s-naive:   #C0455E;
+    --s-b1:      #7D6BC4;
+
+    --shadow: 0 1px 2px rgba(19, 24, 31, .05), 0 8px 24px -16px rgba(19, 24, 31, .18);
+
+    --f-display: "Newsreader", Georgia, "Times New Roman", serif;
+    --f-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --f-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:      #0F1319;
+      --surface:     #161B23;
+      --surface-alt: #1D232C;
+      --ink:         #E6EAF1;
+      --ink-2:       #B9C2CF;
+      --muted:       #8B95A5;
+      --line:        #29313D;
+      --line-soft:   #212832;
+      --accent:      #6FB6D2;
+      --accent-soft: #1E3A47;
+      --pass:        #52BE95;
+      --warn:        #D6A249;
+      --fail:        #E07C6E;
+      --bar:         #4E9DBC;
+      --bar-ref:     #5D6878;
+      --s-agentic:   #2E9CBE;
+      --s-naive:     #DA6274;
+      --s-b1:        #8A79D2;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px -16px rgba(0, 0, 0, .6);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground:      #0F1319;
+    --surface:     #161B23;
+    --surface-alt: #1D232C;
+    --ink:         #E6EAF1;
+    --ink-2:       #B9C2CF;
+    --muted:       #8B95A5;
+    --line:        #29313D;
+    --line-soft:   #212832;
+    --accent:      #6FB6D2;
+    --accent-soft: #1E3A47;
+    --pass:        #52BE95;
+    --warn:        #D6A249;
+    --fail:        #E07C6E;
+    --bar:         #4E9DBC;
+    --bar-ref:     #5D6878;
+    --s-agentic:   #2E9CBE;
+    --s-naive:     #DA6274;
+    --s-b1:        #8A79D2;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px -16px rgba(0, 0, 0, .6);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--f-body);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 0 28px 96px;
+  }
+
+  .prose { max-width: 68ch; }
+
+  /* ---------------------------------------------------------------- type */
+
+  h1, h2, h3 { font-family: var(--f-display); font-weight: 500; text-wrap: balance; margin: 0; }
+  h1 { font-size: clamp(2.1rem, 5vw, 3.2rem); line-height: 1.08; letter-spacing: -.015em; }
+  h2 { font-size: clamp(1.5rem, 3vw, 1.95rem); line-height: 1.15; letter-spacing: -.01em; }
+  h3 { font-size: 1.12rem; line-height: 1.3; font-weight: 600; }
+  p { margin: 0; }
+
+  .eyebrow {
+    font-family: var(--f-mono);
+    font-size: .72rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .lede { font-size: 1.14rem; color: var(--ink-2); }
+  .note { font-size: .92rem; color: var(--muted); }
+  code, .mono { font-family: var(--f-mono); font-size: .88em; }
+
+  a { color: var(--accent); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
+
+  /* -------------------------------------------------------------- header */
+
+  header.masthead {
+    padding: 72px 0 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  header.masthead .prose { display: flex; flex-direction: column; gap: 18px; }
+
+  .rule {
+    height: 1px;
+    background: var(--line);
+    border: 0;
+    margin: 0;
+  }
+
+  /* --------------------------------------------------------------- stats */
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .stat { background: var(--surface); padding: 20px 22px; display: flex; flex-direction: column; gap: 4px; }
+  .stat b {
+    font-family: var(--f-display);
+    font-size: 2.4rem;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat span { font-size: .86rem; color: var(--muted); line-height: 1.35; }
+
+  /* ------------------------------------------------------------ sections */
+
+  section { padding-top: 64px; display: flex; flex-direction: column; gap: 22px; }
+  .section-head { display: flex; flex-direction: column; gap: 10px; }
+
+  /* -------------------------------------------------------------- tables */
+
+  .scroller { overflow-x: auto; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: .9rem; }
+  th, td { padding: 11px 14px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--line-soft); }
+  th:first-child, td:first-child { text-align: left; }
+  thead th {
+    font-family: var(--f-mono);
+    font-size: .68rem;
+    font-weight: 500;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--line);
+    background: var(--surface-alt);
+    position: sticky;
+    top: 0;
+  }
+  tbody tr:last-child td { border-bottom: 0; }
+  td.num { font-variant-numeric: tabular-nums; }
+  td.name { font-family: var(--f-mono); font-size: .82rem; }
+  tr.is-reference td { background: var(--surface-alt); }
+  tr.is-reference td.name { font-weight: 500; }
+  .win { color: var(--pass); font-variant-numeric: tabular-nums; }
+  .lose { color: var(--fail); font-variant-numeric: tabular-nums; }
+  .best { font-weight: 600; }
+
+  /* --------------------------------------------------------------- chart */
+
+  figure { margin: 0; display: flex; flex-direction: column; gap: 16px; }
+  .chart {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 24px 26px 18px;
+    position: relative;
+  }
+  .bars { display: flex; flex-direction: column; gap: 10px; position: relative; z-index: 1; }
+  .row { display: grid; grid-template-columns: minmax(96px, 168px) 1fr; align-items: center; gap: 14px; }
+  .row .label { font-family: var(--f-mono); font-size: .76rem; color: var(--ink-2); text-align: right; }
+  .track { position: relative; height: 22px; display: flex; align-items: center; gap: 9px; }
+  .bar {
+    height: 18px;
+    background: var(--bar);
+    border-radius: 0 4px 4px 0;
+    transition: opacity .12s ease;
+  }
+  .row.ref .bar { background: var(--bar-ref); }
+  .row:hover .bar { opacity: .82; }
+  .val { font-family: var(--f-mono); font-size: .8rem; font-variant-numeric: tabular-nums; color: var(--ink-2); }
+  .baseline-rule {
+    position: absolute;
+    top: 22px;
+    bottom: 34px;
+    width: 0;
+    border-left: 1px dashed var(--accent);
+    z-index: 0;
+  }
+  .baseline-tag {
+    position: absolute;
+    bottom: 6px;
+    transform: translateX(-50%);
+    font-family: var(--f-mono);
+    font-size: .68rem;
+    letter-spacing: .04em;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .axis {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 14px;
+    padding-top: 8px;
+    border-top: 1px solid var(--line-soft);
+    font-family: var(--f-mono);
+    font-size: .68rem;
+    color: var(--muted);
+  }
+  figcaption { font-size: .88rem; color: var(--muted); max-width: 68ch; }
+
+  #tip {
+    position: fixed;
+    z-index: 20;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .1s ease;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+    border-radius: 4px;
+    padding: 9px 12px;
+    font-size: .82rem;
+    line-height: 1.45;
+    max-width: 260px;
+  }
+  #tip .t-name { font-family: var(--f-mono); font-size: .76rem; color: var(--ink); }
+  #tip .t-why { color: var(--muted); margin-top: 2px; }
+
+  /* -------------------------------------------------------- horizon panels */
+
+  .panels { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 16px; }
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 18px 20px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .panel-head { display: flex; flex-direction: column; gap: 3px; }
+  .panel-head .who { font-family: var(--f-mono); font-size: .82rem; font-weight: 500; }
+  .panel-head .what { font-size: .82rem; color: var(--muted); }
+  .panel svg { display: block; width: 100%; height: auto; touch-action: none; }
+
+  .grid-line { stroke: var(--line-soft); stroke-width: 1; }
+  .axis-line { stroke: var(--line); stroke-width: 1; }
+  .tick-text { fill: var(--muted); font-family: var(--f-mono); font-size: 9.5px; }
+  .series-line { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .cross-rule { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 3; opacity: 0; }
+  .cross-dot { stroke: var(--surface); stroke-width: 2; opacity: 0; }
+  .flip-rule { stroke: var(--ink-2); stroke-width: 1; stroke-dasharray: 2 4; opacity: .55; }
+  .flip-text { fill: var(--ink-2); font-family: var(--f-mono); font-size: 9.5px; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+  .legend span { display: inline-flex; align-items: center; gap: 7px; font-size: .8rem; color: var(--ink-2); }
+  .swatch { width: 14px; height: 3px; border-radius: 2px; flex: none; }
+
+  .callouts { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+  .callout {
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    background: var(--surface);
+    padding: 15px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .callout b { font-family: var(--f-display); font-size: 1.75rem; font-weight: 500; line-height: 1; font-variant-numeric: tabular-nums; }
+  .callout span { font-size: .87rem; color: var(--ink-2); }
+  .callout .who { font-family: var(--f-mono); font-size: .7rem; color: var(--muted); letter-spacing: .05em; }
+
+  /* --------------------------------------------------------------- stage */
+
+  .stage {
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: var(--surface);
+    overflow: hidden;
+  }
+  .stage + .stage { margin-top: 14px; }
+  .stage-head {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    padding: 16px 20px;
+    background: var(--surface-alt);
+    border-bottom: 1px solid var(--line);
+    flex-wrap: wrap;
+  }
+  .stage-num {
+    font-family: var(--f-mono);
+    font-size: .74rem;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: .08em;
+  }
+  .stage-head h3 { flex: 1 1 auto; }
+  .stage-count { font-family: var(--f-mono); font-size: .76rem; color: var(--muted); }
+
+  .run { padding: 18px 20px; border-bottom: 1px solid var(--line-soft); display: flex; flex-direction: column; gap: 7px; }
+  .run:last-child { border-bottom: 0; }
+  .run-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .run-id { font-family: var(--f-mono); font-size: .84rem; font-weight: 500; }
+  .run-body { font-size: .93rem; color: var(--ink-2); max-width: 78ch; }
+  .run-body strong { font-weight: 600; color: var(--ink); }
+
+  .tag {
+    font-family: var(--f-mono);
+    font-size: .66rem;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 3px;
+    border: 1px solid currentColor;
+    white-space: nowrap;
+  }
+  .tag.pass { color: var(--pass); }
+  .tag.warn { color: var(--warn); }
+  .tag.fail { color: var(--fail); }
+  .tag.flat { color: var(--muted); }
+  .metric { font-family: var(--f-mono); font-size: .78rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+  /* -------------------------------------------------------------- method */
+
+  .guards { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); }
+  .guard { display: grid; grid-template-columns: 22px 1fr; gap: 14px; padding: 15px 20px; border-bottom: 1px solid var(--line-soft); align-items: start; }
+  .guard:last-child { border-bottom: 0; }
+  .guard .mark { color: var(--pass); font-family: var(--f-mono); font-size: .9rem; line-height: 1.5; }
+  .guard p { font-size: .93rem; color: var(--ink-2); }
+  .guard b { font-weight: 600; color: var(--ink); }
+
+  footer { padding-top: 64px; display: flex; flex-direction: column; gap: 10px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+  @media (max-width: 620px) {
+    .wrap { padding: 0 18px 64px; }
+    header.masthead { padding-top: 44px; }
+    .row { grid-template-columns: 1fr; gap: 4px; }
+    .row .label { text-align: left; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="prose">
+      <p class="eyebrow">Aernoudt bread demand &middot; run audit &middot; 2 September 2026</p>
+      <h1>Nineteen runs, one baseline</h1>
+      <p class="lede">Six of the nineteen agentic runs produced a model. One of those beats an
+        off-the-shelf AutoML on honest, held-out rows. None of them beats the seasonal naive at
+        one day out. Here is every run, what it produced, and what went wrong where something did.</p>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>19</b><span>runs on disk</span></div>
+      <div class="stat"><b>6</b><span>reached a trained model</span></div>
+      <div class="stat"><b>2</b><span>completed to an end-model node</span></div>
+      <div class="stat"><b>1</b><span>beat the AutoML baseline</span></div>
+    </div>
+  </header>
+
+  <hr class="rule">
+
+  <!-- ============================================================ RESULTS -->
+  <section id="results">
+    <div class="section-head">
+      <p class="eyebrow">Comparison one &middot; all models, identical rows</p>
+      <h2>Every model on the same 270 days</h2>
+    </div>
+    <div class="prose" style="display:flex; flex-direction:column; gap:14px;">
+      <p>Each run chose its own split, its own trading-day filter and&mdash;on a handful of
+        days&mdash;its own ground truth, so their reported numbers are not on one scale. This table
+        puts them on one: horizon 1, <strong>270 dates from 2&nbsp;July&nbsp;2021 to
+        8&nbsp;February&nbsp;2023</strong>, every one of them inside the test partition of every run
+        scored. The baseline is FLAML given 600&nbsp;seconds on target lags, rolling windows and
+        calendar only, trained through 1&nbsp;July&nbsp;2021 and never on a scored day.</p>
+    </div>
+
+    <figure>
+      <div class="chart">
+        <div class="bars" id="bars"></div>
+        <div class="baseline-rule" id="baseRule"></div>
+        <div class="baseline-tag" id="baseTag">AutoML baseline</div>
+        <div class="axis"><span>0</span><span>MAE, bread units per day</span><span>80</span></div>
+      </div>
+      <figcaption>Lower is better. The two grey bars are references, not competitors: the
+        seasonal naive at the top and the AutoML baseline at the dashed rule.</figcaption>
+    </figure>
+
+    <div class="scroller">
+      <table>
+        <thead>
+          <tr>
+            <th>System</th><th>MAE</th><th>RMSE</th><th>MASE</th><th>WAPE&nbsp;%</th>
+            <th>Bias</th><th>R&sup2;</th><th>vs&nbsp;AutoML</th><th>vs&nbsp;naive</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="is-reference">
+            <td class="name">seasonal naive</td><td class="num best">32.96</td><td class="num">46.71</td>
+            <td class="num">1.000</td><td class="num">13.36</td><td class="num">&minus;2.0</td>
+            <td class="num">0.076</td><td class="win">+18.9%</td><td class="num">&mdash;</td>
+          </tr>
+          <tr>
+            <td class="name">run_20260901T095109Z</td><td class="num">36.69</td><td class="num best">44.17</td>
+            <td class="num">1.113</td><td class="num">14.87</td><td class="num">+31.6</td>
+            <td class="num best">0.174</td><td class="win">+9.8%</td><td class="lose">&minus;11.3%</td>
+          </tr>
+          <tr class="is-reference">
+            <td class="name">automl_common_h1</td><td class="num">40.65</td><td class="num">51.99</td>
+            <td class="num">1.233</td><td class="num">16.48</td><td class="num">+35.3</td>
+            <td class="num">&minus;0.145</td><td class="num">&mdash;</td><td class="lose">&minus;23.3%</td>
+          </tr>
+          <tr>
+            <td class="name">run_20260820T110000Z</td><td class="num">45.78</td><td class="num">54.40</td>
+            <td class="num">1.389</td><td class="num">18.56</td><td class="num">+42.4</td>
+            <td class="num">&minus;0.253</td><td class="lose">&minus;12.6%</td><td class="lose">&minus;38.9%</td>
+          </tr>
+          <tr>
+            <td class="name">run_20260827T154407Z</td><td class="num">48.67</td><td class="num">56.52</td>
+            <td class="num">1.476</td><td class="num">19.73</td><td class="num">+46.6</td>
+            <td class="num">&minus;0.353</td><td class="lose">&minus;19.7%</td><td class="lose">&minus;47.6%</td>
+          </tr>
+          <tr>
+            <td class="name">run_20260821T140000Z</td><td class="num">52.26</td><td class="num">66.26</td>
+            <td class="num">1.585</td><td class="num">21.18</td><td class="num">+46.4</td>
+            <td class="num">&minus;0.859</td><td class="lose">&minus;28.6%</td><td class="lose">&minus;58.6%</td>
+          </tr>
+          <tr>
+            <td class="name">run_20260819T090000Z</td><td class="num">77.24</td><td class="num">84.38</td>
+            <td class="num">2.343</td><td class="num">31.31</td><td class="num">+77.2</td>
+            <td class="num">&minus;2.016</td><td class="lose">&minus;90.0%</td><td class="lose">&minus;134.3%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prose" style="display:flex; flex-direction:column; gap:14px;">
+      <p>Every model carries a large positive bias&mdash;between +32 and +77 units&mdash;while the
+        naive sits at &minus;2. They all over-forecast this window, because demand fell steadily
+        across the split: mean daily bread quantity runs 326 in train, 260 in validation, 241 in
+        test. A model that learned the training level is wrong in a predictable direction; the naive
+        carries the new level with it and does not have to learn anything.</p>
+      <p><code>run_20260827T154407Z</code> looks poor here and is not. It was built to forecast 21
+        horizons out to 364 days, and h=1 is the horizon it optimises least. The table below is the
+        one that judges it fairly.</p>
+    </div>
+  </section>
+
+  <!-- ======================================================== PER-PROTOCOL -->
+  <section id="per-run">
+    <div class="section-head">
+      <p class="eyebrow">Comparison two &middot; each run on its own protocol</p>
+      <h2>Where the pipeline earned its keep</h2>
+    </div>
+    <div class="prose" style="display:flex; flex-direction:column; gap:14px;">
+      <p>The <code>automl_baseline2</code> harness scores a run against AutoML on that run's own
+        rows, split and horizons, handing each tier a different amount of the agent's work. Only the
+        two horizon-conditioned runs can go through it&mdash;the other four have no
+        <code>h</code> or <code>origin_date</code> column, so the loader rejects them outright.</p>
+    </div>
+    <div class="scroller">
+      <table>
+        <thead>
+          <tr>
+            <th>Run</th><th>Agentic</th><th>B1 agent features</th><th>B2 preprocessed</th>
+            <th>B3 assembled</th><th>Naive</th><th>Winner</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="name">run_20260827T154407Z<br><span class="metric">21 horizons, 10,752 rows</span></td>
+            <td class="num best">43.51</td><td class="num">43.70</td><td class="num">47.57</td>
+            <td class="num">46.24</td><td class="num">45.17</td>
+            <td class="win">agentic, +3.7% over naive</td>
+          </tr>
+          <tr>
+            <td class="name">run_20260901T095109Z<br><span class="metric">23 horizons, 5,530 rows</span></td>
+            <td class="num">42.87</td><td class="num">42.77</td><td class="num">52.08</td>
+            <td class="num">50.22</td><td class="num best">38.08</td>
+            <td class="lose">naive, 20 of 21 horizons</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="prose" style="display:flex; flex-direction:column; gap:14px;">
+      <p>Each tier is handed a different amount of the agent's work and everything else is held
+        fixed, so the gap between adjacent tiers isolates one node. <strong>B3</strong> gets the raw
+        assembled frame and a generic lag/rolling/calendar recipe; <strong>B2</strong> gets the
+        agent's cleaned frame and the <em>same</em> recipe, so the B3&rarr;B2 gap is purely about
+        the cleaning; <strong>B1</strong> gets the agent's engineered matrix unchanged, so the
+        B2&rarr;B1 gap is the feature engineering, and the B1&rarr;agentic gap is nothing but who
+        picked the estimator.</p>
+      <div class="scroller">
+        <table>
+          <thead>
+            <tr><th>Node isolated</th><th>Gap</th><th>run_20260827T154407Z</th><th>run_20260901T095109Z</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Preprocessing</td><td class="name">B3 &rarr; B2</td>
+              <td class="lose">&minus;1.32</td><td class="lose">&minus;1.86</td></tr>
+            <tr><td>Feature engineering</td><td class="name">B2 &rarr; B1</td>
+              <td class="win best">+3.86</td><td class="win best">+9.31</td></tr>
+            <tr><td>Model choice and tuning</td><td class="name">B1 &rarr; agentic</td>
+              <td class="num">+0.20</td><td class="num">&minus;0.10</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">Positive means that node improved MAE.</p>
+      <p><strong>The feature engineering is carrying the pipeline, and carrying it alone.</strong>
+        The training node adds a fifth of an MAE point in one run and loses a tenth in the other
+        &mdash; nothing a generic 900-second search would not have found on its own. And the
+        preprocessing node is <em>negative</em> in both runs: handing AutoML the agent's cleaned
+        frame instead of the raw one made things 1.3 to 1.9 points worse. On a single cutoff that is
+        too small to call a real regression, but "not distinguishable from zero" is the most that
+        can be claimed for it. Note that the cleaning also <em>widens</em> the frame&mdash;114
+        columns to 156 in the first run&mdash;so it may simply be adding columns the generic recipe
+        then dilutes itself across.</p>
+    </div>
+  </section>
+
+  <!-- ======================================================= LONG HORIZONS -->
+  <section id="horizons">
+    <div class="section-head">
+      <p class="eyebrow">Comparison three &middot; horizon by horizon</p>
+      <h2>Where the long horizons change the verdict</h2>
+    </div>
+    <div class="prose" style="display:flex; flex-direction:column; gap:14px;">
+      <p>The h=1 table judges both horizon-conditioned runs at the one horizon they were
+        <em>least</em> built for. Each predicts <code>t+h</code> in a single jump from data at the
+        origin, so every horizon is a separate, independent question&mdash;and the answer changes
+        completely as h grows. This is the comparison that decides whether either run is worth
+        running at all.</p>
+    </div>
+
+    <div class="callouts">
+      <div class="callout">
+        <span class="who">run_20260827T154407Z</span>
+        <b>h = 10</b>
+        <span>where it overtakes the seasonal naive, and never gives the lead back</span>
+      </div>
+      <div class="callout">
+        <span class="who">run_20260827T154407Z</span>
+        <b>+15.4%</b>
+        <span>skill over the naive at h=364, up from &minus;4.7% at h=1</span>
+      </div>
+      <div class="callout">
+        <span class="who">run_20260901T095109Z</span>
+        <b>h = 240</b>
+        <span>the first horizon anything beats the naive &mdash; and it is AutoML, not the agent</span>
+      </div>
+      <div class="callout">
+        <span class="who">run_20260901T095109Z</span>
+        <b>20 of 23</b>
+        <span>horizons won outright by the seasonal naive</span>
+      </div>
+    </div>
+
+    <figure>
+      <div class="panels">
+        <div class="panel">
+          <div class="panel-head">
+            <span class="who">run_20260827T154407Z</span>
+            <span class="what">21 horizons &middot; 512 test dates each &middot; agentic wins from h=10 on</span>
+          </div>
+          <svg id="svg-0827" viewBox="0 0 560 280" role="img"
+               aria-label="MAE by horizon for run_20260827T154407Z: the agentic model starts behind the seasonal naive and overtakes it at horizon 10, with the gap widening to horizon 364."></svg>
+        </div>
+        <div class="panel">
+          <div class="panel-head">
+            <span class="who">run_20260901T095109Z</span>
+            <span class="what">23 horizons &middot; 219&ndash;286 test dates each &middot; naive leads to h=182</span>
+          </div>
+          <svg id="svg-0901" viewBox="0 0 560 280" role="img"
+               aria-label="MAE by horizon for run_20260901T095109Z: the seasonal naive leads at every horizon up to 182, and only past 240 does anything overtake it."></svg>
+        </div>
+      </div>
+      <div class="legend">
+        <span><i class="swatch" style="background:var(--s-agentic)"></i>agentic model</span>
+        <span><i class="swatch" style="background:var(--s-naive)"></i>seasonal naive</span>
+        <span><i class="swatch" style="background:var(--s-b1)"></i>AutoML on the agent's features (B1)</span>
+      </div>
+      <figcaption>Lower is better. The horizon axis is evenly spaced, <strong>not to scale</strong>:
+        the grid is 21 and 23 irregular values from 1 to 364, and log spacing would crush h1&ndash;7,
+        which is exactly where the naive wins. The two panels share a y-axis for legibility but sit
+        on <strong>different test windows and different truth</strong> &mdash; read each panel
+        internally, never one against the other.</figcaption>
+    </figure>
+
+    <div class="prose" style="display:flex; flex-direction:column; gap:14px;">
+      <h3>run_20260827T154407Z &mdash; the value is entirely at the long end</h3>
+      <p>The naive takes the first seven horizons and then falls apart: its MAE climbs from 39.80 at
+        h=1 to <strong>55.96 at h=364</strong>, because "the same weekday a year ago" stops carrying
+        any information. The agentic model barely moves&mdash;41.67 to 47.35 across the same
+        span&mdash;so the gap opens steadily. That flatness is the result: it is not that the model
+        gets good at long horizons, it is that it <em>does not get worse</em>, and the naive does.</p>
+      <p>The <strong>B1 line sits on top of the agentic line at every horizon</strong>, within 0.35
+        MAE from h=1 to h=90, and B1 actually wins six horizons in the 21&ndash;90 band. Only past
+        h=270 does the agentic model pull clear, by 0.93 and then 1.27. If the tuning node earns
+        anything anywhere in this project, it is those last two points.</p>
+
+      <h3>run_20260901T095109Z &mdash; the naive holds to half a year</h3>
+      <p>A different story and a worse one. The naive leads at <strong>every horizon through
+        h=182</strong>, by 39% at h=1 and still by 2% at h=182. The crossover only arrives at h=240,
+        and when it does the winner is <em>B2 preprocessed</em>&mdash;generic AutoML on the agent's
+        cleaned frame&mdash;not the agent's own model, which takes only h=364.</p>
+      <p>Note the shape of the naive's line here: it is flat-to-rising from 28.18 up to 60.10, while
+        this run's own model rises from 39.22 to 53.75. Both degrade; the model simply starts so far
+        behind that it needs 240 days of horizon to catch up. Its test window is also shorter and
+        its per-horizon sample shrinks with h (286 dates at h=364, 219 at h=42), so the long-horizon
+        end of this panel rests on fewer days than the equivalent point in the other.</p>
+    </div>
+
+    <div class="scroller">
+      <table>
+        <thead>
+          <tr><th>h</th><th>n</th><th>Agentic</th><th>Naive</th><th>B1</th><th>B2</th><th>B3</th><th>Skill vs naive</th><th>Winner</th></tr>
+        </thead>
+        <tbody id="tbody-0827"></tbody>
+      </table>
+    </div>
+    <p class="note"><code>run_20260827T154407Z</code> &mdash; horizons won: naive 7, agentic 6,
+      B1 6, B3 assembled 2, B2 preprocessed 0.</p>
+
+    <div class="scroller">
+      <table>
+        <thead>
+          <tr><th>h</th><th>n</th><th>Agentic</th><th>Naive</th><th>B1</th><th>B2</th><th>B3</th><th>Skill vs naive</th><th>Winner</th></tr>
+        </thead>
+        <tbody id="tbody-0901"></tbody>
+      </table>
+    </div>
+    <p class="note"><code>run_20260901T095109Z</code> &mdash; horizons won: naive 20,
+      B2 preprocessed 2, agentic 1, B1 0, B3 assembled 0.</p>
+
+    <div class="prose" style="display:flex; flex-direction:column; gap:14px;">
+      <p><strong>What this changes.</strong> <code>run_20260827T154407Z</code> is not a marginal
+        result that happens to clear the naive by 3.7% overall&mdash;it loses the short horizons and
+        wins the long ones decisively, and the overall average hides both facts. Its 3.7% is the
+        average of &minus;4.7% and +15.4%. Whether the run is useful depends entirely on which
+        horizon the bakery actually needs.</p>
+      <p>And the two runs disagree about the whole enterprise.
+        <code>run_20260901T095109Z</code> is the newer, cleaner, better-documented run; it is also
+        the one that cannot beat "look at the same weekday last week" until it is forecasting eight
+        months out. Newer did not mean better here.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================= LEDGER -->
+  <section id="ledger">
+    <div class="section-head">
+      <p class="eyebrow">The full ledger &middot; grouped by furthest stage reached</p>
+      <h2>All nineteen runs</h2>
+    </div>
+    <div class="prose">
+      <p>The stages are the pipeline's own nodes, so the grouping is a real sequence: a run
+        appears under the last node it completed.</p>
+    </div>
+
+    <div class="stage">
+      <div class="stage-head">
+        <span class="stage-num">01</span>
+        <h3>Stopped at EDA</h3>
+        <span class="stage-count">6 runs</span>
+      </div>
+
+      <div class="run">
+        <div class="run-top"><span class="run-id">run_20260811T141909Z</span>
+          <span class="tag flat">different problem</span></div>
+        <p class="run-body">Ran on <code>adult.csv</code>&mdash;32,561 rows, income classification.
+          Not the bakery task at all; a smoke test of the EDA node on a second dataset. Feasibility
+          passed, F1 recommended for the 24% minority class, run ended there. Nothing to compare.</p>
+      </div>
+
+      <div class="run">
+        <div class="run-top"><span class="run-id">run_20260811T144500Z</span>
+          <span class="tag pass">correct stop</span></div>
+        <p class="run-body"><strong>34 daily rows</strong>, 16 November to 24 December 2010&mdash;
+          4.9 weeks. EDA failed feasibility on sample size and halted: too few points to learn a
+          weekly cycle, let alone hold out a split, and one 618-unit day against a median of 394
+          would dominate any fit. The right call, made for the right reason.</p>
+      </div>
+
+      <div class="run">
+        <div class="run-top"><span class="run-id">run_20260811T151500Z</span>
+          <span class="tag pass">correct stop</span></div>
+        <p class="run-body">A 149-row 2022 slice. EDA found <strong>56 of 149 rows (37.6%) with
+          fewer than 10 orders, 98.2% of them at zero bread</strong>, alongside days like 17 October
+          with 3 orders but 1,001 items and &euro;2,000 revenue. It called the population bimodal
+          rather than noisy and stopped. This is the finding every later run inherits.</p>
+      </div>
+
+      <div class="run">
+        <div class="run-top"><span class="run-id">run_20260811T160000Z</span>
+          <span class="tag flat">no model</span></div>
+        <p class="run-body">3,809 rows across 13 years&mdash;the first slice EDA judged feasible,
+          with enough repeated annual cycles to both learn and validate. It localised the anomaly to
+          <strong>350 rows (9.2%), present every year from 2015 and absent 2010&ndash;2014</strong>,
+          tying it to the schema switch. Then the run ended without preprocessing anything.</p>
+      </div>
+
+      <div class="run">
+        <div class="run-top"><span class="run-id">run_20260818T000000Z</span>
+          <span class="tag flat">no model</span></div>
+        <p class="run-body">EDA on the enriched 3,809&times;28 frame; flagged <code>bread_revenue</code>
+          as collinear with the target and probable leakage, and noted weather missing for ~27% of
+          rows. <code>data/</code> and <code>models/</code> are empty&mdash;nothing was persisted.</p>
+      </div>
+
+      <div class="run">
+        <div class="run-top"><span class="run-id">run_20260818T082437Z</span>
+          <span class="tag flat">no model</span></div>
+        <p class="run-body">EDA only, and the sharpest of the six on leakage: it called
+          <code>bread_revenue</code>'s near-perfect correlation <em>"a red flag, not a genuine
+          driver&mdash;quantity &times; price"</em>, and dismissed <code>num_orders</code> as
+          a same-day outcome rather than a leading indicator. A later run ignored exactly that.</p>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-head">
+        <span class="stage-num">02</span>
+        <h3>Preprocessed, never engineered features</h3>
+        <span class="stage-count">4 runs</span>
+      </div>
+      <div class="run">
+        <div class="run-top">
+          <span class="run-id">run_20260814T082956Z</span>
+          <span class="run-id">run_20260814T131044Z</span>
+          <span class="run-id">run_20260814T140822Z</span>
+          <span class="run-id">run_20260818T121822Z</span>
+          <span class="tag flat">no model</span>
+        </div>
+        <p class="run-body">All four wrote a preprocessed table and stopped. All four applied the
+          same user-authorised filter of the 350 anomalous rows, and all four dropped
+          <code>num_items_sold</code> for the same stated reason: the exact algebraic identity
+          <code>num_items_sold = bread_quantity + non_bread_quantity</code> makes it the target in
+          disguise. <code>run_20260814T082956Z</code> is the only one that reached a second
+          preprocess iteration, redoing iteration 2 because that pass had left the anomalous rows
+          in <em>both</em> partitions of the split. The reasoning here is sound; none of it was
+          carried into a model.</p>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-head">
+        <span class="stage-num">03</span>
+        <h3>Reached research or features, wrote nothing</h3>
+        <span class="stage-count">2 runs</span>
+      </div>
+
+      <div class="run">
+        <div class="run-top"><span class="run-id">run_20260821T110000Z</span>
+          <span class="tag warn">nothing persisted</span></div>
+        <p class="run-body">EDA plus a domain-research node that produced 15 feature
+          recommendations and the most useful negative result in the project: weather correlates at
+          <strong>|r| &lt; 0.09 across every variable</strong>, and the competitor data is
+          <strong>8.7% complete with three zero-variance flags</strong>. It left three open
+          questions about catchment and lockdown boundaries. Every artifact directory is empty.</p>
+      </div>
+
+      <div class="run">
+        <div class="run-top"><span class="run-id">run_20260821T090000Z</span>
+          <span class="tag warn">nothing persisted</span></div>
+        <p class="run-body">Four nodes deep&mdash;EDA, domain research, preprocess, feature
+          engineering&mdash;and <code>data/</code> and <code>artifacts/</code> are both empty. The
+          history JSON records what it decided; nothing exists to check the decisions against.</p>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-head">
+        <span class="stage-num">04</span>
+        <h3>Trained a model that no longer exists</h3>
+        <span class="stage-count">1 run</span>
+      </div>
+      <div class="run">
+        <div class="run-top"><span class="run-id">run_20260820T090000Z</span>
+          <span class="tag fail">unverifiable</span>
+          <span class="metric">claimed val MAE 31.2 &middot; R&sup2; 0.801</span></div>
+        <p class="run-body">The history reaches a training node and reports LightGBM stopping early
+          at round 347, train MAE 18.4, validation MAE 31.2, R&sup2; 0.801. There is
+          <strong>no model file, no data, no state file, and all four artifact directories are
+          empty</strong>. The claim cannot be reproduced or falsified&mdash;and that R&sup2; sits far
+          above every run that <em>can</em> be checked, where the best verified value is 0.174.
+          Treat the number as unmeasured, not as a result.</p>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-head">
+        <span class="stage-num">05</span>
+        <h3>Trained, saved, and scoreable</h3>
+        <span class="stage-count">6 runs</span>
+      </div>
+
+      <div class="run">
+        <div class="run-top"><span class="run-id">run_20260901T095109Z</span>
+          <span class="tag pass">best verified</span>
+          <span class="metric">h=1 MAE 36.69 &middot; +9.8% vs AutoML</span></div>
+        <p class="run-body"><strong>Why it is good:</strong> the only model to beat the AutoML
+          baseline on honest rows, and the only one with a positive R&sup2;. It is horizon-conditioned,
+          it names <strong>22 columns in <code>must_drop_columns</code></strong> with reasons, and it
+          declares which features are known at forecast time&mdash;so same-day revenue and
+          transaction counts never reach it. It completed to an end-model node.<br>
+          <strong>Why it is not good enough:</strong> the seasonal naive beats it by 11% here and
+          wins 20 of 21 horizons on its own protocol. Its B1 gap of &minus;0.10 says AutoML matches
+          it on its own features, so the tuning bought nothing. Bias +31.6: it over-forecasts a
+          falling market.</p>
+      </div>
+
+      <div class="run">
+        <div class="run-top"><span class="run-id">run_20260827T154407Z</span>
+          <span class="tag pass">beats its own baseline</span>
+          <span class="metric">own protocol MAE 43.51 &middot; +3.7% vs naive</span></div>
+        <p class="run-body"><strong>Why it is good:</strong> the only run in the project that beats
+          every AutoML tier <em>and</em> the naive on its own protocol&mdash;the sole demonstration
+          that the pipeline can add value a generic search does not find. 56 features, 20 dropped
+          columns, 21 horizons out to 364 days, completed end to end.<br>
+          <strong>Why it looks bad above:</strong> two reasons, and the second matters more. h=1 is
+          the horizon it cares least about, and its win lives at the long end the cross-run table
+          cannot reach. But the shared window also sits entirely on the far side of a level break
+          this model never absorbed. Split its own test span at the point the shared window opens:
+          before 2021-07-02 it scores <strong>MAE 29.00 with a bias of +7.9, beating the naive by
+          24%</strong>; from 2021-07-02 on it scores 49.73 with a bias of +47.9 and loses. Demand
+          steps down about 35 units in 2021Q3 &mdash; quarterly bias runs +7.6, +9.3, then +45.1
+          &mdash; and the model's level never follows. It was a good model measured on the wrong
+          half of its own window.</p>
+      </div>
+
+      <div class="run">
+        <div class="run-top"><span class="run-id">run_20260820T110000Z</span>
+          <span class="tag fail">duplicate rows</span>
+          <span class="metric">h=1 MAE 45.78 &middot; val MAE 38.09</span></div>
+        <p class="run-body"><strong>What is wrong:</strong> <strong>40 dates appear twice</strong>
+          in its feature table with different bread quantities, and the lag chain was computed over
+          row order rather than the calendar&mdash;so on those days <code>lag_1</code> is the
+          <em>same day's other row</em>, not yesterday. Two of the duplicated dates fall in the
+          scoring window and were dropped for every system. It also feeds the model same-day
+          <code>distinct_waitresses</code>. 21 features, no holiday or school-calendar signal at
+          all, and it never evaluated its own test split.</p>
+      </div>
+
+      <div class="run">
+        <div class="run-top"><span class="run-id">run_20260821T140000Z</span>
+          <span class="tag warn">clean but thin</span>
+          <span class="metric">h=1 MAE 52.26 &middot; val MAE 30.89</span></div>
+        <p class="run-body"><strong>Why it is honest:</strong> the best-designed of the four older
+          runs. A genuinely chronological split, no same-day activity columns, and weather used only
+          as a forecastable proxy.<br>
+          <strong>Why it still loses:</strong> 22 features and no calendar knowledge beyond
+          sine/cosine&mdash;no holidays, no school terms. Its own inputs are sparse:
+          <strong>1,025 of 2,326 training rows have no weather at all</strong> and 413 have no
+          <code>lag_1</code>. Validation 30.9 to held-out 52.3 is the gap that closed-loop tuning on
+          one window cannot see. It never evaluated its own test split either.</p>
+      </div>
+
+      <div class="run">
+        <div class="run-top"><span class="run-id">run_20260819T090000Z</span>
+          <span class="tag fail">target leakage</span>
+          <span class="metric">h=1 MAE 77.24 &middot; val MAE 28.35</span></div>
+        <p class="run-body"><strong>What is wrong:</strong> its top feature is <strong>same-day
+          <code>num_orders</code></strong> at 9.7% importance, followed by
+          <code>pct_ticket_printed</code>, <code>top_payment_mode_count</code>,
+          <code>avg_order_value</code> and <code>total_revenue</code>&mdash;all measurements of the
+          day you are trying to forecast, none of them available when you would forecast it. These
+          are precisely the columns the two newest runs list in <code>must_drop_columns</code>, and
+          an earlier EDA had already called <code>num_orders</code> a same-day outcome rather than a
+          leading indicator.<br>
+          <strong>What it cost:</strong> validation MAE 28.35 became <strong>77.24 on held-out
+          days&mdash;a 2.7&times; collapse</strong>, the worst result in the audit. The leaked
+          columns did not even help: <code>pct_ticket_printed</code> runs at 5.4 in training and
+          98.5 in test, so the model leaned hardest on the feature that changed most.</p>
+      </div>
+
+      <div class="run">
+        <div class="run-top"><span class="run-id">run_20260821T130000Z</span>
+          <span class="tag fail">split contaminated &middot; excluded</span>
+          <span class="metric">val MAE 21.09 &mdash; best-looking, least trustworthy</span></div>
+        <p class="run-body"><strong>What is wrong:</strong> the split is not chronological. Train
+          spans 21 June 2014 to 8 February 2023 against a test window of 29 May 2015 to 1 March
+          2022&mdash;training rows sit inside and after the test period. It was excluded from the
+          ranking and scored separately to measure the damage:
+          <strong>221 of the 270 scored dates were in its own training set</strong>. It scores
+          MAE 20.53 on the days it memorised and 25.82 on the 49 it did not.<br>
+          <strong>Why it matters:</strong> its features are clean, its 14 iterations are the second
+          most of any run, and it posts the best validation MAE in the project. Every visible signal
+          says it is the best model here. The split says none of those numbers mean anything.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================= METHOD -->
+  <section id="method">
+    <div class="section-head">
+      <p class="eyebrow">Method</p>
+      <h2>What was asserted, not assumed</h2>
+    </div>
+    <div class="prose">
+      <p>A comparison whose two sides sit on slightly different rows is worse than no comparison,
+        because it still looks like a result. Each of these is checked in code before any prediction
+        is made, and raises rather than scoring a near-match.</p>
+    </div>
+    <div class="guards">
+      <div class="guard">
+        <span class="mark">&#10003;</span>
+        <p><b>No model sees a scored day.</b> Every scored date postdates each model's training
+          <em>and</em> validation windows. The tightest margin is one day, for
+          <code>run_20260901T095109Z</code>; the widest is 230.</p>
+      </div>
+      <div class="guard">
+        <span class="mark">&#10003;</span>
+        <p><b>The index is a subset of every run's own test partition.</b> Checked run by run, not
+          inferred from the date range.</p>
+      </div>
+      <div class="guard">
+        <span class="mark">&#10003;</span>
+        <p><b>The baseline's training rows stop before the window opens.</b> The AutoML reference is
+          trained on 3,109 rows through 1 July 2021 and asserted to reach no further.</p>
+      </div>
+      <div class="guard">
+        <span class="mark">&#10003;</span>
+        <p><b>One truth, not six.</b> The runs disagree about what actually happened on 15 to 40
+          dates across full history, because they clean differently. One such date&mdash;17 January
+          2023&mdash;fell in the window and was dropped. The naive and AutoML references use a
+          median-across-runs series, so neither inherits any single run's cleaning.</p>
+      </div>
+      <div class="guard">
+        <span class="mark">&#10003;</span>
+        <p><b>Missing lags are scored, not dropped.</b> Every model saw NaNs in its own training
+          rows, so a missing lag is in-distribution. Requiring fully populated rows would have cut
+          the window at 27 December 2021 and discarded the whole second year.</p>
+      </div>
+      <div class="guard">
+        <span class="mark">&#10003;</span>
+        <p><b>A contaminated run is shown, not hidden.</b> Excluding it silently invites someone to
+          recompute the number later without the caveat.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ CAVEATS -->
+  <section id="caveats">
+    <div class="section-head">
+      <p class="eyebrow">Limits</p>
+      <h2>What this cannot settle</h2>
+    </div>
+    <div class="prose" style="display:flex; flex-direction:column; gap:14px;">
+      <p><strong>One cutoff, not nested CV.</strong> Both comparisons inherit a single split. Runs
+        landing within a point or two of each other are not separated here.</p>
+      <p><strong>The cross-run ranking measures window placement as much as modelling.</strong>
+        Every system faced the same 2021Q3 level break, so the table is a fair answer to "which of
+        these saved models would have served best over these 270 days". It is <em>not</em> a fair
+        answer to "which run modelled better", because a run's score depends heavily on how far its
+        training window sits from that break, and no run chose its window with this comparison in
+        mind. Removing a single constant offset from each system makes the point:
+        <code>run_20260901T095109Z</code> beats <code>run_20260827T154407Z</code> by 12.0 MAE raw
+        and by <strong>0.66 de-biased</strong> &mdash; the whole gap is level anchoring, and 0901 is
+        better anchored only because its training window starts in 2016 rather than 2010. On shape
+        the two are indistinguishable. Note that de-biasing with the test mean is an oracle
+        diagnostic, not a deployable correction. Separating the two runs properly would need both
+        pipelines retrained on one cutoff placed clear of mid-2021.</p>
+      <p><strong>h=1 flatters short memory.</strong> The naive winning at one day out is consistent
+        with <code>run_20260827T154407Z</code>'s own per-horizon result, where the naive took 7 of
+        21 horizons&mdash;all at the short end. Nothing in the cross-run table speaks to the long
+        horizons, and the four older runs cannot be asked: they never modelled them.</p>
+      <p><strong>Thirteen runs are absent by construction.</strong> Six stopped at EDA, four at
+        preprocessing, two wrote no artifacts, and one trained a model it did not save. Their
+        reasoning is on disk and much of it is good&mdash;the leakage findings in stage 01 are
+        better than what stage 05 acted on&mdash;but reasoning that produces no artifact cannot be
+        scored.</p>
+    </div>
+  </section>
+
+  <footer>
+    <hr class="rule">
+    <p class="note">Numbers from <code>automl-baseline2/outputs/cross_run_h1/metrics.json</code> and
+      the per-run <code>metrics.json</code> under <code>automl-baseline2/outputs/</code>. Every
+      figure in comparison one is recomputable from <code>predictions.csv</code> in the same folder.
+      Harness: <code>tools/cross_run_h1.py</code>, <code>tools/cross_run_report.py</code>.</p>
+  </footer>
+</div>
+
+<div id="tip" role="status" aria-live="polite"></div>
+
+<script>
+  (function () {
+    var DOMAIN = 80;
+    var data = [
+      { name: "seasonal naive",       mae: 32.96, ref: true,  why: "last observed same-weekday value at or before t−1" },
+      { name: "run_20260901T095109Z", mae: 36.69, ref: false, why: "beats the AutoML baseline by 9.8%" },
+      { name: "automl_common_h1",     mae: 40.65, ref: true,  why: "FLAML, 600s, lags + calendar, trained through 2021-07-01" },
+      { name: "run_20260820T110000Z", mae: 45.78, ref: false, why: "40 duplicated dates corrupt the lag chain" },
+      { name: "run_20260827T154407Z", mae: 48.67, ref: false, why: "built for 21 horizons; h=1 is not its target" },
+      { name: "run_20260821T140000Z", mae: 52.26, ref: false, why: "clean split, but only 22 thin features" },
+      { name: "run_20260819T090000Z", mae: 77.24, ref: false, why: "same-day num_orders as its top feature" }
+    ];
+
+    var host = document.getElementById("bars");
+    if (!host) { return; }
+
+    data.forEach(function (d) {
+      var row = document.createElement("div");
+      row.className = "row" + (d.ref ? " ref" : "");
+
+      var label = document.createElement("div");
+      label.className = "label";
+      label.textContent = d.name;
+
+      var track = document.createElement("div");
+      track.className = "track";
+
+      var bar = document.createElement("div");
+      bar.className = "bar";
+      bar.style.width = (100 * d.mae / DOMAIN) + "%";
+
+      var val = document.createElement("span");
+      val.className = "val";
+      val.textContent = d.mae.toFixed(2);
+
+      track.appendChild(bar);
+      track.appendChild(val);
+      row.appendChild(label);
+      row.appendChild(track);
+      host.appendChild(row);
+
+      row.addEventListener("pointerenter", function (e) { show(d, e); });
+      row.addEventListener("pointermove", function (e) { move(e); });
+      row.addEventListener("pointerleave", hide);
+    });
+
+    // The dashed rule marks the baseline inside the track column, so it is
+    // positioned from a measured track rather than from the chart's own width.
+    function placeRule() {
+      var rule = document.getElementById("baseRule");
+      var tag = document.getElementById("baseTag");
+      var track = host.querySelector(".track");
+      var chart = host.parentElement;
+      if (!rule || !track || !chart) { return; }
+      var t = track.getBoundingClientRect();
+      var c = chart.getBoundingClientRect();
+      var x = (t.left - c.left) + t.width * (40.65 / DOMAIN);
+      rule.style.left = x + "px";
+      tag.style.left = x + "px";
+    }
+    placeRule();
+    window.addEventListener("resize", placeRule);
+
+    var tip = document.getElementById("tip");
+    function show(d, e) {
+      tip.innerHTML = "";
+      var n = document.createElement("div");
+      n.className = "t-name";
+      n.textContent = d.name + " — MAE " + d.mae.toFixed(2);
+      var w = document.createElement("div");
+      w.className = "t-why";
+      w.textContent = d.why;
+      tip.appendChild(n);
+      tip.appendChild(w);
+      tip.style.opacity = "1";
+      move(e);
+    }
+    function move(e) {
+      var pad = 14;
+      var x = Math.min(e.clientX + pad, window.innerWidth - tip.offsetWidth - 8);
+      var y = Math.min(e.clientY + pad, window.innerHeight - tip.offsetHeight - 8);
+      tip.style.left = x + "px";
+      tip.style.top = y + "px";
+    }
+    function hide() { tip.style.opacity = "0"; }
+  })();
+</script>
+
+<script>
+  (function () {
+    // Per-horizon MAE, read from each run's per_horizon.csv.
+    // Columns: h, n, agentic, naive, B1, B2, B3.
+    var RUNS = {
+      "0827": {
+        svg: "svg-0827", tbody: "tbody-0827", flip: 10,
+        rows: [
+          [1, 512, 41.675, 39.797, 41.922, 47.195, 45.916],
+          [2, 512, 41.643, 39.797, 41.997, 47.215, 46.004],
+          [3, 512, 41.680, 39.797, 42.014, 47.190, 46.001],
+          [4, 512, 41.683, 39.797, 41.989, 47.169, 46.028],
+          [5, 512, 41.687, 39.797, 42.017, 47.243, 46.086],
+          [6, 512, 41.596, 39.797, 42.051, 47.153, 46.058],
+          [7, 512, 41.610, 39.797, 41.991, 47.174, 46.076],
+          [10, 512, 42.424, 43.766, 42.652, 47.243, 46.117],
+          [14, 512, 42.484, 43.766, 42.602, 47.328, 46.052],
+          [21, 512, 43.474, 45.469, 43.216, 47.507, 46.140],
+          [28, 512, 43.687, 46.157, 43.377, 47.474, 46.048],
+          [35, 512, 43.836, 46.601, 43.478, 47.618, 46.084],
+          [42, 512, 43.836, 47.061, 43.744, 47.437, 45.892],
+          [56, 512, 43.153, 46.689, 43.404, 47.412, 45.972],
+          [70, 512, 43.678, 46.720, 43.752, 47.601, 46.021],
+          [84, 512, 44.337, 46.897, 44.010, 47.833, 46.146],
+          [90, 512, 44.404, 45.500, 44.152, 47.767, 46.320],
+          [120, 512, 45.478, 50.016, 45.617, 48.121, 46.653],
+          [180, 512, 46.836, 51.988, 47.146, 48.501, 46.806],
+          [270, 512, 47.117, 53.474, 48.046, 48.381, 47.068],
+          [364, 512, 47.352, 55.960, 48.618, 48.312, 47.617]
+        ]
+      },
+      "0901": {
+        svg: "svg-0901", tbody: "tbody-0901", flip: 240,
+        rows: [
+          [1, 241, 39.221, 28.183, 39.265, 53.441, 49.911],
+          [2, 241, 39.221, 28.183, 39.264, 53.413, 49.911],
+          [3, 241, 39.221, 28.183, 39.263, 53.408, 49.911],
+          [4, 241, 39.221, 28.183, 39.270, 53.381, 49.911],
+          [5, 241, 39.221, 28.183, 39.271, 53.356, 49.911],
+          [6, 241, 39.221, 28.183, 39.270, 53.331, 49.911],
+          [7, 241, 39.221, 28.183, 39.269, 53.318, 49.911],
+          [10, 240, 38.679, 32.973, 38.519, 52.221, 49.008],
+          [14, 240, 38.679, 32.973, 38.561, 52.180, 49.008],
+          [21, 237, 39.394, 34.972, 39.313, 52.962, 48.933],
+          [28, 225, 39.697, 34.759, 39.021, 52.457, 49.078],
+          [35, 222, 39.760, 34.272, 38.478, 51.091, 47.972],
+          [42, 219, 40.062, 35.924, 39.369, 50.673, 48.201],
+          [56, 223, 41.301, 34.356, 40.525, 51.048, 48.618],
+          [70, 224, 41.588, 35.238, 41.298, 50.283, 48.834],
+          [84, 227, 41.928, 38.383, 41.657, 50.421, 48.606],
+          [91, 234, 41.706, 37.736, 42.108, 50.132, 49.292],
+          [120, 237, 45.279, 42.985, 44.653, 50.523, 50.428],
+          [150, 247, 46.008, 44.082, 45.395, 49.583, 50.602],
+          [182, 248, 49.397, 48.268, 49.573, 50.622, 51.841],
+          [240, 258, 54.298, 59.614, 53.836, 51.818, 54.379],
+          [300, 276, 54.169, 61.236, 55.413, 52.914, 54.383],
+          [364, 286, 53.749, 60.100, 54.664, 54.281, 54.062]
+        ]
+      }
+    };
+
+    var NAMES = ["agentic", "naive", "B1_agent_features", "B2_preprocessed", "B3_assembled"];
+    // Only three of the five are drawn; B2 and B3 sit well above the others at
+    // every horizon and would flatten the scale that matters.
+    var DRAWN = [
+      { idx: 2, key: "agentic", token: "--s-agentic", label: "agentic" },
+      { idx: 3, key: "naive", token: "--s-naive", label: "seasonal naive" },
+      { idx: 4, key: "b1", token: "--s-b1", label: "AutoML on agent features" }
+    ];
+
+    var Y_MIN = 25, Y_MAX = 65;
+    var W = 560, H = 280, M = { t: 14, r: 16, b: 30, l: 40 };
+    var PW = W - M.l - M.r, PH = H - M.t - M.b;
+    var LABELLED = [1, 7, 21, 56, 120, 240, 364];
+    var NS = "http://www.w3.org/2000/svg";
+
+    function el(name, attrs) {
+      var n = document.createElementNS(NS, name);
+      for (var k in attrs) { n.setAttribute(k, attrs[k]); }
+      return n;
+    }
+    // Paint through the custom property rather than a resolved hex: the token
+    // changes with the viewer's theme, and a value read once at render time would
+    // leave light-mode strokes on the dark ground after a theme switch.
+    function css(token) { return "var(" + token + ")"; }
+
+    Object.keys(RUNS).forEach(function (key) {
+      var run = RUNS[key];
+      var svg = document.getElementById(run.svg);
+      var rows = run.rows;
+      var n = rows.length;
+
+      // Evenly spaced horizon axis: the grid is irregular and log spacing would
+      // crush h1-7, which is where the naive's win lives.
+      function x(i) { return M.l + (n === 1 ? PW / 2 : PW * i / (n - 1)); }
+      function y(v) { return M.t + PH * (1 - (v - Y_MIN) / (Y_MAX - Y_MIN)); }
+
+      [30, 40, 50, 60].forEach(function (v) {
+        svg.appendChild(el("line", { class: "grid-line", x1: M.l, x2: M.l + PW, y1: y(v), y2: y(v) }));
+        var t = el("text", { class: "tick-text", x: M.l - 8, y: y(v) + 3.5, "text-anchor": "end" });
+        t.textContent = v;
+        svg.appendChild(t);
+      });
+      svg.appendChild(el("line", { class: "axis-line", x1: M.l, x2: M.l + PW, y1: M.t + PH, y2: M.t + PH }));
+
+      rows.forEach(function (r, i) {
+        if (LABELLED.indexOf(r[0]) === -1) { return; }
+        var t = el("text", { class: "tick-text", x: x(i), y: H - 14, "text-anchor": "middle" });
+        t.textContent = r[0];
+        svg.appendChild(t);
+      });
+      var axName = el("text", { class: "tick-text", x: M.l + PW, y: H - 2, "text-anchor": "end" });
+      axName.textContent = "horizon h, evenly spaced (not to scale)";
+      svg.appendChild(axName);
+
+      // The horizon at which the agentic model takes the lead from the naive.
+      var flipIdx = rows.findIndex(function (r) { return r[0] === run.flip; });
+      if (flipIdx > -1) {
+        svg.appendChild(el("line", {
+          class: "flip-rule", x1: x(flipIdx), x2: x(flipIdx), y1: M.t, y2: M.t + PH
+        }));
+        var ft = el("text", {
+          class: "flip-text", x: x(flipIdx) + 5, y: M.t + 10,
+          "text-anchor": x(flipIdx) > M.l + PW * 0.6 ? "end" : "start"
+        });
+        if (x(flipIdx) > M.l + PW * 0.6) { ft.setAttribute("x", x(flipIdx) - 5); }
+        ft.textContent = "naive overtaken";
+        svg.appendChild(ft);
+      }
+
+      DRAWN.forEach(function (s) {
+        var d = rows.map(function (r, i) {
+          return (i ? "L" : "M") + x(i).toFixed(1) + " " + y(r[s.idx]).toFixed(1);
+        }).join(" ");
+        var path = el("path", { class: "series-line", d: d });
+        path.style.stroke = css(s.token);   // style, not attribute: var() needs the cascade
+        svg.appendChild(path);
+      });
+
+      var rule = el("line", { class: "cross-rule", y1: M.t, y2: M.t + PH, x1: 0, x2: 0 });
+      svg.appendChild(rule);
+      var dots = DRAWN.map(function (s) {
+        var c = el("circle", { class: "cross-dot", r: 4.5, cx: 0, cy: 0 });
+        c.style.fill = css(s.token);
+        svg.appendChild(c);
+        return c;
+      });
+
+      var hit = el("rect", { x: M.l, y: M.t, width: PW, height: PH, fill: "transparent" });
+      svg.appendChild(hit);
+
+      var tip = document.getElementById("tip");
+      hit.addEventListener("pointermove", function (e) {
+        var box = svg.getBoundingClientRect();
+        var px = (e.clientX - box.left) / box.width * W;
+        var i = Math.round((px - M.l) / PW * (n - 1));
+        i = Math.max(0, Math.min(n - 1, i));
+        var r = rows[i];
+
+        rule.setAttribute("x1", x(i));
+        rule.setAttribute("x2", x(i));
+        rule.style.opacity = "1";
+        dots.forEach(function (c, k) {
+          c.setAttribute("cx", x(i));
+          c.setAttribute("cy", y(r[DRAWN[k].idx]));
+          c.style.opacity = "1";
+        });
+
+        var best = NAMES[[2, 3, 4, 5, 6].reduce(function (a, b) { return r[a] <= r[b] ? a : b; }) - 2];
+        var skill = 100 * (1 - r[2] / r[3]);
+        tip.innerHTML = "";
+        var head = document.createElement("div");
+        head.className = "t-name";
+        head.textContent = "h = " + r[0] + "  ·  n = " + r[1];
+        tip.appendChild(head);
+        DRAWN.forEach(function (s) {
+          var line = document.createElement("div");
+          line.className = "t-why";
+          line.textContent = s.label + ": " + r[s.idx].toFixed(2);
+          line.style.color = css(s.token);
+          tip.appendChild(line);
+        });
+        var foot = document.createElement("div");
+        foot.className = "t-why";
+        foot.textContent = "skill vs naive " + (skill >= 0 ? "+" : "") + skill.toFixed(1) + "%  ·  best: " + best;
+        tip.appendChild(foot);
+
+        tip.style.opacity = "1";
+        var pad = 14;
+        tip.style.left = Math.min(e.clientX + pad, window.innerWidth - tip.offsetWidth - 8) + "px";
+        tip.style.top = Math.min(e.clientY + pad, window.innerHeight - tip.offsetHeight - 8) + "px";
+      });
+      hit.addEventListener("pointerleave", function () {
+        rule.style.opacity = "0";
+        dots.forEach(function (c) { c.style.opacity = "0"; });
+        tip.style.opacity = "0";
+      });
+
+      // Table view, so identity is never carried by color alone.
+      var body = document.getElementById(run.tbody);
+      rows.forEach(function (r) {
+        var vals = [r[2], r[3], r[4], r[5], r[6]];
+        var min = Math.min.apply(null, vals);
+        var winner = NAMES[vals.indexOf(min)];
+        var skill = 100 * (1 - r[2] / r[3]);
+        var tr = document.createElement("tr");
+
+        var th = document.createElement("td");
+        th.className = "name";
+        th.textContent = r[0];
+        tr.appendChild(th);
+
+        var tn = document.createElement("td");
+        tn.className = "num";
+        tn.textContent = r[1];
+        tr.appendChild(tn);
+
+        vals.forEach(function (v) {
+          var td = document.createElement("td");
+          td.className = "num" + (v === min ? " best" : "");
+          td.textContent = v.toFixed(2);
+          tr.appendChild(td);
+        });
+
+        var ts = document.createElement("td");
+        ts.className = skill >= 0 ? "win" : "lose";
+        ts.textContent = (skill >= 0 ? "+" : "−") + Math.abs(skill).toFixed(1) + "%";
+        tr.appendChild(ts);
+
+        var tw = document.createElement("td");
+        tw.className = "num";
+        tw.style.textAlign = "left";
+        tw.textContent = winner;
+        tr.appendChild(tw);
+
+        body.appendChild(tr);
+      });
+    });
+  })();
+</script>

@@ -1,0 +1,200 @@
+{
+  "input": {
+    "dataset_path": "path/to/data.csv",
+    "target_column": "outcome",
+    "features_to_process": [
+      "blood_sugar"
+    ],
+    "mode": "initial",
+    "mode_reasoning": "first Preprocess call this run — nothing to build on yet, starts from the raw dataset",
+    "context": [
+      {
+        "type": "previous_step",
+        "source_node": "eda",
+        "source_iteration": 1,
+        "content": {
+          "recommended_strategy": {
+            "narrative": "Wide dataset with several high-cardinality categorical fields — tree-based models and target/frequency encoding likely outperform one-hot + linear models. Normalize gender categories and drop PII/leakage columns before preprocessing. Start with blood_sugar given strongest target correlation.",
+            "confidence": "medium"
+          },
+          "key_findings": [
+            "Target is imbalanced (0.32) — recall recommended as the primary metric",
+            "87 columns available, but only a handful show strong target relevance"
+          ],
+          "limitations": []
+        }
+      },
+      {
+        "type": "planner_selected",
+        "source_node": "eda",
+        "source_iteration": 1,
+        "reason": "specific missingness and leakage/PII flags needed to process blood_sugar and drop the right columns",
+        "content": {
+          "missingness": [
+            {
+              "name": "blood_sugar",
+              "missing_pct": 2.0,
+              "mechanism": "MCAR",
+              "mechanism_evidence": "missingness indicator shows no meaningful correlation with other observed features or with the target",
+              "suggested_action": "impute with median",
+              "confidence": "medium"
+            }
+          ],
+          "data_quality_issues": {
+            "out_of_range_values": []
+          },
+          "flags": {
+            "possible_leakage": [
+              {
+                "name": "visit_id",
+                "note": "flagged as possible leakage in EDA"
+              }
+            ],
+            "pii_sensitive": [
+              {
+                "name": "patient_name",
+                "note": "PII, not usable as a feature"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "type": "planner_selected",
+        "source_node": "eda",
+        "source_iteration": 1,
+        "reason": "grouping_structure needed to create a leakage-safe split — patients appear across multiple rows, so the split must be group-aware, not row-aware",
+        "content": {
+          "dataset_overview": {
+            "grouping_structure": {
+              "group_column": "patient_id",
+              "avg_rows_per_group": 1.8,
+              "max_rows_per_group": 11,
+              "note": "readmission dataset — many patients appear across multiple admissions, so rows are not independent"
+            }
+          }
+        }
+      }
+    ],
+    "already_processed": [],
+    "iteration": 2
+  },
+  "output": {
+    "schema_version": "2026-08-13",
+    "processed_dataset_path": "data/iteration_002_preprocess.csv",
+    "join_result": {
+      "sources_combined": [
+        "data/hospital_visits.csv",
+        "data/provider_lookup.csv"
+      ],
+      "rows_before": 250000,
+      "rows_after": 250000,
+      "realised_match_rate": 0.996,
+      "eda_estimated_match_rate": 0.997,
+      "rows_gaining_nulls": 987,
+      "keys_that_multiplied_rows": [],
+      "reasoning": "left join on attending_provider_id; realised rate within 0.1pp of EDA's estimate, so no issue raised"
+    },
+    "split_info": {
+      "created_this_call": true,
+      "method": "group_aware_stratified_on_target",
+      "group_by": "patient_id",
+      "train_pct": 80,
+      "validation_pct": 20,
+      "cv_design": "stratified 5-fold within the train partition, group-aware on patient_id",
+      "selection_noise_band": 0.011,
+      "selection_noise_band_metric": "AUC",
+      "horizon_gap": null,
+      "horizon_gap_note": "not a forecasting task - forecast_horizons holds a single value, so no origin gap is required. On a multi-horizon forecast this carries max(forecast_horizons) periods measured between the last train ORIGIN and the first validation ORIGIN (not between targets), names the horizon that set it, and records the rows dropped in between.",
+      "holdout_representativeness": "Rows are drawn from one population and the split is random rather than temporal, so there is no drift argument. Validation is nonetheless reused across every iteration while the external holdout is scored once, so these figures are expected to be mildly optimistic.",
+      "reasoning": "Deployment situation simulated: scoring new patients drawn from the same population. Neither boundary lands anywhere meaningful - the split is random within groups. A reasonable person might have split by admission date instead, to simulate forward deployment; not done here because EDA found no temporal trend in the target and the date coverage is only 14 months.",
+      "note": "EDA reported grouping_structure (patients appear across multiple rows) - split by patient_id first, so every row for a given patient falls entirely into one partition, then assigned group-wise to approximate the target stratification. No _split column existed yet, so one was created and persisted with TWO partitions (train/validation); every later node reuses this exact assignment. There is no test partition: the held-out data was removed before this run began and is scored after the pipeline finishes. Validation absorbs the repeated per-iteration evaluation that Diagnosis reasons over, and every metric this run reports is a validation metric.",
+      "regime_coverage": {
+        "_note": "Rows per identified regime per partition. A training partition holding 0% of a regime that validation or the expected holdout contains REJECTS the split — move to rolling origin so the last fold trains through the change, or move the boundary later.",
+        "regimes": [
+          {
+            "name": "pre_7day_week",
+            "from": null,
+            "to": "2020-05-31"
+          },
+          {
+            "name": "post_7day_week",
+            "from": "2020-06-01",
+            "to": null
+          }
+        ],
+        "train": {
+          "pre_7day_week": 2164,
+          "post_7day_week": 0
+        },
+        "validation": {
+          "pre_7day_week": 443,
+          "post_7day_week": 214
+        },
+        "verdict": "REJECTED in the example: train is 0% post-regime while the holdout is 100% post-regime. A model cannot learn a regime it has no examples of, and the failure is quiet because the pre-change validation rows carry the metrics."
+      }
+    },
+    "transformations_applied": [
+      {
+        "feature": "blood_sugar",
+        "missing_handling": {
+          "method": "median_imputation",
+          "value_used": 142.0,
+          "fit_on": "train_split_only",
+          "missing_indicator_added": false,
+          "source_mechanism": "MCAR",
+          "reasoning": "EDA classified this column's missingness as MCAR (missingness indicator shows no meaningful correlation with other observed features or with the target) — median chosen over mean since the feature is moderately skewed, per the MCAR row of the missingness table",
+          "confidence": "high"
+        },
+        "outlier_handling": {
+          "method": "clip_iqr",
+          "outlier_detection_method_source": "matches feature_stats_summary.numeric.outlier_detection_method from EDA iteration 1 (iqr_1.5x), for a valid before/after comparison",
+          "bounds": [
+            40,
+            310
+          ],
+          "fit_on": "train_split_only",
+          "reasoning": "EDA flagged these as plausible genuine extreme readings, not data entry errors — clipping preserves the rows rather than dropping them, while preventing them from dominating a distance-based model",
+          "confidence": "medium"
+        },
+        "scaling": {
+          "method": "none_needed",
+          "fit_on": "not_applicable",
+          "reasoning": "EDA's recommended_strategy explicitly favors tree-based models for this dataset — scaling is unnecessary for tree-based splits, so it's skipped by default per the decision table. If Training ends up choosing a scale-sensitive model instead, scaling would need to be revisited in a later Preprocess call.",
+          "confidence": "medium"
+        }
+      }
+    ],
+    "encoding_applied": [],
+    "dropped_columns": [
+      {
+        "name": "visit_id",
+        "reason": "flagged as possible leakage in EDA (iteration 1)"
+      },
+      {
+        "name": "patient_name",
+        "reason": "PII, not usable as a feature"
+      }
+    ],
+    "post_transform_stats": [
+      {
+        "feature": "blood_sugar",
+        "missing_pct": 0.0,
+        "skew": 0.3,
+        "outliers": 0,
+        "outlier_detection_method": "iqr_1.5x"
+      }
+    ],
+    "clarification_needed": [],
+    "issues": [],
+    "artifact_paths": {
+      "plots": [
+        {
+          "path": "artifacts/preprocess/iteration_002_preprocess_blood_sugar_before_after.png",
+          "data_path": "artifacts/preprocess/iteration_002_preprocess_blood_sugar_before_after.csv",
+          "reason": "verify imputation and scaling didn't distort the distribution"
+        }
+      ]
+    }
+  }
+}

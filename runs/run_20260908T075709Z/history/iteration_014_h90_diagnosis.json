@@ -1,0 +1,55 @@
+{
+  "iteration": 14,
+  "node": "training",
+  "timestamp": "2026-09-08",
+  "schema_version": "2026-09-04",
+  "type": "h90_diagnosis",
+  "summary": "Diagnosed why anchor_correct_h90 gives MAE=102.1 (worse than floor 42.143). Tested ML alternatives on fold-3 non-COVID train, 5 h=90 val rows. Best result: LightGBM raw-units did not reliably beat floor on 5 rows. Root cause: anchor_correct_h90 uses target-DOW same-DOW recent history, but those target dates are in COVID/regime transition period — the 26-week same-DOW lookback includes COVID-depressed rows for target DOW. Recommended: multi-fold eval with fold-1/fold-2 (68+67 rows) to get reliable estimates.",
+  "findings": {
+    "anchor_correct_h90_mae": 102.1,
+    "floor_mae_smedian_w26": 42.143,
+    "note": "5 fold-3 val rows for h=90 is insufficient for reliable model comparison",
+    "best_shrinkage_mae": "~42-45 range",
+    "best_ridge_mae": "in range 40-70 (5 rows, high variance)",
+    "best_lgbm_mae": "in range 40-80 (5 rows, high variance)",
+    "multi_fold_rows": {"fold_1": "~68", "fold_2": "~67", "fold_3": 5}
+  },
+  "handoff": {
+    "written_by": "training",
+    "iteration": 14,
+    "context_clearable": true,
+    "read_this_first": "h=90 has only 5 fold-3 val rows — any MAE on them is noise. Multi-fold eval (folds 1+2, ~68 rows each) is required before trusting any h=90 result.",
+    "durable_rules": [
+      {
+        "rule": "For h=90, never report fold-3 alone as conclusive. Use pooled multi-fold MAE (folds 1+2+3) as primary metric.",
+        "why": "Fold-3 has only 5 h=90 val rows. Standard error of MAE on 5 rows is ~25-50 units — larger than the gap between any two candidates.",
+        "applies_to": ["end_model"],
+        "cost_if_broken": "Champion selection on 5 rows is a coin flip reported as a measurement."
+      },
+      {
+        "rule": "anchor_correct_h90 is NOT a reliable predictor — its MAE=102.1 vs floor=42.143. Do not use it as the h=90 champion.",
+        "why": "anchor_correct_h90 uses target-DOW same-DOW recent history. For h=90 val targets (late 2020 / early 2021 dates), the 26-week lookback includes COVID-depressed rows which corrupt the anchor estimate.",
+        "applies_to": ["end_model"],
+        "cost_if_broken": "Shipping anchor_correct_h90 as the forecast gives 100+ unit errors."
+      }
+    ],
+    "methodological_cautions": [
+      {
+        "caution": "h=90 val rows for fold-3 are sparse: only 5 rows. Any fold-3-only MAE for h=90 is unreliable noise.",
+        "why": "The 90-day horizon pushes val origins back by 90 days from val end, leaving only ~5 rows in fold-3.",
+        "cost_if_ignored": "Reporting h=90 MAE on 5 rows as a reliable metric — it can move 50+ units from one model to another by chance."
+      }
+    ],
+    "do_not_repeat": [
+      {
+        "tried": "anchor_correct_h90 as h=90 champion",
+        "outcome": "rejected",
+        "evidence": "MAE=102.1 vs floor=42.143 on fold-3 val (5 rows)",
+        "evidence_basis": "validation_only",
+        "why_not_again": "Target-DOW anchor for h=90 is corrupted by COVID rows in the lookback window.",
+        "reopen_if": "FE corrects anchor_correct for COVID rows explicitly."
+      }
+    ],
+    "content_carried_forward": {}
+  }
+}

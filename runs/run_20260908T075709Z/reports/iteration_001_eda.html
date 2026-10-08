@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>element61 · EDA · Iteration 001</title>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Open+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+:root{
+  --e61-orange-red:#FC5B00;--e61-orange:#FC9808;--e61-yellow:#FCBA08;
+  --e61-magenta:#9D1D56;--e61-purple:#301D56;
+  --e61-ink:#1A1230;--e61-ink-2:#301D56;--e61-ink-3:#5B5070;--e61-ink-4:#8B8298;
+  --e61-line:#E6E2EC;--e61-line-2:#D8D2E0;--e61-surface:#FFFFFF;
+  --e61-bg:#FAF8F5;--e61-bg-warm:#FFF6EC;--e61-bg-cool:#F2EEF6;
+  --e61-success:#2F8F5C;--e61-warning:#FCBA08;--e61-danger:#C0294A;--e61-info:#2F6BB3;
+  --font-display:"Montserrat","Helvetica Neue",system-ui,sans-serif;
+  --font-body:"Open Sans","Helvetica Neue",Arial,system-ui,sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:24px;--space-6:32px;--space-7:48px;
+  --radius-sm:4px;--radius-md:8px;--radius-lg:14px;--radius-xl:22px;--radius-pill:999px;
+  --shadow-1:0 1px 2px rgba(48,29,86,.06),0 1px 1px rgba(48,29,86,.04);
+  --shadow-2:0 4px 16px rgba(48,29,86,.08),0 1px 2px rgba(48,29,86,.04);
+  --shadow-3:0 10px 28px rgba(48,29,86,.12),0 2px 6px rgba(48,29,86,.06);
+  --shadow-focus:0 0 0 3px rgba(252,91,0,.28);
+  --ease-standard:cubic-bezier(0.2,0.7,0.2,1);--dur-fast:120ms;--dur-base:200ms;
+  --accent:#FC5B00;
+}
+/* ── RESET & DECK ENGINE ── */
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--e61-bg);color:var(--e61-ink-2);font-family:var(--font-body);line-height:1.6;scroll-snap-type:y proximity;height:100%;overflow-y:auto;scroll-behavior:smooth}
+h1,h2,h3,h4{font-family:var(--font-display);color:var(--e61-ink);margin:0 0 .5em;font-weight:700;text-wrap:balance}
+p{margin:0 0 1em}
+a{color:var(--e61-orange-red)}
+.mono{font-family:var(--font-mono)}
+img{max-width:100%;display:block}
+/* ── TOP BAR ── */
+.topbar{position:fixed;top:0;left:0;right:0;height:3px;background:var(--e61-line);z-index:201}
+.topbar-fill{height:100%;background:linear-gradient(135deg,var(--e61-yellow) 0%,var(--e61-orange) 50%,var(--e61-orange-red) 100%);width:0;transition:width .25s}
+/* ── DOT NAV ── */
+.dotnav{position:fixed;right:20px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:9px;z-index:200}
+.dotnav button{width:9px;height:9px;border-radius:50%;border:none;background:var(--e61-line-2);cursor:pointer;padding:0;transition:background .2s,transform .2s}
+.dotnav button.active{background:var(--e61-orange-red);transform:scale(1.5)}
+.dotnav button:hover{background:var(--e61-orange)}
+/* ── NAVBAR ── */
+.navbar{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:14px;background:rgba(26,18,48,.88);backdrop-filter:blur(6px);border-radius:999px;padding:9px 18px;z-index:200;box-shadow:var(--shadow-3)}
+.navbar button{background:none;border:none;color:#fff;font-size:1rem;cursor:pointer;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.navbar button:hover{background:rgba(255,255,255,.15)}
+.navbar button:disabled{opacity:.3;cursor:default}
+.navbar .counter{font-family:var(--font-mono);font-size:.72rem;color:rgba(255,255,255,.85);min-width:52px;text-align:center}
+/* ── SLIDE SHELL ── */
+.slide{min-height:100vh;scroll-snap-align:start;display:flex;flex-direction:column;justify-content:center;padding:88px 64px 96px;position:relative;border-bottom:1px solid var(--e61-line);box-sizing:border-box}
+.slide-inner{max-width:1180px;margin:0 auto;width:100%}
+.slide-num{position:absolute;top:28px;left:64px;font-family:var(--font-mono);font-size:.72rem;letter-spacing:.1em;color:var(--e61-ink-4);text-transform:uppercase}
+.slide-tag{position:absolute;top:28px;right:64px;font-family:var(--font-mono);font-size:.72rem;color:var(--e61-ink-4)}
+@media(max-width:700px){.slide{padding:72px 24px 80px}.slide-num,.slide-tag{left:24px;right:24px}}
+/* ── COVER ── */
+.cover{min-height:100vh;scroll-snap-align:start;background:var(--e61-bg);color:var(--e61-ink);display:flex;flex-direction:column;justify-content:center;padding:64px 64px 64px 68px;position:relative;overflow:hidden;box-sizing:border-box;border-left:6px solid var(--accent)}
+.cover-inner{position:relative;max-width:980px;margin:0 auto;width:100%}
+.cover .logo{font-family:var(--font-display);font-weight:800;font-size:1rem;letter-spacing:.02em;color:var(--accent);margin-bottom:40px}
+.cover h1{font-family:var(--font-display);font-weight:700;font-size:2.6rem;color:var(--e61-purple);line-height:1.15;margin:0 0 18px}
+.cover .sub{font-size:1.05rem;color:var(--e61-ink-3);max-width:680px;margin-bottom:34px}
+@media(max-width:700px){.cover h1{font-size:1.9rem}}
+/* ── EMPHASIS SLIDES ── */
+.slide.dark{background:var(--e61-bg-cool);border-left:6px solid var(--e61-purple)}
+.slide.dark h1,.slide.dark h2,.slide.dark h3,.slide.dark h4{color:var(--e61-purple)}
+.slide.warm{background:var(--e61-bg-warm);border-left:6px solid var(--e61-orange-red)}
+.slide.warm h1,.slide.warm h2,.slide.warm h3{color:var(--e61-ink)}
+/* ── EYEBROW ── */
+.eyebrow{font-family:var(--font-body);font-size:.8125rem;font-weight:600;text-transform:uppercase;letter-spacing:.14em;color:var(--e61-orange-red);margin-bottom:10px;display:block}
+/* ── KPI TILES ── */
+.kpi-row,.kpi-row-lt{display:flex;gap:14px;flex-wrap:wrap;margin-top:20px}
+.kpi{background:#fff;border:1px solid var(--e61-line);border-radius:14px;box-shadow:var(--shadow-1);padding:16px 22px;min-width:150px}
+.kpi-val{font-family:var(--font-display);font-size:1.7rem;font-weight:700;color:var(--e61-purple)}
+.kpi-lbl{font-size:.72rem;margin-top:4px;color:var(--e61-ink-3)}
+/* ── PILLS / BADGES ── */
+.pill{display:inline-flex;align-items:center;gap:8px;padding:8px 22px;border-radius:999px;font-family:var(--font-display);font-weight:700;font-size:.9rem;margin-bottom:10px}
+.pill-ok{background:var(--e61-success);color:#fff}
+.pill-danger{background:var(--e61-danger);color:#fff}
+.badge{display:inline-block;font-family:var(--font-display);font-size:.62rem;font-weight:700;padding:3px 9px;border-radius:5px;letter-spacing:.05em;text-transform:uppercase}
+.b-hi{background:var(--e61-success);color:#fff}.b-med{background:var(--e61-warning);color:var(--e61-ink)}
+.b-lo{background:var(--e61-magenta);color:#fff}.b-lk{background:var(--e61-danger);color:#fff}
+.b-nc{background:var(--e61-line);color:var(--e61-ink-3)}.b-ok{background:#D1FAE5;color:#065F46}
+.b-used{background:#D1FAE5;color:#065F46}.b-notused{background:#FEE2E2;color:#991B1B}
+/* ── CARDS & GRIDS ── */
+.card{background:var(--e61-surface);border:1px solid var(--e61-line);border-radius:16px;padding:22px 24px;box-shadow:var(--shadow-1)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.grid-lead{display:grid;grid-template-columns:2fr 1fr;gap:18px;align-items:start}
+@media(max-width:900px){.grid-2,.grid-3,.grid-4,.grid-lead{grid-template-columns:1fr}}
+.finding-card{background:#fff;border-left:4px solid var(--accent);border-radius:0 14px 14px 0;padding:18px 20px;box-shadow:var(--shadow-1);font-size:.92rem;color:var(--e61-ink-2);line-height:1.6}
+/* ── PLOT CARD ── */
+.plot-card{background:#fff;border-radius:16px;border:1px solid var(--e61-line);overflow:hidden;box-shadow:var(--shadow-2)}
+.plot-card img{width:100%;cursor:zoom-in}
+.plot-cap{padding:14px 18px;font-size:.8rem;color:var(--e61-ink-3);border-top:1px solid var(--e61-line)}
+.plot-cap b{color:var(--e61-ink-2)}
+/* ── KPI MINI ── */
+.kpi-mini-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:900px){.kpi-mini-row{grid-template-columns:1fr}}
+.kpi-mini{background:#fff;border:1px solid var(--e61-line);border-radius:12px;box-shadow:var(--shadow-1);padding:16px 18px}
+.kpi-mini-label{font-size:.7rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--e61-ink-3);margin-bottom:4px}
+.kpi-mini-val{font-family:var(--font-display);font-size:1.25rem;font-weight:700;color:var(--accent)}
+.kpi-mini-note{font-size:.72rem;color:var(--e61-ink-3);margin-top:4px;line-height:1.4}
+/* ── HERO STAT ── */
+.hero-stat-lbl{font-size:.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--e61-ink-3);margin-bottom:4px}
+.hero-stat-val{font-family:var(--font-display);font-size:2.4rem;font-weight:700;color:var(--accent);line-height:1.05}
+.hero-stat-note{font-size:.86rem;color:var(--e61-ink-3);margin-top:6px;max-width:520px;line-height:1.5}
+/* ── CHIPS ── */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+.chip{background:var(--e61-bg-cool);border:1px solid var(--e61-line-2);border-radius:8px;padding:5px 12px;font-size:.78rem;font-family:var(--font-mono);color:var(--e61-ink-3)}
+.chip span{color:var(--e61-purple);font-weight:500}
+/* ── TABLE ── */
+table{width:100%;border-collapse:collapse;font-size:.84rem}
+th{text-align:left;padding:9px 12px;font-family:var(--font-display);font-size:.7rem;color:var(--e61-ink-3);border-bottom:2px solid var(--e61-line);font-weight:600;background:var(--e61-bg-cool);text-transform:uppercase;letter-spacing:.04em}
+td{padding:9px 12px;border-bottom:1px solid var(--e61-line);color:var(--e61-ink-2);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr.ok-row td:first-child{border-left:3px solid var(--e61-success)}
+tr.warn-row td:first-child{border-left:3px solid var(--e61-warning)}
+tr.danger-row td:first-child{border-left:3px solid var(--e61-danger)}
+/* ── DETAILS DISCLOSURE ── */
+.details-btn{font-family:var(--font-display);font-weight:600;font-size:.78rem;color:var(--e61-orange-red);background:var(--e61-bg-warm);border:1px solid #FCE0BE;border-radius:999px;padding:8px 16px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .15s}
+.details-btn:hover{background:#FFE8CC}
+.details-btn::after{content:"▾";font-size:.65rem;transition:transform .2s}
+.details-btn.open::after{transform:rotate(180deg)}
+.details-panel{max-height:0;overflow:hidden;transition:max-height .35s ease;margin-top:0}
+.details-panel.open{max-height:900px;margin-top:14px}
+.details-panel .inner{background:#fff;border-left:3px solid var(--e61-purple);border-radius:0 10px 10px 0;padding:14px 18px;font-size:.86rem;color:var(--e61-ink-2);line-height:1.7}
+/* ── LIMITS LIST ── */
+.limits-list{list-style:none;padding:0;margin:0}
+.limits-list li{position:relative;padding-left:22px;margin-bottom:10px;font-size:.88rem;color:var(--e61-ink-2)}
+.limits-list li::before{content:"●";position:absolute;left:0;color:var(--e61-yellow);font-size:.6rem;top:.45em}
+/* ── IMAGE MODAL ── */
+.img-modal{display:none;position:fixed;inset:0;background:rgba(26,18,48,.6);z-index:500;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(3px)}
+.img-modal.open{display:flex}
+.img-modal-inner{background:#fff;border-radius:18px;box-shadow:var(--shadow-3);display:grid;grid-template-columns:1.4fr 1fr;max-width:1040px;width:100%;max-height:88vh;overflow:hidden;position:relative}
+.img-modal-close{position:absolute;top:12px;right:12px;background:var(--e61-line);border:none;border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:.85rem;color:var(--e61-ink-2);z-index:10}
+.img-modal-close:hover{background:var(--e61-danger);color:#fff}
+.img-modal-img-wrap{background:var(--e61-bg);display:flex;align-items:center;justify-content:center;padding:24px;overflow:hidden}
+.img-modal-img-wrap img{max-width:100%;max-height:76vh;height:auto;border-radius:10px;object-fit:contain}
+.img-modal-meta{padding:28px 26px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;border-left:1px solid var(--e61-line)}
+.img-modal-name{font-family:var(--font-display);font-size:1.05rem;font-weight:700;color:var(--e61-purple)}
+.img-modal-body{font-size:.9rem;color:var(--e61-ink-2);line-height:1.7}
+@media(max-width:700px){.img-modal-inner{grid-template-columns:1fr;max-height:92vh}.img-modal-meta{border-left:none;border-top:1px solid var(--e61-line)}}
+@media print{.dotnav,.navbar,.topbar{display:none}.slide,.cover{min-height:0;page-break-after:always}}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="topbar-fill" id="topbarFill"></div></div>
+<div class="dotnav" id="dotnav"></div>
+<div class="navbar">
+  <button id="prevBtn" title="Previous (←)">‹</button>
+  <span class="counter" id="counter">1 / 11</span>
+  <button id="nextBtn" title="Next (→)">›</button>
+</div>
+
+<!-- SLIDE 0 — COVER -->
+<section class="cover slide-item" data-title="Cover">
+  <div class="cover-inner">
+    <div class="logo">element61 &nbsp;·&nbsp; pipeline</div>
+    <span class="eyebrow">EDA REPORT &nbsp;·&nbsp; ITERATION 001 &nbsp;·&nbsp; run_20260908T075709Z</span>
+    <h1>Exploratory Data Analysis — Daily Bread Demand, Branch 01</h1>
+    <p class="sub">Analysis of 2,897 trading-day records from 2010-11-16 to 2020-12-31, sourced from 3,212 XML sales files. Covers target distribution, temporal structure, day-of-week seasonality, a structural regime change, data source assessment, and CV split design constraints. All numbers trace to <span class="mono">history/iteration_001_eda.json</span>.</p>
+    <div class="kpi-row-lt">
+      <div class="kpi"><div class="kpi-val">2,897</div><div class="kpi-lbl">Trading-day rows</div></div>
+      <div class="kpi"><div class="kpi-val">2010–2020</div><div class="kpi-lbl">Date range</div></div>
+      <div class="kpi"><div class="kpi-val">315.9</div><div class="kpi-lbl">Target mean (units/day)</div></div>
+      <div class="kpi"><div class="kpi-val">MAE</div><div class="kpi-lbl">Recommended metric</div></div>
+      <div class="kpi"><div class="kpi-val">6</div><div class="kpi-lbl">Forecast horizons</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 1 — AGENDA -->
+<section class="slide slide-item" data-title="Agenda">
+  <div class="slide-num">01 / 11</div><div class="slide-tag">Agenda</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Contents</span>
+    <h2>Report Structure</h2>
+    <div class="grid-3" style="margin-top:24px">
+      <div class="card"><b class="mono" style="color:var(--accent)">02</b><br><b>Overview &amp; Feasibility</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">Source inventory, feasibility verdict, data scope and time coverage</span></div>
+      <div class="card"><b class="mono" style="color:var(--accent)">03</b><br><b>Key Findings</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">Six structural findings: seasonality, trend, regime change, zero-demand days, data gaps, and data source constraints</span></div>
+      <div class="card"><b class="mono" style="color:var(--accent)">04</b><br><b>Target Analysis</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">Distribution statistics, autocorrelation at all horizons, and provisional naive MAE baselines</span></div>
+      <div class="card"><b class="mono" style="color:var(--accent)">05</b><br><b>Day-of-Week Seasonality</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">DOW demand pattern and regime-change impact on weekly structure</span></div>
+      <div class="card"><b class="mono" style="color:var(--accent)">06</b><br><b>Trend &amp; Annual Pattern</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">−28.7% long-term decline, 2020 regime change, COVID closures — the most significant structural finding</span></div>
+      <div class="card"><b class="mono" style="color:var(--accent)">07–09</b><br><b>Plots</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">Target series &amp; ACF, target distribution</span></div>
+      <div class="card"><b class="mono" style="color:var(--accent)">10</b><br><b>Data Sources</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">Assessment of all six data sources: used, conditionally used, or rejected</span></div>
+      <div class="card"><b class="mono" style="color:var(--accent)">11</b><br><b>Durable Rules &amp; Cautions</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">Binding modelling constraints and methodological cautions for downstream skills</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 2 — OVERVIEW & FEASIBILITY -->
+<section class="slide slide-item" data-title="Overview">
+  <div class="slide-num">02 / 11</div><div class="slide-tag">Overview</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Feasibility &amp; Data Scope</span>
+    <h2>Dataset Feasible for Multi-Horizon Forecasting</h2>
+    <div style="margin-bottom:20px">
+      <span class="pill pill-ok">✓ FEASIBLE</span>
+    </div>
+    <p style="max-width:700px;color:var(--e61-ink-3);margin-bottom:24px">2,897 genuine trading-day rows after deduplication of 95 duplicate XML dates. Daily bread quantity (argcod=1, branch 01 POS) is a count-like positive integer well-suited to MAE optimisation. MAPE is unsafe given 50 zero-demand days. RMSE would over-penalise rare extreme days.</p>
+    <div class="grid-2">
+      <div class="card">
+        <h3 style="margin-bottom:14px">Time Coverage</h3>
+        <div style="font-family:var(--font-mono);font-size:1.3rem;font-weight:700;color:var(--e61-purple);margin-bottom:16px">2010-11-16 → 2020-12-31</div>
+        <div class="chips">
+          <div class="chip">n = <span>2,897</span> trading days</div>
+          <div class="chip">3,212 XML source files</div>
+          <div class="chip">95 duplicate dates deduped</div>
+          <div class="chip">Regime change: <span>2020-06-01</span></div>
+          <div class="chip">Weather coverage: <span>2015+</span></div>
+          <div class="chip">Competitor coverage: <span>2017+</span></div>
+          <div class="chip">2014 sparse: <span>64 days</span></div>
+          <div class="chip">COVID zeros 2020: <span>24 days</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3 style="margin-bottom:14px">Data Source Summary</h3>
+        <table>
+          <thead><tr><th>Source</th><th>Status</th><th>Key note</th></tr></thead>
+          <tbody>
+            <tr class="ok-row"><td class="mono">salesdata</td><td><span class="badge b-used">USED</span></td><td>2,897 rows, pre-parsed CSV (3,212 XMLs)</td></tr>
+            <tr class="ok-row"><td class="mono">productdata</td><td><span class="badge b-used">USED</span></td><td>argcod=1 filter; 139 bread articles sold</td></tr>
+            <tr class="ok-row"><td class="mono">storedata</td><td><span class="badge b-used">USED</span></td><td>Confirms regime change 2020-06-01</td></tr>
+            <tr class="ok-row"><td class="mono">weatherdata</td><td><span class="badge b-used">USED</span></td><td>Hourly parquet; 2015–2020 only; col=Date_time</td></tr>
+            <tr class="ok-row"><td class="mono">VerlofConcurrent.csv</td><td><span class="badge b-used">USED</span></td><td>Competitor holidays 2017–2020; sep=';'</td></tr>
+            <tr class="danger-row"><td class="mono">deliverydata</td><td><span class="badge b-notused">NOT USED</span></td><td>Wholesale channel; no branch 01 tie-in</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 3 — KEY FINDINGS -->
+<section class="slide slide-item" data-title="Findings">
+  <div class="slide-num">03 / 11</div><div class="slide-tag">Key Findings</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Structural Findings</span>
+    <h2>Six Structural Properties Shape Modelling Decisions</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px">
+      <div class="finding-card"><b>Weekly seasonality is the dominant structure</b><br>ACF lag-6 = 0.582 (pre-regime), lag-7 = 0.308 (post-regime). Same-day-of-week lookback features are the primary signal source. Day-to-day carry-forward (lag-1 = 0.325) is secondary.</div>
+      <div class="finding-card"><b>Persistent downward trend: −28.7% over 10 years</b><br>OLS slope = −0.039 units/day. ADF p = 0.0005 (stationary — not a random walk but trend-stationary). A year_trend feature is required to capture the ongoing level decline.</div>
+      <div class="finding-card"><b>Structural regime change 2020-06-01</b><br>Store switched from 6-day (Mon closed) to 7-day trading. Pre-regime mean 318.3 → post-regime 285.0 (−10.5%). The seasonal period changes from 6 to 7 trading days/week. Rolling-origin CV must straddle this boundary.</div>
+      <div class="finding-card"><b>50 zero-demand days — not randomly distributed</b><br>24 in 2020 (COVID lockdown March–May); remainder are likely Belgian public holidays. Zero-demand days must stay in the series (they affect multi-day forecasts) but are flagged via an <span class="mono">is_zero_demand</span> binary feature.</div>
+      <div class="finding-card"><b>2014 data is severely sparse: 64 trading days vs ~250 expected</b><br>Cause unknown; confirmed in protocol.json. CV folds spanning 2013–2015 will have uneven coverage. Annual seasonality features computed on 2014 will be unreliable. Feature engineering must handle this explicitly.</div>
+      <div class="finding-card"><b>Medium/long-horizon autocorrelation is strong</b><br>ACF lag-30 = 0.500, lag-60 = 0.465, lag-90 = 0.418. Seasonal median naive predictors at h=30–90 are a strong baseline. Models must include same-DOW rolling features at these horizons to be competitive.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 4 — TARGET ANALYSIS -->
+<section class="slide slide-item" data-title="Target Analysis">
+  <div class="slide-num">04 / 11</div><div class="slide-tag">Target Analysis</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Distribution, Autocorrelation &amp; Provisional Baselines</span>
+    <h2>Target: Daily Bread Quantity (Units Sold)</h2>
+    <div class="grid-2" style="margin-top:20px">
+      <div>
+        <div class="card" style="margin-bottom:16px">
+          <h3 style="margin-bottom:12px">Distribution Statistics</h3>
+          <table>
+            <thead><tr><th>Statistic</th><th>Value</th></tr></thead>
+            <tbody>
+              <tr><td>Mean</td><td><b>315.9</b></td></tr>
+              <tr><td>Std dev</td><td>84.1</td></tr>
+              <tr><td>Min</td><td>0 <span class="badge b-med" style="font-size:.55rem">50 zero-demand days</span></td></tr>
+              <tr><td>Max</td><td>691</td></tr>
+              <tr><td>Skew</td><td>−0.386 (mild left-skew)</td></tr>
+              <tr><td>Trend slope</td><td>−0.039 units/day → −28.7% over 10 yr</td></tr>
+              <tr><td>ADF p-value</td><td>0.0005 (trend-stationary)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <h3 style="margin-bottom:12px">Provisional Naive MAE (same-DOW seasonal median)</h3>
+          <p style="font-size:.78rem;color:var(--e61-ink-3);margin-bottom:10px">Approximate baselines on full training series — authoritative baseline_floor comes from the baseline skill on held-out validation rows.</p>
+          <table>
+            <thead><tr><th>Horizon</th><th>Naive MAE</th></tr></thead>
+            <tbody>
+              <tr><td>h = 1</td><td>38.01</td></tr>
+              <tr><td>h = 7</td><td>40.73</td></tr>
+              <tr><td>h = 14</td><td>42.67</td></tr>
+              <tr><td>h = 30</td><td>44.14</td></tr>
+              <tr><td>h = 60</td><td>45.14</td></tr>
+              <tr><td>h = 90</td><td>47.54</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <h3 style="margin-bottom:12px">Autocorrelation at Forecast Horizons</h3>
+          <p style="font-size:.84rem;color:var(--e61-ink-3);margin-bottom:14px">Strong medium/long-horizon ACF confirms that same-DOW features will be useful well beyond h=7. Lag-1 lower than expected for daily retail — weekly DOW structure dominates short-range carry-forward.</p>
+          <table>
+            <thead><tr><th>Lag</th><th>ACF</th><th>Interpretation</th></tr></thead>
+            <tbody>
+              <tr><td>lag-1</td><td><b>0.325</b></td><td>Moderate day-to-day carry</td></tr>
+              <tr><td>lag-6</td><td><b style="color:var(--accent)">0.582</b></td><td>Dominant weekly (pre-regime)</td></tr>
+              <tr><td>lag-7</td><td>0.308</td><td>Weekly (post-regime 7-day period)</td></tr>
+              <tr><td>lag-14</td><td>0.087</td><td>Bi-weekly — weaker</td></tr>
+              <tr><td>lag-30</td><td><b>0.500</b></td><td>Monthly seasonal — strong</td></tr>
+              <tr><td>lag-60</td><td>0.465</td><td>Bi-monthly — strong</td></tr>
+              <tr><td>lag-90</td><td>0.418</td><td>Quarterly — meaningful</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="margin-top:16px;background:var(--e61-bg-cool);border:1px solid var(--e61-line-2);border-radius:12px;padding:16px 20px">
+          <div style="font-size:.75rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--e61-ink-3);margin-bottom:6px">Key constraint</div>
+          <p style="font-size:.88rem;color:var(--e61-ink-2);margin:0">Seasonal period is <b>6</b> trading days/week before 2020-06-01 (Mon closed) and <b>7</b> after. Lag and rolling-window features must use k=6 pre-regime and k=7 post-regime for same-DOW lookbacks — a universal k=7 will cross DOW boundaries in the pre-regime period.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 5 — DOW SEASONALITY -->
+<section class="slide slide-item" data-title="Seasonality">
+  <div class="slide-num">05 / 11</div><div class="slide-tag">Seasonality</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Weekly Pattern</span>
+    <h2>Strong Day-of-Week Structure; Sunday and Saturday Peak</h2>
+    <div class="grid-lead">
+      <div class="plot-card">
+        <img src="../artifacts/eda/iteration_001_eda_dow_seasonality.png" alt="DOW seasonality"
+             data-modal-title="dow_seasonality"
+             data-modal-body="DOW mean demand in units/day. Sunday (416.5) and Saturday (381.0) are the clear peak trading days; Friday (252.5) and Monday (241.5, post-regime only) are the lowest. The weekly pattern is the dominant within-week structure — any model feature that does not capture DOW will systematically mis-forecast across days of the week.">
+        <div class="plot-cap"><b>dow_seasonality</b> — Sunday peak 416.5, Saturday 381.0; Friday and Monday are troughs</div>
+      </div>
+      <div>
+        <table style="margin-bottom:16px">
+          <thead><tr><th>DOW</th><th>Mean (units)</th><th>n</th></tr></thead>
+          <tbody>
+            <tr><td>Sunday</td><td><b>416.5</b></td><td>477</td></tr>
+            <tr><td>Saturday</td><td><b>381.0</b></td><td>497</td></tr>
+            <tr><td>Tuesday</td><td>337.2</td><td>477</td></tr>
+            <tr><td>Wednesday</td><td>316.3</td><td>477</td></tr>
+            <tr><td>Thursday</td><td>305.8</td><td>478</td></tr>
+            <tr><td>Friday</td><td>252.5</td><td>460</td></tr>
+            <tr><td>Monday</td><td>241.5</td><td>31 <span class="badge b-med" style="font-size:.52rem">post-regime only</span></td></tr>
+          </tbody>
+        </table>
+        <div style="background:var(--e61-bg-warm);border-left:4px solid var(--e61-orange-red);border-radius:0 10px 10px 0;padding:14px 16px">
+          <b style="font-size:.82rem">Regime note</b>
+          <p style="font-size:.82rem;color:var(--e61-ink-3);margin:6px 0 0">Monday (n=31) appears only from 2020-06-01 onward. Pre-regime Mondays are excluded from the series — they would be structural zeros. The post-regime Monday mean (241.5) represents approximately 4–5 observations in CV fold 3 training, making Monday the most data-sparse DOW for model learning.</p>
+        </div>
+      </div>
+    </div>
+    <p style="margin-top:18px;font-size:.9rem;color:var(--e61-ink-3)">The dominant weekly seasonality (ACF lag-6 = 0.582) means that same-day-of-week seasonal median features are both the strongest naive baseline and the most important feature type for ML models. Any model without explicit DOW encoding will systematically mis-forecast the 164-unit spread between Sunday (416.5) and Friday (252.5).</p>
+  </div>
+</section>
+
+<!-- SLIDE 6 — TREND & ANNUAL PATTERN (EMPHASIS) -->
+<section class="slide dark slide-item" data-title="Trend & Regime">
+  <div class="slide-num">06 / 11</div><div class="slide-tag">Trend &amp; Regime Change</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Most Significant Structural Finding</span>
+    <h2>−28.7% Long-Term Decline and a Structural Regime Change in 2020</h2>
+    <div class="grid-2" style="margin-top:20px;margin-bottom:20px">
+      <div class="plot-card">
+        <img src="../artifacts/eda/iteration_001_eda_annual_trend.png" alt="Annual trend"
+             data-modal-title="annual_trend"
+             data-modal-body="Annual mean bread quantity 2010–2020. Persistent downward trend: −0.039 units/day OLS slope, −28.7% total decline over the series. ADF p=0.0005 confirms trend-stationarity (not a random walk). 2014 is an anomalous year with only 64 trading days vs ~250 expected. 2020 shows the combined effect of COVID closures (24 zero-demand days March–May) and the regime change (shop went 7/7 from June 2020).">
+        <div class="plot-cap"><b>annual_trend</b> — persistent −0.039 units/day; 2014 sparse (64 days); 2020 COVID + regime</div>
+      </div>
+      <div class="plot-card">
+        <img src="../artifacts/eda/iteration_001_eda_yoy_overlay.png" alt="YOY overlay"
+             data-modal-title="yoy_overlay"
+             data-modal-body="Year-on-year overlay of daily bread quantity, aligned by day-of-year. The consistent downward shift of each year's line confirms a monotone long-term decline rather than cyclical variation. The 2020 line drops sharply during the COVID lockdown period (March–May), then recovers partially post-lockdown. The seasonal shape (winter high, summer low) is stable across years — only the level changes.">
+        <div class="plot-cap"><b>yoy_overlay</b> — consistent annual level shift; 2020 COVID dip visible; seasonal shape stable</div>
+      </div>
+    </div>
+    <div class="grid-3">
+      <div class="kpi-mini">
+        <div class="kpi-mini-label">Total trend decline</div>
+        <div class="kpi-mini-val">−28.7%</div>
+        <div class="kpi-mini-note">2010→2020 | slope −0.039 units/day | ADF p=0.0005</div>
+      </div>
+      <div class="kpi-mini">
+        <div class="kpi-mini-label">Regime change level drop</div>
+        <div class="kpi-mini-val">−10.5%</div>
+        <div class="kpi-mini-note">Pre-mean 318.3 → post-mean 285.0 (2020-06-01)</div>
+      </div>
+      <div class="kpi-mini">
+        <div class="kpi-mini-label">COVID zero-demand days</div>
+        <div class="kpi-mini-val">24</div>
+        <div class="kpi-mini-note">2020 March–May lockdown; confounds regime-level estimate</div>
+      </div>
+    </div>
+    <div style="margin-top:18px;background:#fff;border-left:4px solid var(--e61-purple);border-radius:0 12px 12px 0;padding:14px 20px">
+      <p style="font-size:.88rem;color:var(--e61-ink-2);margin:0">The −10.5% post-regime level drop is <b>confounded by COVID closures</b>: 24 zero-demand days fell in the pre-regime window (Jan–May 2020), artificially inflating the pre-regime mean. The structural break is real, but its magnitude is uncertain. A <span class="mono">year_trend</span> feature is required to extrapolate the −28.7% long-term decline into the 2021+ holdout period.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 7 — TARGET SERIES & ACF PLOT -->
+<section class="slide slide-item" data-title="Series & ACF">
+  <div class="slide-num">07 / 11</div><div class="slide-tag">Series &amp; ACF</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Full Time Series</span>
+    <h2>Target Series and Autocorrelation Function</h2>
+    <div class="plot-card" style="margin-top:20px">
+      <img src="../artifacts/eda/iteration_001_eda_target_and_acf.png" alt="Target series and ACF"
+           data-modal-title="target_and_acf"
+           data-modal-body="Top panel: daily bread_quantity 2010–2020, showing the downward trend, the 2020 COVID zero-demand cluster, and the regime change at 2020-06-01. Bottom panel: ACF up to lag 90. The dominant peak at lag 6 (pre-regime) confirms weekly seasonality is the primary structure. Significant ACF at lags 30, 60, and 90 confirms that medium-to-long-horizon same-DOW features will carry meaningful signal well beyond the weekly cycle.">
+      <div class="plot-cap"><b>target_and_acf</b> — full 2010–2020 series (top) with ACF to lag 90 (bottom); lag-6 peak 0.582 is the dominant structure</div>
+    </div>
+    <p style="margin-top:16px;font-size:.9rem;color:var(--e61-ink-3)">The ACF shows two distinct features: a sharp drop from lag-1 (0.325) to lag-2, followed by a recovery at lag-6 (0.582). This is the fingerprint of within-week DOW variance dominating the series. The significant ACF at lags 30 (0.500), 60 (0.465), and 90 (0.418) supports building same-DOW seasonal median features at all six forecast horizons — these are not noise, they reflect genuine monthly and quarterly demand cycles in the bakery's trading pattern.</p>
+  </div>
+</section>
+
+<!-- SLIDE 8 — TARGET DISTRIBUTION PLOT -->
+<section class="slide slide-item" data-title="Distribution">
+  <div class="slide-num">08 / 11</div><div class="slide-tag">Distribution</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Target Distribution</span>
+    <h2>Daily Bread Quantity Distribution</h2>
+    <div class="grid-lead" style="margin-top:20px">
+      <div class="plot-card">
+        <img src="../artifacts/eda/iteration_001_eda_target_hist.png" alt="Target histogram"
+             data-modal-title="target_hist"
+             data-modal-body="Histogram of daily bread_quantity (2,897 trading days). The main distribution is approximately bell-shaped, centred around 315 units, with mild left-skew (−0.386). A distinct near-zero cluster (50 days, 1.7% of the series) represents zero-demand days — store closures due to holidays and COVID. These zeros must remain in the series (they affect multi-horizon target construction) but should be flagged with an is_zero_demand binary. MAPE is unsafe as a metric because of these zero days.">
+        <div class="plot-cap"><b>target_hist</b> — main mode ~315 units, mild left-skew (−0.386), distinct zero-demand cluster (50 days / 1.7%)</div>
+      </div>
+      <div>
+        <div class="kpi-mini" style="margin-bottom:14px">
+          <div class="kpi-mini-label">Zero-demand days</div>
+          <div class="kpi-mini-val">50</div>
+          <div class="kpi-mini-note">1.7% of series. 24 COVID (2020), rest likely Belgian public holidays</div>
+        </div>
+        <div class="kpi-mini" style="margin-bottom:14px">
+          <div class="kpi-mini-label">Skew</div>
+          <div class="kpi-mini-val">−0.386</div>
+          <div class="kpi-mini-note">Mild left-skew; does not require log-transform for tree models</div>
+        </div>
+        <div style="background:var(--e61-bg-warm);border-left:4px solid var(--e61-orange);border-radius:0 10px 10px 0;padding:14px 16px">
+          <b style="font-size:.82rem">Metric recommendation: MAE</b>
+          <p style="font-size:.82rem;color:var(--e61-ink-3);margin:6px 0 0">MAPE is unsafe (division by zero on 50 zero-demand days). RMSE would disproportionately penalise the few high-quantity outlier days (max=691). MAE aligns with operational planning: each unit of error has equal cost regardless of the day's baseline demand level.</p>
+        </div>
+        <div style="margin-top:14px;background:var(--e61-bg-cool);border-radius:10px;padding:14px 16px">
+          <b style="font-size:.82rem">Zero-demand handling</b>
+          <p style="font-size:.82rem;color:var(--e61-ink-3);margin:6px 0 0">Zero-demand days must stay in the series. Dropping them creates date-join gaps that break multi-horizon target construction (a target at D+h may fall on a zero-demand day and is a real, forecasting-relevant value). Add <span class="mono">is_zero_demand</span> binary as a feature.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 9 — DATA SOURCES -->
+<section class="slide slide-item" data-title="Data Sources">
+  <div class="slide-num">09 / 11</div><div class="slide-tag">Data Sources</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Source Assessment</span>
+    <h2>Six Data Sources — One Rejected, Five Retained</h2>
+    <table style="margin-top:20px">
+      <thead>
+        <tr><th>Source</th><th>Status</th><th>Coverage</th><th>Key Finding / Caution</th></tr>
+      </thead>
+      <tbody>
+        <tr class="ok-row">
+          <td class="mono">salesdata (XML)</td>
+          <td><span class="badge b-used">USED</span></td>
+          <td>2010–2020</td>
+          <td>3,212 XMLs, dual schema (pre/post POS migration). 95 duplicate dates deduped by latest export_timestamp. 2,897 rows after dedup + Monday exclusion pre-2020-06-01.</td>
+        </tr>
+        <tr class="ok-row">
+          <td class="mono">productdata.csv</td>
+          <td><span class="badge b-used">USED</span></td>
+          <td>Full chain</td>
+          <td>Catalog count 278 (argcod=1) ≠ 139 articles actually sold in branch 01. Use sold-article filter, not catalog count, as a data-load check.</td>
+        </tr>
+        <tr class="ok-row">
+          <td class="mono">storedata (Winkelfile.csv)</td>
+          <td><span class="badge b-used">USED</span></td>
+          <td>Full period</td>
+          <td>Confirms regime change 2020-06-01 (shop went 7/7; Mondays closed before this date). Source of truth for trading-day rule.</td>
+        </tr>
+        <tr class="warn-row">
+          <td class="mono">weatherdata (parquet)</td>
+          <td><span class="badge b-used">USED</span></td>
+          <td>2015–2020 only</td>
+          <td>Hourly; temporal column = <span class="mono">Date_time</span> (not 'date'). 1,015 pre-2015 rows need imputation. Aggregate with mean/max/min — NOT sum (daily totals are repeated per hourly row by the Visual Crossing API).</td>
+        </tr>
+        <tr class="warn-row">
+          <td class="mono">VerlofConcurrent.csv</td>
+          <td><span class="badge b-used">USED</span></td>
+          <td>2017–2020</td>
+          <td>Separator is <span class="mono">;</span> (not comma). Competitor holiday events; aggregate to n_competitors_closed per date. VC2 is an exact duplicate of VC1 — use VC1 only.</td>
+        </tr>
+        <tr class="danger-row">
+          <td class="mono">deliverydata (3 files)</td>
+          <td><span class="badge b-notused">NOT USED</span></td>
+          <td>—</td>
+          <td>Wholesale delivery channel. No branch 01 retail tie-in confirmed across two prior runs. Header.csv has only 33 rows. Do not use as features (delivery anticipates demand — potential leakage).</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- SLIDE 10 — DURABLE RULES & CAUTIONS -->
+<section class="slide slide-item" data-title="Rules & Cautions">
+  <div class="slide-num">10 / 11</div><div class="slide-tag">Rules &amp; Cautions</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Binding Constraints for Downstream Skills</span>
+    <h2>Durable Rules and Methodological Cautions</h2>
+    <div class="grid-2" style="margin-top:20px">
+      <div>
+        <h3 style="margin-bottom:12px">Binding Rules (must not change)</h3>
+        <ul class="limits-list">
+          <li><b>Per-horizon targets by DATE JOIN only</b> — row.date + h calendar days. Never positional shift. Trading-day gaps break positional alignment → silent target corruption.</li>
+          <li><b>Seasonal period is 6 pre-2020-06-01, 7 from 2020-06-01</b> — same-DOW lags and rolling windows must use k=6 (pre-regime) and k=7 (post-regime). A universal k=7 crosses DOW boundaries pre-regime.</li>
+          <li><b>Rolling-origin CV must straddle the 2020-06-01 regime boundary</b> — CV restricted to pre-regime period fails to test post-regime generalisation; the 2021+ holdout is entirely post-regime.</li>
+          <li><b>Weather temporal column is <span class="mono">Date_time</span></b> — not 'date', 'timestamp', or 'Date'. Using the wrong column produces all-null weather features without raising an error.</li>
+          <li><b>VerlofConcurrent.csv: use VC1 only, sep=';'</b> — VC2 is an exact VC1 duplicate. Competitor CSV uses semicolons; commas appear in data fields.</li>
+          <li><b>Deliverydata must not be used as features</b> — wholesale channel; delivery anticipates demand → potential leakage; confirmed across multiple runs.</li>
+          <li><b>Weather aggregation: mean/max/min — never sum</b> — Visual Crossing API repeats daily totals in each hourly row; summing produces 24× inflated values.</li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="margin-bottom:12px">Domain Research Flags (open questions)</h3>
+        <ul class="limits-list" style="margin-bottom:20px">
+          <li><b>Belgian public holidays</b> — map to zero-demand days in training data; verify against calendar before treating them as modellable events.</li>
+          <li><b>Gentse Feesten (mid-July Ghent festival)</b> — check for systematic demand spike or dip pattern; annual event within the training window.</li>
+          <li><b>COVID-19</b> — Belgium lockdown from 2020-03-18; 24 zero-demand days in 2020 are lockdown closures, not normal seasonality. Rolling-origin CV construction must handle this correctly.</li>
+          <li><b>2014 sparse data</b> — only 64 trading days; cause unknown. May need exclusion from some CV folds or flagging as an anomaly year for annual seasonality features.</li>
+        </ul>
+        <div style="background:var(--e61-bg-cool);border-radius:12px;padding:16px 18px">
+          <b style="font-size:.82rem;color:var(--e61-ink-3)">CV h=90 constraint</b>
+          <p style="font-size:.82rem;color:var(--e61-ink-2);margin:6px 0 0">h=90 has only 5 scoreable validation rows in fold 3 (dataset ends 2020-12-31; last usable h=90 origin is ~2020-10-02). Training must use all 3 CV folds when scoring h=90 candidates — fold 3 alone gives unreliable MAE estimates from 5 rows.</p>
+        </div>
+        <div style="margin-top:14px;padding:10px 0;border-top:1px solid var(--e61-line);font-size:.78rem;color:var(--e61-ink-4)">
+          <a href="index.html" style="color:var(--e61-orange-red)">← Run index</a>
+          &nbsp;|&nbsp;
+          <a href="../history/iteration_001_eda.json" style="color:var(--e61-orange-red)">Raw JSON</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- IMAGE MODAL -->
+<div class="img-modal" id="imgModal" onclick="if(event.target.id==='imgModal')closeImgModal()">
+  <div class="img-modal-inner">
+    <button class="img-modal-close" onclick="closeImgModal()">✕</button>
+    <div class="img-modal-img-wrap"><img id="imgModalImg" src="" alt=""></div>
+    <div class="img-modal-meta">
+      <div class="img-modal-name" id="imgModalName"></div>
+      <div class="img-modal-body" id="imgModalBody"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DECK ENGINE ──
+const slides = Array.from(document.querySelectorAll('.cover,.slide'));
+const dotnav = document.getElementById('dotnav');
+slides.forEach((s,i)=>{
+  const dot = document.createElement('button');
+  dot.title = s.dataset.title || ('Slide '+(i+1));
+  dot.onclick = ()=> s.scrollIntoView({behavior:'smooth'});
+  dotnav.appendChild(dot);
+});
+const dots = Array.from(dotnav.children);
+const counter = document.getElementById('counter');
+const topbarFill = document.getElementById('topbarFill');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+let current = 0;
+function setActive(idx){
+  current = idx;
+  dots.forEach((d,i)=> d.classList.toggle('active', i===idx));
+  counter.textContent = (idx+1) + ' / ' + slides.length;
+  topbarFill.style.width = (((idx+1)/slides.length)*100) + '%';
+  prevBtn.disabled = idx===0;
+  nextBtn.disabled = idx===slides.length-1;
+}
+setActive(0);
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting && e.intersectionRatio>0.55){
+      const idx = slides.indexOf(e.target);
+      if(idx>-1) setActive(idx);
+    }
+  });
+}, {threshold:[0.55]});
+slides.forEach(s=>io.observe(s));
+function goTo(idx){
+  idx = Math.max(0, Math.min(slides.length-1, idx));
+  slides[idx].scrollIntoView({behavior:'smooth'});
+}
+prevBtn.onclick = ()=> goTo(current-1);
+nextBtn.onclick = ()=> goTo(current+1);
+document.addEventListener('keydown', e=>{
+  if(['ArrowDown','ArrowRight','PageDown',' '].includes(e.key)){ e.preventDefault(); goTo(current+1); }
+  if(['ArrowUp','ArrowLeft','PageUp'].includes(e.key)){ e.preventDefault(); goTo(current-1); }
+});
+
+// ── DETAILS DISCLOSURE ──
+function toggleDetails(btn){
+  btn.classList.toggle('open');
+  const panel = btn.nextElementSibling;
+  panel.classList.toggle('open');
+  btn.textContent = panel.classList.contains('open')
+    ? btn.textContent.replace(/^Full/, 'Hide')
+    : (btn.dataset.orig || btn.textContent.replace(/^Hide/, 'Full'));
+}
+document.querySelectorAll('.details-btn').forEach(b=>{ b.dataset.orig = b.textContent; });
+
+// ── IMAGE MODAL ──
+function openImgModal(imgEl){
+  document.getElementById('imgModalImg').src = imgEl.currentSrc || imgEl.src;
+  document.getElementById('imgModalImg').alt = imgEl.alt;
+  document.getElementById('imgModalName').textContent = imgEl.dataset.modalTitle || imgEl.alt;
+  document.getElementById('imgModalBody').textContent = imgEl.dataset.modalBody || '';
+  document.getElementById('imgModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeImgModal(){
+  document.getElementById('imgModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function wireImgModals(){
+  document.querySelectorAll('.plot-card img').forEach(img=>{
+    img.style.cursor = 'zoom-in';
+    img.addEventListener('click', ()=>openImgModal(img));
+  });
+}
+document.addEventListener('keydown', e=>{
+  if(document.getElementById('imgModal')?.classList.contains('open') && e.key==='Escape') closeImgModal();
+});
+wireImgModals();
+</script>
+</body>
+</html>

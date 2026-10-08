@@ -1,0 +1,273 @@
+{
+  "iteration": 12,
+  "node": "feature_engineering + training",
+  "timestamp": "2026-09-08T21:49:42",
+  "schema_version": "2026-09-04",
+  "fe_fix": {
+    "problem": "naive_h{h}_seasonal_median_w{w} used same-DOW of ORIGIN; should use same-DOW of TARGET for h not multiple of 7",
+    "fixed_horizons": [
+      1,
+      30,
+      60,
+      90
+    ],
+    "method": "For origin D, target_dow = DOW(D+h calendar days). Compute smedian of last W bread_quantity observations with that DOW, from dates before D.",
+    "output_csv": "data\\iteration_012_feature_engineering.csv",
+    "new_columns": [
+      "anchor_correct_h1",
+      "anchor_correct_h30",
+      "anchor_correct_h60",
+      "anchor_correct_h90",
+      "ratio_correct_h1",
+      "ratio_correct_h30",
+      "ratio_correct_h60",
+      "ratio_correct_h90"
+    ],
+    "h1_anchor_improvement": {
+      "old_val_mae": 54.4149,
+      "new_val_mae": 31.3989
+    }
+  },
+  "training": {
+    "results": {
+      "1": {
+        "algorithm": "LightGBM_Optuna",
+        "n_trials": 75,
+        "n_val": 94,
+        "n_train": 1749,
+        "n_trees": 513,
+        "best_optuna_trial_mae": 29.3783,
+        "val_mae_units": 29.3783,
+        "baseline_floor": 31.263,
+        "beats_floor": true,
+        "margin": -1.8847,
+        "best_params": {
+          "learning_rate": 0.006218784954704821,
+          "n_estimators": 740,
+          "num_leaves": 62,
+          "max_depth": 3,
+          "min_child_samples": 17,
+          "reg_alpha": 0.007575141881790464,
+          "reg_lambda": 0.3436296611567454,
+          "subsample": 0.6462540008187073,
+          "colsample_bytree": 0.6703384564678746,
+          "min_split_gain": 0.3562948033436028
+        }
+      },
+      "30": {
+        "algorithm": "LightGBM_Optuna",
+        "n_trials": 75,
+        "n_val": 65,
+        "n_train": 1704,
+        "n_trees": 197,
+        "best_optuna_trial_mae": 34.425,
+        "val_mae_units": 34.425,
+        "baseline_floor": 35.913,
+        "beats_floor": true,
+        "margin": -1.488,
+        "best_params": {
+          "learning_rate": 0.0858554430108127,
+          "n_estimators": 852,
+          "num_leaves": 27,
+          "max_depth": 3,
+          "min_child_samples": 26,
+          "reg_alpha": 0.0053114271635353455,
+          "reg_lambda": 0.12787052754751665,
+          "subsample": 0.76993757269623,
+          "colsample_bytree": 0.8523154908318611,
+          "min_split_gain": 0.6943271019433669
+        }
+      },
+      "60": {
+        "algorithm": "LightGBM_Optuna",
+        "n_trials": 75,
+        "n_val": 35,
+        "n_train": 1699,
+        "n_trees": 2,
+        "best_optuna_trial_mae": 45.2179,
+        "val_mae_units": 45.2179,
+        "baseline_floor": 40.042,
+        "beats_floor": false,
+        "margin": 5.1759,
+        "best_params": {
+          "learning_rate": 0.1418778209021944,
+          "n_estimators": 844,
+          "num_leaves": 47,
+          "max_depth": 8,
+          "min_child_samples": 53,
+          "reg_alpha": 0.7461271228840068,
+          "reg_lambda": 0.0687304906605752,
+          "subsample": 0.5622752701812832,
+          "colsample_bytree": 0.6058384926755057,
+          "min_split_gain": 0.15647345279583477
+        }
+      },
+      "90": {
+        "algorithm": "LightGBM_fixed",
+        "n_val": 5,
+        "val_mae_units": 105.0003,
+        "baseline_floor": 42.143,
+        "beats_floor": false,
+        "margin": 62.8573,
+        "n_trees": 68
+      }
+    },
+    "optuna_trials_per_horizon": 75,
+    "covid_exclusion": true,
+    "ratio_target": "ratio_correct_h{h}"
+  },
+  "full_results_all_horizons": {
+    "1": {
+      "algorithm": "LightGBM_Optuna",
+      "n_trials": 75,
+      "n_val": 94,
+      "n_train": 1749,
+      "n_trees": 513,
+      "best_optuna_trial_mae": 29.3783,
+      "val_mae_units": 29.3783,
+      "baseline_floor": 31.263,
+      "beats_floor": true,
+      "margin": -1.8847,
+      "best_params": {
+        "learning_rate": 0.006218784954704821,
+        "n_estimators": 740,
+        "num_leaves": 62,
+        "max_depth": 3,
+        "min_child_samples": 17,
+        "reg_alpha": 0.007575141881790464,
+        "reg_lambda": 0.3436296611567454,
+        "subsample": 0.6462540008187073,
+        "colsample_bytree": 0.6703384564678746,
+        "min_split_gain": 0.3562948033436028
+      }
+    },
+    "7": {
+      "algorithm": "LightGBM_Optuna",
+      "val_mae_units": 30.97,
+      "baseline_floor": 31.263,
+      "beats_floor": true,
+      "margin": -0.293
+    },
+    "14": {
+      "algorithm": "LightGBM_Optuna",
+      "val_mae_units": 34.891,
+      "baseline_floor": 32.846,
+      "beats_floor": false,
+      "margin": 2.045
+    },
+    "30": {
+      "algorithm": "LightGBM_Optuna",
+      "n_trials": 75,
+      "n_val": 65,
+      "n_train": 1704,
+      "n_trees": 197,
+      "best_optuna_trial_mae": 34.425,
+      "val_mae_units": 34.425,
+      "baseline_floor": 35.913,
+      "beats_floor": true,
+      "margin": -1.488,
+      "best_params": {
+        "learning_rate": 0.0858554430108127,
+        "n_estimators": 852,
+        "num_leaves": 27,
+        "max_depth": 3,
+        "min_child_samples": 26,
+        "reg_alpha": 0.0053114271635353455,
+        "reg_lambda": 0.12787052754751665,
+        "subsample": 0.76993757269623,
+        "colsample_bytree": 0.8523154908318611,
+        "min_split_gain": 0.6943271019433669
+      }
+    },
+    "60": {
+      "algorithm": "LightGBM_Optuna",
+      "n_trials": 75,
+      "n_val": 35,
+      "n_train": 1699,
+      "n_trees": 2,
+      "best_optuna_trial_mae": 45.2179,
+      "val_mae_units": 45.2179,
+      "baseline_floor": 40.042,
+      "beats_floor": false,
+      "margin": 5.1759,
+      "best_params": {
+        "learning_rate": 0.1418778209021944,
+        "n_estimators": 844,
+        "num_leaves": 47,
+        "max_depth": 8,
+        "min_child_samples": 53,
+        "reg_alpha": 0.7461271228840068,
+        "reg_lambda": 0.0687304906605752,
+        "subsample": 0.5622752701812832,
+        "colsample_bytree": 0.6058384926755057,
+        "min_split_gain": 0.15647345279583477
+      }
+    },
+    "90": {
+      "algorithm": "LightGBM_fixed",
+      "n_val": 5,
+      "val_mae_units": 105.0003,
+      "baseline_floor": 42.143,
+      "beats_floor": false,
+      "margin": 62.8573,
+      "n_trees": 68
+    }
+  },
+  "beats_floor_count": 3,
+  "pooled_val_mae": 46.6471,
+  "next_iteration_contract": {
+    "node": "diagnosis",
+    "iteration": 13,
+    "why_this_node": "Diagnosis: assess remaining gaps per horizon; decide which to accept (naive predictor) vs continue."
+  },
+  "handoff": {
+    "written_by": "feature_engineering + training",
+    "iteration": 12,
+    "context_clearable": true,
+    "read_this_first": "Anchor DOW fixed for h=1,30,60,90. 3/6 horizons beat floor. h=7 champion: LightGBM ratio target val_mae=30.97 (beats floor=31.263). Pooled val MAE=46.6471 vs floor=35.5783.",
+    "durable_rules": [
+      {
+        "rule": "For h not a multiple of 7, anchor must use same-DOW of TARGET date (D+h), not origin date (D).",
+        "why": "h=1 old anchor gave val MAE=54.4 vs correct anchor MAE on same rows. DOW mismatch causes systematic bias.",
+        "applies_to": [
+          "feature_engineering",
+          "end_model"
+        ]
+      },
+      {
+        "rule": "pred_units = pred_ratio x anchor_correct_h{h} (use corrected anchor at serving time)",
+        "why": "The ratio was computed against anchor_correct, not the original naive predictor columns.",
+        "applies_to": [
+          "end_model"
+        ]
+      }
+    ],
+    "do_not_repeat": [
+      {
+        "tried": "Ratio target with original anchor (same-DOW of origin) for h=1, h=30, h=60",
+        "outcome": "rejected",
+        "evidence": "iter010 h=1 MAE=52.32 (DOW mismatch). Correct anchor gives different val MAE.",
+        "why_not_again": "Always compute anchor with same-DOW of target date.",
+        "evidence_basis": "validation_only",
+        "reopen_if": "Never \u2014 the DOW mismatch is a definitional error, not a hypothesis."
+      }
+    ],
+    "content_carried_forward": {
+      "h7_champion_model": "artifacts/training/optuna/optuna_lgbm_h7_best.pkl",
+      "h7_val_mae": 30.97,
+      "h14_best_val_mae": 34.891,
+      "corrected_anchor_cols": {
+        "1": "anchor_correct_h1",
+        "30": "anchor_correct_h30",
+        "60": "anchor_correct_h60",
+        "90": "anchor_correct_h90"
+      },
+      "corrected_ratio_cols": {
+        "1": "ratio_correct_h1",
+        "30": "ratio_correct_h30",
+        "60": "ratio_correct_h60",
+        "90": "ratio_correct_h90"
+      }
+    }
+  }
+}

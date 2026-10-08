@@ -1,0 +1,493 @@
+{
+  "note": "Based on the actual bread-demand dataset (aernoudt_bread_daily_all_years.csv) tested against EDA and Preprocess earlier in this build. Demonstrates both leakage rules: fit_on='train_split_only' for the group-aggregation-style case, and fit_on='row_local_causal' for lag/calendar features.",
+  "input": {
+    "dataset_path": "data/iteration_004_preprocess.csv",
+    "target_column": "bread_quantity",
+    "context": [
+      {
+        "type": "previous_step",
+        "source_node": "preprocess",
+        "source_iteration": 4,
+        "content": {
+          "reasoning": "dropped num_items_sold, non_bread_quantity, bread_revenue as leakage per EDA; day_of_week encoded as ordinal"
+        }
+      },
+      {
+        "type": "planner_selected",
+        "source_node": "eda",
+        "source_iteration": 1,
+        "reason": "time_series_analysis and recommended_strategy needed to decide which derived features are worth creating for this forecasting task",
+        "content": {
+          "target": {
+            "time_series_analysis": {
+              "trend": "confirmed real decline — mean daily bread_quantity fell ~28% from 2011 to 2021, not noise",
+              "seasonality": "day-of-week pattern present — Sunday and Saturday notably higher than weekdays",
+              "stationarity": "non-stationary — the confirmed trend means mean demand shifts over the series, not stable",
+              "autocorrelation": "strong at lag 7 (weekly cycle) — today's demand correlates with demand exactly one week prior more than with adjacent days"
+            }
+          },
+          "recommended_strategy": {
+            "narrative": "Given only ~10 candidate features remain after dropping leakage columns, an incremental forward-selection posture isn't necessary — start broader and let embedded importance from a tree-based model prune the weak ones.",
+            "confidence": "medium"
+          }
+        }
+      }
+    ],
+    "current_features": [
+      "day_of_week"
+    ],
+    "naive_predictor_features": {
+      "source": "history/iteration_003_training.json (mode=baseline, baseline-skill Part B)",
+      "selection_basis": "train_rows_only",
+      "1": [
+        {
+          "column_name": "naive_h1_last_value",
+          "rule": {
+            "family": "last_value",
+            "params": {}
+          },
+          "formula": "value at the last OBSERVED period at or before target_date - 1",
+          "train_mae": 24.8,
+          "rank": 1,
+          "selected_by": "part_a_winner",
+          "corr_with_kept": null,
+          "protected": true,
+          "zero_handling": "closures excluded as reference values"
+        },
+        {
+          "column_name": "naive_h1_trailing_mean_w7",
+          "rule": {
+            "family": "trailing_mean",
+            "params": {
+              "w": 7
+            }
+          },
+          "formula": "mean of the last 7 OBSERVED periods at or before target_date - 1",
+          "train_mae": 26.1,
+          "rank": 3,
+          "selected_by": "train_search",
+          "corr_with_kept": 0.91,
+          "protected": true,
+          "zero_handling": "closures excluded as reference values"
+        }
+      ],
+      "7": [
+        {
+          "column_name": "naive_h7_seasonal_median_w13",
+          "rule": {
+            "family": "seasonal_median",
+            "params": {
+              "P": 7,
+              "window_seasons": 13
+            }
+          },
+          "formula": "median of the last 13 observations on target_date's own weekday, all at or before target_date - 7",
+          "train_mae": 33.4,
+          "rank": 1,
+          "selected_by": "part_a_winner",
+          "corr_with_kept": null,
+          "protected": true,
+          "zero_handling": "closures excluded as reference values"
+        }
+      ]
+    },
+    "protected_features": [
+      {
+        "column": "naive_h1_last_value",
+        "reason": "naive predictor selected for h=1",
+        "protected_since_iteration": 3
+      },
+      {
+        "column": "naive_h1_trailing_mean_w7",
+        "reason": "naive predictor selected for h=1",
+        "protected_since_iteration": 3
+      },
+      {
+        "column": "naive_h7_seasonal_median_w13",
+        "reason": "naive predictor selected for h=7",
+        "protected_since_iteration": 3
+      }
+    ],
+    "mode": "initial",
+    "mode_reasoning": "first Feature Engineering call this run — building on Preprocess's latest output",
+    "iteration": 5
+  },
+  "output": {
+    "schema_version": "2026-08-18",
+    "engineered_dataset_path": "data/iteration_005_feature_engineering.csv",
+    "features_created": [
+      {
+        "name": "naive_h7_seasonal_median_w13",
+        "technique": "naive_predictor",
+        "protected": true,
+        "source_spec": "naive_predictor_features['7'][0] -- baseline-skill Part B, iteration 003",
+        "trigger": "baseline Part B selected this rule as the strongest naive predictor for h=7 on train rows",
+        "formula": "median of the last 13 observations on target_date's own weekday, every one at or before target_date - 7 calendar days; walks back to the last OBSERVED period, never a fixed date",
+        "fit_on": "row_local_causal",
+        "reasoning": "hands the h=7 model a decent forecast to correct rather than a level to rebuild from lags; selected per horizon because the rule that wins at h=1 is not the rule that wins at h=7",
+        "confidence": "high",
+        "min_horizon": 7,
+        "max_horizon": 7,
+        "max_horizon_reasoning": "computed at origin target_date - 7; used at any longer horizon it would read the series after that model's origin, which is a leak",
+        "verification": {
+          "method": "rescore the built column on train rows and compare to the baseline's own number for the same rule",
+          "baseline_train_mae": 33.4,
+          "rebuilt_train_mae": 33.4,
+          "verified": true
+        },
+        "lag_nan_fill": "first 13 weeks of the series have no full window; NaN retained and declared native, LightGBM handles it",
+        "relevance_check": {
+          "method": "spearman",
+          "computed_on": "_split==train only",
+          "target_corr": 0.74,
+          "note": "high by construction -- recorded, never used as a drop or leakage signal for a protected column"
+        }
+      },
+      {
+        "name": "bread_quantity_lag_7",
+        "technique": "lag_feature",
+        "trigger": "eda.target.time_series_analysis.autocorrelation — strong lag-7 autocorrelation found",
+        "formula": "bread_quantity shifted 7 rows (1 week) back, per row's own history only",
+        "fit_on": "row_local_causal",
+        "reasoning": "EDA found today's demand correlates more with demand exactly one week ago than with adjacent days — a direct lag feature operationalizes this rather than leaving the model to rediscover a pattern already confirmed statistically",
+        "confidence": "high",
+        "min_horizon": 1,
+        "min_horizon_reasoning": "computable at an origin one period before the target; a lag-7 value is available for every horizon up to 7, and this field is what Training uses to build each horizon's feature subset",
+        "relevance_check": {
+          "method": "spearman",
+          "computed_on": "_split==train only",
+          "target_corr": 0.61,
+          "effective_n": 2661
+        }
+      },
+      {
+        "name": "is_weekend",
+        "technique": "calendar_feature",
+        "trigger": "eda.target.time_series_analysis.seasonality — Saturday/Sunday notably higher than weekdays",
+        "formula": "1 if day_of_week is Saturday or Sunday, else 0",
+        "fit_on": "row_local_causal",
+        "reasoning": "the weekend effect EDA found is binary in nature (weekend vs. weekday), not a full 7-level day-of-week distinction — this collapses day_of_week into the specific contrast that actually matters, which may be an easier signal for some model families than 7 separate categories",
+        "confidence": "medium",
+        "relevance_check": {
+          "method": "spearman",
+          "computed_on": "_split==train only",
+          "target_corr": 0.48,
+          "effective_n": 2661
+        }
+      },
+      {
+        "name": "time_index",
+        "technique": "trend_feature",
+        "trigger": "eda.target.time_series_analysis.trend — confirmed real ~28% decline over the series, non-stationary",
+        "formula": "sequential integer index of each row's position in chronological order",
+        "fit_on": "row_local_causal",
+        "reasoning": "a non-stationary target with a confirmed trend needs an explicit way for the model to represent 'how far into the declining series is this row' — without this, a model trained on early years would systematically over-predict later years",
+        "confidence": "high",
+        "relevance_check": {
+          "method": "spearman",
+          "computed_on": "_split==train only",
+          "target_corr": -0.52,
+          "effective_n": 2661
+        }
+      }
+    ],
+    "features_selected": [
+      "day_of_week",
+      "bread_quantity_lag_7",
+      "is_weekend",
+      "time_index"
+    ],
+    "features_dropped": [],
+    "naive_predictors_built": [
+      {
+        "column": "naive_h1_last_value",
+        "horizon": 1,
+        "verified": true,
+        "baseline_train_mae": 24.8,
+        "rebuilt_train_mae": 24.8,
+        "nan_fill": "first row only; dropped from train window"
+      },
+      {
+        "column": "naive_h1_trailing_mean_w7",
+        "horizon": 1,
+        "verified": true,
+        "baseline_train_mae": 26.1,
+        "rebuilt_train_mae": 26.1,
+        "nan_fill": "first 7 rows; NaN retained as native"
+      },
+      {
+        "column": "naive_h7_seasonal_median_w13",
+        "horizon": 7,
+        "verified": true,
+        "baseline_train_mae": 33.4,
+        "rebuilt_train_mae": 33.4,
+        "nan_fill": "first 13 weeks; NaN retained as native"
+      }
+    ],
+    "protected_features_status": [
+      {
+        "column": "naive_h1_last_value",
+        "present_in_output": true,
+        "blocking_clarification": null
+      },
+      {
+        "column": "naive_h1_trailing_mean_w7",
+        "present_in_output": true,
+        "blocking_clarification": "naive_h1_trailing_mean_w7_redundancy -- correlates 0.91 with naive_h1_last_value; kept pending the user's answer"
+      },
+      {
+        "column": "naive_h7_seasonal_median_w13",
+        "present_in_output": true,
+        "blocking_clarification": null
+      }
+    ],
+    "horizon_feature_subsets": {
+      "1": {
+        "features": [
+          "bread_quantity_lag_1",
+          "bread_quantity_lag_7",
+          "bread_quantity_rolling_7d_mean",
+          "dow_Monday",
+          "month_sin"
+        ],
+        "n_features": 5,
+        "lost_vs_shortest": [],
+        "evaluated_at": {
+          "bread_quantity_lag_1": "origin",
+          "bread_quantity_lag_7": "origin",
+          "bread_quantity_rolling_7d_mean": "origin",
+          "dow_Monday": "target_date",
+          "month_sin": "target_date"
+        },
+        "dropped_not_known_future": []
+      },
+      "7": {
+        "features": [
+          "bread_quantity_lag_7",
+          "bread_quantity_rolling_7d_mean",
+          "dow_Monday",
+          "month_sin"
+        ],
+        "n_features": 4,
+        "lost_vs_shortest": [
+          "bread_quantity_lag_1"
+        ],
+        "evaluated_at": {
+          "bread_quantity_lag_7": "origin",
+          "bread_quantity_rolling_7d_mean": "origin",
+          "dow_Monday": "target_date",
+          "month_sin": "target_date"
+        },
+        "dropped_not_known_future": []
+      },
+      "14": {
+        "features": [
+          "bread_quantity_rolling_28d_mean",
+          "dow_Monday",
+          "month_sin"
+        ],
+        "n_features": 3,
+        "lost_vs_shortest": [
+          "bread_quantity_lag_1",
+          "bread_quantity_lag_7",
+          "bread_quantity_rolling_7d_mean"
+        ],
+        "evaluated_at": {
+          "bread_quantity_rolling_28d_mean": "origin",
+          "dow_Monday": "target_date",
+          "month_sin": "target_date"
+        },
+        "dropped_not_known_future": [
+          "wx_temperature",
+          "wx_precipitation"
+        ]
+      },
+      "30": {
+        "features": [
+          "bread_quantity_rolling_28d_mean",
+          "dow_Monday",
+          "month_sin"
+        ],
+        "n_features": 3,
+        "lost_vs_shortest": [
+          "bread_quantity_lag_1",
+          "bread_quantity_lag_7",
+          "bread_quantity_rolling_7d_mean"
+        ],
+        "evaluated_at": {
+          "bread_quantity_rolling_28d_mean": "origin",
+          "dow_Monday": "target_date",
+          "month_sin": "target_date"
+        },
+        "dropped_not_known_future": [
+          "wx_temperature",
+          "wx_precipitation"
+        ]
+      },
+      "_note": "features filters on BOTH bounds: min_horizon <= h (computable at the origin) and known_future_horizon >= h (its target-date value is knowable when the forecast is made). evaluated_at says which anchor each feature is read at; dropped_not_known_future lists what this horizon loses because no forecast reaches that far. A feature below its known_future_horizon is DROPPED for that horizon, never silently replaced by its stale origin value."
+    },
+    "horizon_feature_subsets_note": "h=14 and h=30 lose every short lag, which is the mechanical reason their error is higher - stated here rather than rediscovered in residuals",
+    "horizon_targets": {
+      "1": {
+        "column": "bread_quantity_h1",
+        "rows_lost_at_series_end": 1
+      },
+      "7": {
+        "column": "bread_quantity_h7",
+        "rows_lost_at_series_end": 7
+      },
+      "14": {
+        "column": "bread_quantity_h14",
+        "rows_lost_at_series_end": 14
+      },
+      "30": {
+        "column": "bread_quantity_h30",
+        "rows_lost_at_series_end": 30
+      }
+    },
+    "clarification_needed": [
+      {
+        "topic": "naive_h1_trailing_mean_w7_redundancy",
+        "question": "Drop naive_h1_trailing_mean_w7, which correlates 0.91 with naive_h1_last_value, or keep both?",
+        "description": "Both are protected h=1 naive predictors. The redundancy screen would normally drop the weaker one, but a protected feature is never dropped on this node's judgment -- the column is kept and the question is put to the user.",
+        "blocking": true,
+        "confidence": "medium",
+        "recommendation": "keep both",
+        "recommendation_reasoning": "0.91 is below the 0.98 deduplication threshold the baseline already applied, so the two carry different information at the margin; the cost of keeping one extra column is one feature slot against a train set of 1,847 rows",
+        "impact_if_wrong": "one redundant column in the h=1 model; costs nothing measurable if kept, costs a rebuild of the h=1 feature set if dropped and later wanted back"
+      }
+    ],
+    "agent_initiated_findings": [
+      {
+        "related_step": "3",
+        "title": "revenue_per_order (bread_revenue / num_orders)",
+        "method": "domain ratio, not a table-driven crossing — no feature_interactions entry triggered this specifically",
+        "findings": "computed as a candidate feature but ultimately not carried into features_selected — bread_revenue is already flagged possible_leakage by EDA (quantity × price), so a ratio built from it inherits the same leakage risk rather than being an independent signal",
+        "reasoning": "tried this because average order value is a common, domain-plausible bakery metric, not because any specified trigger called for it — recording the negative result so it isn't independently reconsidered in a later iteration",
+        "confidence": "high"
+      }
+    ],
+    "issues": [],
+    "artifact_paths": {
+      "plots": [
+        {
+          "path": "artifacts/feature_engineering/iteration_005_feature_engineering_lag7_vs_target.png",
+          "data_path": "artifacts/feature_engineering/iteration_005_feature_engineering_lag7_vs_target.csv",
+          "reason": "verify the lag-7 feature's relationship with the target visually matches the strong correlation found in the relevance check"
+        }
+      ]
+    },
+    "prediction_time_availability_audit": {
+      "_note": "One entry per feature. min_horizon is the lower bound (when it becomes computable at the origin); known_future_horizon is the upper bound (how far ahead its target-date value is knowable). Both are required on every non-target feature.",
+      "wx_temperature": {
+        "tier": "pre_period",
+        "min_horizon": 1,
+        "known_future_horizon": 7,
+        "evaluated_at": "target_date",
+        "reasoning": "a public forecast exists ~7 days out; beyond that the target-date value is unknowable and the feature is dropped rather than read at the origin, which would be a stale observation of a variable with no memory",
+        "confidence": 0.9
+      },
+      "comp_any_holiday": {
+        "tier": "pre_period",
+        "min_horizon": 1,
+        "known_future_horizon": "published_window_end",
+        "evaluated_at": "target_date",
+        "reasoning": "a published closure calendar; confirm the window rather than assuming it extends indefinitely",
+        "confidence": 0.8
+      },
+      "dow_Monday": {
+        "tier": "pre_period",
+        "min_horizon": 1,
+        "known_future_horizon": null,
+        "evaluated_at": "target_date",
+        "reasoning": "null = unbounded; the date is known arbitrarily far ahead",
+        "confidence": 1.0
+      },
+      "bread_quantity_lag_1": {
+        "tier": "pre_period",
+        "min_horizon": 1,
+        "known_future_horizon": 0,
+        "evaluated_at": "origin",
+        "reasoning": "a realisation of the target; never knowable past the origin, so it stays an origin-anchored lag",
+        "confidence": 1.0
+      },
+      "_serving_mismatch_warning": "Where a known-future feature is trained on OBSERVED target-date values but served on FORECAST ones, every score from it is an upper bound. State it here, and train on archived forecasts where they exist."
+    },
+    "target_representation": {
+      "_note": "Per model family where families differ. A family that cannot consume a transformed target does not impose raw levels on families that can.",
+      "by_family": {
+        "tree": {
+          "form": "ratio",
+          "anchor": "anchor_roll91",
+          "inverse": "pred * anchor_roll91",
+          "trigger": "significant downward trend in EDA target.time_series_analysis.trend",
+          "reasoning": "a gradient-boosted tree predicts a leaf constant averaged from training targets, so with level targets its output cannot leave the training range; on a declining series that is a floor no feature can lift",
+          "confidence": 0.95
+        },
+        "classical_arima": {
+          "form": "level",
+          "anchor": null,
+          "inverse": "identity",
+          "reasoning": "ARIMA-family fits model the level directly and cannot consume a ratio target",
+          "confidence": 1.0
+        }
+      },
+      "override": {
+        "in_force": false,
+        "_note": "Set only when a disqualifying trigger is overridden. Name the family that required it. The override is VOID the moment that family stops being a live candidate, and the decision returns to the representation table. Diagnosis reads this: a champion from a family that never needed the override, while the override is still in force, is a finding and a routing trigger back to feature_engineering.",
+        "example_if_set": {
+          "in_force": true,
+          "required_by_family": "classical_arima",
+          "expires_when": "classical_arima is no longer a live candidate"
+        }
+      }
+    },
+    "horizon_construction": {
+      "_note": "Targets are joined on row_date + h in the series' calendar unit, never by positional shift. These are the realised gaps, recorded so the check is auditable: if median_gap_days != h the column is not what its name says. Split by regime where one exists - a construction that holds on one side and not the other is exactly what this catches.",
+      "method": "date_join",
+      "1": {
+        "median_gap_days": 1,
+        "gap_range": [
+          1,
+          1
+        ],
+        "by_regime": {
+          "pre": 1,
+          "post": 1
+        }
+      },
+      "30": {
+        "median_gap_days": 30,
+        "gap_range": [
+          30,
+          30
+        ],
+        "by_regime": {
+          "pre": 30,
+          "post": 30
+        }
+      },
+      "90": {
+        "median_gap_days": 90,
+        "gap_range": [
+          90,
+          90
+        ],
+        "by_regime": {
+          "pre": 90,
+          "post": 90
+        }
+      },
+      "counter_example": {
+        "method": "positional_shift",
+        "h": 30,
+        "median_gap_days": 35,
+        "by_regime": {
+          "pre": 35,
+          "post": 30
+        },
+        "why_rejected": "30 rows on a Monday-filtered frame is five six-day weeks, so the model learns 'same weekday as origin' and is +2 weekdays wrong once the shop trades 7/7"
+      }
+    }
+  }
+}

@@ -1,0 +1,311 @@
+{
+  "agentic_run": {
+    "run_dir": "..\\runs\\run_20260903T152603Z",
+    "run_id": "run_20260903T152603Z",
+    "target": "bread_quantity",
+    "horizons": [
+      1,
+      7,
+      14,
+      30,
+      60,
+      90
+    ],
+    "splits": {
+      "train": {
+        "name": "train",
+        "date_min": "2010-11-24",
+        "date_max": "2018-12-31",
+        "n_rows": 12292,
+        "n_dates": 2248
+      },
+      "validation": {
+        "name": "validation",
+        "date_min": "2019-01-01",
+        "date_max": "2019-12-31",
+        "n_rows": 1880,
+        "n_dates": 316
+      },
+      "test": {
+        "name": "test",
+        "date_min": "2020-01-01",
+        "date_max": "2020-12-31",
+        "n_rows": 2034,
+        "n_dates": 345
+      }
+    },
+    "feature_table": "iteration_004a_feature_engineering.csv",
+    "preprocess_table": "iteration_002_preprocess.csv",
+    "final_model": "artifacts\\training\\iteration_005_training_model.pkl",
+    "chosen_iteration": "unknown",
+    "seasonal_naive_column": "lag_same_weekday",
+    "mase_denominators": {
+      "train_denominator": 65.00292873413602,
+      "test_denominator": 64.5653883972468,
+      "definition": "mean |y - lag_same_weekday|; lag_same_weekday is the last observed same-weekday value at or before the origin"
+    },
+    "reported_test_metrics": {}
+  },
+  "systems": {
+    "n_features": {
+      "agentic": 18,
+      "naive": 1,
+      "B1_agent_features": 18
+    },
+    "estimator": {
+      "agentic": "LGBMRegressor",
+      "naive": "seasonal naive",
+      "B1_agent_features": "extra_tree"
+    },
+    "budget": {
+      "agentic": "agent-directed",
+      "naive": "none",
+      "B1_agent_features": "180s"
+    },
+    "search": {
+      "B1_agent_features": {
+        "estimator": "extra_tree",
+        "config": {
+          "n_estimators": 25.0,
+          "max_features": 0.40538611916817563,
+          "max_leaves": 389.0
+        },
+        "validation_loss": 23.208321784524358,
+        "metric": "mae",
+        "search_seconds": 180.0,
+        "budget_seconds": 180,
+        "n_train_rows": 12292,
+        "n_val_rows": 1880,
+        "n_features": 18,
+        "feature_names": [
+          "Column_0",
+          "Column_1",
+          "Column_2",
+          "Column_3",
+          "Column_4",
+          "Column_5",
+          "Column_6",
+          "Column_7",
+          "Column_8",
+          "Column_9",
+          "Column_10",
+          "Column_11",
+          "Column_12",
+          "Column_13",
+          "Column_14",
+          "Column_15",
+          "Column_16",
+          "Column_17"
+        ],
+        "estimator_list": "flaml default",
+        "selection": "explicit holdout on the agentic run's validation partition"
+      }
+    },
+    "protocol_notes": [
+      "Rows: the 2034 (target date, horizon) pairs in the agentic run's test partition, checked pair-by-pair against every tier before scoring.",
+      "Split: the agentic run's own chronological 70/15/15 by target date. Train ends 2018-12-31, validation ends 2019-12-31, test runs 2020-01-01 to 2020-12-31.",
+      "Tuning: every AutoML tier selects hyperparameters on the run's validation partition, never on test, and never on a split of its own choosing.",
+      "No recursion: each row predicts t+h in one jump from data at the origin t = t+h minus h days, so long horizons do not inherit accumulated one-step error.",
+      "Trading days: the 2920 dates the agentic run kept. The 242 sub-10-unit non-trading days it filtered are excluded from every system, and unexported dates stay absent on the calendar so a lag of 7 still means seven days.",
+      "Exogenous columns are lagged unless the run declared them knowable in advance (calendar terms, opening pattern, competitor closures). Weather is lagged for the AutoML tiers, where the agentic features used observed weather as a forecast proxy at h&nbsp;&le;&nbsp;7 - a small advantage to the agentic side on a feature the run measured at Spearman -0.076.",
+      "B3 drops the run's must_drop_columns (same-day revenue, transaction and line counts). Lagging them instead would give the AutoML tier information the agentic model was denied, and the gap would stop meaning what it appears to mean.",
+      "MASE denominators: train 65.003, test 64.565, both from the run's own seasonal-naive column.",
+      "AutoML engine: FLAML, 180s per tier, optimising mae."
+    ]
+  },
+  "scores": {
+    "n_scored_rows": 2034,
+    "n_rows_in_grid": 2034,
+    "scored_window": [
+      "2020-01-01",
+      "2020-12-31"
+    ],
+    "mase_denominators": {
+      "train_denominator": 65.00292873413602,
+      "test_denominator": 64.5653883972468,
+      "definition": "mean |y - lag_same_weekday|; lag_same_weekday is the last observed same-weekday value at or before the origin"
+    },
+    "coverage": {
+      "agentic": {
+        "predicted_rows": 2034,
+        "missing_rows": 0,
+        "complete": true
+      },
+      "naive": {
+        "predicted_rows": 2034,
+        "missing_rows": 0,
+        "complete": true
+      },
+      "B1_agent_features": {
+        "predicted_rows": 2034,
+        "missing_rows": 0,
+        "complete": true
+      }
+    },
+    "overall": {
+      "agentic": {
+        "n": 2034,
+        "MAE": 40.7426,
+        "RMSE": 54.4367,
+        "R2": 0.2449,
+        "SMAPE_pct": 14.9594,
+        "WAPE_pct": 13.7329,
+        "bias": -5.1377,
+        "MASE_train_denom": 0.6268,
+        "MASE_test_denom": 0.631
+      },
+      "naive": {
+        "n": 2034,
+        "MAE": 64.5654,
+        "RMSE": 85.0213,
+        "R2": -0.842,
+        "SMAPE_pct": 22.8932,
+        "WAPE_pct": 21.7626,
+        "bias": 1.3029,
+        "MASE_train_denom": 0.9933,
+        "MASE_test_denom": 1.0
+      },
+      "B1_agent_features": {
+        "n": 2034,
+        "MAE": 37.6278,
+        "RMSE": 52.5242,
+        "R2": 0.297,
+        "SMAPE_pct": 13.783,
+        "WAPE_pct": 12.683,
+        "bias": 0.1068,
+        "MASE_train_denom": 0.5789,
+        "MASE_test_denom": 0.5828
+      }
+    },
+    "per_horizon": [
+      {
+        "h": 1,
+        "n": 342,
+        "y_mean": 296.79,
+        "MAE_agentic": 40.695,
+        "MAE_naive": 68.544,
+        "MAE_B1_agent_features": 38.006
+      },
+      {
+        "h": 7,
+        "n": 344,
+        "y_mean": 297.17,
+        "MAE_agentic": 40.671,
+        "MAE_naive": 46.791,
+        "MAE_B1_agent_features": 37.406
+      },
+      {
+        "h": 14,
+        "n": 343,
+        "y_mean": 297.56,
+        "MAE_agentic": 40.542,
+        "MAE_naive": 49.563,
+        "MAE_B1_agent_features": 37.438
+      },
+      {
+        "h": 30,
+        "n": 339,
+        "y_mean": 297.48,
+        "MAE_agentic": 40.19,
+        "MAE_naive": 79.64,
+        "MAE_B1_agent_features": 37.14
+      },
+      {
+        "h": 60,
+        "n": 335,
+        "y_mean": 298.14,
+        "MAE_agentic": 41.13,
+        "MAE_naive": 81.313,
+        "MAE_B1_agent_features": 38.041
+      },
+      {
+        "h": 90,
+        "n": 331,
+        "y_mean": 292.84,
+        "MAE_agentic": 41.249,
+        "MAE_naive": 62.085,
+        "MAE_B1_agent_features": 37.746
+      }
+    ],
+    "per_band": [
+      {
+        "band": "h1-7 (within the week)",
+        "n": 686,
+        "horizons": [
+          1,
+          7
+        ],
+        "MAE_agentic": 40.683,
+        "MAE_naive": 57.636,
+        "MAE_B1_agent_features": 37.705
+      },
+      {
+        "band": "h8-30 (within the month)",
+        "n": 682,
+        "horizons": [
+          14,
+          30
+        ],
+        "MAE_agentic": 40.367,
+        "MAE_naive": 64.513,
+        "MAE_B1_agent_features": 37.29
+      },
+      {
+        "band": "h31-90 (within the quarter)",
+        "n": 666,
+        "horizons": [
+          60,
+          90
+        ],
+        "MAE_agentic": 41.189,
+        "MAE_naive": 71.757,
+        "MAE_B1_agent_features": 37.894
+      }
+    ],
+    "per_year": [
+      {
+        "year": 2020,
+        "n": 2034,
+        "y_mean": 296.68,
+        "MAE_agentic": 40.743,
+        "MAE_naive": 64.565,
+        "MAE_B1_agent_features": 37.628
+      }
+    ]
+  },
+  "verdict": {
+    "ranking_by_MAE": [
+      "B1_agent_features",
+      "agentic",
+      "naive"
+    ],
+    "best": "B1_agent_features",
+    "champion": "agentic",
+    "champion_is_best": false,
+    "versus_champion": {
+      "naive": {
+        "MAE": 64.5654,
+        "MAE_gap_vs_agentic": 23.8228,
+        "pct_worse_than_agentic": 58.47,
+        "beats_agentic": false
+      },
+      "B1_agent_features": {
+        "MAE": 37.6278,
+        "MAE_gap_vs_agentic": -3.1148,
+        "pct_worse_than_agentic": -7.65,
+        "beats_agentic": true
+      }
+    },
+    "horizons_won": {
+      "agentic": 0,
+      "naive": 0,
+      "B1_agent_features": 6
+    },
+    "skill_vs_naive_pct": {
+      "agentic": 36.9,
+      "naive": 0.0,
+      "B1_agent_features": 41.72
+    },
+    "skill_definition": "1 - MAE_system / MAE_naive, in percent, on the identical scored rows. Positive means better than naive."
+  }
+}

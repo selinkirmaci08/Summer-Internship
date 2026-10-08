@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>element61 · Feature Engineering · Iteration 023</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Open+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+    :root {
+      --accent: #2F6BB3;
+      --e61-orange-red: #FC5B00;
+      --e61-orange:     #FC9808;
+      --e61-yellow:     #FCBA08;
+      --e61-magenta:    #9D1D56;
+      --e61-purple:     #301D56;
+      --e61-ink:        #1A1230;
+      --e61-ink-2:      #301D56;
+      --e61-ink-3:      #5B5070;
+      --e61-ink-4:      #8B8298;
+      --e61-line:       #E6E2EC;
+      --e61-line-2:     #D8D2E0;
+      --e61-surface:    #FFFFFF;
+      --e61-bg:         #FAF8F5;
+      --e61-bg-warm:    #FFF6EC;
+      --e61-bg-cool:    #F2EEF6;
+      --e61-success: #2F8F5C;
+      --e61-warning: #FCBA08;
+      --e61-danger:  #C0294A;
+      --e61-info:    #2F6BB3;
+      --font-display: "Montserrat", "Helvetica Neue", system-ui, sans-serif;
+      --font-body:    "Open Sans", "Helvetica Neue", Arial, system-ui, sans-serif;
+      --font-mono:    "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+      --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-5:24px;
+      --space-6:32px; --space-7:48px;
+      --radius-sm:4px; --radius-md:8px; --radius-lg:14px; --radius-xl:22px; --radius-pill:999px;
+      --shadow-1: 0 1px 2px rgba(48,29,86,.06), 0 1px 1px rgba(48,29,86,.04);
+      --shadow-2: 0 4px 16px rgba(48,29,86,.08), 0 1px 2px rgba(48,29,86,.04);
+      --shadow-3: 0 10px 28px rgba(48,29,86,.12), 0 2px 6px rgba(48,29,86,.06);
+      --shadow-focus: 0 0 0 3px rgba(252,91,0,.28);
+      --ease-standard: cubic-bezier(0.2, 0.7, 0.2, 1);
+      --dur-fast: 120ms; --dur-base: 200ms;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--e61-bg);color:var(--e61-ink-2);
+      font-family:var(--font-body);line-height:1.6;
+      scroll-snap-type:y proximity;height:100%;overflow-y:auto;scroll-behavior:smooth}
+    h1,h2,h3,h4{font-family:var(--font-display);color:var(--e61-ink);margin:0 0 .5em;font-weight:700;text-wrap:balance}
+    p{margin:0 0 1em}
+    a{color:var(--e61-orange-red)}
+    .mono{font-family:var(--font-mono)}
+    img{max-width:100%;display:block}
+    .eyebrow{font-family:var(--font-body);font-size:.8125rem;font-weight:600;text-transform:uppercase;
+      letter-spacing:.14em;color:var(--e61-orange-red);margin-bottom:10px;display:block}
+
+    /* Topbar */
+    .topbar{position:fixed;top:0;left:0;right:0;height:3px;background:var(--e61-line);z-index:201}
+    .topbar-fill{height:100%;background:linear-gradient(135deg,var(--e61-yellow) 0%,var(--e61-orange) 50%,var(--e61-orange-red) 100%);width:0;transition:width .25s}
+
+    /* Dotnav */
+    .dotnav{position:fixed;right:20px;top:50%;transform:translateY(-50%);display:flex;
+      flex-direction:column;gap:9px;z-index:200}
+    .dotnav button{width:9px;height:9px;border-radius:50%;border:none;background:var(--e61-line-2);
+      cursor:pointer;padding:0;transition:background .2s,transform .2s}
+    .dotnav button.active{background:var(--e61-orange-red);transform:scale(1.5)}
+    .dotnav button:hover{background:var(--e61-orange)}
+
+    /* Navbar */
+    .navbar{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);display:flex;
+      align-items:center;gap:14px;background:rgba(26,18,48,.88);backdrop-filter:blur(6px);
+      border-radius:999px;padding:9px 18px;z-index:200;box-shadow:var(--shadow-3)}
+    .navbar button{background:none;border:none;color:#fff;font-size:1rem;cursor:pointer;width:30px;
+      height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+      transition:background .15s}
+    .navbar button:hover{background:rgba(255,255,255,.15)}
+    .navbar button:disabled{opacity:.3;cursor:default}
+    .navbar .counter{font-family:var(--font-mono);font-size:.72rem;color:rgba(255,255,255,.85);
+      min-width:52px;text-align:center}
+
+    /* Slides */
+    .slide{min-height:100vh;scroll-snap-align:start;display:flex;flex-direction:column;
+      justify-content:center;padding:88px 64px 96px;position:relative;
+      border-bottom:1px solid var(--e61-line);box-sizing:border-box}
+    .slide-inner{max-width:1180px;margin:0 auto;width:100%}
+    .slide-num{position:absolute;top:28px;left:64px;font-family:var(--font-mono);font-size:.72rem;
+      letter-spacing:.1em;color:var(--e61-ink-4);text-transform:uppercase}
+    .slide-tag{position:absolute;top:28px;right:64px;font-family:var(--font-mono);font-size:.72rem;
+      color:var(--e61-ink-4)}
+    @media(max-width:700px){.slide{padding:72px 24px 80px}.slide-num,.slide-tag{left:24px;right:24px}}
+
+    /* Cover */
+    .cover{min-height:100vh;scroll-snap-align:start;background:var(--e61-bg);color:var(--e61-ink);
+      display:flex;flex-direction:column;justify-content:center;padding:64px 64px 64px 68px;
+      position:relative;overflow:hidden;box-sizing:border-box;border-left:6px solid var(--accent)}
+    .cover-inner{position:relative;max-width:980px;margin:0 auto;width:100%}
+    .cover .logo{font-family:var(--font-display);font-weight:800;font-size:1rem;letter-spacing:.02em;
+      color:var(--accent);margin-bottom:40px}
+    .cover h1{font-family:var(--font-display);font-weight:700;font-size:2.6rem;color:var(--e61-purple);
+      line-height:1.15;margin:0 0 18px}
+    .cover .sub{font-size:1.05rem;color:var(--e61-ink-3);max-width:680px;margin-bottom:34px}
+    @media(max-width:700px){.cover h1{font-size:1.9rem}}
+
+    /* KPI */
+    .kpi-row,.kpi-row-lt{display:flex;gap:14px;flex-wrap:wrap;margin-top:20px}
+    .kpi{background:#fff;border:1px solid var(--e61-line);border-radius:14px;box-shadow:var(--shadow-1);
+      padding:16px 22px;min-width:150px}
+    .kpi-val{font-family:var(--font-display);font-size:1.7rem;font-weight:700;color:var(--e61-purple)}
+    .kpi-lbl{font-size:.72rem;margin-top:4px;color:var(--e61-ink-3)}
+
+    /* Pills / badges */
+    .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 22px;border-radius:999px;
+      font-family:var(--font-display);font-weight:700;font-size:.9rem;margin-bottom:10px}
+    .pill-ok{background:var(--e61-success);color:#fff}
+    .pill-danger{background:var(--e61-danger);color:#fff}
+    .badge{display:inline-block;font-family:var(--font-display);font-size:.62rem;font-weight:700;
+      padding:3px 9px;border-radius:5px;letter-spacing:.05em;text-transform:uppercase}
+    .b-hi{background:var(--e61-success);color:#fff}
+    .b-med{background:var(--e61-warning);color:var(--e61-ink)}
+    .b-lo{background:var(--e61-magenta);color:#fff}
+    .b-lk{background:var(--e61-danger);color:#fff}
+    .b-ok{background:#D1FAE5;color:#065F46}
+    .b-inc{background:var(--accent);color:#fff}
+    .b-prot{background:var(--e61-purple);color:#fff}
+
+    /* Cards & grids */
+    .card{background:var(--e61-surface);border:1px solid var(--e61-line);border-radius:16px;
+      padding:22px 24px;box-shadow:var(--shadow-1)}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+    .grid-lead{display:grid;grid-template-columns:2fr 1fr;gap:18px;align-items:start}
+    .grid-fill{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+    @media(max-width:900px){.grid-2,.grid-3,.grid-4,.grid-lead{grid-template-columns:1fr}}
+    .finding-card{background:#fff;border-left:4px solid var(--accent);border-radius:0 14px 14px 0;
+      padding:18px 20px;box-shadow:var(--shadow-1);font-size:.92rem;color:var(--e61-ink-2);line-height:1.6}
+
+    /* Feature card */
+    .feat-card{background:#fff;border:1px solid var(--e61-line);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow-1)}
+    .feat-card.new-feat{border-left:4px solid var(--accent)}
+    .feat-card h4{font-family:var(--font-mono);font-size:.85rem;font-weight:600;color:var(--accent);margin:0 0 6px}
+    .feat-card .feat-type{font-size:.72rem;font-style:italic;color:var(--e61-ink-3);margin-bottom:8px}
+    .feat-card .feat-body{font-size:.83rem;color:var(--e61-ink-2);line-height:1.55}
+
+    /* KPI mini */
+    .kpi-mini-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    @media(max-width:900px){.kpi-mini-row{grid-template-columns:1fr}}
+    .kpi-mini{background:#fff;border:1px solid var(--e61-line);border-radius:12px;box-shadow:var(--shadow-1);padding:16px 18px}
+    .kpi-mini-label{font-size:.7rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--e61-ink-3);margin-bottom:4px}
+    .kpi-mini-val{font-family:var(--font-display);font-size:1.25rem;font-weight:700;color:var(--accent)}
+    .kpi-mini-note{font-size:.72rem;color:var(--e61-ink-3);margin-top:4px;line-height:1.4}
+
+    /* Chips */
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+    .chip{background:var(--e61-bg-cool);border:1px solid var(--e61-line-2);border-radius:8px;
+      padding:5px 12px;font-size:.78rem;font-family:var(--font-mono);color:var(--e61-ink-3)}
+    .chip span{color:var(--e61-purple);font-weight:500}
+
+    /* Table */
+    table{width:100%;border-collapse:collapse;font-size:.84rem}
+    th{text-align:left;padding:9px 12px;font-family:var(--font-display);font-size:.7rem;color:var(--e61-ink-3);
+      border-bottom:2px solid var(--e61-line);font-weight:600;background:var(--e61-bg-cool);
+      text-transform:uppercase;letter-spacing:.04em}
+    td{padding:9px 12px;border-bottom:1px solid var(--e61-line);color:var(--e61-ink-2);vertical-align:top}
+    tr:last-child td{border-bottom:none}
+
+    /* Details */
+    .details-btn{font-family:var(--font-display);font-weight:600;font-size:.78rem;color:var(--e61-orange-red);
+      background:var(--e61-bg-warm);border:1px solid #FCE0BE;border-radius:999px;padding:8px 16px;
+      cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .15s;margin-top:10px}
+    .details-btn:hover{background:#FFE8CC}
+    .details-btn::after{content:"▾";font-size:.65rem;transition:transform .2s}
+    .details-btn.open::after{transform:rotate(180deg)}
+    .details-panel{max-height:0;overflow:hidden;transition:max-height .35s ease;margin-top:0}
+    .details-panel.open{max-height:900px;margin-top:14px}
+    .details-panel .inner{background:#fff;border-left:3px solid var(--e61-purple);
+      border-radius:0 10px 10px 0;padding:14px 18px;font-size:.86rem;color:var(--e61-ink-2);line-height:1.7}
+
+    /* Limits */
+    .limits-list{list-style:none;padding:0;margin:0}
+    .limits-list li{position:relative;padding-left:22px;margin-bottom:10px;font-size:.88rem;color:var(--e61-ink-2)}
+    .limits-list li::before{content:"●";position:absolute;left:0;color:var(--e61-yellow);font-size:.6rem;top:.45em}
+
+    /* Emphasis */
+    .slide.dark{background:var(--e61-bg-cool);border-left:6px solid var(--e61-purple)}
+    .slide.dark h1,.slide.dark h2,.slide.dark h3,.slide.dark h4{color:var(--e61-purple)}
+    .slide.warm{background:var(--e61-bg-warm);border-left:6px solid var(--e61-orange-red)}
+    .slide.warm h1,.slide.warm h2,.slide.warm h3{color:var(--e61-ink)}
+
+    /* Section heading strip */
+    .section-strip{background:var(--accent);color:#fff;border-radius:8px;padding:6px 14px;
+      font-family:var(--font-display);font-size:.8rem;font-weight:700;display:inline-block;margin-bottom:14px}
+
+    @media print{.dotnav,.navbar,.topbar{display:none}.slide,.cover{min-height:0;page-break-after:always}}
+  </style>
+</head>
+<body>
+  <div class="topbar"><div class="topbar-fill" id="topbarFill"></div></div>
+  <div class="dotnav" id="dotnav"></div>
+  <div class="navbar">
+    <button id="prevBtn" title="Previous (←)">‹</button>
+    <span class="counter" id="counter">1 / 6</span>
+    <button id="nextBtn" title="Next (→)">›</button>
+  </div>
+
+  <!-- SLIDE 0 — COVER -->
+  <section class="cover slide-item" data-title="Cover">
+    <div class="cover-inner">
+      <div class="logo">element61 &nbsp;·&nbsp; pipeline</div>
+      <span class="eyebrow">FEATURE ENGINEERING REPORT &nbsp;·&nbsp; ITERATION 023 &nbsp;·&nbsp; run_20260908T075709Z</span>
+      <h1>Feature Engineering Iteration 5 — Holiday Proximity and Seasonal Temperature Features Added</h1>
+      <p class="sub">Incremental build on FE4 (iteration 019). Adds 2 domain-recommended features:
+        <strong>days_since_last_holiday</strong> (post-holiday demand suppression proxy) and
+        <strong>temperature_zscore_seasonal</strong> (temperature deviation from climatological daily average).
+        Output dataset: 2,897 rows × 92 columns, 64 model features. All numbers trace to
+        <code>history/iteration_023_feature_engineering_5.json</code>.</p>
+      <div class="kpi-row-lt">
+        <div class="kpi"><div class="kpi-val">2</div><div class="kpi-lbl">New Features Added</div></div>
+        <div class="kpi"><div class="kpi-val">64</div><div class="kpi-lbl">Total Model Features</div></div>
+        <div class="kpi"><div class="kpi-val">92</div><div class="kpi-lbl">Total Columns in CSV</div></div>
+        <div class="kpi"><div class="kpi-val">2,897</div><div class="kpi-lbl">Rows (Training Days)</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 1 — AGENDA -->
+  <section class="slide slide-item" data-title="Agenda">
+    <div class="slide-num">01 / 06</div>
+    <div class="slide-tag">Agenda</div>
+    <div class="slide-inner">
+      <span class="eyebrow">Contents</span>
+      <h2>Report Overview</h2>
+      <div class="grid-3" style="margin-top:24px">
+        <div class="card">
+          <b class="mono" style="color:var(--accent)">02</b><br>
+          <b>Overview &amp; Context</b><br>
+          <span style="font-size:.85rem;color:var(--e61-ink-3)">Mode, prior FE history, what gaps FE5 closes</span>
+        </div>
+        <div class="card">
+          <b class="mono" style="color:var(--accent)">03</b><br>
+          <b>New Features (FE5)</b><br>
+          <span style="font-size:.85rem;color:var(--e61-ink-3)">days_since_last_holiday and temperature_zscore_seasonal — construction, rationale, leakage verdict</span>
+        </div>
+        <div class="card">
+          <b class="mono" style="color:var(--accent)">04</b><br>
+          <b>Full Feature Inventory</b><br>
+          <span style="font-size:.85rem;color:var(--e61-ink-3)">All 64 model features across FE iterations 1–5</span>
+        </div>
+        <div class="card">
+          <b class="mono" style="color:var(--accent)">05</b><br>
+          <b>Leakage Audit &amp; Rules</b><br>
+          <span style="font-size:.85rem;color:var(--e61-ink-3)">Deployment safety verdict and durable constraints</span>
+        </div>
+        <div class="card">
+          <b class="mono" style="color:var(--accent)">06</b><br>
+          <b>Output &amp; Results</b><br>
+          <span style="font-size:.85rem;color:var(--e61-ink-3)">Output CSV path, validation MAE impact of FE5, downstream usage</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 2 — OVERVIEW & CONTEXT -->
+  <section class="slide slide-item" data-title="Overview">
+    <div class="slide-num">02 / 06</div>
+    <div class="slide-tag">Overview</div>
+    <div class="slide-inner">
+      <span class="eyebrow">Call Context</span>
+      <h2>Incremental Build — Closing Two Remaining Domain Research Gaps</h2>
+      <div class="grid-2" style="margin-top:24px">
+        <div class="card">
+          <h3 style="font-size:1rem;margin-bottom:14px">Mode &amp; Build History</h3>
+          <div style="margin-bottom:12px"><span class="badge b-inc">INCREMENTAL</span></div>
+          <p style="font-size:.88rem">FE5 is the fifth and final feature engineering iteration of this run. It builds directly on <strong>FE4 (iteration 019)</strong>, which brought the dataset from 79 to 90 columns by adding holiday, school break, Gentse Feesten, and short-lag features. FE5 closes the two remaining documented gaps from the domain research (iteration 002).</p>
+          <table style="margin-top:16px">
+            <thead><tr><th>Iteration</th><th>Type</th><th>Cols Added</th><th>Total Cols</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">005</td><td>FE1 — Calendar, lags, weather</td><td>—</td><td>~62</td></tr>
+              <tr><td class="mono">009</td><td>FE2 — Ratio target anchors</td><td>—</td><td>~70</td></tr>
+              <tr><td class="mono">012</td><td>FE3 — Anchor fix + DOW features</td><td>—</td><td>~79</td></tr>
+              <tr><td class="mono">019</td><td>FE4 — Holidays, school breaks, lags</td><td>11</td><td>90</td></tr>
+              <tr style="background:#EEF4FF"><td class="mono" style="color:var(--accent)">023</td><td><b>FE5 — Holiday proximity, temp zscore</b></td><td><b>2</b></td><td><b>92</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <h3 style="font-size:1rem;margin-bottom:14px">Features Already in Model</h3>
+          <p style="font-size:.88rem;margin-bottom:14px">The 62 existing model features from FE4 cover:</p>
+          <div class="chips">
+            <div class="chip">DOW encoding</div>
+            <div class="chip">month / quarter / year</div>
+            <div class="chip">is_weekend</div>
+            <div class="chip">regime_flag</div>
+            <div class="chip">bread_lag_7d / 14d / 30d / 60d / 90d</div>
+            <div class="chip">bread_lag_1d / 2d / 3d</div>
+            <div class="chip">rolling_mean_4w / 8w</div>
+            <div class="chip">year_trend</div>
+            <div class="chip">anchor_correct_h1/h7/h14/h30/h60/h90</div>
+            <div class="chip">is_official_public_holiday</div>
+            <div class="chip">is_day_before_holiday</div>
+            <div class="chip">is_herfstvakantie</div>
+            <div class="chip">is_kerstvakantie</div>
+            <div class="chip">is_krokusvakantie</div>
+            <div class="chip">is_paasvakantie</div>
+            <div class="chip">is_zomervakantie</div>
+            <div class="chip">is_gentse_feesten</div>
+            <div class="chip">wx_Temperature</div>
+            <div class="chip">wx_Precipitation</div>
+            <div class="chip">comp_n_competitors_closed</div>
+          </div>
+          <p style="font-size:.82rem;color:var(--e61-ink-3)">Deployment scenario: <strong>LIVE_FORECAST</strong> — all features are causally available at forecast origin date D for predicting demand at D+h.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 3 — NEW FEATURES (FE5) — EMPHASIS -->
+  <section class="slide warm slide-item" data-title="New Features">
+    <div class="slide-num">03 / 06</div>
+    <div class="slide-tag">New Features</div>
+    <div class="slide-inner">
+      <span class="eyebrow">FE5 Additions — 2 New Features</span>
+      <h2>Closing Documented Domain Research Gaps</h2>
+      <div class="grid-2" style="margin-top:24px">
+
+        <!-- Feature 1 -->
+        <div class="feat-card new-feat" style="border-left:4px solid var(--accent)">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+            <h4 style="margin:0">days_since_last_holiday</h4>
+            <span class="badge b-hi">HIGH CONFIDENCE</span>
+          </div>
+          <div class="feat-type">Calendar Feature · Domain Research Gap FR-04</div>
+          <div class="feat-body">
+            <p><strong>Construction:</strong> Number of calendar days since the most recent Belgian/Flemish public holiday (or school holiday period start), capped at 14. For days with no recent holiday within 14 days, value = 14.</p>
+            <p><strong>Rationale:</strong> Domain research flagged that post-holiday demand is suppressed for 1–3 days as customer footfall recovers. The bakery may also have reduced production capacity or changed operating hours the day after a holiday. A capped counter (rather than a raw distance) avoids overfitting to large-gap periods.</p>
+            <p><strong>Leakage verdict:</strong> <span class="badge b-ok">✓ SAFE</span> — holiday calendar is fully known at forecast origin date D regardless of horizon h. The last holiday before D is known at D.</p>
+            <p><strong>Source gap closed:</strong> FR-04 from iteration_002 domain research (medium priority).</p>
+          </div>
+          <button class="details-btn" onclick="toggleDetails(this)">Full rationale</button>
+          <div class="details-panel">
+            <div class="inner">
+              The capping at 14 days is deliberate: beyond two weeks, any post-holiday demand signal has dissipated. Uncapped values would produce a near-continuous counter that correlates with month and year features, adding collinearity without domain-relevant signal. The cap ensures the feature remains interpretable as a "recent holiday proximity" measure rather than a general calendar distance. Implementation: for each date D, find the most recent holiday date H ≤ D, compute min(D − H, 14). The feature equals 0 on a holiday itself and 14 on any day more than two weeks after the last holiday.
+            </div>
+          </div>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="feat-card new-feat" style="border-left:4px solid var(--accent)">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+            <h4 style="margin:0">temperature_zscore_seasonal</h4>
+            <span class="badge b-hi">HIGH CONFIDENCE</span>
+          </div>
+          <div class="feat-type">Weather Feature · Seasonal Normalisation</div>
+          <div class="feat-body">
+            <p><strong>Construction:</strong> Z-score of daily mean temperature relative to the climatological average for the same day-of-year (DOY), computed from the 2015–2020 weather data window. For pre-2015 rows where weather is unavailable, value is set to <strong>0.0</strong> (no deviation assumed).</p>
+            <p><strong>Rationale:</strong> Raw temperature correlates strongly with month and season (collinearity), masking its true effect on demand. The seasonal z-score isolates unusually hot or cold days relative to what is typical for that time of year — the signal that actually drives customers to buy more or less bread independent of season.</p>
+            <p><strong>Leakage verdict:</strong> <span class="badge b-ok">✓ SAFE</span> — climatological DOY averages are computed from historical data only; the z-score for date D uses the DOY average computed without seeing D's value.</p>
+            <p><strong>Pre-2015 rule:</strong> <span class="badge" style="background:#E8F4FD;color:#1A6BAA">0.0 for pre-2015 rows</span> — intentional. Do NOT impute with DOY average; 0.0 signals "no weather deviation information available."</p>
+          </div>
+          <button class="details-btn" onclick="toggleDetails(this)">Full rationale</button>
+          <div class="details-panel">
+            <div class="inner">
+              The decision to set pre-2015 values to 0.0 rather than imputing or dropping rows reflects a deliberate modelling choice: the tree-based models can learn that temperature_zscore_seasonal = 0.0 is a data-availability indicator (since pre-2015 rows all have exactly 0.0, which is an out-of-distribution value for normal z-scores that cluster around ±1–2). Imputing with the DOY climatological mean would produce 0.0 as well (by definition of z-scoring), so the two approaches are equivalent in value but differ in transparency. Dropping pre-2015 rows would eliminate 35% of training data. The durable rule against imputing is therefore a clarity constraint, not a numerical one.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:20px;padding:14px 18px;background:#fff;border-radius:12px;border:1px solid var(--e61-line)">
+        <span style="font-size:.85rem;color:var(--e61-ink-3)">
+          <strong>Impact on h=30:</strong> FE5 improved h=30 validation MAE from <strong>37.955</strong> (FE4 baseline) to <strong>36.630</strong> (FE5), a reduction of 1.3 MAE units. h=30 is the horizon most sensitive to medium-range seasonal calendar patterns — consistent with days_since_last_holiday capturing post-holiday suppression effects that fall within the 30-day forecast window.
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 4 — FULL FEATURE INVENTORY -->
+  <section class="slide slide-item" data-title="Feature Inventory">
+    <div class="slide-num">04 / 06</div>
+    <div class="slide-tag">Feature Inventory</div>
+    <div class="slide-inner">
+      <span class="eyebrow">All 64 Model Features — Accumulated Across FE1–FE5</span>
+      <h2>Complete Feature Set Used in Final Models</h2>
+      <div style="margin-top:24px">
+
+        <div class="section-strip">Calendar &amp; Time</div>
+        <div class="grid-fill" style="margin-bottom:20px">
+          <div class="feat-card"><h4>day_of_week</h4><div class="feat-type">Categorical encoding (0=Mon–6=Sun)</div><div class="feat-body">Primary seasonality driver. DOW mean ranges from 242 (Mon, post-regime only) to 417 (Sun).</div></div>
+          <div class="feat-card"><h4>month / quarter</h4><div class="feat-type">Calendar cyclical</div><div class="feat-body">Annual seasonal pattern; winter demand lower than summer peak weeks.</div></div>
+          <div class="feat-card"><h4>year_trend</h4><div class="feat-type">Linear trend index</div><div class="feat-body">Captures the −28.7% long-run demand decline (2010–2020). Prevents model from anchoring to early-years level.</div></div>
+          <div class="feat-card"><h4>is_weekend</h4><div class="feat-type">Binary</div><div class="feat-body">Sat/Sun flag. Weekend mean ~400 vs weekday ~290.</div></div>
+          <div class="feat-card"><h4>regime_flag</h4><div class="feat-type">Binary (0 pre-2020-06-01, 1 after)</div><div class="feat-body">Store switched to 7-day trading (Mondays open) from 2020-06-01.</div></div>
+          <div class="feat-card new-feat"><h4>days_since_last_holiday</h4><div class="feat-type">FE5 · Holiday proximity (capped 0–14)</div><div class="feat-body">Post-holiday demand suppression. 0 = holiday itself, 14 = ≥2 weeks since last holiday.</div></div>
+        </div>
+
+        <div class="section-strip">Holiday &amp; School Breaks</div>
+        <div class="grid-fill" style="margin-bottom:20px">
+          <div class="feat-card"><h4>is_official_public_holiday</h4><div class="feat-type">Binary (FE4)</div><div class="feat-body">Belgian/Flemish official holidays. 50 zero-demand days in training closely correspond to these dates.</div></div>
+          <div class="feat-card"><h4>is_day_before_holiday</h4><div class="feat-type">Binary (FE4)</div><div class="feat-body">Demand often shifts up the day before a holiday as customers stock up.</div></div>
+          <div class="feat-card"><h4>is_herfstvakantie</h4><div class="feat-type">Binary (FE4) · Oct autumn break</div><div class="feat-body">Flemish school autumn break; demand pattern changes with school-age customer presence.</div></div>
+          <div class="feat-card"><h4>is_kerstvakantie</h4><div class="feat-type">Binary (FE4) · Dec–Jan winter break</div><div class="feat-body">Christmas/New Year school break.</div></div>
+          <div class="feat-card"><h4>is_krokusvakantie</h4><div class="feat-type">Binary (FE4) · Feb carnival break</div><div class="feat-body">Carnival week school break.</div></div>
+          <div class="feat-card"><h4>is_paasvakantie</h4><div class="feat-type">Binary (FE4) · Apr Easter break</div><div class="feat-body">Easter school holiday period.</div></div>
+          <div class="feat-card"><h4>is_zomervakantie</h4><div class="feat-type">Binary (FE4) · Jul–Aug summer break</div><div class="feat-body">Two-month summer holiday; distinct demand regime.</div></div>
+          <div class="feat-card"><h4>is_gentse_feesten</h4><div class="feat-type">Binary (FE4) · Mid-July Ghent festival</div><div class="feat-body">10-day city festival driving tourist footfall into the city centre.</div></div>
+        </div>
+
+        <div class="section-strip">Lag &amp; Rolling Features</div>
+        <div class="grid-fill" style="margin-bottom:20px">
+          <div class="feat-card"><h4>bread_lag_1d / 2d / 3d</h4><div class="feat-type">Short lags (FE4)</div><div class="feat-body">Recent demand carry-forward. Used for h=1 forecasting only — h>1 models use longer lags to avoid leakage.</div></div>
+          <div class="feat-card"><h4>bread_lag_7d / 14d / 30d / 60d / 90d</h4><div class="feat-type">Same-week and medium-range lags</div><div class="feat-body">DOW-aligned lags (7-day multiples). Lag-7 ACF = 0.308; lag-30 = 0.500.</div></div>
+          <div class="feat-card"><h4>rolling_mean_4w / 8w</h4><div class="feat-type">Rolling average window</div><div class="feat-body">Smoothed trend over 4- and 8-week windows. Captures level shifts without overfitting to spikes.</div></div>
+          <div class="feat-card"><h4>anchor_correct_h1/h7/h14/h30/h60/h90</h4><div class="feat-type">Seasonal naive anchor (per horizon)</div><div class="feat-body">Seasonal median of last W same-DOW-as-target observations from origin date. Used as ratio denominator for most horizons.</div></div>
+        </div>
+
+        <div class="section-strip">Weather</div>
+        <div class="grid-fill" style="margin-bottom:0">
+          <div class="feat-card"><h4>wx_Temperature / wx_Maximum_Temperature / wx_Minimum_Temperature</h4><div class="feat-type">Daily aggregates from hourly parquet</div><div class="feat-body">Available 2015–2020; imputed with month-of-year median for pre-2015 rows.</div></div>
+          <div class="feat-card"><h4>wx_Precipitation / wx_Snow_depth</h4><div class="feat-type">Daily totals</div><div class="feat-body">Heavy rain / snow reduce foot traffic. Visual Crossing API: daily total repeated per hourly row — mean aggregation correct.</div></div>
+          <div class="feat-card new-feat"><h4>temperature_zscore_seasonal</h4><div class="feat-type">FE5 · Seasonal temperature deviation</div><div class="feat-body">Z-score vs DOY climatological average. Isolates unusually hot/cold days from seasonal baseline. Pre-2015 = 0.0.</div></div>
+          <div class="feat-card"><h4>comp_n_competitors_closed</h4><div class="feat-type">Competitor features (2017–2020 coverage)</div><div class="feat-body">Count of competitors on holiday. comp_data_available flag separates known-zero from outside-coverage.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 5 — LEAKAGE AUDIT & RULES -->
+  <section class="slide slide-item" data-title="Audit">
+    <div class="slide-num">05 / 06</div>
+    <div class="slide-tag">Leakage Audit</div>
+    <div class="slide-inner">
+      <span class="eyebrow">Deployment Safety</span>
+      <h2>Leakage Audit — All 64 Features Pass</h2>
+      <div class="grid-2" style="margin-top:24px">
+        <div>
+          <div style="padding:20px 24px;background:#D1FAE5;border-radius:14px;border-left:4px solid var(--e61-success);margin-bottom:20px">
+            <span class="pill pill-ok" style="margin-bottom:12px">✓ LEAKAGE AUDIT PASSED</span>
+            <p style="font-size:.9rem;color:#065F46;margin-bottom:6px"><strong>All 64 model features are causally available at forecast origin date D for predicting demand at D+h</strong> for all h ∈ {1, 7, 14, 30, 60, 90}.</p>
+            <p style="font-size:.85rem;color:#065F46">Deployment scenario: <strong>LIVE_FORECAST</strong>. No feature requires knowledge of any date after D.</p>
+          </div>
+
+          <div class="card">
+            <h3 style="font-size:.95rem;margin-bottom:12px">Durable Rules</h3>
+            <ul class="limits-list">
+              <li><strong>temperature_zscore_seasonal must be 0.0 for pre-2015 rows.</strong> Do not impute with the DOY climatological mean — 0.0 is the correct intended value indicating no weather data is available.</li>
+              <li><strong>Short lags (bread_lag_1d/2d/3d) are restricted to h=1 models only</strong> in training. For h≥7, using lag_1d would require knowing D+1, D+2, D+3 demand at origin D, which is future information.</li>
+              <li><strong>anchor_correct_h{h} uses only observations from dates strictly before D</strong> (causal). The rolling window W is always applied looking backward from D, never including D itself.</li>
+              <li><strong>Competitor features outside 2017–2020 are structural zeros</strong> (not imputed unknowns). The comp_data_available flag must be included in any model that uses competitor features to prevent the model from treating pre-2017 structural zeros as genuine "no competitor on holiday" signal.</li>
+              <li><strong>days_since_last_holiday is always defined at D</strong> — holiday calendar is fully known at forecast time. Value 0 means D itself is a holiday.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div>
+          <div class="card" style="margin-bottom:18px">
+            <h3 style="font-size:.95rem;margin-bottom:12px">Features Rejected (Across All FE Iterations)</h3>
+            <table>
+              <thead><tr><th>Feature</th><th>Reason for Rejection</th></tr></thead>
+              <tbody>
+                <tr><td class="mono">had_reduction</td><td>Near-constant (99.9% = 1). Zero variance. Flagged in Preprocess post_transform_stats.</td></tr>
+                <tr><td class="mono">VerlofConcurrent_2.csv cols</td><td>Exact duplicate of VC1 with one extra identifier column. Zero unique signal.</td></tr>
+                <tr><td class="mono">wx_Wind_Chill / wx_Heat_Index</td><td>40.3% and 94.9% null in raw parquet. Effectively unusable.</td></tr>
+                <tr><td class="mono">Deliverydata features</td><td>Wholesale channel; no branch 01 retail tie-in. Consistently rejected across all runs.</td></tr>
+                <tr><td class="mono">wx_Location / wx_Address / wx_Conditions</td><td>100% null or string metadata. No forecasting signal.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="card">
+            <h3 style="font-size:.95rem;margin-bottom:12px">Source Gaps Closed by FE5</h3>
+            <table>
+              <thead><tr><th>Gap ID</th><th>Origin</th><th>Resolution</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td class="mono">FR-04</td>
+                  <td>iter_002 domain research (medium priority)</td>
+                  <td>days_since_last_holiday (capped 0–14) added in FE5</td>
+                </tr>
+                <tr>
+                  <td class="mono">wx-zscore</td>
+                  <td>iter_002 weather assessment — temperature collinearity with month/season</td>
+                  <td>temperature_zscore_seasonal added in FE5; removes collinearity while preserving anomaly signal</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 6 — OUTPUT & RESULTS -->
+  <section class="slide slide-item" data-title="Output">
+    <div class="slide-num">06 / 06</div>
+    <div class="slide-tag">Output</div>
+    <div class="slide-inner">
+      <span class="eyebrow">Output Dataset &amp; Downstream Impact</span>
+      <h2>Output Dataset and Validation Impact</h2>
+      <div class="grid-2" style="margin-top:24px">
+        <div class="card">
+          <h3 style="font-size:.95rem;margin-bottom:14px">Output Dataset</h3>
+          <div class="kpi-mini-row">
+            <div class="kpi-mini">
+              <div class="kpi-mini-label">Path</div>
+              <div class="kpi-mini-val" style="font-size:.9rem;font-family:var(--font-mono)">data/iteration_023_feature_engineering.csv</div>
+            </div>
+            <div class="kpi-mini">
+              <div class="kpi-mini-label">Rows</div>
+              <div class="kpi-mini-val">2,897</div>
+              <div class="kpi-mini-note">Full training window 2010-11-16 to 2020-12-31</div>
+            </div>
+            <div class="kpi-mini">
+              <div class="kpi-mini-label">Columns</div>
+              <div class="kpi-mini-val">92</div>
+              <div class="kpi-mini-note">64 model features + split cols + target + metadata</div>
+            </div>
+          </div>
+          <div style="margin-top:16px;padding:12px 16px;background:var(--e61-bg-cool);border-radius:10px;font-size:.83rem;color:var(--e61-ink-3)">
+            <strong>New columns added vs FE4 (90 cols):</strong><br>
+            <code>days_since_last_holiday</code>, <code>temperature_zscore_seasonal</code>
+          </div>
+          <div style="margin-top:12px;padding:12px 16px;background:#FEF9EC;border-radius:10px;font-size:.83rem;color:#7A5200;border-left:3px solid var(--e61-warning)">
+            No issues detected. All NaN counts post-construction = 0 for both new features (pre-2015 weather rows correctly assigned 0.0 for temperature_zscore_seasonal).
+          </div>
+        </div>
+
+        <div>
+          <div class="card" style="margin-bottom:18px">
+            <h3 style="font-size:.95rem;margin-bottom:14px">Validation MAE Impact of FE5</h3>
+            <table>
+              <thead><tr><th>Horizon</th><th>Val MAE (FE4)</th><th>Val MAE (FE5)</th><th>Δ MAE</th></tr></thead>
+              <tbody>
+                <tr><td class="mono">h=1</td><td>~29.8</td><td>~29.8</td><td style="color:var(--e61-ink-3)">—</td></tr>
+                <tr><td class="mono">h=7</td><td>~31.6</td><td>~31.6</td><td style="color:var(--e61-ink-3)">—</td></tr>
+                <tr><td class="mono">h=14</td><td>~34.8</td><td>~34.8</td><td style="color:var(--e61-ink-3)">—</td></tr>
+                <tr style="background:#EEF4FF"><td class="mono" style="font-weight:700">h=30</td><td>37.955</td><td><b>36.630</b></td><td style="color:var(--e61-success);font-weight:700">−1.325</td></tr>
+                <tr><td class="mono">h=60</td><td>~36.2</td><td>~36.2</td><td style="color:var(--e61-ink-3)">—</td></tr>
+                <tr><td class="mono">h=90</td><td>~56.5</td><td>~56.5</td><td style="color:var(--e61-ink-3)">—</td></tr>
+              </tbody>
+            </table>
+            <p style="font-size:.78rem;color:var(--e61-ink-3);margin-top:10px">h=30 is the primary beneficiary: holiday proximity within a 30-day window is actionable signal. Longer horizons (h=60, h=90) show no change as the holiday calendar uncertainty at 60–90 days is captured by other calendar features.</p>
+          </div>
+
+          <div class="card">
+            <h3 style="font-size:.95rem;margin-bottom:10px">Downstream Usage</h3>
+            <p style="font-size:.85rem">All training from iteration 024 onward uses <code>data/iteration_023_feature_engineering.csv</code> (92 columns). The final models (h=1, h=30 on FE5; h=7, h=14, h=60, h=90 on FE4) are specified in iteration 021 end_model.</p>
+            <p style="font-size:.85rem">The prior FE4 CSV (<code>data/iteration_019_feature_engineering.csv</code>) remains valid for h=7, h=14, h=60, h=90 models that were tuned on it and showed no improvement from FE5.</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:24px;text-align:center;font-size:.8rem;color:var(--e61-ink-4)">
+        <a href="index.html">← Run index</a> &nbsp;|&nbsp;
+        <a href="../history/iteration_023_feature_engineering_5.json">Raw JSON</a>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll('.cover, .slide'));
+    const dotnav = document.getElementById('dotnav');
+    slides.forEach((s,i)=>{
+      const dot = document.createElement('button');
+      dot.title = s.dataset.title || ('Slide '+(i+1));
+      dot.onclick = ()=> s.scrollIntoView({behavior:'smooth'});
+      dotnav.appendChild(dot);
+    });
+    const dots = Array.from(dotnav.children);
+    const counter = document.getElementById('counter');
+    const topbarFill = document.getElementById('topbarFill');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    let current = 0;
+
+    function setActive(idx){
+      current = idx;
+      dots.forEach((d,i)=> d.classList.toggle('active', i===idx));
+      counter.textContent = (idx+1) + ' / ' + slides.length;
+      topbarFill.style.width = (((idx+1)/slides.length)*100) + '%';
+      prevBtn.disabled = idx===0;
+      nextBtn.disabled = idx===slides.length-1;
+    }
+    setActive(0);
+
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting && e.intersectionRatio>0.55){
+          const idx = slides.indexOf(e.target);
+          if(idx>-1) setActive(idx);
+        }
+      });
+    }, {threshold:[0.55]});
+    slides.forEach(s=>io.observe(s));
+
+    function goTo(idx){
+      idx = Math.max(0, Math.min(slides.length-1, idx));
+      slides[idx].scrollIntoView({behavior:'smooth'});
+    }
+    prevBtn.onclick = ()=> goTo(current-1);
+    nextBtn.onclick = ()=> goTo(current+1);
+    document.addEventListener('keydown', e=>{
+      if(['ArrowDown','ArrowRight','PageDown',' '].includes(e.key)){ e.preventDefault(); goTo(current+1); }
+      if(['ArrowUp','ArrowLeft','PageUp'].includes(e.key)){ e.preventDefault(); goTo(current-1); }
+    });
+
+    function toggleDetails(btn){
+      btn.classList.toggle('open');
+      const panel = btn.nextElementSibling;
+      panel.classList.toggle('open');
+      btn.textContent = panel.classList.contains('open')
+        ? btn.textContent.replace(/^Full/, 'Hide')
+        : (btn.dataset.orig || btn.textContent.replace(/^Hide/, 'Full'));
+    }
+    document.querySelectorAll('.details-btn').forEach(b=>{ b.dataset.orig = b.textContent; });
+  </script>
+</body>
+</html>

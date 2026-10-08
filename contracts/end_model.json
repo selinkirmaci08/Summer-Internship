@@ -1,0 +1,403 @@
+{
+  "note": "end_model has a skill file at skills/end_model-skill/end_model.md, like every other node. This contract stays AUTHORITATIVE where the two disagree: the skill carries the procedure and the reasoning behind it, this file carries the input/output shape and the requirements block. The handoff and methodology requirements below are deliberately stated in both - they were written here first, when the node had no skill, and a node that reads only one of the two files must still meet them.\n\nSCOPE: this pipeline never holds a genuinely held-out set. The holdout is carved off before the run starts and scored afterwards, outside the pipeline. end_model therefore does NOT produce a final unbiased number. Its job is to choose the champion on validation evidence, freeze it, and emit its predictions in the form the later comparison expects.\n\nThis example is adapted from run_20260827T154407Z iteration 016 - the real end_model call that closed that run - with its test-scored sections replaced by the validation-scored equivalents this design calls for. Values are trimmed for readability; the shape is the real one. conventions/naming_conventions.md is authoritative for paths and numbering.",
+  "requirements": {
+    "handoff": "MUST write a top-level 'handoff' block per conventions/handoff_contract.md, including the externalisation pass the skill files carry. Being the last node is not an exemption: tools/handoff_check.py requires a conformant block in every history file, and a resumed or extended run reads this one first. Its do_not_repeat and methodological_cautions are the most valuable in the run - they are what stops a later agent re-opening an axis this run already closed by measurement.",
+    "selection_is_validation_only": "The champion MUST be chosen from validation evidence - or the CV design recorded in split_info.cv_design - and nothing else, recorded with choice.selected_on = 'validation'. There is no held-out partition in this run to choose on, and inventing one by carving a third slice out of the training data does not create one. This is the single most important rule in the node.",
+    "no_final_numbers": "Every metric this node emits is a validation metric and must be labelled as one. No output field may be named or described as a test, final, or held-out score. The unbiased number is produced after the pipeline finishes, by whoever holds the external holdout.",
+    "respect_the_noise_band": "Where split_info.selection_noise_band is set and the top candidates fall within it, they are tied. Say so, and break the tie on a stated criterion - generalisation gap, artifact simplicity, feature count - rather than presenting a noise-sized metric difference as if it decided anything.",
+    "emit_predictions": "The chosen model's predictions MUST be written to a CSV keyed the way the downstream comparison expects (for a horizon-conditioned forecast: target_date, h, y_pred), together with a prediction_manifest recording the model path, feature table, feature order, and any target transform plus its inverse. Without this the model cannot be scored against the holdout later, which is the only thing that will produce a real number for this run.",
+    "refit_champion_on_all_data": "Once the champion is chosen, it MUST be refitted on train + validation before it is frozen, and the refitted artifact is the one that ships - final_model_path, predictions_path and prediction_manifest all point at it. Selection spends the validation partition; freezing the selected fit spends it twice, and leaves the shipped model fitted on the smaller and older part of the data the run was given. The withheld rows are the most recent ones, which makes them the rows closest to whatever the model will actually face. Refit means refit and nothing else: identical feature list, identical hyperparameters, identical target transform, no re-tuning, no re-selection, no new features. Where a hyperparameter was set by early stopping against validation, pin it to the value already chosen - it cannot be re-derived once validation is inside the fit. Note in output.refit that pinning is mildly conservative, since the optimal value would usually be a little higher on more rows; it errs against the model, which is the safe direction. Keep both artifacts and record both paths: the selected fit is the evidence behind the choice, the refit is the deliverable. If the champion has no fit step (a naive baseline, a rule) record refit.performed = false with the reason. This does not weaken selection_is_validation_only - the refit changes no choice, it only stops the run from shipping a model deliberately fitted on a fraction of its data.",
+    "refit_carries_no_metrics": "The refitted artifact MUST NOT be scored, and output.refit.metrics MUST be null. It has been fitted on the validation rows, so any validation metric computed from it is contaminated and would be the most convincing wrong number the run could produce - lower than the honest one, and sitting in the field a reader trusts most. Every metric this node reports stays attached to the SELECTED fit and keeps its validation label, per no_final_numbers. The refit's real number comes from the external holdout, later, from whoever holds it."
+  },
+  "input": {
+    "goal": "forecast daily bread demand (bread_quantity) for Aernoudt branch 01 at any future date",
+    "run_id": "run_20260827T154407Z",
+    "iteration": 16,
+    "final_stop_reason": "diagnosis iteration 015 recommended stop; the Planner concurred - the remaining axes were closed by measurement rather than unexplored",
+    "stop_justification": {
+      "binding_constraint": "an unexplained level shift in the second half of the series that no available feature accounts for; residuals either side of it have different means, and no source in data_sources dates the change",
+      "axes_worked": [
+        {"axis": "feature framing", "iterations": [8, 11, 13], "bought": "-2.4 MAE"},
+        {"axis": "model family", "iterations": [14, 16], "bought": "within the noise band - no measurable gain"},
+        {"axis": "classical statistical (SARIMA)", "iterations": [17], "bought": "+1.9 MAE - lost to the ML path, recorded either way"}
+      ],
+      "axes_untried": [
+        {"axis": "sub-daily granularity", "expected_effect": "smaller than the noise band at this sample size", "verdict": "declined - does not block the stop"}
+      ],
+      "considered_and_declined": [
+        {"candidate": "a fourth GBT hyperparameter sweep", "reason": "the axis is saturated; the last two sweeps each moved less than the selection noise band"}
+      ],
+      "would_reopen_if": "the external holdout score lands far from validation, or the shop confirms a date for the operational change behind the level shift"
+    },
+    "baseline_floor": {
+      "baseline_type": "seasonal_naive", "seasonal_period": 7, "established_at_iteration": 3,
+      "pooled": {"MAE": 52.3},
+      "note": "the champion beats this pooled and on every segment; a champion that did not would be reported as such, and the naive baseline named as the outcome"
+    },
+    "selection_criteria_source": "diagnosis iteration 015 handoff: artifact simplicity and generalisation, since the candidates are separated by less than fold noise on the metric",
+    "candidates_built_from": "state.current.all_saved_models joined to each model's validation metrics from its training history JSON. Not state.current.latest_model_path - end_model compares every candidate the run produced, and taking only the latest silently reduces this node to a one-model run with nothing to hold the ranking against.",
+    "candidates": [
+      {
+        "model": "iteration_006_training",
+        "path": "artifacts/training/iteration_006_training_model.pkl",
+        "val_MAE": 26.355,
+        "overfit_ratio": 2.0975,
+        "target": "absolute"
+      },
+      {
+        "model": "iteration_011_training",
+        "path": "artifacts/training/iteration_011_training_model.pkl",
+        "val_MAE": 26.594,
+        "overfit_ratio": 1.9125,
+        "target": "absolute"
+      },
+      {
+        "model": "iteration_013_training",
+        "path": "artifacts/training/iteration_013_training_model.pkl",
+        "val_MAE": 26.155,
+        "overfit_ratio": 1.9725,
+        "target": "log1p"
+      }
+    ],
+    "fe_output_path": "data/iteration_008_feature_engineering.csv",
+    "feature_list": [
+      "h",
+      "days_since_start",
+      "bread_quantity_lag_7",
+      "bread_quantity_lag_364",
+      "doy_sin_2",
+      "doy_cos_2",
+      "...56 in total"
+    ],
+    "split_info": {
+      "train": [
+        "2016-01-04",
+        "2019-05-30"
+      ],
+      "validation": [
+        "2019-05-31",
+        "2020-12-12"
+      ],
+      "cv_design": "rolling-origin, 5 folds, 90-day step, expanding train window",
+      "selection_noise_band": 0.919,
+      "holdout_representativeness": "validation sits +2.3% against the training level; the series is drifting downward, so the unseen holdout is expected to sit below both. Validation can rank candidates on accuracy but understates robustness.",
+      "note": "Two partitions only. The held-out data was removed before this run began and is not present in the dataset this run was given."
+    },
+    "recommended_metric": {
+      "primary": "MAE",
+      "secondary": [
+        "MASE",
+        "RMSE",
+        "R2"
+      ]
+    },
+    "horizon_grid": [
+      1,
+      7,
+      14,
+      28,
+      90,
+      182,
+      364
+    ],
+    "durable_rules_in_force": [
+      "lag construction uses k = 7*ceil(h/7) - a lag must not use data unavailable at the horizon",
+      "h is exempt from the relevance screen; dropping it destroys the horizon-conditioned design"
+    ]
+  },
+  "output": {
+    "schema_version": "1.0",
+    "node": "end_model",
+    "iteration": 16,
+    "run_id": "run_20260827T154407Z",
+    "contract": "contracts/end_model.json",
+    "final_model_path": "models/iteration_016_end_model.pkl",
+    "refit": {
+      "performed": true,
+      "selected_model_path": "artifacts/training/iteration_011_training_model.pkl",
+      "shipped_model_path": "models/iteration_016_end_model.pkl",
+      "fitted_on": [
+        "train",
+        "validation"
+      ],
+      "fitted_through": "2020-12-12",
+      "rows_selected_fit": 1256,
+      "rows_refit": 1795,
+      "pct_of_available_rows": 100.0,
+      "unchanged_from_selected_fit": [
+        "feature_list",
+        "hyperparameters",
+        "target_transform"
+      ],
+      "pinned_from_selection": {
+        "n_estimators": 340,
+        "why": "set by early stopping against validation at iteration 011; validation is inside the refit, so it cannot be re-derived and is carried over unchanged",
+        "direction_of_error": "mildly conservative - the optimal count is usually a little higher on 43% more rows, so this understates the refit rather than flattering it"
+      },
+      "metrics": null,
+      "why_no_metrics": "the refit has seen the validation rows, so any validation metric from it would be contaminated and lower than the honest one. Selection metrics below belong to the selected fit and keep their validation label. The refit's real number comes from the external holdout.",
+      "verification": "feature order and target transform asserted identical to the selected fit before freezing; prediction_manifest regenerated from the refit"
+    },
+    "choice": {
+      "chosen": "iteration_011_training",
+      "selected_on": "validation",
+      "selection_noise_band": 0.919,
+      "criteria_source": "diagnosis iteration 015 handoff: artifact simplicity and generalisation",
+      "reasoning": "Three candidates separated by 0.44 MAE on validation - inside the run's 0.919 noise band, measured from four directions - so they are TIED on the metric and the decision is made on criteria that are not noise. Iteration 011 has the best overfit ratio in the run (1.9125 vs 1.9725 and 2.0975). That matters concretely: preprocess flagged the series as drifting, so the unseen holdout is expected to sit below the training level, and 011 is the candidate that degrades least when moved off its training distribution. Iteration 013 is also a dict carrying a log1p target and an inverse, which loads carelessly into plausible-looking wrong numbers - a bad trade for a tied metric.",
+      "rejected": [
+        {
+          "model": "iteration_013_training",
+          "why": "best raw val MAE but the gap is inside the noise band, and it carries a log1p target transform that must be inverted correctly by every consumer"
+        }
+      ]
+    },
+    "seasonal_naive_reference": {
+      "naive_MAE_train_denominator": 37.906,
+      "naive_MAE_on_validation_rows": 36.48,
+      "why_two": "MASE against the TRAIN denominator is comparable with every other figure in the run. MASE against the validation rows' own naive is the 'better than doing nothing, on these rows' number. Both are validation-scoped; neither says anything about the holdout."
+    },
+    "model_comparison": [
+      {
+        "iteration": 6,
+        "target": "absolute",
+        "features": 55,
+        "family": "LightGBM",
+        "val_MAE": 26.355,
+        "overfit": 2.0975,
+        "chosen": false
+      },
+      {
+        "iteration": 11,
+        "target": "absolute",
+        "features": 56,
+        "family": "LightGBM",
+        "val_MAE": 26.594,
+        "overfit": 1.9125,
+        "chosen": true
+      }
+    ],
+    "hypotheses_summary": [
+      {
+        "iteration": 9,
+        "statement": "a faster level signal reduces the sign-flipping temporal bias",
+        "result": "rejected - bias gap widened 20.52 to 20.83 and every secondary metric worsened, with the model demonstrably USING all three new features"
+      },
+      {
+        "iteration": 10,
+        "statement": "the sign-flipping bias itself is real",
+        "result": "rejected - the flip was an artefact of averaging two regimes across the lockdown boundary"
+      }
+    ],
+    "artifact_paths": {
+      "plots": [
+        {
+          "name": "candidates_on_validation",
+          "path": "artifacts/end_model/iteration_016_end_model_candidates_on_validation.png",
+          "data_path": "artifacts/end_model/iteration_016_end_model_validation_metrics_all_candidates.csv",
+          "reason": "All candidates with the noise band drawn as a shaded band. Showing the band is what makes it visible that the top three are tied rather than ranked."
+        }
+      ]
+    },
+    "headline": {
+      "statement": "A horizon-conditioned model that beats the seasonal naive on validation at every horizon band, chosen from three candidates that are statistically tied. Whether it holds up is not yet known: this run never saw held-out data, and the series is drifting, so these figures are expected to be optimistic.",
+      "the_chosen_model_on_validation": {
+        "MAE": 26.412,
+        "MASE_train_denom": 0.6968,
+        "skill_vs_seasonal_naive_on_the_same_rows_pct": 27.6,
+        "skill_at_short_horizons_pct": 6.1
+      },
+      "what_is_not_known": "Every number above is a validation number. The model has not been scored against data withheld from this run, and preprocess flagged that validation sits closer to the training level than the holdout is likely to. Treat the figures as a ranking signal, not as expected deployment accuracy."
+    },
+    "deployment_recommendation": {
+      "ship": "do not ship on validation evidence alone - score the frozen model against the external holdout first, using predictions_path and prediction_manifest",
+      "candidate_serving_component": {
+        "what": "a serving-time recalibration step: maintain a rolling 56-day mean of (actual - predicted) over recent days for which actuals have arrived, and subtract it from every new prediction, using only days strictly earlier than the target being predicted",
+        "status": "UNVERIFIED IN THIS RUN. Recorded as a hypothesis for the holdout evaluation to test, not as a measured result.",
+        "evidence_basis": "cross_run - a prior effort measured a large gain from this against its own held-out period. That is motivation, not justification: see diagnosis.md 'Reading findings from other runs'.",
+        "if_adopted": "do NOT freeze the correction into the model artifact - its entire merit is that it adapts as actuals arrive"
+      },
+      "do_not": [
+        "quote any figure in this file as the model's expected accuracy - they are all validation figures",
+        "bake any correction constant into the .pkl",
+        "treat the choice between the three tied candidates as a measured result"
+      ]
+    },
+    "remaining_risks": [
+      "The three candidates are tied within the noise band, so the choice rests on generalisation and artifact simplicity rather than on measured accuracy. A different tiebreak would have picked a different model.",
+      "The series is drifting and validation sits closer to the training level than the holdout is expected to, so every figure here is optimistic by an unknown margin.",
+      "The recalibration component is inherited from another run's held-out measurement and has not been verified on any data this run could see.",
+      "No numeric accuracy target was ever set, so 'good enough' was judged from trend and structure throughout."
+    ],
+    "issues": [],
+    "final_summary": "The goal was a single horizon-conditioned model forecasting daily bread demand at any future date. That model exists, is frozen at artifact_paths, and beats the seasonal naive on validation at every horizon band. Three candidates finished inside the selection noise band and are reported as tied; iteration 011 was taken on generalisation gap and artifact simplicity, with the reasoning recorded in choice.reasoning. No held-out score exists for this run by design - the holdout was removed before the run began and is scored afterwards from predictions_path... (full prose narrative of the run, its decisions, and what the numbers mean)",
+    "handoff": {
+      "written_by": "end_model",
+      "iteration": 16,
+      "context_clearable": true,
+      "read_this_first": "no held-out score exists inside this run - every metric here is validation-only, and the top three candidates are tied within the noise band. The frozen model and its prediction manifest are the handoff to the external holdout evaluation. Read the closed axes below before re-opening any of them.",
+      "parameters": {
+        "final_model_path": {
+          "value": "models/iteration_016_end_model.pkl",
+          "why": "the model the run recommends, to be deployed only with the recalibration step. This is the refit on train + validation, not the selected fit - the selected fit at artifacts/training/iteration_011_training_model.pkl is kept as the evidence behind the choice and must not be shipped or scored in its place",
+          "must_not_change": true
+        }
+      },
+      "durable_rules": [
+        {
+          "rule": "the model that ships is the champion refit on train + validation; the refit is never scored",
+          "why": "selection spends the validation partition, and freezing the selected fit spends it twice - the shipped model ends up fitted on the smaller and older part of the data, missing exactly the most recent rows. Refitting recovers them without changing any choice. Scoring the refit would undo the benefit, because it has seen the validation rows and its validation metric would be contaminated and flattering",
+          "applies_to": [
+            "end_model"
+          ],
+          "cost_if_broken": "either the run ships a model fitted on a fraction of its data, or it reports a contaminated metric as if it were the validation number"
+        },
+        {
+          "rule": "never select a model on anything other than validation or the recorded CV design",
+          "why": "this run holds no held-out partition, and carving a third slice out of training data does not create one - it only produces a smaller validation set with a more authoritative name",
+          "applies_to": [
+            "training",
+            "end_model"
+          ],
+          "cost_if_broken": "the reported metric silently becomes optimistic and the run's only clean external read is pre-empted"
+        },
+        {
+          "rule": "never present a difference smaller than split_info.selection_noise_band as an improvement",
+          "why": "this run compared many candidates against one validation partition; below the band, the ranking is a lucky draw",
+          "applies_to": [
+            "training",
+            "diagnosis",
+            "end_model"
+          ],
+          "cost_if_broken": "the run converges on noise and reports it as a result"
+        },
+        {
+          "rule": "always emit predictions plus a prediction_manifest for the chosen model",
+          "why": "the model is scored against the external holdout after the run; without a reproducible feature order and documented target transform it cannot be scored at all",
+          "applies_to": [
+            "end_model"
+          ],
+          "cost_if_broken": "the run produces no real number, ever"
+        }
+      ],
+      "methodological_cautions": [
+        {
+          "caution": "a yearly mean over 2020 averages two regimes across the lockdown boundary",
+          "why": "the validation window straddles 2020-03-14 almost exactly in half",
+          "cost_if_ignored": "a sign flip appears that does not exist; this run spent two iterations on it"
+        }
+      ],
+      "do_not_repeat": [
+        {
+          "tried": "faster level-adaptation features to fix the temporal bias",
+          "outcome": "rejected",
+          "evidence": "iteration 009: bias gap widened 20.52 to 20.83, all secondary metrics worsened, features demonstrably used at importance ranks 14/17/24 of 58",
+          "why_not_again": "the target pattern was an averaging artefact, not a real defect"
+        }
+      ],
+      "content_carried_forward": {
+        "axes_closed_by_measurement": [
+          "level-adaptation features",
+          "log1p target",
+          "classical baselines (SARIMA/ETS)",
+          "ensembling",
+          "price as a lead",
+          "promotions calendar",
+          "recent-day lag gating"
+        ],
+        "recalibration_spec": "rolling 56-day mean of (actual - predicted), strictly past days, applied at serving time - the full rule, not a reference to it"
+      }
+    },
+    "report_html": "reports/iteration_016_end_model.html",
+    "final_validation_metrics": {
+      "model": "iteration_011_training",
+      "is_chosen": true,
+      "split": "validation",
+      "MAE": 26.412,
+      "RMSE": 33.118,
+      "R2": 0.6903,
+      "mean_residual": -1.702,
+      "MASE_train_denom": 0.6968,
+      "label": "VALIDATION METRIC - not a held-out score. The unbiased number for this model does not exist yet and will be produced outside this pipeline."
+    },
+    "all_candidates_on_validation": [
+      {
+        "model": "iteration_011_training",
+        "is_chosen": true,
+        "MAE": 26.412,
+        "MASE_train_denom": 0.6968,
+        "overfit_ratio": 1.9125
+      },
+      {
+        "model": "iteration_013_training",
+        "is_chosen": false,
+        "MAE": 25.972,
+        "MASE_train_denom": 0.6852,
+        "overfit_ratio": 1.9725
+      },
+      {
+        "model": "iteration_006_training",
+        "is_chosen": false,
+        "MAE": 26.855,
+        "MASE_train_denom": 0.7085,
+        "overfit_ratio": 2.0975
+      }
+    ],
+    "tie_declared": {
+      "models": [
+        "iteration_011_training",
+        "iteration_013_training",
+        "iteration_006_training"
+      ],
+      "spread_MAE": 0.883,
+      "noise_band": 0.919,
+      "note": "The spread across all three candidates is smaller than the noise band, so no candidate is measurably better than another. Reporting a winner on MAE alone here would be reporting a coin flip."
+    },
+    "validation_error_by_horizon": {
+      "table_path": "artifacts/end_model/iteration_016_end_model_validation_error_by_horizon.csv",
+      "mae_h_1_to_7": 24.902,
+      "mae_h_90_plus": 29.517,
+      "skill_vs_naive_h_1_to_7_pct": 6.1,
+      "skill_vs_naive_h_90_plus_pct": 14.4,
+      "horizon_response": "PASS - error grows with horizon"
+    },
+    "predictions_path": "data/iteration_016_end_model_predictions.csv",
+    "prediction_manifest": {
+      "key": [
+        "target_date",
+        "h"
+      ],
+      "pred_column": "y_pred",
+      "rows": 5460,
+      "model_path": "artifacts/training/iteration_011_training_model.pkl",
+      "feature_table": "data/iteration_008_feature_engineering.csv",
+      "feature_order_path": "artifacts/end_model/iteration_016_end_model_feature_order.json",
+      "target_transform": "none - predictions are in the target's own units",
+      "horizon_grid": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        10,
+        14,
+        21,
+        28,
+        35,
+        42,
+        56,
+        70,
+        84,
+        91,
+        120,
+        150,
+        182,
+        240,
+        300,
+        364
+      ],
+      "why": "This is what lets the frozen model be scored against the external holdout after the run. A model with no reproducible feature order or undocumented target transform cannot be scored later, and the run's only real number never gets produced."
+    }
+  }
+}

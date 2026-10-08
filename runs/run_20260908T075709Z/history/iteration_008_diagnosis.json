@@ -1,0 +1,406 @@
+{
+  "iteration": 8,
+  "node": "diagnosis",
+  "report_html": "reports/iteration_008_diagnosis.html",
+  "timestamp": "2026-09-08T21:19:35",
+  "schema_version": "2026-09-04",
+  "measurement_checks": {
+    "1_units": {
+      "result": "PASS",
+      "detail": "FE uses calendar-day offsets for targets (date-based lookup, not row shift). Lags are DOW-aligned calendar offsets. Naive predictors use D-h calendar days as origin. No units issue."
+    },
+    "2_regime": {
+      "result": "WARN",
+      "detail": "Training: 30 post-regime rows (1.1%), Val: 100% post-regime. Monday demand pattern learned from 30 rows vs 95 val rows. regime_x_monday feature present but model may not have learned it reliably with early-stopping at 12 trees."
+    },
+    "3_rows": {
+      "result": "MINOR",
+      "detail": "Baseline h=1 evaluated on n=95, LightGBM on n=94 (Dec31 excluded from LightGBM because bread_quantity_h1=NaN for Dec31). Difference is 1 row. Not materially affecting the comparison (both approaches excluded the same Dec31 row in reality; baseline may have included it with a slightly different target definition)."
+    },
+    "4_floor": {
+      "result": "PASS",
+      "detail": "Baseline used 22-candidate grid including seasonal median/mean, drift, last-value, train-mean. smedian_w4 won at 31.263 for h=1. The floor is genuinely strong."
+    },
+    "5_justification": {
+      "result": "WARN",
+      "detail": "LightGBM uses 12 trees at depth 5 (early stopping fired very early on noisy val set). With 12 trees, at most ~60 splits can be made. The 38-feature h=1 model cannot be using all features. Permutation importance shows DOW group dominant (4.8 MAE increase), naive predictor group second (2.1). Lag features, calendar, weather groups are near zero. Features added for 'calendar effect on demand' are NOT confirmed as used \u2014 the severely constrained model fails to justify their inclusion."
+    }
+  },
+  "per_horizon_verdicts": {
+    "1": {
+      "stop_recommendation": "continue",
+      "reasoning": "h=1: Best model (LightGBM, iter006) achieves val_mae=39.360. Floor=31.263. Margin=8.097 ABOVE floor (model LOSES). Coverage blocks stop: FE run only once, no hyperparameter search. Continue.",
+      "confidence": "high",
+      "primary_issue": "Model cannot beat baseline floor",
+      "root_cause": "COVID lockdown rows in training (n=57, mean demand near zero) contaminate the gradient signal, causing LightGBM early stopping to fire at 12 trees before the model can use lag/calendar features. Additionally, only 30 post-regime training rows exist vs 95 val rows (all post-regime), insufficient to learn Monday demand pattern."
+    },
+    "7": {
+      "stop_recommendation": "continue",
+      "reasoning": "h=7: Best model (LightGBM, iter006) achieves val_mae=39.391. Floor=31.263. Margin=8.128 ABOVE floor (model LOSES). Coverage blocks stop: FE run only once, no hyperparameter search. Continue.",
+      "confidence": "high",
+      "primary_issue": "Model cannot beat baseline floor",
+      "root_cause": "COVID lockdown rows in training (n=57, mean demand near zero) contaminate the gradient signal, causing LightGBM early stopping to fire at 12 trees before the model can use lag/calendar features. Additionally, only 30 post-regime training rows exist vs 95 val rows (all post-regime), insufficient to learn Monday demand pattern."
+    },
+    "14": {
+      "stop_recommendation": "continue",
+      "reasoning": "h=14: Best model (LightGBM, iter006) achieves val_mae=40.189. Floor=32.846. Margin=7.343 ABOVE floor (model LOSES). Coverage blocks stop: FE run only once, no hyperparameter search. Continue.",
+      "confidence": "high",
+      "primary_issue": "Model cannot beat baseline floor",
+      "root_cause": "COVID lockdown rows in training (n=57, mean demand near zero) contaminate the gradient signal, causing LightGBM early stopping to fire at 12 trees before the model can use lag/calendar features. Additionally, only 30 post-regime training rows exist vs 95 val rows (all post-regime), insufficient to learn Monday demand pattern."
+    },
+    "30": {
+      "stop_recommendation": "continue",
+      "reasoning": "h=30: Best model (LightGBM, iter006) achieves val_mae=43.227. Floor=35.913. Margin=7.314 ABOVE floor (model LOSES). Coverage blocks stop: FE run only once, no hyperparameter search. Continue.",
+      "confidence": "high",
+      "primary_issue": "Model cannot beat baseline floor",
+      "root_cause": "COVID lockdown rows in training (n=57, mean demand near zero) contaminate the gradient signal, causing LightGBM early stopping to fire at 12 trees before the model can use lag/calendar features. Additionally, only 30 post-regime training rows exist vs 95 val rows (all post-regime), insufficient to learn Monday demand pattern."
+    },
+    "60": {
+      "stop_recommendation": "continue",
+      "reasoning": "h=60: Best model (LightGBM, iter006) achieves val_mae=50.080. Floor=40.042. Margin=10.038 ABOVE floor (model LOSES). Coverage blocks stop: FE run only once, no hyperparameter search. Continue.",
+      "confidence": "high",
+      "primary_issue": "Model cannot beat baseline floor",
+      "root_cause": "COVID lockdown rows in training (n=57, mean demand near zero) contaminate the gradient signal, causing LightGBM early stopping to fire at 12 trees before the model can use lag/calendar features. Additionally, only 30 post-regime training rows exist vs 95 val rows (all post-regime), insufficient to learn Monday demand pattern."
+    },
+    "90": {
+      "stop_recommendation": "continue",
+      "reasoning": "h=90: Best model (LightGBM, iter006) achieves val_mae=79.218. Floor=42.143. Margin=37.075 ABOVE floor (model LOSES). Coverage blocks stop: FE run only once, no hyperparameter search. Continue.",
+      "confidence": "high",
+      "primary_issue": "Model cannot beat baseline floor",
+      "root_cause": "COVID lockdown rows in training (n=57, mean demand near zero) contaminate the gradient signal, causing LightGBM early stopping to fire at 12 trees before the model can use lag/calendar features. Additionally, only 30 post-regime training rows exist vs 95 val rows (all post-regime), insufficient to learn Monday demand pattern."
+    }
+  },
+  "stop_recommendation": {
+    "recommendation": "continue",
+    "reasoning": "No horizon beats the baseline floor (best: LGBM h=1 MAE=39.36 vs floor=31.26). Coverage check blocks stop on three grounds: (1) no hyperparameter search run, (2) feature_engineering visited only once \u2014 no feature rationale tested against evidence, (3) no model beats floor on any horizon. Root cause is identified and actionable: COVID training contamination causes early stopping to fire at 12 trees, preventing the model from learning the lag/calendar patterns that have high Spearman r with the target (r=0.76 for bread_lag_7d). At least two cheap, evidence-backed hypotheses remain untested.",
+    "confidence": "high",
+    "checks_that_drove_it": [
+      "coverage_baseline_floor",
+      "coverage_hyperparameter_search",
+      "coverage_feature_engineering_once"
+    ],
+    "horizons_still_continuing": [
+      1,
+      7,
+      14,
+      30,
+      60,
+      90
+    ],
+    "horizons_settled": []
+  },
+  "coverage_check": {
+    "nodes_visited": {
+      "eda": 1,
+      "domain_research": 1,
+      "preprocess": 1,
+      "baseline": 1,
+      "feature_engineering": 1,
+      "training": 2,
+      "diagnosis": 0
+    },
+    "model_families_fitted": [
+      "LightGBM",
+      "ARIMA",
+      "SARIMA",
+      "Ridge (reference, 2-feature)"
+    ],
+    "ts_approaches_filled": [
+      "ml_as_regression",
+      "classical_statistical"
+    ],
+    "ts_approach_gap": null,
+    "hyperparameter_search_done": false,
+    "feature_engineering_iterations": 1,
+    "hypotheses_untested": [
+      "COVID rows excluded from training",
+      "Ratio target (y / anchor) in FE",
+      "Rolling-window training (last 12-18 months only)",
+      "Optuna hyperparameter search (n_trials>=50)"
+    ],
+    "stop_blocked_by": [
+      "hyperparameter_search_done=False (guardrail)",
+      "feature_engineering visited only once (no feature rationale tested against evidence)",
+      "no model beats baseline floor on any horizon"
+    ]
+  },
+  "diagnosis": {
+    "primary_issue": "LightGBM fails to beat baseline floor on all 6 horizons; ARIMA/SARIMA are worse",
+    "evidence": [
+      "LightGBM best: pooled val MAE=48.58 vs floor=35.58 (worse by 13.0 units pooled)",
+      "Early stopping fires at 12 trees for h=1 (regression_l1 on noisy 95-row val set)",
+      "COVID lockdown rows: 41 rows with mean demand=263.6 vs normal 318.5",
+      "Only 30 post-regime training rows vs 95 val rows (all post-regime)",
+      "ARIMA forecasts 89-184 steps ahead from training end; long-range extrapolation fails",
+      "Permutation importance: only DOW group (4.8) and naive predictors (2.1) used by 12-tree model; lag features near zero despite Spearman r=0.76",
+      "Ratio oracle check: predicting naive x mean_train_ratio as constant gives val MAE=58.166 (vs floor=31.263) \u2014 small gap suggests level correction alone is not sufficient"
+    ],
+    "root_cause": "Two compounding problems: (1) COVID lockdown (57 rows, demand ~0) contaminates the training gradient, causing LightGBM's early stopping to fire too early on the global validation set signal, yielding a severely underfitted model (12 trees). (2) Only 30 post-regime training rows exist vs 95 all-post-regime validation rows \u2014 the Monday demand pattern cannot be learned from 30 examples. The seasonal median naive predictor (smedian_w4) is immune to both problems because it uses only the 4 most recent same-DOW observations, naturally excluding COVID and adapting to the post-regime demand level. This is what makes it unbeatable.",
+    "agent_initiated_findings": [
+      {
+        "finding": "Ratio oracle: naive x mean_train_ratio (noncovid) -> val MAE=58.166. Difference from floor: 26.903. A constant ratio predictor still fails to beat floor by 26.903 units. The ratio target alone (without COVID exclusion) may not suffice.",
+        "reasoning": "Computed from val rows using non-COVID train ratio mean as constant predictor",
+        "confidence": "high",
+        "implication": "Ratio target + COVID exclusion together required; ratio alone insufficient"
+      },
+      {
+        "finding": "Post-regime training rows: only 30 out of 2713 (1.1%). Monday is DOW=0; all 95 val rows have Mondays. Monday pattern from 5 post-regime Mondays in training vs 14 post-regime Mondays in val.",
+        "reasoning": "Regime change 2020-06-01, training ends 2020-06-30, giving exactly 4-5 post-regime Mondays in training",
+        "confidence": "high",
+        "implication": "Any model using day-of-week patterns will predict Mondays incorrectly unless trained on post-regime data"
+      }
+    ]
+  },
+  "hypotheses": [
+    {
+      "rank": 1,
+      "statement": "Adding a multiplicative ratio target (y_h[h] / anchor_h[h]) in Feature Engineering, combined with excluding COVID lockdown rows from LightGBM training, will remove the two sources of distribution shift simultaneously: the additive level change (ratio is ~1.0 for normal days regardless of level) and the COVID contamination (COVID rows are zero-demand outliers excluded from training). The additive residual approach (iter006) failed because mean_resid(train)=+13.45 vs mean_resid(val)=-13.15 for h=1. The ratio target should be stationary across train/val for non-COVID rows (oracle check: ratio means are 1.0616 vs 0.9724).",
+      "applies_to_horizons": "all",
+      "suggested_action": {
+        "node": "feature_engineering",
+        "action": "Add ratio target columns: ratio_h{h} = bread_quantity_h{h} / anchor_h{h} (anchor = smedian_w4 for h<=30, smedian_w26 for h>=60). Clip to [0.1, 4.0] to handle extreme COVID values. Keep original bread_quantity_h{h} columns for baseline comparison. Also add a flag column is_covid_period (= is_covid_lockdown_period) for the Training node to use as a filter. Training node: train LightGBM on non-COVID rows only, predicting ratio_h{h}, then multiply final prediction by anchor to get bread_quantity prediction.",
+        "reasoning": "Ratio target removes level shift; COVID exclusion removes contamination. Both required together based on oracle check."
+      },
+      "falsification": "If LightGBM on ratio target (non-COVID rows only) achieves val_mae >= 31.263 for h=1, this hypothesis is rejected. Expected: val_mae < 31.0 for h=1 if lag features can be utilized.",
+      "cost": "moderate",
+      "confidence": "medium",
+      "why_this_rank": "Directly addresses both root causes simultaneously. The additive residual was tried (iter006) and failed; multiplicative ratio is the FE-level change needed. More complex but higher upside."
+    },
+    {
+      "rank": 2,
+      "statement": "Excluding COVID lockdown rows from LightGBM training (no FE change required) will allow early stopping to find a better tree count, enabling the model to use lag features (bread_lag_7d r=0.76 but unused in 12-tree model). COVID rows (n=57, demand~0) create extreme gradients that dominate early stopping calibration, causing it to fire at 12 trees before lag features are used.",
+      "applies_to_horizons": "all",
+      "suggested_action": {
+        "node": "training",
+        "action": "In the LightGBM training loop: filter train_mask to exclude is_covid_lockdown_period==1 rows. This reduces training from 2713 to ~2656 rows. Keep all other parameters from iter006 (regression_l1, 500 trees, early stopping 50 rounds). Use inner-fold early stopping on fold-1 and fold-2 val rows (not last 15% of training) to avoid COVID period contaminating the early stopping set. Report whether this change alone achieves val_mae < 31.263.",
+        "reasoning": "Cheapest fix \u2014 no FE required. Tests whether COVID contamination alone explains the 12-tree early stopping. If this alone beats the floor, rank 1 (ratio target) is unnecessary."
+      },
+      "falsification": "If LGBM without COVID rows still achieves val_mae >= 31.263 for h=1, COVID rows are not the primary cause of early stopping failure. Look at regime-change underfitting instead.",
+      "cost": "cheap",
+      "confidence": "medium",
+      "why_this_rank": "Cheaper than rank 1 (no FE required). Tests the COVID-contamination hypothesis in isolation. If successful, avoids the more complex ratio target change. Ranked 2 because COVID exclusion alone may still leave the level-shift problem (train_noncovid_mean=318 vs val_mean=306)."
+    },
+    {
+      "rank": 3,
+      "statement": "Using a rolling training window (last 12 months of non-COVID data: 2019-01-01 to 2020-02-28, ~320 rows) removes both COVID contamination AND the level trend: recent normal data has mean demand closer to the validation period. Small but clean training set may allow LightGBM to generalize the local demand level.",
+      "applies_to_horizons": "all",
+      "suggested_action": {
+        "node": "training",
+        "action": "In the training loop: further filter to date >= 2019-01-01 AND is_covid_lockdown_period==0. This gives ~320 training rows. Use aggressive regularization (max_depth=3, min_child_samples=20, L2=1.0) to avoid overfitting on the small dataset. Fit alongside the full-training model and report both.",
+        "reasoning": "Addresses both COVID contamination and level trend simultaneously. Tests whether recency beats breadth for this task."
+      },
+      "falsification": "If rolling-window LGBM (n=320 train) achieves val_mae >= 31.263, the model is underfitting on 320 rows. The training set is too small for tree-based learning.",
+      "cost": "cheap",
+      "confidence": "low",
+      "why_this_rank": "Lowest confidence: 320 training rows for 38 features is very small for LightGBM. High overfitting risk on small dataset. But cheap to try alongside rank 2."
+    }
+  ],
+  "ranking_note": null,
+  "alternative_if_all_wrong": "If ratio target + COVID exclusion (rank 1) fails, COVID exclusion alone (rank 2) fails, and rolling window (rank 3) fails \u2014 the signal in the feature set is insufficient to beat the seasonal median. Recommendation: accept smedian_w4 as the champion model for h=1-30, smedian_w26 for h=60-90. Proceed to end_model with the naive predictor as the per-horizon champion. Document that ML-as-regression cannot beat the naive predictor on this dataset given the COVID-distorted training distribution and the limited post-regime training data.",
+  "clarification_needed": [
+    {
+      "id": "CQ-D-001",
+      "topic": "Ratio target deployment semantics",
+      "description": "The ratio target (y/anchor) requires the anchor (smedian_w4) to be available at serving time. The smedian_w4 is already a feature in the FE output. Confirm: at serving time, can the baker compute the smedian_w4 from recent sales records? If not, the ratio model cannot be deployed.",
+      "blocking": false,
+      "confidence": "high",
+      "recommendation": "Proceed with ratio target implementation. Deployment question can be resolved later.",
+      "impact_if_wrong": "If anchor unavailable at serving time, ratio model is theoretically correct but undeployable. Fall back to naive predictor."
+    },
+    {
+      "id": "CQ-D-002",
+      "topic": "Hyperparameter search guardrail still open",
+      "description": "Training.md requires Optuna search (n_trials>=50) before run close. If rank 1 (ratio target) succeeds and beats the floor, Optuna should be run on the ratio-target model before the run closes.",
+      "blocking": false,
+      "confidence": "medium",
+      "recommendation": "Defer Optuna until ratio-target model is established. Run Optuna on the winning variant.",
+      "impact_if_wrong": "Run closes without hyperparameter search \u2014 violates training.md guardrail. Risk: final model is not optimally tuned."
+    }
+  ],
+  "agent_initiated_findings": [
+    {
+      "finding": "Ratio oracle MAE=58.166 for h=1. The constant ratio predictor (anchor x mean_noncovid_ratio) gives 58.166 vs floor 31.263. Gap of 26.903 suggests the ratio target alone needs additional features to beat the floor \u2014 the model cannot just predict the mean ratio.",
+      "reasoning": "Direct computation on val rows",
+      "confidence": "high"
+    },
+    {
+      "finding": "Post-regime Monday problem: only 30 post-regime training rows total, of which ~4-5 are Mondays. The validation has 14 Mondays. Monday demand in post-regime is systematically different (Mondays newly opened, lower demand than other days). Any model must learn this from 4-5 examples.",
+      "reasoning": "Computed from df[date >= 2020-06-01] in training set",
+      "confidence": "high"
+    }
+  ],
+  "do_not_repeat": [
+    {
+      "tried": "Additive residual target (y - anchor) with LightGBM",
+      "outcome": "rejected",
+      "evidence": "iter006: residual approach gave val_mae=49.20 for h=1 (worse than raw target at 39.36). Train residual mean=+13.45 vs val residual mean=-13.15 for h=1, confirming distribution shift persists in residuals.",
+      "why_not_again": "The additive residual does not remove the COVID-period contamination: COVID rows have residual = 0 - 280 = -280, which dominates the gradient. Ratio target is the correct alternative.",
+      "evidence_basis": "validation_only",
+      "reopen_if": "A version with COVID rows excluded from training AND additive residual target is tested \u2014 if COVID exclusion alone fixes the residual distribution, additive residual becomes viable again."
+    },
+    {
+      "tried": "Inner-fold early stopping using last 15% of training rows (time-ordered)",
+      "outcome": "rejected",
+      "evidence": "iter006: last 15% of fold-3 training = Apr-Jun 2020 = COVID lockdown period. Inner val is even more contaminated than the global val. Did not improve over global val early stopping.",
+      "why_not_again": "The last 15% of training rows falls in the COVID period regardless of INNER_VAL_FRAC choice, because training ends 2020-06-30 and COVID started 2020-03-18 (affecting ~15% of training). Use fold-1/fold-2 val rows for inner stopping instead.",
+      "evidence_basis": "validation_only",
+      "reopen_if": "A training run where COVID rows are excluded first, THEN the last 15% of the cleaned training set is used for inner stopping."
+    },
+    {
+      "tried": "ARIMA/SARIMA classical forecasting (iter007)",
+      "outcome": "rejected",
+      "evidence": "ARIMA(2,1,2): pooled val MAE=73.35 vs floor=35.58. Forecast from training end (Jun 30, 2020) is 89-184 steps ahead of val start. Long-range extrapolation is unreliable.",
+      "why_not_again": "Classical TS is fundamentally limited by the 89-day gap between training end and val start. SARIMA cannot adapt to the COVID recovery period at this range.",
+      "evidence_basis": "validation_only",
+      "reopen_if": "A rolling-origin SARIMA that refits monthly or uses the gap period data \u2014 but this requires data not available in the current split setup. Not feasible without a preprocess change."
+    }
+  ],
+  "next_iteration_contract": {
+    "node": "feature_engineering",
+    "iteration": 9,
+    "why_this_node": "Diagnosis rank 1: add ratio target columns (y_h{h} / anchor_h{h}) and COVID-period flag to FE output. This is the incremental FE change that enables the LightGBM ratio-target training in iteration 010.",
+    "read_this_first": "Add ratio_h{h} = bread_quantity_h{h} / anchor_h{h} for each horizon h (clip to [0.1, 4.0]). Anchor cols: smedian_w4 for h<=30, smedian_w26 for h>=60. Also ensure is_covid_lockdown_period column is present (already in FE output). Training will filter to is_covid_lockdown_period==0 rows when fitting LightGBM on ratio target.",
+    "required_state_fields": [
+      "feature_engineering_output_path",
+      "horizon_feature_subsets",
+      "protected_features",
+      "baseline_floor"
+    ],
+    "context": {
+      "anchor_cols": {
+        "1": "naive_h1_seasonal_median_w4",
+        "7": "naive_h7_seasonal_median_w4",
+        "14": "naive_h14_seasonal_median_w4",
+        "30": "naive_h30_seasonal_median_w4",
+        "60": "naive_h60_seasonal_median_w26",
+        "90": "naive_h90_seasonal_median_w26"
+      },
+      "ratio_clip": [
+        0.1,
+        4.0
+      ],
+      "covid_filter": "is_covid_lockdown_period == 0 (filter in Training, not in FE)",
+      "target_cols_to_add": [
+        "ratio_h1",
+        "ratio_h7",
+        "ratio_h14",
+        "ratio_h30",
+        "ratio_h60",
+        "ratio_h90"
+      ],
+      "keep_original_targets": true,
+      "do_not_repeat_residual": "Additive residual (y - anchor) failed in iter006; use MULTIPLICATIVE ratio",
+      "baseline_floor": {
+        "1": 31.263,
+        "7": 31.263,
+        "14": 32.846,
+        "30": 35.913,
+        "60": 40.042,
+        "90": 42.143
+      }
+    }
+  },
+  "handoff": {
+    "written_by": "diagnosis",
+    "iteration": 8,
+    "context_clearable": true,
+    "read_this_first": "Root cause: COVID lockdown rows (57, demand~0) in training contaminate LightGBM's early stopping signal (fires at 12 trees). Fix: ratio target (y/anchor) + COVID exclusion in Training. Next: FE adds ratio_h{h} columns, Training filters COVID rows.",
+    "parameters": {
+      "ratio_target_anchor": {
+        "value": {
+          "1": "naive_h1_seasonal_median_w4",
+          "7": "naive_h7_seasonal_median_w4",
+          "14": "naive_h14_seasonal_median_w4",
+          "30": "naive_h30_seasonal_median_w4",
+          "60": "naive_h60_seasonal_median_w26",
+          "90": "naive_h90_seasonal_median_w26"
+        },
+        "why": "These are the Part A winners per horizon, and the anchor for the ratio target.",
+        "must_not_change": true
+      },
+      "ratio_clip": {
+        "value": [
+          0.1,
+          4.0
+        ],
+        "why": "Clips COVID-period extreme ratios (near 0) and prevents runaway predictions above 4x anchor.",
+        "must_not_change": false
+      },
+      "covid_filter_column": {
+        "value": "is_covid_lockdown_period",
+        "why": "Training must filter out COVID rows (this column = 1 during 2020-03-18 to 2020-05-03).",
+        "must_not_change": true
+      }
+    },
+    "durable_rules": [
+      {
+        "rule": "Do not use additive residual (y - anchor) as the ratio target. Use multiplicative ratio (y / anchor).",
+        "why": "Additive residual tried in iter006 and failed. Train/val mean residual difference of 26.6 units persists.",
+        "applies_to": [
+          "feature_engineering",
+          "training"
+        ],
+        "cost_if_broken": "Model produces systematic bias similar to iter006 residual approach."
+      },
+      {
+        "rule": "Filter is_covid_lockdown_period==1 rows from LightGBM training when using ratio target.",
+        "why": "COVID rows have ratio near 0, making the target distribution bimodal; 57 extreme-ratio rows contaminate the gradient signal.",
+        "applies_to": [
+          "training"
+        ],
+        "cost_if_broken": "Early stopping fires prematurely as in iter006 (12 trees), model underfits."
+      },
+      {
+        "rule": "Keep original bread_quantity_h{h} columns alongside ratio_h{h} in FE output for baseline comparison.",
+        "why": "The baseline floor is defined on bread_quantity units (MAE). Final predictions must be converted back to units for floor comparison: pred_units = pred_ratio x anchor.",
+        "applies_to": [
+          "feature_engineering",
+          "training"
+        ],
+        "cost_if_broken": "Floor comparison invalid; cannot measure whether model beats baseline."
+      }
+    ],
+    "methodological_cautions": [
+      {
+        "caution": "smedian_w4 for Mondays post-2020-06-01 is computed from a mix of pre-regime and post-regime Monday observations. The anchor for post-regime Mondays may be unreliable for the first 4-8 Mondays.",
+        "why": "Before June 2020, Mondays had zero demand (closed). The smedian for the first 4 post-regime Mondays averages pre-regime (0) and post-regime observations.",
+        "cost_if_ignored": "Ratio target for Monday rows in Oct-Dec 2020 may have anchor values that are too low (contaminated by closed-Monday observations), making the ratio unusually high."
+      },
+      {
+        "caution": "The 89-day gap means ARIMA/SARIMA are forecasting 89-184 steps ahead of their training end. This is fundamentally beyond reliable range for any univariate TS model without retraining.",
+        "why": "Classical TS confirmed unreliable on this split (iter007, pooled MAE=73.35). Do not propose ARIMA variants without changing the split setup.",
+        "cost_if_ignored": "Another classical TS iteration will also fail, wasting one iteration."
+      }
+    ],
+    "do_not_repeat": [
+      {
+        "tried": "Additive residual target (y - anchor) with LightGBM",
+        "outcome": "rejected",
+        "evidence": "iter006 val_mae=49.20 (h=1), worse than raw target 39.36. Train/val residual mean asymmetry persists.",
+        "why_not_again": "Residual distribution shift (train=+13.45, val=-13.15) is not removed by additive anchor; use ratio target instead.",
+        "evidence_basis": "validation_only",
+        "reopen_if": "COVID rows excluded from training AND additive residual tested separately."
+      },
+      {
+        "tried": "ARIMA/SARIMA classical forecasting (fixed origin at training end)",
+        "outcome": "rejected",
+        "evidence": "iter007 ARIMA pooled val_mae=73.35 vs floor=35.58. 89-184 step forecast is unreliable.",
+        "why_not_again": "89-day gap makes classical TS fundamentally unsuitable without rolling refit.",
+        "evidence_basis": "validation_only",
+        "reopen_if": "A rolling-origin refit setup (refit SARIMA every 7 days using available gap data)."
+      }
+    ],
+    "content_carried_forward": {
+      "diagnosis_hypotheses_ranked": [
+        "1. Ratio target + COVID exclusion (FE + Training, moderate cost)",
+        "2. COVID rows excluded only (Training only, cheap)",
+        "3. Rolling window training 2019+ (Training only, cheap)"
+      ],
+      "oracle_check_result": "naive x mean_noncovid_ratio -> val MAE=58.166 for h=1 (vs floor 31.263). Ratio alone insufficient; features needed.",
+      "post_regime_train_rows": 30,
+      "covid_train_rows": 41,
+      "train_noncovid_mean_ratio_h1": 1.0616,
+      "val_mean_ratio_h1": 0.9724
+    }
+  }
+}

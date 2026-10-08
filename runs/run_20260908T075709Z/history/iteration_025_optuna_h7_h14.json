@@ -1,0 +1,68 @@
+{
+  "iteration": 25,
+  "node": "training",
+  "timestamp": "2026-09-09",
+  "schema_version": "2026-09-04",
+  "type": "optuna_h7_h14",
+  "summary": "Multi-fold Optuna (200 trials) for h=7 (FE5) and h=14 (FE4). Inner-split early stopping for n_estimators. Only updates champion if improved.",
+  "results": {
+    "7": {
+      "mae": 31.645636601001424,
+      "n_est": 1996,
+      "floor": 34.125,
+      "prior_mae": 33.016,
+      "beats_floor": true,
+      "improved": true,
+      "best_params": {
+        "num_leaves": 105,
+        "learning_rate": 0.007513501254953555,
+        "max_depth": 8,
+        "min_child_samples": 35,
+        "reg_alpha": 0.003316104100821952,
+        "reg_lambda": 0.0033032146460551543,
+        "subsample": 0.6829889649208664,
+        "colsample_bytree": 0.7706311229038864,
+        "min_split_gain": 0.543045604604721,
+        "objective": "regression_l1",
+        "verbose": -1
+      },
+      "best_multifold_mae": 39.598410930671236
+    },
+    "14": {
+      "mae": 34.78245464001946,
+      "n_est": 204,
+      "floor": 38.116,
+      "prior_mae": 37.797,
+      "beats_floor": true,
+      "improved": true,
+      "best_params": {
+        "num_leaves": 14,
+        "learning_rate": 0.04329320308216602,
+        "max_depth": 4,
+        "min_child_samples": 10,
+        "reg_alpha": 16.97710733156892,
+        "reg_lambda": 0.0003383668561610993,
+        "subsample": 0.6534325587849966,
+        "colsample_bytree": 0.5425362537854647,
+        "min_split_gain": 0.10445524518388125,
+        "objective": "regression_l1",
+        "verbose": -1
+      },
+      "best_multifold_mae": 40.816830283316826
+    }
+  },
+  "saved_models": {
+    "7": "lgbm_h7_optuna_fe5.pkl",
+    "14": "lgbm_h14_optuna_fe4.pkl"
+  },
+  "handoff": {
+    "written_by": "training",
+    "iteration": 25,
+    "context_clearable": true,
+    "durable_rules": [
+      "All LightGBM models must use objective='regression_l1'.",
+      "h=60 eval: 95 val target dates (Sep-Dec 2020), features from origin D-60.",
+      "h=90 eval: pooled multi-fold (fold-3 alone has only 5 rows)."
+    ]
+  }
+}

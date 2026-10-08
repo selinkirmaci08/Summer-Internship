@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>element61 · Preprocess · Iteration 003</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Open+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+    :root {
+      --accent: #9D1D56;
+      --e61-orange-red:#FC5B00; --e61-orange:#FC9808; --e61-yellow:#FCBA08;
+      --e61-magenta:#9D1D56; --e61-purple:#301D56;
+      --e61-ink:#1A1230; --e61-ink-2:#301D56; --e61-ink-3:#5B5070; --e61-ink-4:#8B8298;
+      --e61-line:#E6E2EC; --e61-line-2:#D8D2E0;
+      --e61-surface:#FFFFFF; --e61-bg:#FAF8F5; --e61-bg-warm:#FFF6EC; --e61-bg-cool:#F2EEF6;
+      --e61-success:#2F8F5C; --e61-warning:#FCBA08; --e61-danger:#C0294A; --e61-info:#2F6BB3;
+      --font-display:"Montserrat","Helvetica Neue",system-ui,sans-serif;
+      --font-body:"Open Sans","Helvetica Neue",Arial,system-ui,sans-serif;
+      --font-mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+      --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:24px;--space-6:32px;--space-7:48px;
+      --radius-sm:4px;--radius-md:8px;--radius-lg:14px;--radius-xl:22px;--radius-pill:999px;
+      --shadow-1:0 1px 2px rgba(48,29,86,.06),0 1px 1px rgba(48,29,86,.04);
+      --shadow-2:0 4px 16px rgba(48,29,86,.08),0 1px 2px rgba(48,29,86,.04);
+      --shadow-3:0 10px 28px rgba(48,29,86,.12),0 2px 6px rgba(48,29,86,.06);
+      --ease-standard:cubic-bezier(0.2,0.7,0.2,1); --dur-fast:120ms; --dur-base:200ms;
+    }
+    /* ── SHELL ── */
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--e61-bg);color:var(--e61-ink-2);
+      font-family:var(--font-body);line-height:1.6;
+      scroll-snap-type:y proximity;height:100%;overflow-y:auto;scroll-behavior:smooth}
+    .topbar{position:fixed;top:0;left:0;right:0;height:3px;background:var(--e61-line);z-index:201}
+    .topbar-fill{height:100%;background:linear-gradient(135deg,var(--e61-yellow) 0%,var(--e61-orange) 50%,var(--e61-orange-red) 100%);width:0;transition:width .25s}
+    .dotnav{position:fixed;right:20px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:9px;z-index:200}
+    .dotnav button{width:9px;height:9px;border-radius:50%;border:none;background:var(--e61-line-2);cursor:pointer;padding:0;transition:background .2s,transform .2s}
+    .dotnav button.active{background:var(--accent);transform:scale(1.5)}
+    .dotnav button:hover{background:var(--e61-orange)}
+    .navbar{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:14px;background:rgba(26,18,48,.88);backdrop-filter:blur(6px);border-radius:999px;padding:9px 18px;z-index:200;box-shadow:var(--shadow-3)}
+    .navbar button{background:none;border:none;color:#fff;font-size:1rem;cursor:pointer;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background .15s}
+    .navbar button:hover{background:rgba(255,255,255,.15)}
+    .navbar button:disabled{opacity:.3;cursor:default}
+    .navbar .counter{font-family:var(--font-mono);font-size:.72rem;color:rgba(255,255,255,.85);min-width:52px;text-align:center}
+    /* ── SLIDES ── */
+    .slide{min-height:100vh;scroll-snap-align:start;display:flex;flex-direction:column;justify-content:center;padding:88px 64px 96px;position:relative;border-bottom:1px solid var(--e61-line);box-sizing:border-box}
+    .slide-inner{max-width:1180px;margin:0 auto;width:100%}
+    .slide-num{position:absolute;top:28px;left:64px;font-family:var(--font-mono);font-size:.72rem;letter-spacing:.1em;color:var(--e61-ink-4);text-transform:uppercase}
+    .slide-tag{position:absolute;top:28px;right:64px;font-family:var(--font-mono);font-size:.72rem;color:var(--e61-ink-4)}
+    @media(max-width:700px){.slide{padding:72px 24px 80px}.slide-num,.slide-tag{left:24px;right:24px}}
+    .slide.dark{background:var(--e61-bg-cool);border-left:6px solid var(--e61-purple)}
+    .slide.dark h1,.slide.dark h2,.slide.dark h3,.slide.dark h4{color:var(--e61-purple)}
+    .slide.warm{background:var(--e61-bg-warm);border-left:6px solid var(--e61-orange-red)}
+    /* ── COVER ── */
+    .cover{min-height:100vh;scroll-snap-align:start;background:var(--e61-bg);color:var(--e61-ink);display:flex;flex-direction:column;justify-content:center;padding:64px 64px 64px 68px;position:relative;overflow:hidden;box-sizing:border-box;border-left:6px solid var(--accent)}
+    .cover-inner{position:relative;max-width:980px;margin:0 auto;width:100%}
+    .cover .logo{font-family:var(--font-display);font-weight:800;font-size:1rem;letter-spacing:.02em;color:var(--accent);margin-bottom:40px}
+    .cover h1{font-family:var(--font-display);font-weight:700;font-size:2.6rem;color:var(--e61-purple);line-height:1.15;margin:0 0 18px}
+    .cover .sub{font-size:1.05rem;color:var(--e61-ink-3);max-width:680px;margin-bottom:34px}
+    @media(max-width:700px){.cover h1{font-size:1.9rem}}
+    /* ── COMPONENTS ── */
+    h1,h2,h3,h4{font-family:var(--font-display);color:var(--e61-ink);margin:0 0 .5em;font-weight:700;text-wrap:balance}
+    p{margin:0 0 1em} a{color:var(--e61-orange-red)} .mono{font-family:var(--font-mono)} img{max-width:100%;display:block}
+    .eyebrow{font-family:var(--font-body);font-size:.8125rem;font-weight:600;text-transform:uppercase;letter-spacing:.14em;color:var(--e61-orange-red);margin-bottom:10px;display:block}
+    .kpi-row,.kpi-row-lt{display:flex;gap:14px;flex-wrap:wrap;margin-top:20px}
+    .kpi{background:#fff;border:1px solid var(--e61-line);border-radius:14px;box-shadow:var(--shadow-1);padding:16px 22px;min-width:150px}
+    .kpi-val{font-family:var(--font-display);font-size:1.7rem;font-weight:700;color:var(--e61-purple)}
+    .kpi-lbl{font-size:.72rem;margin-top:4px;color:var(--e61-ink-3)}
+    .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 22px;border-radius:999px;font-family:var(--font-display);font-weight:700;font-size:.9rem;margin-bottom:10px}
+    .pill-ok{background:var(--e61-success);color:#fff}
+    .pill-danger{background:var(--e61-danger);color:#fff}
+    .badge{display:inline-block;font-family:var(--font-display);font-size:.62rem;font-weight:700;padding:3px 9px;border-radius:5px;letter-spacing:.05em;text-transform:uppercase}
+    .b-hi{background:var(--e61-success);color:#fff} .b-med{background:var(--e61-warning);color:var(--e61-ink)}
+    .b-lo{background:var(--e61-magenta);color:#fff} .b-lk{background:var(--e61-danger);color:#fff}
+    .b-nc{background:var(--e61-line);color:var(--e61-ink-3)} .b-nb{background:var(--e61-warning);color:var(--e61-ink)}
+    .b-block{background:var(--e61-danger);color:#fff} .b-ok{background:#D1FAE5;color:#065F46}
+    .b-mar{background:var(--e61-info);color:#fff} .b-mcar{background:var(--e61-success);color:#fff}
+    .card{background:var(--e61-surface);border:1px solid var(--e61-line);border-radius:16px;padding:22px 24px;box-shadow:var(--shadow-1)}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .grid-lead{display:grid;grid-template-columns:2fr 1fr;gap:18px;align-items:start}
+    @media(max-width:900px){.grid-2,.grid-3,.grid-lead{grid-template-columns:1fr}}
+    .finding-card{background:#fff;border-left:4px solid var(--accent);border-radius:0 14px 14px 0;padding:18px 20px;box-shadow:var(--shadow-1);font-size:.92rem;color:var(--e61-ink-2);line-height:1.6}
+    .plot-card{background:#fff;border-radius:16px;border:1px solid var(--e61-line);overflow:hidden;box-shadow:var(--shadow-2)}
+    .plot-card img{width:100%;cursor:zoom-in}
+    .plot-cap{padding:14px 18px;font-size:.8rem;color:var(--e61-ink-3);border-top:1px solid var(--e61-line)}
+    .plot-cap b{color:var(--e61-ink-2)}
+    .kpi-mini-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .kpi-mini{background:#fff;border:1px solid var(--e61-line);border-radius:12px;box-shadow:var(--shadow-1);padding:16px 18px}
+    .kpi-mini-label{font-size:.7rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--e61-ink-3);margin-bottom:4px}
+    .kpi-mini-val{font-family:var(--font-display);font-size:1.25rem;font-weight:700;color:var(--accent)}
+    .kpi-mini-note{font-size:.72rem;color:var(--e61-ink-3);margin-top:4px;line-height:1.4}
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+    .chip{background:var(--e61-bg-cool);border:1px solid var(--e61-line-2);border-radius:8px;padding:5px 12px;font-size:.78rem;font-family:var(--font-mono);color:var(--e61-ink-3)}
+    .chip span{color:var(--e61-purple);font-weight:500}
+    table{width:100%;border-collapse:collapse;font-size:.84rem}
+    th{text-align:left;padding:9px 12px;font-family:var(--font-display);font-size:.7rem;color:var(--e61-ink-3);border-bottom:2px solid var(--e61-line);font-weight:600;background:var(--e61-bg-cool);text-transform:uppercase;letter-spacing:.04em}
+    td{padding:9px 12px;border-bottom:1px solid var(--e61-line);color:var(--e61-ink-2);vertical-align:top}
+    tr:last-child td{border-bottom:none}
+    .details-btn{font-family:var(--font-display);font-weight:600;font-size:.78rem;color:var(--e61-orange-red);background:var(--e61-bg-warm);border:1px solid #FCE0BE;border-radius:999px;padding:8px 16px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .15s}
+    .details-btn:hover{background:#FFE8CC}
+    .details-btn::after{content:"▾";font-size:.65rem;transition:transform .2s}
+    .details-btn.open::after{transform:rotate(180deg)}
+    .details-panel{max-height:0;overflow:hidden;transition:max-height .35s ease;margin-top:0}
+    .details-panel.open{max-height:900px;margin-top:14px}
+    .details-panel .inner{background:#fff;border-left:3px solid var(--e61-purple);border-radius:0 10px 10px 0;padding:14px 18px;font-size:.86rem;color:var(--e61-ink-2);line-height:1.7}
+    .clar-card{border-left:4px solid var(--accent);padding:16px 20px;border-radius:0 12px 12px 0;margin-bottom:14px;background:var(--e61-surface)}
+    .clar-card.blocking{border-color:var(--e61-danger);background:var(--e61-bg-warm)}
+    .clar-card.non-blocking{border-color:var(--e61-line-2);background:var(--e61-surface)}
+    .limits-list{list-style:none;padding:0;margin:0}
+    .limits-list li{position:relative;padding-left:22px;margin-bottom:10px;font-size:.88rem;color:var(--e61-ink-2)}
+    .limits-list li::before{content:"●";position:absolute;left:0;color:var(--e61-yellow);font-size:.6rem;top:.45em}
+    .callout-warn{background:#FFFBEB;border-left:4px solid var(--e61-warning);border-radius:0 10px 10px 0;padding:14px 18px;margin:14px 0;font-size:.88rem;color:var(--e61-ink-2)}
+    .callout-ok{background:#F0FBF4;border-left:4px solid var(--e61-success);border-radius:0 10px 10px 0;padding:14px 18px;margin:14px 0;font-size:.88rem;color:var(--e61-ink-2)}
+    .img-modal{display:none;position:fixed;inset:0;background:rgba(26,18,48,.6);z-index:500;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(3px)}
+    .img-modal.open{display:flex}
+    .img-modal-inner{background:#fff;border-radius:18px;box-shadow:var(--shadow-3);display:grid;grid-template-columns:1.4fr 1fr;max-width:1040px;width:100%;max-height:88vh;overflow:hidden;position:relative}
+    .img-modal-close{position:absolute;top:12px;right:12px;background:var(--e61-line);border:none;border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:.85rem;color:var(--e61-ink-2);z-index:10}
+    .img-modal-close:hover{background:var(--e61-danger);color:#fff}
+    .img-modal-img-wrap{background:var(--e61-bg);display:flex;align-items:center;justify-content:center;padding:24px;overflow:hidden}
+    .img-modal-img-wrap img{max-width:100%;max-height:76vh;height:auto;border-radius:10px;object-fit:contain}
+    .img-modal-meta{padding:28px 26px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;border-left:1px solid var(--e61-line)}
+    .img-modal-name{font-family:var(--font-display);font-size:1.05rem;font-weight:700;color:var(--e61-purple)}
+    .img-modal-body{font-size:.9rem;color:var(--e61-ink-2);line-height:1.7}
+    @media(max-width:700px){.img-modal-inner{grid-template-columns:1fr;max-height:92vh}.img-modal-meta{border-left:none;border-top:1px solid var(--e61-line)}}
+    @media print{.dotnav,.navbar,.topbar{display:none}.slide,.cover{min-height:0;page-break-after:always}}
+    .tr-leakage td:first-child{color:var(--e61-danger)} .tr-leakage{background:#FEF2F2}
+    .tr-null td:first-child{color:var(--e61-ink-3)} .tr-null{background:#F9F9FA}
+  </style>
+</head>
+<body>
+  <div class="topbar"><div class="topbar-fill" id="topbarFill"></div></div>
+  <div class="dotnav" id="dotnav"></div>
+  <div class="navbar">
+    <button id="prevBtn" title="Previous (←)">‹</button>
+    <span class="counter" id="counter">1 / 9</span>
+    <button id="nextBtn" title="Next (→)">›</button>
+  </div>
+
+  <!-- ══ SLIDE 0 — COVER ══ -->
+  <section class="cover slide-item" data-title="Cover">
+    <div class="cover-inner">
+      <div class="logo">element61 &nbsp;·&nbsp; pipeline</div>
+      <span class="eyebrow">PREPROCESS REPORT &nbsp;·&nbsp; ITERATION 003 &nbsp;·&nbsp; run_20260908T075709Z</span>
+      <h1>Data Preprocessing &amp; CV Split — Daily Bread Demand, Branch 01</h1>
+      <p class="sub">Initial preprocessing call: weather and competitor data joined to the sales series, 4 null-heavy weather columns dropped, and a 3-fold rolling-origin cross-validation split created. All 2,897 trading-day rows are retained. Every number in this report traces directly to the iteration_003_preprocess history JSON.</p>
+      <div class="kpi-row kpi-row-lt">
+        <div class="kpi"><div class="kpi-val">2,897</div><div class="kpi-lbl">Rows in &amp; out (0 filtered)</div></div>
+        <div class="kpi"><div class="kpi-val">3</div><div class="kpi-lbl">CV folds (rolling-origin)</div></div>
+        <div class="kpi"><div class="kpi-val">4</div><div class="kpi-lbl">Columns dropped</div></div>
+        <div class="kpi"><div class="kpi-val">2</div><div class="kpi-lbl">Data sources joined (weather + competitor)</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 1 — AGENDA ══ -->
+  <section class="slide slide-item" data-title="Agenda">
+    <div class="slide-num">01 / 09</div>
+    <div class="slide-tag">Agenda</div>
+    <div class="slide-inner">
+      <span class="eyebrow">Contents</span>
+      <h2>Report Overview</h2>
+      <div class="grid-3" style="margin-top:24px">
+        <div class="card"><b class="mono" style="color:var(--accent)">03</b><br><b>Overview</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">Mode, row counts, call context, and zero-row-filter confirmation</span></div>
+        <div class="card"><b class="mono" style="color:var(--accent)">04</b><br><b>CV Split</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">3-fold rolling-origin design, fold-3 details, scoreable val rows per horizon, holdout representativeness warning</span></div>
+        <div class="card"><b class="mono" style="color:var(--accent)">05</b><br><b>Data Joins</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">Weather join (1,015 nulls imputed) and competitor join (structural zero fill)</span></div>
+        <div class="card"><b class="mono" style="color:var(--accent)">06</b><br><b>Columns Dropped</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">4 high-null weather columns removed with reasoning</span></div>
+        <div class="card"><b class="mono" style="color:var(--accent)">07</b><br><b>Transformations</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">Per-feature imputation details and a NEAR-CONSTANT flag on had_reduction</span></div>
+        <div class="card"><b class="mono" style="color:var(--accent)">08</b><br><b>Plots</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">Split visualization, weather coverage, competitor coverage</span></div>
+        <div class="card"><b class="mono" style="color:var(--accent)">09</b><br><b>Clarifications &amp; Findings</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">1 non-blocking clarification and 4 agent-initiated findings</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 2 — OVERVIEW ══ -->
+  <section class="slide slide-item" data-title="Overview">
+    <div class="slide-num">02 / 09</div>
+    <div class="slide-tag">Overview</div>
+    <div class="slide-inner">
+      <span class="eyebrow">Call Context</span>
+      <h2>Initial Preprocessing Run — 0 Rows Filtered</h2>
+      <div style="margin-bottom:18px">
+        <span class="pill pill-ok">✓ INITIAL MODE</span>
+        <span class="badge b-hi" style="margin-left:12px;font-size:.75rem">NO ISSUES</span>
+        <span class="badge b-ok" style="margin-left:8px;font-size:.75rem">0 ROWS FILTERED</span>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="color:var(--accent);font-size:1rem;margin-bottom:12px">Call Context</h3>
+          <p style="font-size:.9rem">First Preprocess call this run. Starting from EDA's pre-parsed daily CSV (3,212 XMLs, 2,897 trading-day rows). Weather (hourly parquet → daily aggregates) and competitor holiday data joined per EDA join_plan. All transformations fit on fold-3 train rows only to prevent validation leakage.</p>
+          <div class="chips">
+            <span class="chip">mode <span>initial</span></span>
+            <span class="chip">train fit source <span>fold 3 train (2010–2020-06-30)</span></span>
+            <span class="chip">delivery join <span>NOT_USED</span></span>
+          </div>
+        </div>
+        <div class="card">
+          <h3 style="color:var(--accent);font-size:1rem;margin-bottom:12px">Row Counts</h3>
+          <div class="kpi-mini-row" style="grid-template-columns:1fr 1fr">
+            <div class="kpi-mini"><div class="kpi-mini-label">Rows in</div><div class="kpi-mini-val">2,897</div></div>
+            <div class="kpi-mini"><div class="kpi-mini-label">Rows out</div><div class="kpi-mini-val">2,897</div></div>
+          </div>
+          <div class="callout-ok" style="margin-top:16px">
+            <strong>0 rows filtered.</strong> All trading-day rows retained. Zero-demand days (public holidays, closures) kept per EDA durable rule — they are real events, not outliers.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 3 — CV SPLIT ══ (DARK — most important structural decision) -->
+  <section class="slide dark slide-item" data-title="CV Split">
+    <div class="slide-num">03 / 09</div>
+    <div class="slide-tag">CV Split</div>
+    <div class="slide-inner">
+      <span class="eyebrow">Train / Validation Design</span>
+      <h2>3-Fold Rolling-Origin CV — 90-Day Horizon Gap</h2>
+
+      <div class="callout-warn">
+        <strong>⚠ Holdout representativeness:</strong> The 2021+ holdout is fully post-regime (Mondays open). Fold 3 validation (Sep–Dec 2020, 95 rows) is the best available proxy, but it captures COVID recovery demand, not full post-COVID normalcy. Gentse Feesten was cancelled in 2020 but may resume in the holdout years. All metrics are validation-only and optimistic by an unknown margin.
+      </div>
+
+      <div style="margin-top:20px;overflow-x:auto">
+        <table>
+          <thead><tr><th>Fold</th><th>Train end</th><th>Val start</th><th>Val end</th><th>Train rows</th><th>Val rows</th><th>Val mean</th><th>Level gap</th><th>Post-regime in train</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">Fold 1</td><td>2018-06-30</td><td>2018-09-28</td><td>2018-12-30</td><td>2,082</td><td>81</td><td>293.5</td><td style="color:var(--e61-danger)">−10.7%</td><td>0</td></tr>
+            <tr><td class="mono">Fold 2</td><td>2019-06-30</td><td>2019-09-28</td><td>2019-12-31</td><td>2,395</td><td>81</td><td>269.4</td><td style="color:var(--e61-danger)">−17.0%</td><td>0</td></tr>
+            <tr style="background:#F0FBF4"><td class="mono">Fold 3 ★</td><td>2020-06-30</td><td>2020-09-28</td><td>2020-12-31</td><td>2,713</td><td>95</td><td>305.9</td><td style="color:var(--e61-warning)">−3.7%</td><td>30</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid-2" style="margin-top:20px">
+        <div>
+          <h3 style="font-size:.95rem;margin-bottom:10px">Scoreable val rows per horizon (Fold 3)</h3>
+          <table>
+            <thead><tr><th>h</th><th>Scoreable val rows</th><th>Note</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>94</td><td></td></tr>
+              <tr><td>7</td><td>88</td><td></td></tr>
+              <tr><td>14</td><td>81</td><td></td></tr>
+              <tr><td>30</td><td>65</td><td></td></tr>
+              <tr><td>60</td><td>35</td><td></td></tr>
+              <tr style="background:#FEF2F2"><td>90</td><td style="color:var(--e61-danger);font-weight:700">5</td><td style="color:var(--e61-danger)">⚠ Use all 3 folds for h=90 selection</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <h3 style="font-size:.95rem;margin-bottom:10px">Split reasoning</h3>
+          <p style="font-size:.88rem;color:var(--e61-ink-3)">Fold 3 train cutoff (2020-06-30) falls exactly within the post-regime period, giving 30 post-regime training rows. This is the minimum viable signal to learn the Monday pattern added on 2020-06-01. Cutting at 2019-12-31 (clean boundary) would revert to 0 post-regime training — the same error as the prior run (+8.5 MAE on Mondays).</p>
+          <button class="details-btn" onclick="toggleDetails(this)">Full split reasoning</button>
+          <div class="details-panel"><div class="inner">
+            <b>Deployment simulation:</b> Forecasting bread demand h=1 to 90 days ahead from an origin date in recent history. Model trained on historical patterns, evaluated on future demands it has not seen.<br><br>
+            <b>Val fairness:</b> Fold 3 val (Sep–Dec 2020, 95 rows, fully post-regime) is the best proxy for the 2021+ holdout. It captures the post-regime Monday pattern and COVID recovery demand. It does NOT capture the full Gentse Feesten pattern (cancelled in 2020) or the ongoing demand decline into 2021+.<br><br>
+            <b>Regime boundary:</b> Fold 3 train cutoff 2020-06-30 falls in the post-regime period. Train includes 30 days post-regime. Leaves the full Sep–Dec post-regime window for evaluation.<br><br>
+            <b>Alternative considered:</b> Cutting at 2019-12-31 would give 240 val rows but 0 post-regime training — repeating run_20260904T140437Z's error. Rejected.<br><br>
+            <b>h=90 constraint:</b> Only 5 scoreable fold-3 val rows. Training MUST use all 3 folds for h=90 model selection.
+          </div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 4 — DATA JOINS ══ -->
+  <section class="slide slide-item" data-title="Data Joins">
+    <div class="slide-num">04 / 09</div>
+    <div class="slide-tag">Data Joins</div>
+    <div class="slide-inner">
+      <span class="eyebrow">Source Integration</span>
+      <h2>Weather &amp; Competitor Data Joined; Delivery Not Used</h2>
+      <div class="grid-2" style="margin-top:20px">
+        <div class="card">
+          <h3 style="color:var(--accent);font-size:1rem;margin-bottom:10px">Weather Join</h3>
+          <div class="chips">
+            <span class="chip">raw parquet <span>52,608 rows × 16 cols (hourly)</span></span>
+            <span class="chip">daily aggregated <span>2,192 rows × 10 cols</span></span>
+            <span class="chip">join type <span>left on date</span></span>
+          </div>
+          <p style="font-size:.88rem">The parquet stores daily aggregates repeated per hourly row — <b>mean (not sum)</b> was used for Temperature and Precipitation. 1,015–1,016 pre-2015 rows had no weather coverage; these were imputed with <b>month-of-year medians fit on fold-3 train only</b>.</p>
+          <div style="display:flex;align-items:center;gap:12px;margin-top:10px">
+            <div class="kpi-mini" style="flex:1"><div class="kpi-mini-label">Nulls before</div><div class="kpi-mini-val" style="color:var(--e61-danger)">1,015</div></div>
+            <div style="font-size:1.4rem;color:var(--e61-ink-4)">→</div>
+            <div class="kpi-mini" style="flex:1"><div class="kpi-mini-label">Nulls after</div><div class="kpi-mini-val" style="color:var(--e61-success)">0</div></div>
+          </div>
+          <p style="font-size:.8rem;color:var(--e61-ink-3);margin-top:10px"><b>Dropped weather cols:</b> Location (100% null), Address (metadata), Conditions (string), Wind_Chill (40.3% null), Heat_Index (94.9% null)</p>
+        </div>
+        <div>
+          <div class="card" style="margin-bottom:16px">
+            <h3 style="color:var(--accent);font-size:1rem;margin-bottom:10px">Competitor Join</h3>
+            <div class="chips">
+              <span class="chip">source <span>VerlofConcurrent.csv</span></span>
+              <span class="chip">coverage <span>2017-07-01 to 2020-09-15</span></span>
+              <span class="chip">separator <span>; (semicolon)</span></span>
+            </div>
+            <p style="font-size:.88rem">Each source row = one competitor on holiday for that date. Aggregated to <b>n_competitors_closed, any_closed, closure_density</b>. Dates outside coverage window filled with <b>structural zero</b> (absence of row = no holiday, not unknown). A <span class="mono">comp_data_available</span> binary flag separates "known zero" from "outside coverage window".</p>
+            <div style="display:flex;align-items:center;gap:12px;margin-top:10px">
+              <div class="kpi-mini" style="flex:1"><div class="kpi-mini-label">Nulls before</div><div class="kpi-mini-val" style="color:var(--e61-danger)">2,594</div></div>
+              <div style="font-size:1.4rem;color:var(--e61-ink-4)">→</div>
+              <div class="kpi-mini" style="flex:1"><div class="kpi-mini-label">After fill</div><div class="kpi-mini-val" style="color:var(--e61-success)">0</div></div>
+            </div>
+          </div>
+          <div class="card" style="background:var(--e61-bg-cool)">
+            <h3 style="font-size:.9rem;margin-bottom:6px">Delivery Join — NOT USED</h3>
+            <p style="font-size:.82rem;color:var(--e61-ink-3)">Deliverydata covers wholesale operations; no branch 01 retail tie-in confirmed. Consistent with EDA do_not_repeat entry and prior runs.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 5 — COLUMNS DROPPED ══ -->
+  <section class="slide slide-item" data-title="Columns Dropped">
+    <div class="slide-num">05 / 09</div>
+    <div class="slide-tag">Columns Dropped</div>
+    <div class="slide-inner">
+      <span class="eyebrow">Column Removal</span>
+      <h2>4 High-Null or Redundant Weather Columns Removed</h2>
+      <div style="margin-top:20px;overflow-x:auto">
+        <table>
+          <thead><tr><th>Column</th><th>Category</th><th>Reason</th></tr></thead>
+          <tbody>
+            <tr class="tr-null"><td class="mono">wx_Wind_Chill</td><td><span class="badge b-nc">HIGH NULL</span></td><td>40.3% null in raw hourly parquet; derived feel-like index that adds nothing over Temperature for demand modeling</td></tr>
+            <tr class="tr-null"><td class="mono">wx_Heat_Index</td><td><span class="badge b-nc">HIGH NULL</span></td><td>94.9% null in raw hourly parquet; effectively unusable</td></tr>
+            <tr class="tr-null"><td class="mono">wx_Location / wx_Address</td><td><span class="badge b-nc">100% NULL</span></td><td>100% null metadata columns in the parquet file</td></tr>
+            <tr class="tr-null"><td class="mono">wx_Conditions</td><td><span class="badge b-nc">REDUNDANT</span></td><td>String category; redundant with numeric Precipitation for demand modeling; would require encoding overhead</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout-ok" style="margin-top:20px">
+        <strong>Retained weather columns:</strong> wx_Maximum_Temperature, wx_Minimum_Temperature, wx_Temperature, wx_Precipitation, wx_Snow_depth, wx_Wind_Speed, wx_Wind_Gust, wx_Cloud_Cover, wx_Relative_Humidity — all fully imputed (0 nulls).
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 6 — TRANSFORMATIONS ══ -->
+  <section class="slide slide-item" data-title="Transformations">
+    <div class="slide-num">06 / 09</div>
+    <div class="slide-tag">Transformations</div>
+    <div class="slide-inner">
+      <span class="eyebrow">Per-Feature Transformations</span>
+      <h2>Month-of-Year Median Imputation for Weather; Structural Zero for Competitor</h2>
+      <div class="grid-2" style="margin-top:20px">
+        <div>
+          <div class="card" style="margin-bottom:16px">
+            <h3 style="color:var(--accent);font-size:.95rem;margin-bottom:8px">wx_Maximum_Temperature <span class="badge b-mar" style="font-size:.6rem">MAR</span></h3>
+            <div class="chips"><span class="chip">nulls <span>1,015 → 0</span></span><span class="chip">method <span>month-of-year median</span></span><span class="chip">fit on <span>fold-3 train</span></span></div>
+            <p style="font-size:.85rem">Missingness is entirely explained by date &lt; 2015-01-01 (weather coverage gap). Month-of-year median preserves Belgium's strong annual temperature seasonality (summer warm, winter cold) that a global median would flatten. Fit on fold-3 train rows only to prevent validation leakage. Confidence: 0.85.</p>
+          </div>
+          <div class="card" style="margin-bottom:16px">
+            <h3 style="color:var(--accent);font-size:.95rem;margin-bottom:8px">wx_Precipitation <span class="badge b-mar" style="font-size:.6rem">MAR</span></h3>
+            <div class="chips"><span class="chip">nulls <span>1,015 → 0</span></span><span class="chip">mean post-impute <span>1.246 mm/day</span></span></div>
+            <p style="font-size:.85rem">Same MAR mechanism as temperature (date &lt; 2015 gap). Visual Crossing API repeats the daily total in every hourly row — aggregation uses <b>mean across 24 rows</b> (not sum). Month-of-year median imputation applied. Note: post-imputation mean (1.246 mm/day) is ~2× lower than prior run's value (2.68 mm/day); may reflect that month medians underrepresent actual pre-2015 precipitation. Non-blocking — see clarification slide.</p>
+          </div>
+        </div>
+        <div>
+          <div class="card" style="margin-bottom:16px">
+            <h3 style="color:var(--accent);font-size:.95rem;margin-bottom:8px">comp_n_competitors_closed <span class="badge b-mcar" style="font-size:.6rem">MCAR</span></h3>
+            <div class="chips"><span class="chip">nulls <span>2,594 → 0</span></span><span class="chip">fill <span>constant 0</span></span></div>
+            <p style="font-size:.85rem">VerlofConcurrent.csv records events (competitor holidays). A missing row means no competitor was on holiday — structural zero, not unknown. Dates outside the 2017-07-01 to 2020-09-15 coverage window also get 0. The <span class="mono">comp_data_available</span> indicator (1 within coverage window) separates known zeros from out-of-coverage zeros. Confidence: 0.95.</p>
+          </div>
+          <div class="card" style="border-left:4px solid var(--e61-danger)">
+            <h3 style="font-size:.95rem;margin-bottom:8px">⚠ had_reduction <span class="badge b-nc" style="font-size:.6rem">NEAR-CONSTANT</span></h3>
+            <p style="font-size:.85rem">Post-transform stats: mean=0.999, std=0.026, skew=−38.04. <b>99.9% of days had_reduction=1.</b> This column has effectively zero variance — it carries no signal for a tree-based or linear model. Feature Engineering should drop this column before training.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 7 — PLOTS ══ -->
+  <section class="slide slide-item" data-title="Plots">
+    <div class="slide-num">07 / 09</div>
+    <div class="slide-tag">Plots</div>
+    <div class="slide-inner">
+      <span class="eyebrow">Diagnostic Visualizations</span>
+      <h2>Split, Weather Coverage &amp; Competitor Coverage</h2>
+      <div class="grid-2" style="margin-top:20px">
+        <div>
+          <div class="plot-card" style="margin-bottom:16px">
+            <img src="../artifacts/preprocess/iteration_003_preprocess_split_visualization.png"
+                 alt="CV split visualization"
+                 data-modal-title="split_visualization"
+                 data-modal-body="Shows the 3-fold rolling-origin train/gap/validation assignment across the full 2010–2020 time series. Regime change (2020-06-01) and fold boundaries are marked. Fold 3 (primary) has 2,713 train rows, 89 gap rows, 95 val rows — all post-regime.">
+            <div class="plot-cap"><b>split_visualization</b> — 3-fold rolling-origin CV; fold 3 primary split (train to 2020-06-30, val Sep–Dec 2020)</div>
+          </div>
+          <div class="plot-card">
+            <img src="../artifacts/preprocess/iteration_003_preprocess_competitor_coverage.png"
+                 alt="Competitor coverage"
+                 data-modal-title="competitor_coverage"
+                 data-modal-body="Shows competitor closure events per day, with the coverage window (2017-07-01 to 2020-09-15) marked. Outside this window, competitor features are set to structural zero. The coverage indicator (comp_data_available) separates known zeros from out-of-coverage dates.">
+            <div class="plot-cap"><b>competitor_coverage</b> — competitor closure events 2017–2020; coverage window marked</div>
+          </div>
+        </div>
+        <div>
+          <div class="plot-card">
+            <img src="../artifacts/preprocess/iteration_003_preprocess_weather_coverage.png"
+                 alt="Weather coverage"
+                 data-modal-title="weather_coverage"
+                 data-modal-body="Shows weather temperature and precipitation coverage across the full series. The 2015 coverage-start boundary is marked. Pre-2015 rows (2010–2014) had NULL weather, imputed with month-of-year medians fit on fold-3 train. Post-imputation: 0 nulls in all weather columns.">
+            <div class="plot-cap"><b>weather_coverage</b> — weather coverage from 2015; pre-2015 gap imputed with month-of-year median</div>
+          </div>
+          <div style="margin-top:16px">
+            <p style="font-size:.88rem;color:var(--e61-ink-3)">The split visualization confirms fold 3's unique property: the only fold with post-regime data in training (30 rows, June 2020). This is critical — prior run had 0 post-regime training rows, causing a systematic +8.5 MAE error on Mondays. The weather coverage plot confirms the 1,015-row gap (pre-2015) is fully covered by month-of-year median imputation, with no residual nulls.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 8 — CLARIFICATIONS & AGENT FINDINGS ══ -->
+  <section class="slide slide-item" data-title="Clarifications">
+    <div class="slide-num">08 / 09</div>
+    <div class="slide-tag">Clarifications</div>
+    <div class="slide-inner">
+      <span class="eyebrow">Open Questions &amp; Agent Findings</span>
+      <h2>1 Non-Blocking Clarification · 4 Agent-Initiated Findings</h2>
+      <div class="grid-2" style="margin-top:20px;align-items:start">
+        <div>
+          <h3 style="font-size:.95rem;margin-bottom:12px">Clarification Needed</h3>
+          <div class="clar-card non-blocking">
+            <span class="badge b-nb">NON-BLOCKING</span> <span class="badge b-med">MEDIUM CONFIDENCE (0.7)</span>
+            <h4 style="margin-top:10px">Is the wx_Precipitation mean discrepancy (1.246 vs 2.68 mm/day) due to imputation or a genuine data difference?</h4>
+            <p style="font-size:.85rem;color:var(--e61-ink-3)">Post-imputation Precipitation mean is ~2× lower than prior run's value. Possible cause: month-of-year medians may underrepresent actual pre-2015 precipitation (right-skewed distribution).</p>
+            <p style="font-size:.85rem"><b>Recommended answer:</b> Proceed with current imputation. Investigate in Feature Engineering by inspecting 2015–2020 precipitation mean separately (without imputed rows). <b>If wrong:</b> moderate impact — weather feature importance for pre-2015 period may be underestimated.</p>
+          </div>
+          <h3 style="font-size:.95rem;margin-top:20px;margin-bottom:12px">Issues</h3>
+          <div class="callout-ok"><strong>✓ No issues.</strong> All joins completed without errors. All null counts resolved to 0 post-imputation.</div>
+        </div>
+        <div>
+          <h3 style="font-size:.95rem;margin-bottom:12px">Agent-Initiated Findings</h3>
+          <div class="finding-card" style="margin-bottom:12px">
+            <strong>Weather parquet: use mean (not sum) for aggregation</strong><br>
+            <span style="font-size:.82rem">Visual Crossing API repeats the daily total in each hourly row. Summing 24 copies produced 29.9 mm/day (13× Belgium's annual average). Fixed to mean. Affects Precipitation, Snow_depth, Wind_Gust.</span>
+          </div>
+          <div class="finding-card" style="margin-bottom:12px">
+            <strong>VerlofConcurrent.csv uses ';' separator (not ',')</strong><br>
+            <span style="font-size:.82rem">European CSV convention. Initial read produced a 2,357×1 dataframe. Fixed: <span class="mono">sep=';', encoding='latin-1'</span>. All downstream scripts must use these settings.</span>
+          </div>
+          <div class="finding-card" style="margin-bottom:12px">
+            <strong>h=90 has only 5 scoreable val rows in fold 3</strong><br>
+            <span style="font-size:.82rem">Dataset ends 2020-12-31; last usable h=90 origin is ~2020-10-02. Training must pool all 3 folds for h=90 model selection. A fold-3-only h=90 result is likely noise.</span>
+          </div>
+          <div class="finding-card">
+            <strong>Fold 3 has only 30 post-regime training rows</strong><br>
+            <span style="font-size:.82rem">~4–5 Monday observations. Model must learn Monday-level demand from a very small signal. Feature Engineering should not regularise the regime×Monday feature aggressively.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 9 — POST-TRANSFORM STATS ══ -->
+  <section class="slide slide-item" data-title="Output">
+    <div class="slide-num">09 / 09</div>
+    <div class="slide-tag">Output</div>
+    <div class="slide-inner">
+      <span class="eyebrow">Output Dataset &amp; Post-Transform Stats</span>
+      <h2>Processed Dataset: 2,897 Rows, 0 Nulls</h2>
+      <div class="grid-2" style="margin-top:20px">
+        <div>
+          <div class="card">
+            <h3 style="color:var(--accent);font-size:.95rem;margin-bottom:10px">Output File</h3>
+            <div class="chips">
+              <span class="chip">path <span>data/iteration_003_preprocess.csv</span></span>
+              <span class="chip">rows <span>2,897</span></span>
+            </div>
+          </div>
+          <div style="margin-top:16px;overflow-x:auto">
+            <table>
+              <thead><tr><th>Feature</th><th>Mean</th><th>Std</th><th>Skew</th><th>Nulls</th></tr></thead>
+              <tbody>
+                <tr><td class="mono">bread_quantity</td><td>315.9</td><td>84.1</td><td>−0.39</td><td>0</td></tr>
+                <tr><td class="mono">wx_Maximum_Temperature</td><td>15.1°C</td><td>6.6</td><td>0.19</td><td>0 ✓ imputed</td></tr>
+                <tr><td class="mono">wx_Precipitation</td><td>1.25 mm</td><td>3.18</td><td>5.14</td><td>0 ✓ imputed</td></tr>
+                <tr><td class="mono">wx_Snow_depth</td><td>0.02</td><td>0.23</td><td>16.2</td><td>0</td></tr>
+                <tr><td class="mono">comp_n_competitors_closed</td><td>0.73</td><td>2.55</td><td>3.63</td><td>0 ✓ zero-fill</td></tr>
+                <tr style="background:#FEF2F2"><td class="mono">had_reduction</td><td>0.999</td><td>0.026</td><td>−38.0</td><td style="color:var(--e61-danger)">⚠ NEAR-CONSTANT</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div>
+          <p style="font-size:.9rem;color:var(--e61-ink-3)">The processed dataset is the input for all subsequent Feature Engineering and Training calls in this run. The <span class="mono">_split</span> column (values: train/gap/validation) and fold columns (<span class="mono">_fold_1</span>, <span class="mono">_fold_2</span>, <span class="mono">_fold_3</span>) are fixed for the run — changing the split mid-run would invalidate all metric comparisons.</p>
+          <div class="callout-warn" style="margin-top:16px">
+            <strong>had_reduction (99.9% constant)</strong> — Feature Engineering must drop this column before training. It has near-zero variance and will inflate feature importance scores without providing signal.
+          </div>
+          <div style="margin-top:20px">
+            <a href="index.html" style="font-size:.85rem;color:var(--e61-ink-4);text-decoration:none">← Back to run index</a>
+            &nbsp;&nbsp;
+            <a href="../history/iteration_003_preprocess.json" style="font-size:.85rem;color:var(--e61-ink-4);text-decoration:none">Raw JSON ↗</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ IMAGE MODAL ══ -->
+  <div class="img-modal" id="imgModal" onclick="if(event.target.id==='imgModal')closeImgModal()">
+    <div class="img-modal-inner">
+      <button class="img-modal-close" onclick="closeImgModal()">✕</button>
+      <div class="img-modal-img-wrap"><img id="imgModalImg" src="" alt=""></div>
+      <div class="img-modal-meta">
+        <div class="img-modal-name" id="imgModalName"></div>
+        <div class="img-modal-body" id="imgModalBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ── Deck engine ──
+    const slides = Array.from(document.querySelectorAll('.cover,.slide'));
+    const dotnav = document.getElementById('dotnav');
+    slides.forEach((s,i)=>{
+      const dot = document.createElement('button');
+      dot.title = s.dataset.title || ('Slide '+(i+1));
+      dot.onclick = ()=>s.scrollIntoView({behavior:'smooth'});
+      dotnav.appendChild(dot);
+    });
+    const dots = Array.from(dotnav.children);
+    const counter = document.getElementById('counter');
+    const topbarFill = document.getElementById('topbarFill');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    let current = 0;
+    function setActive(idx){
+      current = idx;
+      dots.forEach((d,i)=>d.classList.toggle('active',i===idx));
+      counter.textContent = (idx+1)+' / '+slides.length;
+      topbarFill.style.width = (((idx+1)/slides.length)*100)+'%';
+      prevBtn.disabled = idx===0;
+      nextBtn.disabled = idx===slides.length-1;
+    }
+    setActive(0);
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting && e.intersectionRatio>0.55){
+          const idx = slides.indexOf(e.target);
+          if(idx>-1) setActive(idx);
+        }
+      });
+    },{threshold:[0.55]});
+    slides.forEach(s=>io.observe(s));
+    function goTo(idx){
+      idx = Math.max(0,Math.min(slides.length-1,idx));
+      slides[idx].scrollIntoView({behavior:'smooth'});
+    }
+    prevBtn.onclick = ()=>goTo(current-1);
+    nextBtn.onclick = ()=>goTo(current+1);
+    document.addEventListener('keydown',e=>{
+      if(['ArrowDown','ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();goTo(current+1);}
+      if(['ArrowUp','ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();goTo(current-1);}
+    });
+
+    // ── Details disclosure ──
+    function toggleDetails(btn){
+      btn.classList.toggle('open');
+      const panel = btn.nextElementSibling;
+      panel.classList.toggle('open');
+      btn.textContent = panel.classList.contains('open')
+        ? btn.textContent.replace(/^Full/,'Hide')
+        : (btn.dataset.orig || btn.textContent.replace(/^Hide/,'Full'));
+    }
+    document.querySelectorAll('.details-btn').forEach(b=>{b.dataset.orig=b.textContent;});
+
+    // ── Image modal ──
+    function openImgModal(imgEl){
+      document.getElementById('imgModalImg').src = imgEl.currentSrc || imgEl.src;
+      document.getElementById('imgModalImg').alt = imgEl.alt;
+      document.getElementById('imgModalName').textContent = imgEl.dataset.modalTitle || imgEl.alt;
+      document.getElementById('imgModalBody').textContent = imgEl.dataset.modalBody || '';
+      document.getElementById('imgModal').classList.add('open');
+      document.body.style.overflow='hidden';
+    }
+    function closeImgModal(){
+      document.getElementById('imgModal').classList.remove('open');
+      document.body.style.overflow='';
+    }
+    function wireImgModals(){
+      document.querySelectorAll('.plot-card img').forEach(img=>{
+        img.addEventListener('click',()=>openImgModal(img));
+      });
+    }
+    document.addEventListener('keydown',e=>{
+      if(document.getElementById('imgModal')?.classList.contains('open')&&e.key==='Escape') closeImgModal();
+    });
+    wireImgModals();
+  </script>
+</body>
+</html>

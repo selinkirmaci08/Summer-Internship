@@ -1,0 +1,672 @@
+{
+  "iteration": 3,
+  "node": "preprocess",
+  "run_id": "run_20260908T075709Z",
+  "timestamp": "2026-09-08",
+  "code_file": "code/iteration_003_preprocess.py",
+  "mode": "initial",
+  "mode_reasoning": "First Preprocess call this run. Starting from EDA's pre-parsed daily CSV (same 3212 XMLs, same protocol). Joining weather (hourly parquet aggregated to daily) and competitor data per EDA join_plan.",
+  "join_result": {
+    "primary_rows_in": 2897,
+    "primary_rows_out": 2897,
+    "weather_join": {
+      "type": "left",
+      "raw_parquet_shape": "52608 rows x 16 cols (hourly, 24 rows per day)",
+      "daily_aggregated_shape": "2192 rows x 10 cols",
+      "aggregation_method": {
+        "Maximum_Temperature": "max across 24 hourly rows",
+        "Minimum_Temperature": "min across 24 hourly rows",
+        "Temperature": "mean (hourly observations)",
+        "Precipitation": "mean (daily total repeated per hour — NOT sum; Visual Crossing API stores daily total in each hourly row)",
+        "Snow_depth": "mean (daily value repeated per hour)",
+        "Wind_Speed": "mean (hourly observations)",
+        "Wind_Gust": "max (daily peak repeated per hour)",
+        "Cloud_Cover": "mean (hourly observations)",
+        "Relative_Humidity": "mean (hourly observations)"
+      },
+      "dropped_cols": [
+        "Location (100% null)",
+        "Address (metadata)",
+        "Conditions (string)",
+        "Forecast (bool)",
+        "Wind_Chill (40.3% null in raw)",
+        "Heat_Index (94.9% null in raw)"
+      ],
+      "null_rows_pre_impute": 1016,
+      "null_rows_post_impute": 0,
+      "imputation_method": "month-of-year median, fit on fold 3 train rows only (2010-11-16 to 2020-06-30)",
+      "note": "1015-1016 pre-2015 rows had NULL weather (2010-2014 coverage gap). Cloud_Cover had one additional 2015 null. Imputed with month-of-year median from fold 3 train."
+    },
+    "competitor_join": {
+      "type": "left",
+      "source_file": "VerlofConcurrent.csv",
+      "source_separator": ";",
+      "source_date_format": "DD/MM/YYYY",
+      "raw_shape": "2357 rows x 10 cols",
+      "unique_dates_in_source": 303,
+      "date_range_in_source": "2017-07-01 to 2020-09-15",
+      "max_competitors_closed_one_day": 16,
+      "columns_produced": [
+        "comp_n_competitors_closed",
+        "comp_any_closed",
+        "comp_closure_density"
+      ],
+      "fill_strategy_outside_coverage": "0 (structural zero — absence of row = no competitor on holiday; NOT imputed missing)",
+      "comp_data_available_indicator": "added as comp_data_available binary (1 within 2017-07-01 to 2020-09-15)",
+      "note": "VerlofConcurrent.csv uses ';' separator (not ','). Each row = one competitor (winkel) on holiday for that date. Aggregated to count per date: n_competitors_closed, any_closed, closure_density = n/23."
+    },
+    "delivery_join": {
+      "status": "NOT_USED",
+      "reason": "Deliverydata is wholesale channel; no branch 01 retail tie-in per EDA domain research. Consistent with prior runs and do_not_repeat entries."
+    }
+  },
+  "rows_filtered": [],
+  "dropped_columns": [
+    {
+      "column": "wx_Wind_Chill",
+      "reason": "40.3% null in raw hourly parquet; Wind_Chill is a derived feel-like index that adds nothing over Temperature for demand modeling"
+    },
+    {
+      "column": "wx_Heat_Index",
+      "reason": "94.9% null in raw hourly parquet; effectively unusable"
+    },
+    {
+      "column": "wx_Location / wx_Address",
+      "reason": "100% null metadata columns in parquet"
+    },
+    {
+      "column": "wx_Conditions",
+      "reason": "String category column; redundant with numeric Precipitation for demand modeling"
+    }
+  ],
+  "split_info": {
+    "method": "rolling-origin (walk-forward) CV with 3 folds + 90-day horizon gap",
+    "split_created_this_call": true,
+    "horizon_gap_days": 90,
+    "horizon_setting_gap": "h=90 (max of forecast_horizons = [1,7,14,30,60,90])",
+    "cv_design": {
+      "fold_1": {
+        "train_start": "2010-11-16",
+        "train_end": "2018-06-30",
+        "gap_start": "2018-07-01",
+        "gap_end": "2018-09-27",
+        "val_start": "2018-09-28",
+        "val_end": "2018-12-30",
+        "train_rows": 2082,
+        "gap_rows": 76,
+        "val_rows": 81,
+        "train_mean": 328.85,
+        "val_mean": 293.53,
+        "level_gap_pct": -10.7,
+        "post_regime_rows_in_train": 0
+      },
+      "fold_2": {
+        "train_start": "2010-11-16",
+        "train_end": "2019-06-30",
+        "gap_start": "2019-07-02",
+        "gap_end": "2019-09-27",
+        "val_start": "2019-09-28",
+        "val_end": "2019-12-31",
+        "train_rows": 2395,
+        "gap_rows": 76,
+        "val_rows": 81,
+        "train_mean": 324.5,
+        "val_mean": 269.36,
+        "level_gap_pct": -17.0,
+        "post_regime_rows_in_train": 0
+      },
+      "fold_3_primary": {
+        "train_start": "2010-11-16",
+        "train_end": "2020-06-30",
+        "gap_start": "2020-07-01",
+        "gap_end": "2020-09-27",
+        "val_start": "2020-09-28",
+        "val_end": "2020-12-31",
+        "train_rows": 2713,
+        "gap_rows": 89,
+        "val_rows": 95,
+        "train_mean": 317.68,
+        "val_mean": 305.89,
+        "level_gap_pct": -3.7,
+        "post_regime_rows_in_train": 30,
+        "post_regime_rows_in_val": 95
+      }
+    },
+    "primary_split_column": "_split",
+    "primary_split_values": {
+      "train": 2713,
+      "gap": 89,
+      "validation": 95
+    },
+    "fold_columns": {
+      "_fold_1": "values for dates 2010-11-16 to 2018-12-30 only (null outside)",
+      "_fold_2": "values for dates 2010-11-16 to 2019-12-31 only (null outside)",
+      "_fold_3": "values for all 2897 rows"
+    },
+    "scoreable_val_rows_by_horizon_fold3": {
+      "h1": 94,
+      "h7": 88,
+      "h14": 81,
+      "h30": 65,
+      "h60": 35,
+      "h90": 5
+    },
+    "selection_noise_band": {
+      "note": "Approximate — computed from target mean variance across fold validation windows; proper noise band requires baseline skill MAE estimation per fold",
+      "h1": "~25-30 MAE (estimated; folds 1-2 val window is autumn quarter, fold 3 is autumn/winter of COVID year)",
+      "h90": "unreliable from fold 3 alone (5 scoreable rows); use folds 1+2+3 pooled for h90 selection; formal estimate deferred to baseline skill"
+    },
+    "holdout_representativeness": "The 2021+ holdout is FULLY post-regime (Mondays open) — training fold 3 now includes 30 post-regime rows (vs 0 in run_20260904T140437Z), which is a material improvement. However, 30 rows of post-regime training signal is still limited (~4-5 Mondays). The fold 3 validation window (Sep-Dec 2020, 95 rows) is entirely post-regime and provides the best available proxy for holdout performance, but: (1) COVID behavioral changes persisted into autumn 2020; (2) Gentse Feesten was cancelled in 2020 while holdout years (2021+) may resume it; (3) the -28.7% long-term demand trend continues beyond 2020. All model metrics are validation-only and optimistic by an unknown margin.",
+    "regime_coverage": {
+      "train_fold3": "MAJORITY pre-regime (2683 rows) + 30 post-regime rows (June 2020)",
+      "gap_fold3": "entirely post-regime (July-September 2020)",
+      "val_fold3": "entirely post-regime (September-December 2020)",
+      "note": "This is the minimum viable post-regime representation in training. The prior run (run_20260904T140437Z) had 0 post-regime in training, which caused +8.5 MAE error on Mondays. 30 training rows vs 0 is a critical fix."
+    },
+    "reasoning": {
+      "deployment_simulation": "Forecasting bread demand for future days (h=1 to 90 days ahead) from an origin date in recent history. The model is trained on historical patterns and evaluated on its ability to predict demands it has not seen.",
+      "val_fairness": "Fold 3 validation (Sep-Dec 2020, 95 rows post-regime) is the best available proxy for the 2021+ holdout. It captures the post-regime Monday pattern, COVID recovery demand levels, and winter seasonality. It does NOT capture the full Gentse Feesten pattern (2020 was cancelled) or the steady demand decline continuing into 2021+.",
+      "regime_boundary": "The fold 3 train cutoff (2020-06-30) falls exactly within the post-regime period — train includes only 30 days post-regime change. This is a deliberate choice: (1) ensures post-regime Monday pattern is in training, fixing the key error from the prior run; (2) leaves the full September-December post-regime window available for evaluation. Alternative of cutting at 2019-12-31 would be cleaner but repeats the prior run's 0%-post-regime error.",
+      "alternative_considered": "Cutting at 2019-12-31 (clean year boundary) would give 240 validation rows but 0 post-regime in training — same error as run_20260904T140437Z. Rejected in favour of 30 post-regime training rows.",
+      "h90_constraint": "The h=90 horizon has only 5 scoreable validation rows in fold 3. This makes per-horizon model selection for h=90 unreliable on fold 3 alone. Training MUST use all 3 folds when evaluating h=90 candidates. This is flagged as a constraint for Training and Diagnosis."
+    }
+  },
+  "transformations_applied": {
+    "wx_Maximum_Temperature": {
+      "missing_handling": {
+        "source_mechanism": "MAR — missingness entirely explained by date < 2015-01-01; once date is conditioned on, no remaining randomness",
+        "method": "month-of-year median imputation",
+        "fit_on": "fold 3 train rows only (2010-11-16 to 2020-06-30)",
+        "missing_indicator_added": false,
+        "null_count_before": 1015,
+        "null_count_after": 0,
+        "reasoning": "Month-of-year median preserves the strong annual seasonal temperature pattern (winter cold, summer warm) that a global median would flatten. Fit on fold 3 train only to prevent validation leakage.",
+        "confidence": 0.85
+      },
+      "outlier_handling": {
+        "method": "none",
+        "reasoning": "Range 0-35°C is physically plausible for Ghent; no outliers detected",
+        "confidence": 0.9
+      },
+      "scaling": {
+        "method": "none_at_this_step",
+        "reasoning": "Tree-based models don't need scaling; linear models will scale in Training",
+        "confidence": 1.0
+      },
+      "encoding": {
+        "method": "none_needed",
+        "reasoning": "Continuous numeric",
+        "confidence": 1.0
+      }
+    },
+    "wx_Precipitation": {
+      "missing_handling": {
+        "source_mechanism": "MAR — same as other wx columns (date < 2015-01-01); note: parquet stores daily total per hourly row, so 'mean' of 24 rows gives correct daily total",
+        "method": "month-of-year median imputation",
+        "fit_on": "fold 3 train rows only",
+        "missing_indicator_added": false,
+        "null_count_before": 1015,
+        "null_count_after": 0,
+        "reasoning": "Precipitation is highly seasonal in Belgium; month-median preserves seasonal pattern better than global median.",
+        "confidence": 0.8
+      },
+      "outlier_handling": {
+        "method": "none",
+        "reasoning": "Extreme precipitation events are genuine signal — heavy rain affects foot traffic",
+        "confidence": 0.75
+      },
+      "scaling": {
+        "method": "none_at_this_step",
+        "confidence": 1.0
+      },
+      "encoding": {
+        "method": "none_needed",
+        "confidence": 1.0
+      }
+    },
+    "comp_n_competitors_closed": {
+      "missing_handling": {
+        "source_mechanism": "MCAR — rows with NULL are dates outside the competitor data coverage window (2017-07-01 to 2020-09-15) OR dates when no competitor was on holiday. The absence of a row means zero closures, not an unknown value.",
+        "method": "constant_0 fill",
+        "fit_on": "no fitting needed — structural zero",
+        "missing_indicator_added": false,
+        "null_count_before": 2594,
+        "null_count_after": 0,
+        "reasoning": "VerlofConcurrent.csv records events (competitor holidays). A missing row means the event did not occur. Filling with 0 is the correct value, not imputation. The comp_data_available indicator separates 'known zero' (within coverage, no holidays) from 'unknown' (outside coverage window).",
+        "confidence": 0.95
+      },
+      "outlier_handling": {
+        "method": "none",
+        "reasoning": "Count 0-16; physically bounded; all values plausible",
+        "confidence": 1.0
+      },
+      "scaling": {
+        "method": "none_at_this_step",
+        "confidence": 1.0
+      },
+      "encoding": {
+        "method": "none_needed",
+        "reasoning": "Count variable",
+        "confidence": 1.0
+      }
+    }
+  },
+  "post_transform_stats": {
+    "bread_quantity": {
+      "mean": 315.887,
+      "std": 84.12,
+      "skew": -0.386,
+      "null_pct": 0.0
+    },
+    "wx_Maximum_Temperature": {
+      "mean": 15.136,
+      "std": 6.648,
+      "skew": 0.186,
+      "null_pct": 0.0,
+      "note": "1015 rows imputed with month-of-year median (pre-2015)"
+    },
+    "wx_Minimum_Temperature": {
+      "mean": 7.941,
+      "std": 5.009,
+      "skew": 0.014,
+      "null_pct": 0.0
+    },
+    "wx_Temperature": {
+      "mean": 11.507,
+      "std": 5.643,
+      "skew": 0.071,
+      "null_pct": 0.0
+    },
+    "wx_Precipitation": {
+      "mean": 1.246,
+      "std": 3.175,
+      "skew": 5.142,
+      "null_pct": 0.0,
+      "note": "Mean of hourly rows (API stores daily total in each hourly record). 1.246mm/day average ~ 455mm/year (plausible for Ghent 2015-2020; imputed pre-2015 may pull down mean vs actual ~2.2mm/day)"
+    },
+    "wx_Snow_depth": {
+      "mean": 0.019,
+      "std": 0.229,
+      "skew": 16.174,
+      "null_pct": 0.0
+    },
+    "wx_Wind_Speed": {
+      "mean": 14.286,
+      "std": 6.151,
+      "skew": 0.545,
+      "null_pct": 0.0
+    },
+    "wx_Wind_Gust": {
+      "mean": 28.099,
+      "std": 12.053,
+      "skew": 0.53,
+      "null_pct": 0.0
+    },
+    "wx_Cloud_Cover": {
+      "mean": 62.423,
+      "std": 21.428,
+      "skew": -0.432,
+      "null_pct": 0.0
+    },
+    "wx_Relative_Humidity": {
+      "mean": 77.912,
+      "std": 9.726,
+      "skew": -0.371,
+      "null_pct": 0.0
+    },
+    "comp_n_competitors_closed": {
+      "mean": 0.732,
+      "std": 2.55,
+      "skew": 3.629,
+      "null_pct": 0.0
+    },
+    "comp_any_closed": {
+      "mean": 0.094,
+      "std": 0.291,
+      "skew": 2.793,
+      "null_pct": 0.0
+    },
+    "comp_closure_density": {
+      "mean": 0.032,
+      "std": 0.111,
+      "skew": 3.629,
+      "null_pct": 0.0
+    },
+    "had_reduction": {
+      "mean": 0.999,
+      "std": 0.026,
+      "skew": -38.04,
+      "null_pct": 0.0,
+      "FLAG": "NEAR-CONSTANT — 99.9% of days had_reduction=1. Zero variance signal. Feature Engineering should drop."
+    }
+  },
+  "agent_initiated_findings": [
+    {
+      "related_step": "step_0b_weather_aggregation",
+      "title": "Weather parquet stores daily totals/extremes repeated for each hourly row — must use mean/max/min, NOT sum for aggregation",
+      "method": "cross-run comparison of wx_Precipitation mean",
+      "findings": "Initial aggregation with 'sum' for Precipitation produced mean=29.9mm/day (13x Belgium annual average). Cross-run comparison with run_20260904T140437Z (mean=2.68) confirmed the parquet stores the daily total in each hourly row (Visual Crossing API format). Correct aggregation: mean(daily_total_repeated) = daily total. Precipitation mean after fix: 1.246mm/day.",
+      "reasoning": "This is a common pitfall with Visual Crossing hourly weather exports. Summing 24 copies of the daily total produces wildly inflated values. The same issue applies to Snow_depth and Wind_Gust (daily max repeated per hour — use max not sum).",
+      "confidence": 0.95,
+      "recommendation": "Feature Engineering scripts that use wx_Precipitation must NOT re-aggregate from raw parquet — use the pre-aggregated values from data/iteration_003_preprocess.csv."
+    },
+    {
+      "related_step": "step_0c_competitor_join",
+      "title": "VerlofConcurrent.csv uses ';' separator, not ','",
+      "method": "error investigation when pandas read as 1-column frame",
+      "findings": "Initial pd.read_csv with sep=',' produced a 2357×1 dataframe (all data in single column). Correct separator is ';'. After fixing: 2357×10 correctly parsed with date, winkel, verlof_concurrent_1-5, Highsales, lowsales, Actie columns.",
+      "reasoning": "European CSV convention often uses semicolons when commas appear in values (e.g., Dutch number formatting). This is a consistent parsing requirement across runs.",
+      "confidence": 1.0,
+      "recommendation": "All downstream scripts that read VerlofConcurrent.csv must use sep=';', encoding='latin-1'."
+    },
+    {
+      "related_step": "step_3_split",
+      "title": "h=90 horizon has only 5 scoreable validation rows in fold 3",
+      "method": "count of val rows with date <= dataset_end - 90 days",
+      "findings": "The fold 3 val window (2020-09-28 to 2020-12-31) has 95 rows total. For h=90, a val origin at date D requires a target at D+90 within the dataset. Dataset ends 2020-12-31, so last usable h=90 origin is approximately 2020-10-02. Only 5 val rows have origins ≤ 2020-10-02.",
+      "reasoning": "This is a structural constraint of the dataset ending at 2020-12-31. With 5 scoreable rows, h=90 MAE estimation in fold 3 has very high variance. Training must pool all 3 folds for h=90 model selection.",
+      "confidence": 1.0,
+      "recommendation": "Training skill: use all 3 folds when scoring h=90 candidates. A h=90 result that appears to win in fold 3 alone (5 rows) is likely noise. Diagnosis should flag h=90 model selection as statistically uncertain until confirmed across all folds."
+    },
+    {
+      "related_step": "step_3_split",
+      "title": "Fold 3 has only 30 post-regime training rows (June 1-30, 2020)",
+      "method": "count of train rows with date >= 2020-06-01",
+      "findings": "Fold 3 training (through 2020-06-30) includes only 30 post-regime rows. This gives approximately 4-5 Monday observations, which is the entire training signal for the regime_x_monday feature.",
+      "reasoning": "30 post-regime rows is dramatically better than 0 (prior run's error), but still limited. The model must learn Monday-level demand from ~4-5 data points. Feature Engineering should use the full post-regime DOW mean (from all 95 val rows) to set a reasonable prior for the Monday feature.",
+      "confidence": 0.9,
+      "recommendation": "Feature Engineering: regime_x_monday feature should not be shrunk or regularised aggressively — it has only 4-5 training examples and needs to learn from a small signal. Diagnosis: specifically check whether Monday val rows are systematically over- or under-predicted."
+    }
+  ],
+  "clarification_needed": [
+    {
+      "question": "wx_Precipitation mean=1.246mm/day post-imputation vs prior run's mean=2.68mm/day. Is this difference due to the imputation approach for 2010-2014 pulling the overall mean down, or a genuine difference in the weather data period (2015-2020 actual precipitation)?",
+      "reason": "If the imputation significantly under-represents actual 2010-2014 precipitation, the feature may confuse tree-based models that split on raw precipitation values.",
+      "blocking": false,
+      "confidence": 0.7,
+      "recommendation": "Proceed with current imputation. Investigate discrepancy in Feature Engineering by inspecting the 2015-2020 precipitation mean separately (without imputed rows).",
+      "recommendation_reasoning": "The ~2× difference could simply reflect that the month-of-year medians are lower than means (right-skewed precipitation distribution). Non-blocking.",
+      "impact_if_wrong": "Moderate — if 2010-2014 precipitation is systematically misrepresented, weather feature importance may be underestimated for the pre-2015 period."
+    }
+  ],
+  "issues": [],
+  "processed_dataset_path": "data/iteration_003_preprocess.csv",
+  "artifact_paths": {
+    "plots": [
+      {
+        "name": "split_visualization",
+        "path": "artifacts/preprocess/iteration_003_preprocess_split_visualization.png",
+        "data_path": "artifacts/preprocess/iteration_003_preprocess_split_visualization.csv",
+        "reason": "Visualises fold 3 train/gap/validation assignment across the full time series, with regime change and fold boundaries marked"
+      },
+      {
+        "name": "weather_coverage",
+        "path": "artifacts/preprocess/iteration_003_preprocess_weather_coverage.png",
+        "data_path": "artifacts/preprocess/iteration_003_preprocess_weather_coverage.csv",
+        "reason": "Shows weather temperature and precipitation coverage, with the 2015 coverage-start boundary marked; confirms imputation fills pre-2015 gap"
+      },
+      {
+        "name": "competitor_coverage",
+        "path": "artifacts/preprocess/iteration_003_preprocess_competitor_coverage.png",
+        "data_path": "artifacts/preprocess/iteration_003_preprocess_competitor_coverage.csv",
+        "reason": "Competitor closure events per day, with coverage window (2017-07-01 to 2020-09-15) marked"
+      }
+    ]
+  },
+  "handoff": {
+    "written_by": "preprocess",
+    "iteration": 3,
+    "context_clearable": false,
+    "read_this_first": "The CV split uses 3 rolling-origin folds where fold 3 (the PRIMARY split, column _split) is the only fold with post-regime data in training (30 rows, June 2020); h=90 has only 5 scoreable validation rows in fold 3 — Training MUST use all 3 folds for h=90 model selection, not fold 3 alone.",
+    "parameters": {
+      "processed_dataset_path": {
+        "value": "data/iteration_003_preprocess.csv",
+        "why": "Base dataset for all downstream Feature Engineering and Training calls"
+      },
+      "split_column": {
+        "value": "_split",
+        "why": "Primary split assignment based on fold 3; values: train/gap/validation",
+        "must_not_change": true
+      },
+      "fold_columns": {
+        "value": {
+          "_fold_1": "train/gap/val for fold 1 (null outside 2018-12-30)",
+          "_fold_2": "train/gap/val for fold 2 (null outside 2019-12-31)",
+          "_fold_3": "train/gap/val for fold 3 (all rows)"
+        },
+        "why": "Rolling-origin CV design; Training uses these to implement the 3-fold CV evaluation",
+        "must_not_change": true
+      },
+      "split_info_fold3": {
+        "value": {
+          "method": "rolling-origin-cv-3-folds",
+          "train_end": "2020-06-30",
+          "gap_start": "2020-07-01",
+          "gap_end": "2020-09-27",
+          "val_start": "2020-09-28",
+          "val_end": "2020-12-31",
+          "train_rows": 2713,
+          "gap_rows": 89,
+          "val_rows": 95,
+          "train_mean": 317.68,
+          "val_mean": 305.89,
+          "level_gap_pct": -3.7,
+          "post_regime_rows_in_train": 30,
+          "scoreable_val_rows": {
+            "h1": 94,
+            "h7": 88,
+            "h14": 81,
+            "h30": 65,
+            "h60": 35,
+            "h90": 5
+          }
+        },
+        "why": "Every downstream metric comparison is conditional on this split; must not change",
+        "must_not_change": true
+      },
+      "fit_statistics_source": {
+        "value": "_split == 'train' rows only (2010-11-16 to 2020-06-30, 2713 rows)",
+        "why": "All imputation and scaling parameters fit on train rows only to prevent validation leakage",
+        "must_not_change": true
+      },
+      "weather_aggregation_rule": {
+        "value": "mean for all numeric columns; max for Maximum_Temperature, Wind_Gust; min for Minimum_Temperature. Do NOT sum — Visual Crossing API repeats daily totals in each hourly row.",
+        "why": "Sum aggregation produces 24× inflated precipitation values (confirmed by cross-run comparison)",
+        "must_not_change": true
+      },
+      "competitor_csv_parsing": {
+        "value": "sep=';', encoding='latin-1', date_format=dayfirst=True (DD/MM/YYYY)",
+        "why": "European semicolon-delimited CSV; commas are data separators within fields",
+        "must_not_change": true
+      }
+    },
+    "durable_rules": [
+      {
+        "rule": "The train/validation split (_split column) is fixed as of iteration 003 and must not be changed for the rest of this run. All model selection, feature evaluation, and metric reporting uses this split.",
+        "why": "Changing the split mid-run invalidates all metric comparisons across iterations. The selection noise band is conditional on this specific partitioning.",
+        "applies_to": [
+          "feature_engineering",
+          "training",
+          "diagnosis",
+          "baseline",
+          "end_model"
+        ],
+        "cost_if_broken": "All metrics from different iterations become incomparable; model selection is invalidated; the CV design's purpose of testing on post-regime data is defeated"
+      },
+      {
+        "rule": "Fit all imputation statistics, scalers, and encoding maps on _split=='train' rows only. Apply (transform) to all rows.",
+        "why": "Standard leakage prevention. Validation rows must not influence what 'normal' looks like.",
+        "applies_to": [
+          "feature_engineering",
+          "training"
+        ],
+        "cost_if_broken": "Validation metrics are optimistically biased; model selection favors models that 'remembered' the validation period"
+      },
+      {
+        "rule": "For h=90 model selection, Training must use all 3 CV folds (_fold_1, _fold_2, _fold_3), NOT fold 3 alone.",
+        "why": "Fold 3 has only 5 scoreable h=90 val rows. MAE estimate from 5 rows has very high variance. Any apparent winner at h=90 from fold 3 alone is likely noise.",
+        "applies_to": [
+          "training",
+          "diagnosis"
+        ],
+        "cost_if_broken": "h=90 champion selection is driven by noise, not genuine performance; holdout h=90 error will be much worse than expected"
+      },
+      {
+        "rule": "wx_Precipitation is in mm/day (daily total, mean of 24 identical hourly records). Do NOT re-aggregate from raw parquet — use the preprocess CSV values directly.",
+        "why": "Visual Crossing API stores daily total repeated in each hourly row; summing gives 24× inflated values",
+        "applies_to": [
+          "feature_engineering"
+        ],
+        "cost_if_broken": "If raw parquet is re-aggregated with sum, precipitation features will be 24× inflated, making is_heavy_rain threshold meaningless and any precipitation coefficient nonsensical"
+      },
+      {
+        "rule": "Competitor columns (comp_*) outside coverage window (pre-2017-07-01, post-2020-09-15) are filled with 0 — this is the correct structural value, NOT imputation. Always use comp_data_available indicator alongside comp_n_competitors_closed.",
+        "why": "VerlofConcurrent.csv records events. Absence of a record = no event occurred = 0. A model that treats 0 as 'unknown' will confuse the absence of competitor holidays with competitor holidays occurring on 0 days.",
+        "applies_to": [
+          "feature_engineering",
+          "training"
+        ],
+        "cost_if_broken": "If 0s are imputed with competitor mean (~0.73), the model sees phantom competitor closures across 2010-2016, potentially creating a spurious positive correlation"
+      },
+      {
+        "rule": "had_reduction is near-constant (99.9% = 1). Feature Engineering must drop it.",
+        "why": "Zero-variance feature; cannot predict anything; adds noise to model training",
+        "applies_to": [
+          "feature_engineering"
+        ],
+        "cost_if_broken": "Minor — tree models will auto-ignore it; linear models waste a coefficient; negligible MAE impact"
+      }
+    ],
+    "methodological_cautions": [
+      {
+        "caution": "Fold 3 training contains only 30 post-regime rows (June 2020). The model has approximately 4-5 Monday observations as training signal for the regime_x_monday interaction. This is minimal and should not be treated as sufficient to reliably estimate Monday demand.",
+        "why": "The regime change is 2020-06-01; fold 3 training ends 2020-06-30. There are at most 4-5 Mondays in June 2020.",
+        "cost_if_ignored": "If the model's Monday coefficient is calibrated on 4-5 observations, it will be noisy. Diagnosis must check Monday prediction error specifically. Feature Engineering should use domain-knowledge priors for Monday demand level (see domain research: Monday demand is lower than other weekdays because Monday bread-buying is not culturally established)."
+      },
+      {
+        "caution": "h=90 has only 5 scoreable fold 3 validation rows. Any h=90 validation metric reported from fold 3 alone should be disregarded. Use pooled 3-fold metrics for h=90.",
+        "why": "5 rows is insufficient for a reliable MAE estimate. Standard error of MAE with n=5 is ~45% of the mean MAE.",
+        "cost_if_ignored": "Selecting a h=90 champion based on fold 3 alone is equivalent to random model selection at that horizon."
+      },
+      {
+        "caution": "Weather imputation for pre-2015 rows (1015 rows, 35% of training) uses month-of-year medians from 2015-2020. Belgium precipitation is right-skewed (medians < means), so median imputation understates historical rainfall for 2010-2014 rows. This may suppress weather feature importance in the pre-2015 period.",
+        "why": "Right-skewed distribution means median < mean; imputing with median understates the central tendency for non-rainy-day precipitation.",
+        "cost_if_ignored": "Weather features may appear less important in training (35% of rows have understated precipitation) than they would be if actual 2010-2014 weather data were available. A model tuned on this data may underweight precipitation features."
+      },
+      {
+        "caution": "The competitor closure data has a structural confound: the days with the most competitor closures (official public holidays) are also the days Aernoudt may be closed (zero bread_quantity). A naive correlation between comp_n_competitors_closed and bread_quantity will be downward-biased.",
+        "why": "On public holidays, n_competitors_closed is high AND Aernoudt demand may be zero. The genuine positive demand-redirection effect (August summer vacations) is masked by the holiday confound in raw correlation.",
+        "cost_if_ignored": "Feature Engineering may drop or penalise the competitor feature based on low observed correlation, when the true effect (August summer vacation period) is genuine but hidden by the holiday confound."
+      }
+    ],
+    "do_not_repeat": [
+      {
+        "tried": "Aggregating Precipitation from hourly parquet with 'sum'",
+        "outcome": "rejected",
+        "evidence": "Produced mean=29.9mm/day vs expected ~2.2mm/day; cross-run comparison with run_20260904T140437Z (mean=2.68mm/day) confirmed issue",
+        "why_not_again": "Visual Crossing API stores daily total repeated in each hourly row; summing 24 copies inflates by 24×",
+        "evidence_basis": "validation_only",
+        "reopen_if": "Weather data source changes to an API that provides true hourly accumulation deltas"
+      },
+      {
+        "tried": "Parsing VerlofConcurrent.csv with sep=','",
+        "outcome": "rejected",
+        "evidence": "Produced a 2357×1 dataframe with all data in a single column; actual separator is ';'",
+        "why_not_again": "European CSV convention uses semicolons; commas appear in value fields",
+        "evidence_basis": "validation_only",
+        "reopen_if": "Competitor data file format changes in a future data refresh"
+      }
+    ],
+    "content_carried_forward": {
+      "processed_dataset_path": "data/iteration_003_preprocess.csv",
+      "processed_shape": [
+        2897,
+        35
+      ],
+      "split_column": "_split",
+      "split_values": {
+        "train": 2713,
+        "gap": 89,
+        "validation": 95
+      },
+      "train_date_range": {
+        "start": "2010-11-16",
+        "end": "2020-06-30"
+      },
+      "val_date_range": {
+        "start": "2020-09-28",
+        "end": "2020-12-31"
+      },
+      "fold_columns": [
+        "_fold_1",
+        "_fold_2",
+        "_fold_3"
+      ],
+      "fold3_scoreable_val_rows": {
+        "h1": 94,
+        "h7": 88,
+        "h14": 81,
+        "h30": 65,
+        "h60": 35,
+        "h90": 5
+      },
+      "level_gap_pct_fold3": -3.7,
+      "post_regime_train_rows": 30,
+      "weather_columns": [
+        "wx_Maximum_Temperature",
+        "wx_Minimum_Temperature",
+        "wx_Temperature",
+        "wx_Precipitation",
+        "wx_Snow_depth",
+        "wx_Wind_Speed",
+        "wx_Wind_Gust",
+        "wx_Cloud_Cover",
+        "wx_Relative_Humidity"
+      ],
+      "competitor_columns": [
+        "comp_n_competitors_closed",
+        "comp_any_closed",
+        "comp_closure_density",
+        "comp_data_available"
+      ],
+      "leakage_risk_columns": [
+        "pistolet_quantity",
+        "total_quantity",
+        "total_revenue",
+        "bread_revenue",
+        "num_orders",
+        "payment_mode_1",
+        "payment_mode_2",
+        "payment_mode_4"
+      ],
+      "near_constant_drop": [
+        "had_reduction"
+      ],
+      "pre_existing_date_columns": [
+        "day_of_week",
+        "is_closed_monday",
+        "year",
+        "month",
+        "dow",
+        "week",
+        "doy"
+      ],
+      "key_next_tasks_for_feature_engineering": [
+        "Build per-horizon target columns (bread_qty_h1/h7/h14/h30/h60/h90) via DATE JOIN — rows missing a target (date+h > 2020-12-31) get NaN",
+        "Build is_official_public_holiday (11 Belgian/Flemish holidays; floating holidays via Easter formula — NOT hardcoded)",
+        "Build days_until_next_holiday (capped 30), days_since_last_holiday (capped 14)",
+        "Build is_school_holiday_flanders (Easter-anchored for Krokus/Paas; fixed July1-Aug31 for Zomervakantie)",
+        "Build is_zomervakantie (July 1 - Aug 31, every year)",
+        "Build is_gentse_feesten (year-specific dates from domain research handoff; 2020=0)",
+        "Build is_sinterklaas_period (Dec 1-6), is_easter_period (Good Fri to Easter Mon), is_covid_lockdown_period (2020-03-18 to 2020-05-03)",
+        "Build year_trend (date - 2010-11-16).days / 365.25",
+        "Build regime_x_monday (date >= 2020-06-01 AND dow==Monday) — critical, only Monday training signal",
+        "Build is_2014_sparse_period (year==2014)",
+        "Build lag features (DOW-aligned lags for each horizon h: lag = k*7 where k=ceil(h/7))",
+        "Build is_hot_day (wx_Temperature > 25), is_heavy_rain (wx_Precipitation > 5)",
+        "Drop: had_reduction, pistolet_quantity (leakage), total_quantity, total_revenue, bread_revenue, num_orders, payment_mode_1/2/4, is_closed_monday (already applied), day_of_week (replaced by dow)"
+      ]
+    }
+  },
+  "report_html": "reports/iteration_003_preprocess.html"
+}

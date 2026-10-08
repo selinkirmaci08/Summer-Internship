@@ -1,0 +1,1477 @@
+{
+  "analysis": {
+    "holdout_primary": {
+      "pooled": {
+        "agentic_shipped_calendar": {
+          "n": 2139,
+          "MAE": 57.5900555579373,
+          "RMSE": 72.1194766150354,
+          "sMAPE_pct": 20.16553881779246,
+          "bias": 31.741958192225177,
+          "MAE_debiased": 50.565089737648165,
+          "MASE_vs_naive_same_h": 1.4454276827939063
+        },
+        "seasonal_naive_m7": {
+          "n": 2139,
+          "MAE": 39.842917251051894,
+          "RMSE": 56.25989913414692,
+          "sMAPE_pct": 15.57485454461599,
+          "bias": 3.053763440860215,
+          "MAE_debiased": 39.61060087368733,
+          "MASE_vs_naive_same_h": 1.0
+        },
+        "automl_recipe": {
+          "n": 2139,
+          "MAE": 40.46085140481319,
+          "RMSE": 51.50932847983686,
+          "sMAPE_pct": 15.704271595932626,
+          "bias": 8.395728580780434,
+          "MAE_debiased": 39.03819263447764,
+          "MASE_vs_naive_same_h": 1.0155092597730149
+        },
+        "seasonal_median_52wk": {
+          "n": 2139,
+          "MAE": 38.56708742402992,
+          "RMSE": 48.89557716302832,
+          "sMAPE_pct": 14.22585894142645,
+          "bias": 23.393641888733054,
+          "MAE_debiased": 33.01251868448138,
+          "MASE_vs_naive_same_h": 0.9679785037078757
+        },
+        "agentic_refit_calendar": {
+          "n": 2139,
+          "MAE": 49.09149225740663,
+          "RMSE": 60.44080058577527,
+          "sMAPE_pct": 17.743437061360304,
+          "bias": 26.189917268139013,
+          "MAE_debiased": 42.43115662756987,
+          "MASE_vs_naive_same_h": 1.2321259497159576
+        },
+        "automl_no_fe": {
+          "n": 2139,
+          "MAE": 48.58815006360586,
+          "RMSE": 61.65394789276268,
+          "sMAPE_pct": 17.879225867082894,
+          "bias": 12.20336113124794,
+          "MAE_debiased": 46.653007020427715,
+          "MASE_vs_naive_same_h": 1.219492783559243
+        },
+        "agentic_shipped_row": {
+          "n": 2139,
+          "MAE": 57.36249799936866,
+          "RMSE": 71.82405942988818,
+          "sMAPE_pct": 20.095820222053387,
+          "bias": 31.44949270745241,
+          "MAE_debiased": 50.41915327824146,
+          "MASE_vs_naive_same_h": 1.4397163148954468
+        },
+        "agentic_refit_row": {
+          "n": 2139,
+          "MAE": 49.89495228626182,
+          "RMSE": 61.376364259009335,
+          "sMAPE_pct": 18.00087141837802,
+          "bias": 26.11714039270823,
+          "MAE_debiased": 43.28805582270268,
+          "MASE_vs_naive_same_h": 1.2522916424987567
+        }
+      },
+      "per_horizon": {
+        "1": {
+          "agentic_shipped_calendar": {
+            "n": 357,
+            "MAE": 41.61379401468603,
+            "RMSE": 52.49798402264942,
+            "sMAPE_pct": 15.163785356871863,
+            "bias": 25.85272529498724,
+            "MAE_debiased": 35.56057637444227,
+            "MASE_vs_naive_same_h": 1.1554891859098477
+          },
+          "seasonal_naive_m7": {
+            "n": 357,
+            "MAE": 36.0140056022409,
+            "RMSE": 52.843752562379116,
+            "sMAPE_pct": 14.322643700493629,
+            "bias": -1.380952380952381,
+            "MAE_debiased": 36.088301987461655,
+            "MASE_vs_naive_same_h": 1.0
+          },
+          "automl_recipe": {
+            "n": 357,
+            "MAE": 40.319744695485056,
+            "RMSE": 51.59917919716829,
+            "sMAPE_pct": 15.78005785632911,
+            "bias": 6.201152041564654,
+            "MAE_debiased": 39.354077847670446,
+            "MASE_vs_naive_same_h": 1.1195573505707523
+          },
+          "seasonal_median_52wk": {
+            "n": 357,
+            "MAE": 36.865546218487395,
+            "RMSE": 47.141125509322684,
+            "sMAPE_pct": 13.629538752145127,
+            "bias": 22.173669467787114,
+            "MAE_debiased": 31.54328398025877,
+            "MASE_vs_naive_same_h": 1.023644707163413
+          },
+          "agentic_refit_calendar": {
+            "n": 357,
+            "MAE": 40.328368827762596,
+            "RMSE": 50.76170918152293,
+            "sMAPE_pct": 14.918127585159379,
+            "bias": 28.059432890667697,
+            "MAE_debiased": 33.16344952729343,
+            "MASE_vs_naive_same_h": 1.1197968166377261
+          },
+          "automl_no_fe": {
+            "n": 357,
+            "MAE": 47.90114800153739,
+            "RMSE": 59.72518000961203,
+            "sMAPE_pct": 17.481476671609304,
+            "bias": 32.559777784643636,
+            "MAE_debiased": 38.277805787871735,
+            "MASE_vs_naive_same_h": 1.3300699880647777
+          },
+          "agentic_shipped_row": {
+            "n": 357,
+            "MAE": 41.61379401468603,
+            "RMSE": 52.49798402264942,
+            "sMAPE_pct": 15.163785356871863,
+            "bias": 25.85272529498724,
+            "MAE_debiased": 35.56057637444227,
+            "MASE_vs_naive_same_h": 1.1554891859098477
+          },
+          "agentic_refit_row": {
+            "n": 357,
+            "MAE": 40.328368827762596,
+            "RMSE": 50.76170918152293,
+            "sMAPE_pct": 14.918127585159379,
+            "bias": 28.059432890667697,
+            "MAE_debiased": 33.16344952729343,
+            "MASE_vs_naive_same_h": 1.1197968166377261
+          }
+        },
+        "7": {
+          "agentic_shipped_calendar": {
+            "n": 356,
+            "MAE": 53.4980455473496,
+            "RMSE": 68.27063991720799,
+            "sMAPE_pct": 18.667322067830764,
+            "bias": 26.30535013160963,
+            "MAE_debiased": 48.42484753426265,
+            "MASE_vs_naive_same_h": 1.4814331218774468
+          },
+          "seasonal_naive_m7": {
+            "n": 356,
+            "MAE": 36.1123595505618,
+            "RMSE": 52.921714495739266,
+            "sMAPE_pct": 14.363570995558819,
+            "bias": -1.247191011235955,
+            "MAE_debiased": 36.19498800656483,
+            "MASE_vs_naive_same_h": 1.0
+          },
+          "automl_recipe": {
+            "n": 356,
+            "MAE": 41.016240580770855,
+            "RMSE": 52.55196592662077,
+            "sMAPE_pct": 16.022015894370785,
+            "bias": 6.415194686273713,
+            "MAE_debiased": 40.02713534512475,
+            "MASE_vs_naive_same_h": 1.1357950876442457
+          },
+          "seasonal_median_52wk": {
+            "n": 356,
+            "MAE": 36.98033707865169,
+            "RMSE": 47.26095973006411,
+            "sMAPE_pct": 13.682912213857188,
+            "bias": 22.247191011235955,
+            "MAE_debiased": 31.67122206792072,
+            "MASE_vs_naive_same_h": 1.0240354698195395
+          },
+          "agentic_refit_calendar": {
+            "n": 356,
+            "MAE": 48.419198288934105,
+            "RMSE": 60.559116761241356,
+            "sMAPE_pct": 17.40030296079209,
+            "bias": 23.947197114901495,
+            "MAE_debiased": 43.75939101776179,
+            "MASE_vs_naive_same_h": 1.3407929831098742
+          },
+          "automl_no_fe": {
+            "n": 356,
+            "MAE": 36.55949941143389,
+            "RMSE": 50.08695137961522,
+            "sMAPE_pct": 14.074698017321216,
+            "bias": -15.017789849997417,
+            "MAE_debiased": 34.75774052669282,
+            "MASE_vs_naive_same_h": 1.0123819065393953
+          },
+          "agentic_shipped_row": {
+            "n": 356,
+            "MAE": 53.53724814734198,
+            "RMSE": 68.53241889131776,
+            "sMAPE_pct": 18.699794496548677,
+            "bias": 26.15532220544877,
+            "MAE_debiased": 48.57296049096775,
+            "MASE_vs_naive_same_h": 1.482518694808163
+          },
+          "agentic_refit_row": {
+            "n": 356,
+            "MAE": 48.85149404838815,
+            "RMSE": 61.30787776239957,
+            "sMAPE_pct": 17.55076252516353,
+            "bias": 23.846044057105242,
+            "MAE_debiased": 44.394060679386904,
+            "MASE_vs_naive_same_h": 1.352763836436386
+          }
+        },
+        "14": {
+          "agentic_shipped_calendar": {
+            "n": 356,
+            "MAE": 60.90865971345432,
+            "RMSE": 76.50560077857772,
+            "sMAPE_pct": 21.230687133227004,
+            "bias": 32.33324780752278,
+            "MAE_debiased": 55.76238059805331,
+            "MASE_vs_naive_same_h": 1.5365279802997263
+          },
+          "seasonal_naive_m7": {
+            "n": 356,
+            "MAE": 39.640449438202246,
+            "RMSE": 55.25563675552411,
+            "sMAPE_pct": 15.396525544731452,
+            "bias": -0.4606741573033708,
+            "MAE_debiased": 39.65856583764676,
+            "MASE_vs_naive_same_h": 1.0
+          },
+          "automl_recipe": {
+            "n": 356,
+            "MAE": 41.21266289921449,
+            "RMSE": 52.28621656079802,
+            "sMAPE_pct": 16.04839992807269,
+            "bias": 6.839311423981665,
+            "MAE_debiased": 39.97993470706763,
+            "MASE_vs_naive_same_h": 1.0396618475141979
+          },
+          "seasonal_median_52wk": {
+            "n": 356,
+            "MAE": 37.467696629213485,
+            "RMSE": 47.804780624554674,
+            "sMAPE_pct": 13.852156417268748,
+            "bias": 22.728932584269664,
+            "MAE_debiased": 32.09491383663679,
+            "MASE_vs_naive_same_h": 0.9451884920634921
+          },
+          "agentic_refit_calendar": {
+            "n": 356,
+            "MAE": 47.13452431110648,
+            "RMSE": 58.27210687496554,
+            "sMAPE_pct": 17.15816604045769,
+            "bias": 20.190226983214465,
+            "MAE_debiased": 43.69760057236244,
+            "MASE_vs_naive_same_h": 1.18905120852848
+          },
+          "automl_no_fe": {
+            "n": 356,
+            "MAE": 42.905142256798506,
+            "RMSE": 56.27831630759796,
+            "sMAPE_pct": 16.1570679046439,
+            "bias": 13.195860949916861,
+            "MAE_debiased": 39.74519546758877,
+            "MASE_vs_naive_same_h": 1.0823576136210509
+          },
+          "agentic_shipped_row": {
+            "n": 356,
+            "MAE": 60.545754560139635,
+            "RMSE": 75.86119552734588,
+            "sMAPE_pct": 21.098668510159374,
+            "bias": 31.822320363648664,
+            "MAE_debiased": 55.171690344433905,
+            "MASE_vs_naive_same_h": 1.527373060048874
+          },
+          "agentic_refit_row": {
+            "n": 356,
+            "MAE": 48.22449609762673,
+            "RMSE": 59.45756917893438,
+            "sMAPE_pct": 17.49791831395032,
+            "bias": 20.1434139743475,
+            "MAE_debiased": 44.68233214508912,
+            "MASE_vs_naive_same_h": 1.2165476623267513
+          }
+        },
+        "30": {
+          "agentic_shipped_calendar": {
+            "n": 356,
+            "MAE": 73.31917869835132,
+            "RMSE": 85.80649220916061,
+            "sMAPE_pct": 25.15283673599342,
+            "bias": 37.071492397027605,
+            "MAE_debiased": 61.85323409794889,
+            "MASE_vs_naive_same_h": 1.7030945854504158
+          },
+          "seasonal_naive_m7": {
+            "n": 356,
+            "MAE": 43.050561797752806,
+            "RMSE": 60.853434163062666,
+            "sMAPE_pct": 16.82526336455297,
+            "bias": 2.2191011235955056,
+            "MAE_debiased": 42.933278626436056,
+            "MASE_vs_naive_same_h": 1.0
+          },
+          "automl_recipe": {
+            "n": 356,
+            "MAE": 40.47037808814303,
+            "RMSE": 51.41955843712587,
+            "sMAPE_pct": 15.65767792343652,
+            "bias": 7.966687241678,
+            "MAE_debiased": 39.11905592426896,
+            "MASE_vs_naive_same_h": 0.940066201186149
+          },
+          "seasonal_median_52wk": {
+            "n": 356,
+            "MAE": 38.60533707865169,
+            "RMSE": 48.93848609579494,
+            "sMAPE_pct": 14.216611338507995,
+            "bias": 23.751404494382022,
+            "MAE_debiased": 32.8272945335185,
+            "MASE_vs_naive_same_h": 0.8967440950019575
+          },
+          "agentic_refit_calendar": {
+            "n": 356,
+            "MAE": 53.91760577181537,
+            "RMSE": 64.5427698192756,
+            "sMAPE_pct": 19.30874108085555,
+            "bias": 27.49625503411297,
+            "MAE_debiased": 45.60803804616992,
+            "MASE_vs_naive_same_h": 1.2524251373330466
+          },
+          "automl_no_fe": {
+            "n": 356,
+            "MAE": 57.890447824670495,
+            "RMSE": 69.97923868767936,
+            "sMAPE_pct": 21.408699910856836,
+            "bias": 9.192170025793622,
+            "MAE_debiased": 57.057438932102464,
+            "MASE_vs_naive_same_h": 1.3447083012907932
+          },
+          "agentic_shipped_row": {
+            "n": 356,
+            "MAE": 72.2253288971442,
+            "RMSE": 85.62461426609835,
+            "sMAPE_pct": 24.737720531445266,
+            "bias": 37.25306777906734,
+            "MAE_debiased": 61.56039963839402,
+            "MASE_vs_naive_same_h": 1.6776860947007266
+          },
+          "agentic_refit_row": {
+            "n": 356,
+            "MAE": 54.605664704495474,
+            "RMSE": 65.6460351729467,
+            "sMAPE_pct": 19.52573448246393,
+            "bias": 27.618703310758562,
+            "MAE_debiased": 46.410959764583,
+            "MASE_vs_naive_same_h": 1.2684077146548605
+          }
+        },
+        "60": {
+          "agentic_shipped_calendar": {
+            "n": 357,
+            "MAE": 62.93897980783405,
+            "RMSE": 78.66185202749715,
+            "sMAPE_pct": 21.92667465676123,
+            "bias": 35.26721322960242,
+            "MAE_debiased": 56.23303868710401,
+            "MASE_vs_naive_same_h": 1.4861575363050965
+          },
+          "seasonal_naive_m7": {
+            "n": 357,
+            "MAE": 42.35014005602241,
+            "RMSE": 57.23035667799211,
+            "sMAPE_pct": 16.26408826727987,
+            "bias": 7.918767507002801,
+            "MAE_debiased": 41.52865852223242,
+            "MASE_vs_naive_same_h": 1.0
+          },
+          "automl_recipe": {
+            "n": 357,
+            "MAE": 39.87776980826078,
+            "RMSE": 50.37615345695547,
+            "sMAPE_pct": 15.482890391854315,
+            "bias": 10.235534582237305,
+            "MAE_debiased": 38.14634613438844,
+            "MASE_vs_naive_same_h": 0.9416207303094846
+          },
+          "seasonal_median_52wk": {
+            "n": 357,
+            "MAE": 40.15406162464986,
+            "RMSE": 50.50400045169343,
+            "sMAPE_pct": 14.797708534728393,
+            "bias": 24.80952380952381,
+            "MAE_debiased": 34.18060557556356,
+            "MASE_vs_naive_same_h": 0.9481447185660428
+          },
+          "agentic_refit_calendar": {
+            "n": 357,
+            "MAE": 54.43986954110477,
+            "RMSE": 66.18024464631489,
+            "sMAPE_pct": 19.529710203155425,
+            "bias": 28.8231112794594,
+            "MAE_debiased": 45.87959952770537,
+            "MASE_vs_naive_same_h": 1.2854708265212251
+          },
+          "automl_no_fe": {
+            "n": 357,
+            "MAE": 60.61906243825139,
+            "RMSE": 70.97742568039692,
+            "sMAPE_pct": 21.517999353921613,
+            "bias": 40.021422679620756,
+            "MAE_debiased": 44.587210433058296,
+            "MASE_vs_naive_same_h": 1.4313780865438022
+          },
+          "agentic_shipped_row": {
+            "n": 357,
+            "MAE": 60.617132741575496,
+            "RMSE": 75.69952435914583,
+            "sMAPE_pct": 21.204822566724456,
+            "bias": 34.71494536396396,
+            "MAE_debiased": 53.13958666029331,
+            "MASE_vs_naive_same_h": 1.4313325212475991
+          },
+          "agentic_refit_row": {
+            "n": 357,
+            "MAE": 54.21714457495261,
+            "RMSE": 65.71316615430459,
+            "sMAPE_pct": 19.46362772179672,
+            "bias": 28.725272893225537,
+            "MAE_debiased": 45.418315216556216,
+            "MASE_vs_naive_same_h": 1.2802116947720141
+          }
+        },
+        "90": {
+          "agentic_shipped_calendar": {
+            "n": 357,
+            "MAE": 53.3035683314536,
+            "RMSE": 66.28132471415091,
+            "sMAPE_pct": 18.8646839014029,
+            "bias": 33.62307663926664,
+            "MAE_debiased": 44.20104990010696,
+            "MASE_vs_naive_same_h": 1.272527343475253
+          },
+          "seasonal_naive_m7": {
+            "n": 357,
+            "MAE": 41.88795518207283,
+            "RMSE": 58.02085976670138,
+            "sMAPE_pct": 16.276645468667418,
+            "bias": 11.249299719887954,
+            "MAE_debiased": 40.2010058925531,
+            "MASE_vs_naive_same_h": 1.0
+          },
+          "automl_recipe": {
+            "n": 357,
+            "MAE": 39.87200066892007,
+            "RMSE": 50.793786496417205,
+            "sMAPE_pct": 15.23631105200315,
+            "bias": 12.705382286565152,
+            "MAE_debiased": 37.45640429565191,
+            "MASE_vs_naive_same_h": 0.9518726921763051
+          },
+          "seasonal_median_52wk": {
+            "n": 357,
+            "MAE": 41.32212885154062,
+            "RMSE": 51.54735931258594,
+            "sMAPE_pct": 15.173632843438803,
+            "bias": 24.647058823529413,
+            "MAE_debiased": 35.471412094249466,
+            "MASE_vs_naive_same_h": 0.9864919085194597
+          },
+          "agentic_refit_calendar": {
+            "n": 357,
+            "MAE": 50.315540449653824,
+            "RMSE": 61.105704941020896,
+            "sMAPE_pct": 18.147358528268356,
+            "bias": 28.603851531485912,
+            "MAE_debiased": 41.969845182258986,
+            "MASE_vs_naive_same_h": 1.2011935228384656
+          },
+          "automl_no_fe": {
+            "n": 357,
+            "MAE": 45.630044816736444,
+            "RMSE": 60.22451052103461,
+            "sMAPE_pct": 16.629818913420603,
+            "bias": -6.813179122568337,
+            "MAE_debiased": 46.24488211854083,
+            "MASE_vs_naive_same_h": 1.089335696106387
+          },
+          "agentic_shipped_row": {
+            "n": 357,
+            "MAE": 55.67556391433445,
+            "RMSE": 68.47620928611741,
+            "sMAPE_pct": 19.682031055086085,
+            "bias": 32.90104647632621,
+            "MAE_debiased": 47.134521800000414,
+            "MASE_vs_naive_same_h": 1.3291544949456597
+          },
+          "agentic_refit_row": {
+            "n": 357,
+            "MAE": 53.148138736030894,
+            "RMSE": 64.06998556287641,
+            "sMAPE_pct": 19.050659565393744,
+            "bias": 28.29108654713107,
+            "MAE_debiased": 45.193597471510074,
+            "MASE_vs_naive_same_h": 1.2688167399199566
+          }
+        }
+      },
+      "wins": {
+        "agentic_shipped_calendar": 0,
+        "seasonal_naive_m7": 2,
+        "automl_recipe": 2,
+        "seasonal_median_52wk": 2,
+        "agentic_refit_calendar": 0,
+        "automl_no_fe": 0,
+        "agentic_shipped_row": 0,
+        "agentic_refit_row": 0
+      },
+      "beats_naive_h": {
+        "agentic_shipped_calendar": 0,
+        "seasonal_naive_m7": 0,
+        "automl_recipe": 3,
+        "seasonal_median_52wk": 4,
+        "agentic_refit_calendar": 0,
+        "automl_no_fe": 0,
+        "agentic_shipped_row": 0,
+        "agentic_refit_row": 0
+      },
+      "n_horizons": 6,
+      "rows": {
+        "target_dates_in_window": 362,
+        "pairs_before_trading_rule": 2172,
+        "excluded_zero_or_missing_actual": 18,
+        "pairs_after_trading_rule": 2154,
+        "pairs_all_systems_complete": 2139
+      },
+      "coverage": {
+        "agentic_refit_calendar": 2139,
+        "agentic_refit_row": 2154,
+        "agentic_shipped_calendar": 2139,
+        "agentic_shipped_row": 2154,
+        "automl_recipe": 2154,
+        "automl_no_fe": 2154,
+        "seasonal_naive_m7": 2154,
+        "seasonal_median_52wk": 2154
+      },
+      "window": [
+        "2021-01-01",
+        "2021-12-31"
+      ]
+    },
+    "holdout_stress": {
+      "pooled": {
+        "agentic_shipped_calendar": {
+          "n": 324,
+          "MAE": 68.62139493900817,
+          "RMSE": 80.04469594944797,
+          "sMAPE_pct": 25.15711867509464,
+          "bias": 56.448882070018406,
+          "MAE_debiased": 43.043950768840695,
+          "MASE_vs_naive_same_h": 1.9343424360743557
+        },
+        "seasonal_naive_m7": {
+          "n": 324,
+          "MAE": 35.47530864197531,
+          "RMSE": 53.68064000280838,
+          "sMAPE_pct": 15.717374345581481,
+          "bias": -5.345679012345679,
+          "MAE_debiased": 35.79766803840877,
+          "MASE_vs_naive_same_h": 1.0
+        },
+        "automl_recipe": {
+          "n": 324,
+          "MAE": 49.46406954474379,
+          "RMSE": 58.87517325959894,
+          "sMAPE_pct": 20.637543770514853,
+          "bias": 24.718497503902167,
+          "MAE_debiased": 37.805807893260884,
+          "MASE_vs_naive_same_h": 1.394323867452322
+        },
+        "seasonal_median_52wk": {
+          "n": 324,
+          "MAE": 25.674382716049383,
+          "RMSE": 32.44945024168598,
+          "sMAPE_pct": 10.459087254355259,
+          "bias": 14.881172839506172,
+          "MAE_debiased": 22.181441472336537,
+          "MASE_vs_naive_same_h": 0.723725421959283
+        },
+        "agentic_refit_calendar": {
+          "n": 324,
+          "MAE": 60.25661840708932,
+          "RMSE": 69.47674760290255,
+          "sMAPE_pct": 22.69432090141196,
+          "bias": 49.506139427933064,
+          "MAE_debiased": 35.85371894132252,
+          "MASE_vs_naive_same_h": 1.6985509277794448
+        },
+        "automl_no_fe": {
+          "n": 324,
+          "MAE": 54.42144783517299,
+          "RMSE": 67.07831837219884,
+          "sMAPE_pct": 21.09416742998001,
+          "bias": 27.22160911635156,
+          "MAE_debiased": 47.59815254941574,
+          "MASE_vs_naive_same_h": 1.5340655210193186
+        },
+        "agentic_shipped_row": {
+          "n": 324,
+          "MAE": 68.06771371597414,
+          "RMSE": 79.47416812116181,
+          "sMAPE_pct": 25.023172366370694,
+          "bias": 56.67129915661214,
+          "MAE_debiased": 41.13395218590269,
+          "MASE_vs_naive_same_h": 1.9187349263942595
+        },
+        "agentic_refit_row": {
+          "n": 324,
+          "MAE": 61.94888342440953,
+          "RMSE": 71.91053531884344,
+          "sMAPE_pct": 23.239058935173915,
+          "bias": 49.326457731442076,
+          "MAE_debiased": 37.734687063082845,
+          "MASE_vs_naive_same_h": 1.7462535435452138
+        }
+      },
+      "per_horizon": {
+        "1": {
+          "agentic_shipped_calendar": {
+            "n": 63,
+            "MAE": 53.323757808761464,
+            "RMSE": 59.52815983225884,
+            "sMAPE_pct": 20.39012498608686,
+            "bias": 53.323757808761464,
+            "MAE_debiased": 21.645776853405195,
+            "MASE_vs_naive_same_h": 1.7496858030999856
+          },
+          "seasonal_naive_m7": {
+            "n": 63,
+            "MAE": 30.476190476190474,
+            "RMSE": 46.765880928809835,
+            "sMAPE_pct": 12.529951256283445,
+            "bias": -1.8412698412698412,
+            "MAE_debiased": 30.505416981607453,
+            "MASE_vs_naive_same_h": 1.0
+          },
+          "automl_recipe": {
+            "n": 63,
+            "MAE": 51.683564502856704,
+            "RMSE": 59.92585822905617,
+            "sMAPE_pct": 21.545227006424042,
+            "bias": 28.499637695090378,
+            "MAE_debiased": 36.99722875029513,
+            "MASE_vs_naive_same_h": 1.6958669602499856
+          },
+          "seasonal_median_52wk": {
+            "n": 63,
+            "MAE": 22.825396825396826,
+            "RMSE": 30.580105577693107,
+            "sMAPE_pct": 9.386824381041926,
+            "bias": 13.603174603174603,
+            "MAE_debiased": 20.114638447971785,
+            "MASE_vs_naive_same_h": 0.7489583333333334
+          },
+          "agentic_refit_calendar": {
+            "n": 63,
+            "MAE": 54.63591987544493,
+            "RMSE": 59.3562361976005,
+            "sMAPE_pct": 20.985163623093587,
+            "bias": 54.63591987544493,
+            "MAE_debiased": 18.405045256914782,
+            "MASE_vs_naive_same_h": 1.7927411209130368
+          },
+          "automl_no_fe": {
+            "n": 63,
+            "MAE": 61.16242595440505,
+            "RMSE": 70.18789885856127,
+            "sMAPE_pct": 23.369315305695267,
+            "bias": 54.85396842103123,
+            "MAE_debiased": 35.82489214669372,
+            "MASE_vs_naive_same_h": 2.006892101628916
+          },
+          "agentic_shipped_row": {
+            "n": 63,
+            "MAE": 53.323757808761464,
+            "RMSE": 59.52815983225884,
+            "sMAPE_pct": 20.39012498608686,
+            "bias": 53.323757808761464,
+            "MAE_debiased": 21.645776853405195,
+            "MASE_vs_naive_same_h": 1.7496858030999856
+          },
+          "agentic_refit_row": {
+            "n": 63,
+            "MAE": 54.63591987544493,
+            "RMSE": 59.3562361976005,
+            "sMAPE_pct": 20.985163623093587,
+            "bias": 54.63591987544493,
+            "MAE_debiased": 18.405045256914782,
+            "MASE_vs_naive_same_h": 1.7927411209130368
+          }
+        },
+        "7": {
+          "agentic_shipped_calendar": {
+            "n": 60,
+            "MAE": 66.51827128214555,
+            "RMSE": 79.77130398401228,
+            "sMAPE_pct": 24.673649702883154,
+            "bias": 57.977176327028744,
+            "MAE_debiased": 42.8596439778415,
+            "MASE_vs_naive_same_h": 2.099472002592705
+          },
+          "seasonal_naive_m7": {
+            "n": 60,
+            "MAE": 31.683333333333334,
+            "RMSE": 46.808296985328006,
+            "sMAPE_pct": 13.163488382885305,
+            "bias": -6.45,
+            "MAE_debiased": 31.53166666666667,
+            "MASE_vs_naive_same_h": 1.0
+          },
+          "automl_recipe": {
+            "n": 60,
+            "MAE": 50.05712595941108,
+            "RMSE": 57.78400957400007,
+            "sMAPE_pct": 20.38198678179521,
+            "bias": 32.78980777911578,
+            "MAE_debiased": 32.952138800610534,
+            "MASE_vs_naive_same_h": 1.5799198093449052
+          },
+          "seasonal_median_52wk": {
+            "n": 60,
+            "MAE": 23.8,
+            "RMSE": 30.11353516278021,
+            "sMAPE_pct": 9.908297520583812,
+            "bias": 15.516666666666667,
+            "MAE_debiased": 19.20111111111111,
+            "MASE_vs_naive_same_h": 0.7511835875854813
+          },
+          "agentic_refit_calendar": {
+            "n": 60,
+            "MAE": 62.2351554174855,
+            "RMSE": 74.7113476016266,
+            "sMAPE_pct": 23.424078457309598,
+            "bias": 53.89014850802998,
+            "MAE_debiased": 39.811151495061424,
+            "MASE_vs_naive_same_h": 1.9642868622036456
+          },
+          "automl_no_fe": {
+            "n": 60,
+            "MAE": 39.24762494864251,
+            "RMSE": 59.25654378036329,
+            "sMAPE_pct": 16.901837130560434,
+            "bias": -14.47197861955321,
+            "MAE_debiased": 39.31345204020895,
+            "MASE_vs_naive_same_h": 1.2387467106357446
+          },
+          "agentic_shipped_row": {
+            "n": 60,
+            "MAE": 68.45587399738454,
+            "RMSE": 81.19586726466785,
+            "sMAPE_pct": 25.294895376160593,
+            "bias": 59.4467535060598,
+            "MAE_debiased": 42.23156323651287,
+            "MASE_vs_naive_same_h": 2.1606272697754196
+          },
+          "agentic_refit_row": {
+            "n": 60,
+            "MAE": 63.33265829233924,
+            "RMSE": 75.50738360372782,
+            "sMAPE_pct": 23.81595237312424,
+            "bias": 54.6290149738441,
+            "MAE_debiased": 39.68461527794198,
+            "MASE_vs_naive_same_h": 1.9989266162758308
+          }
+        },
+        "14": {
+          "agentic_shipped_calendar": {
+            "n": 59,
+            "MAE": 69.49630550464906,
+            "RMSE": 84.91454650686156,
+            "sMAPE_pct": 25.018642847921548,
+            "bias": 52.89743323410325,
+            "MAE_debiased": 53.613580204476925,
+            "MASE_vs_naive_same_h": 1.768887845027737
+          },
+          "seasonal_naive_m7": {
+            "n": 59,
+            "MAE": 39.28813559322034,
+            "RMSE": 59.43975728216521,
+            "sMAPE_pct": 17.41107309296199,
+            "bias": -7.898305084745763,
+            "MAE_debiased": 39.31686297041079,
+            "MASE_vs_naive_same_h": 1.0
+          },
+          "automl_recipe": {
+            "n": 59,
+            "MAE": 47.792650802379036,
+            "RMSE": 57.22383005183207,
+            "sMAPE_pct": 19.93735509005487,
+            "bias": 24.52754216305708,
+            "MAE_debiased": 37.540802800914484,
+            "MASE_vs_naive_same_h": 1.2164652274979997
+          },
+          "seasonal_median_52wk": {
+            "n": 59,
+            "MAE": 24.0,
+            "RMSE": 30.0309162731241,
+            "sMAPE_pct": 9.646423348417892,
+            "bias": 12.779661016949152,
+            "MAE_debiased": 21.55357655846021,
+            "MASE_vs_naive_same_h": 0.6108714408973253
+          },
+          "agentic_refit_calendar": {
+            "n": 59,
+            "MAE": 55.18557738474866,
+            "RMSE": 66.85542811612802,
+            "sMAPE_pct": 20.767779509848257,
+            "bias": 33.44790160462774,
+            "MAE_debiased": 43.81463455019833,
+            "MASE_vs_naive_same_h": 1.4046372155738442
+          },
+          "automl_no_fe": {
+            "n": 59,
+            "MAE": 48.27324459802263,
+            "RMSE": 57.49831119473513,
+            "sMAPE_pct": 18.526126188471192,
+            "bias": 26.23589414910997,
+            "MAE_debiased": 38.33770240553167,
+            "MASE_vs_naive_same_h": 1.2286977701826294
+          },
+          "agentic_shipped_row": {
+            "n": 59,
+            "MAE": 72.12058355914164,
+            "RMSE": 87.54758389054882,
+            "sMAPE_pct": 25.821277607485055,
+            "bias": 53.015504471334886,
+            "MAE_debiased": 53.35983065714889,
+            "MASE_vs_naive_same_h": 1.8356835332137
+          },
+          "agentic_refit_row": {
+            "n": 59,
+            "MAE": 58.50665183332075,
+            "RMSE": 70.58881274690779,
+            "sMAPE_pct": 21.847814751561963,
+            "bias": 34.345939445011474,
+            "MAE_debiased": 45.91421067194816,
+            "MASE_vs_naive_same_h": 1.4891684461457828
+          }
+        },
+        "30": {
+          "agentic_shipped_calendar": {
+            "n": 45,
+            "MAE": 83.58827153693755,
+            "RMSE": 90.42730445482383,
+            "sMAPE_pct": 29.85964764512023,
+            "bias": 63.85228786127822,
+            "MAE_debiased": 47.521505981001226,
+            "MASE_vs_naive_same_h": 2.4861019293867748
+          },
+          "seasonal_naive_m7": {
+            "n": 45,
+            "MAE": 33.62222222222222,
+            "RMSE": 46.603051879082386,
+            "sMAPE_pct": 13.65280628323085,
+            "bias": -0.06666666666666667,
+            "MAE_debiased": 33.63851851851852,
+            "MASE_vs_naive_same_h": 1.0
+          },
+          "automl_recipe": {
+            "n": 45,
+            "MAE": 43.1442840020912,
+            "RMSE": 50.068686038438855,
+            "sMAPE_pct": 17.812320370615673,
+            "bias": 25.888591245121113,
+            "MAE_debiased": 29.684090559629066,
+            "MASE_vs_naive_same_h": 1.2832073893549927
+          },
+          "seasonal_median_52wk": {
+            "n": 45,
+            "MAE": 24.488888888888887,
+            "RMSE": 31.296787197552547,
+            "sMAPE_pct": 10.00773550366196,
+            "bias": 14.2,
+            "MAE_debiased": 21.924444444444443,
+            "MASE_vs_naive_same_h": 0.728354263053536
+          },
+          "agentic_refit_calendar": {
+            "n": 45,
+            "MAE": 66.87850463680802,
+            "RMSE": 72.87673594952946,
+            "sMAPE_pct": 24.885036203557632,
+            "bias": 53.80964298542172,
+            "MAE_debiased": 36.857892277301936,
+            "MASE_vs_naive_same_h": 1.9891161326215208
+          },
+          "automl_no_fe": {
+            "n": 45,
+            "MAE": 71.47729390439287,
+            "RMSE": 80.42514933003103,
+            "sMAPE_pct": 27.251312214969577,
+            "bias": 36.292429551418316,
+            "MAE_debiased": 57.740148547668916,
+            "MASE_vs_naive_same_h": 2.1258943990070582
+          },
+          "agentic_shipped_row": {
+            "n": 45,
+            "MAE": 75.3520494982791,
+            "RMSE": 86.45170474387727,
+            "sMAPE_pct": 27.33115855743125,
+            "bias": 58.92151721991389,
+            "MAE_debiased": 51.44318033784751,
+            "MASE_vs_naive_same_h": 2.2411382864656706
+          },
+          "agentic_refit_row": {
+            "n": 45,
+            "MAE": 68.96813985140525,
+            "RMSE": 77.61345832762649,
+            "sMAPE_pct": 25.5519425842265,
+            "bias": 54.15189590773386,
+            "MAE_debiased": 42.91772445508254,
+            "MASE_vs_naive_same_h": 2.051266552090705
+          }
+        },
+        "60": {
+          "agentic_shipped_calendar": {
+            "n": 45,
+            "MAE": 79.00717597401467,
+            "RMSE": 90.5205818663962,
+            "sMAPE_pct": 28.643507612739207,
+            "bias": 60.98964114844535,
+            "MAE_debiased": 51.30496972739768,
+            "MASE_vs_naive_same_h": 1.9664396674948341
+          },
+          "seasonal_naive_m7": {
+            "n": 45,
+            "MAE": 40.17777777777778,
+            "RMSE": 60.43950143187263,
+            "sMAPE_pct": 18.610221283920506,
+            "bias": -7.066666666666666,
+            "MAE_debiased": 41.01037037037037,
+            "MASE_vs_naive_same_h": 1.0
+          },
+          "automl_recipe": {
+            "n": 45,
+            "MAE": 47.49635666565171,
+            "RMSE": 58.47034057851287,
+            "sMAPE_pct": 20.022425475811698,
+            "bias": 20.90563124171824,
+            "MAE_debiased": 39.18629915955,
+            "MASE_vs_naive_same_h": 1.1821548948862428
+          },
+          "seasonal_median_52wk": {
+            "n": 45,
+            "MAE": 27.844444444444445,
+            "RMSE": 34.58740939834738,
+            "sMAPE_pct": 11.307892470085594,
+            "bias": 13.333333333333334,
+            "MAE_debiased": 25.103703703703705,
+            "MASE_vs_naive_same_h": 0.6930309734513275
+          },
+          "agentic_refit_calendar": {
+            "n": 45,
+            "MAE": 63.90533492439679,
+            "RMSE": 73.64130142108527,
+            "sMAPE_pct": 24.003923227931875,
+            "bias": 50.88416578847672,
+            "MAE_debiased": 39.93052125354667,
+            "MASE_vs_naive_same_h": 1.5905641988926194
+          },
+          "automl_no_fe": {
+            "n": 45,
+            "MAE": 69.96435242893867,
+            "RMSE": 78.5004297209489,
+            "sMAPE_pct": 25.969486300773625,
+            "bias": 55.97449881001879,
+            "MAE_debiased": 41.4324552190494,
+            "MASE_vs_naive_same_h": 1.7413693912069912
+          },
+          "agentic_shipped_row": {
+            "n": 45,
+            "MAE": 72.58105433173829,
+            "RMSE": 82.27996981439614,
+            "sMAPE_pct": 26.655081514168184,
+            "bias": 59.86214407812369,
+            "MAE_debiased": 40.483468674703204,
+            "MASE_vs_naive_same_h": 1.8064974806018932
+          },
+          "agentic_refit_row": {
+            "n": 45,
+            "MAE": 65.59318118636676,
+            "RMSE": 75.27573387169869,
+            "sMAPE_pct": 24.529722933173545,
+            "bias": 50.733826312229574,
+            "MAE_debiased": 40.88830751484308,
+            "MASE_vs_naive_same_h": 1.632573646784571
+          }
+        },
+        "90": {
+          "agentic_shipped_calendar": {
+            "n": 52,
+            "MAE": 66.64926497289994,
+            "RMSE": 77.05473721864257,
+            "sMAPE_pct": 24.560916919291458,
+            "bias": 52.16490582428098,
+            "MAE_debiased": 43.222553691872854,
+            "MASE_vs_naive_same_h": 1.7039143454232042
+          },
+          "seasonal_naive_m7": {
+            "n": 52,
+            "MAE": 39.11538461538461,
+            "RMSE": 61.053255441458646,
+            "sMAPE_pct": 19.887375054670304,
+            "bias": -8.5,
+            "MAE_debiased": 39.65384615384615,
+            "MASE_vs_naive_same_h": 1.0
+          },
+          "automl_recipe": {
+            "n": 52,
+            "MAE": 55.15906122814528,
+            "RMSE": 67.45988312729337,
+            "sMAPE_pct": 23.604387690998358,
+            "bias": 13.328125965356177,
+            "MAE_debiased": 49.35284181421803,
+            "MASE_vs_naive_same_h": 1.4101628239250517
+          },
+          "seasonal_median_52wk": {
+            "n": 52,
+            "MAE": 32.33653846153846,
+            "RMSE": 38.41029759762949,
+            "sMAPE_pct": 12.971812438368035,
+            "bias": 20.009615384615383,
+            "MAE_debiased": 25.37426035502958,
+            "MASE_vs_naive_same_h": 0.8266961651917404
+          },
+          "agentic_refit_calendar": {
+            "n": 52,
+            "MAE": 61.64904309116139,
+            "RMSE": 70.75766519977562,
+            "sMAPE_pct": 23.07976520896016,
+            "bias": 51.53595620225035,
+            "MAE_debiased": 37.69031374008361,
+            "MASE_vs_naive_same_h": 1.5760817309441457
+          },
+          "automl_no_fe": {
+            "n": 52,
+            "MAE": 42.528139428206266,
+            "RMSE": 57.74075019256382,
+            "sMAPE_pct": 16.541457247939483,
+            "bias": 10.238279409307195,
+            "MAE_debiased": 41.42689388270302,
+            "MASE_vs_naive_same_h": 1.087248402294359
+          },
+          "agentic_shipped_row": {
+            "n": 52,
+            "MAE": 70.67472999693142,
+            "RMSE": 80.19593159872919,
+            "sMAPE_pct": 26.00769361437316,
+            "bias": 56.96383561935238,
+            "MAE_debiased": 40.84347713709281,
+            "MASE_vs_naive_same_h": 1.8068269222421012
+          },
+          "agentic_refit_row": {
+            "n": 52,
+            "MAE": 63.889689902877635,
+            "RMSE": 74.85325398294019,
+            "sMAPE_pct": 23.764165879400778,
+            "bias": 48.378856293260114,
+            "MAE_debiased": 40.89252042259416,
+            "MASE_vs_naive_same_h": 1.6333647369467243
+          }
+        }
+      },
+      "wins": {
+        "agentic_shipped_calendar": 0,
+        "seasonal_naive_m7": 0,
+        "automl_recipe": 0,
+        "seasonal_median_52wk": 6,
+        "agentic_refit_calendar": 0,
+        "automl_no_fe": 0,
+        "agentic_shipped_row": 0,
+        "agentic_refit_row": 0
+      },
+      "beats_naive_h": {
+        "agentic_shipped_calendar": 0,
+        "seasonal_naive_m7": 0,
+        "automl_recipe": 0,
+        "seasonal_median_52wk": 6,
+        "agentic_refit_calendar": 0,
+        "automl_no_fe": 0,
+        "agentic_shipped_row": 0,
+        "agentic_refit_row": 0
+      },
+      "n_horizons": 6,
+      "rows": {
+        "target_dates_in_window": 131,
+        "pairs_before_trading_rule": 786,
+        "excluded_zero_or_missing_actual": 0,
+        "pairs_after_trading_rule": 786,
+        "pairs_all_systems_complete": 324
+      },
+      "coverage": {
+        "agentic_refit_calendar": 324,
+        "agentic_refit_row": 786,
+        "agentic_shipped_calendar": 324,
+        "agentic_shipped_row": 786,
+        "automl_recipe": 786,
+        "automl_no_fe": 786,
+        "seasonal_naive_m7": 786,
+        "seasonal_median_52wk": 786
+      },
+      "window": [
+        "2022-01-01",
+        "2023-02-08"
+      ]
+    }
+  },
+  "per_year": {
+    "2021": {
+      "n": 2139,
+      "mean_actual": 274.536231884058,
+      "agentic_shipped_calendar": {
+        "bias": 31.741958192225177,
+        "MAE": 57.5900555579373
+      },
+      "seasonal_naive_m7": {
+        "bias": 3.053763440860215,
+        "MAE": 39.842917251051894
+      },
+      "automl_recipe": {
+        "bias": 8.395728580780434,
+        "MAE": 40.46085140481319
+      },
+      "seasonal_median_52wk": {
+        "bias": 23.393641888733054,
+        "MAE": 38.56708742402992
+      },
+      "agentic_refit_calendar": {
+        "bias": 26.189917268139013,
+        "MAE": 49.09149225740663
+      },
+      "automl_no_fe": {
+        "bias": 12.20336113124794,
+        "MAE": 48.58815006360586
+      },
+      "agentic_shipped_row": {
+        "bias": 31.44949270745241,
+        "MAE": 57.36249799936866
+      },
+      "agentic_refit_row": {
+        "bias": 26.11714039270823,
+        "MAE": 49.89495228626182
+      }
+    },
+    "2022": {
+      "n": 190,
+      "mean_actual": 249.76842105263157,
+      "agentic_shipped_calendar": {
+        "bias": 54.17756794779201,
+        "MAE": 67.76897720777141
+      },
+      "seasonal_naive_m7": {
+        "bias": -8.857894736842105,
+        "MAE": 36.6578947368421
+      },
+      "automl_recipe": {
+        "bias": 19.028727786918537,
+        "MAE": 47.41466355660787
+      },
+      "seasonal_median_52wk": {
+        "bias": 17.121052631578948,
+        "MAE": 28.96315789473684
+      },
+      "agentic_refit_calendar": {
+        "bias": 48.41376085659908,
+        "MAE": 59.77008687950974
+      },
+      "automl_no_fe": {
+        "bias": 26.67377672061396,
+        "MAE": 57.19476988524521
+      },
+      "agentic_shipped_row": {
+        "bias": 54.01032537844902,
+        "MAE": 67.02373683588029
+      },
+      "agentic_refit_row": {
+        "bias": 47.626740952421514,
+        "MAE": 61.837725859190186
+      }
+    },
+    "2023": {
+      "n": 134,
+      "mean_actual": 246.6044776119403,
+      "agentic_shipped_calendar": {
+        "bias": 59.66940209407076,
+        "MAE": 69.83004694598566
+      },
+      "seasonal_naive_m7": {
+        "bias": -0.3656716417910448,
+        "MAE": 33.798507462686565
+      },
+      "automl_recipe": {
+        "bias": 32.78608143096851,
+        "MAE": 52.36994370702607
+      },
+      "seasonal_median_52wk": {
+        "bias": 11.705223880597014,
+        "MAE": 21.011194029850746
+      },
+      "agentic_refit_calendar": {
+        "bias": 51.055034417137975,
+        "MAE": 60.94647654320961
+      },
+      "automl_no_fe": {
+        "bias": 27.998386393889962,
+        "MAE": 50.48912552536912
+      },
+      "agentic_shipped_row": {
+        "bias": 60.44432167788821,
+        "MAE": 69.54797944148034
+      },
+      "agentic_refit_row": {
+        "bias": 51.73650391065032,
+        "MAE": 62.106494897481724
+      }
+    }
+  },
+  "importance": {
+    "lags": {
+      "grouped_dMAE": -1.4378813935860109,
+      "sd": 0.12775392628446705,
+      "sum_solo": -1.7626747993435288,
+      "masking_gap": 0.3247934057575179,
+      "n_features": 7
+    },
+    "fourier": {
+      "grouped_dMAE": 2.4576589863920106,
+      "sd": 0.41386576316283513,
+      "sum_solo": 2.3247821256820584,
+      "masking_gap": 0.1328768607099522,
+      "n_features": 6
+    },
+    "calendar": {
+      "grouped_dMAE": -0.5739987838256184,
+      "sd": 0.07287150748563667,
+      "sum_solo": -0.5112599167283728,
+      "masking_gap": -0.06273886709724563,
+      "n_features": 4
+    },
+    "trend": {
+      "grouped_dMAE": 0.0,
+      "sd": 0.0,
+      "sum_solo": 0.0,
+      "masking_gap": 0.0,
+      "n_features": 1
+    },
+    "weather": {
+      "grouped_dMAE": -0.027120386450829415,
+      "sd": 0.035994874207890944,
+      "sum_solo": -0.11275560793647799,
+      "masking_gap": 0.08563522148564857,
+      "n_features": 12
+    },
+    "competitor": {
+      "grouped_dMAE": 0.015991919505648867,
+      "sd": 0.027721924720213224,
+      "sum_solo": 0.016568955465842805,
+      "masking_gap": -0.0005770359601939383,
+      "n_features": 7
+    }
+  },
+  "validation_base_mae": 68.09748518346744,
+  "agentic_manifest": {
+    "declared_departures": [
+      {
+        "id": "pos_before_dedup",
+        "what": "POS 001 is selected before the newest-export-per-date rule, not after.",
+        "why": "The run's order is equivalent on training data (POS 001 is the only till) but drops 12 dates in 2021 where the second till's export is newer.",
+        "affects": "holdout_primary, holdout_stress"
+      },
+      {
+        "id": "holiday_years",
+        "what": "Belgian public holidays computed for 2010-2024 instead of the run's range(2010, 2021).",
+        "why": "Same Gregorian-Easter algorithm, more years. Verbatim replay flags zero holidays anywhere in the holdout, which would misprice every holiday closure.",
+        "affects": "holdout_primary, holdout_stress"
+      },
+      {
+        "id": "imputation_pinned_to_train",
+        "what": "Weather month-medians, competitor fills and lag/rolling NaN fills stay fitted on the run's own train rows (date <= 2018-10-04).",
+        "why": "Refitting them over holdout rows would let holdout values reach the model's inputs.",
+        "affects": "all"
+      }
+    ],
+    "windows": {
+      "holdout_primary": {
+        "window": [
+          "2021-01-01",
+          "2021-12-31"
+        ],
+        "data_roots": [
+          "C:/Users/selin/OneDrive/Desktop/alldata/aernoudt_split/train",
+          "C:/Users/selin/OneDrive/Desktop/HOLDOUT_DO_NOT_GIVE_TO_PIPELINE\\holdout_primary"
+        ],
+        "frame_rows": 3259,
+        "sales_stats": {
+          "files_seen": 3592,
+          "superseded_dropped": 97,
+          "dropped_wrong_pos": 12,
+          "unparseable": [
+            {
+              "date": "20211102",
+              "file": "PT_Sales_002001_20211102_20211103093150.xml",
+              "error": "unclosed token: line 1225, column 0"
+            }
+          ],
+          "dates": 3482
+        },
+        "target_dates_in_window": 362,
+        "grid_rows": 2172,
+        "calendar_origin_missing": 15,
+        "row_origin_missing": 0,
+        "refit": {
+          "1": {
+            "rows": 2896,
+            "n_estimators": 185,
+            "last_origin": "2020-12-30",
+            "last_target": "2020-12-31"
+          },
+          "7": {
+            "rows": 2890,
+            "n_estimators": 141,
+            "last_origin": "2020-12-24",
+            "last_target": "2020-12-31"
+          },
+          "14": {
+            "rows": 2883,
+            "n_estimators": 274,
+            "last_origin": "2020-12-17",
+            "last_target": "2020-12-31"
+          },
+          "30": {
+            "rows": 2867,
+            "n_estimators": 119,
+            "last_origin": "2020-12-01",
+            "last_target": "2020-12-31"
+          },
+          "60": {
+            "rows": 2837,
+            "n_estimators": 52,
+            "last_origin": "2020-11-01",
+            "last_target": "2020-12-31"
+          },
+          "90": {
+            "rows": 2807,
+            "n_estimators": 69,
+            "last_origin": "2020-10-02",
+            "last_target": "2020-12-31"
+          }
+        }
+      },
+      "holdout_stress": {
+        "window": [
+          "2022-01-01",
+          "2023-02-08"
+        ],
+        "data_roots": [
+          "C:/Users/selin/OneDrive/Desktop/alldata/aernoudt_split/train",
+          "C:/Users/selin/OneDrive/Desktop/HOLDOUT_DO_NOT_GIVE_TO_PIPELINE\\holdout_primary",
+          "C:/Users/selin/OneDrive/Desktop/HOLDOUT_DO_NOT_GIVE_TO_PIPELINE\\holdout_stress"
+        ],
+        "frame_rows": 3390,
+        "sales_stats": {
+          "files_seen": 3809,
+          "superseded_dropped": 97,
+          "dropped_wrong_pos": 98,
+          "unparseable": [
+            {
+              "date": "20211102",
+              "file": "PT_Sales_002001_20211102_20211103093150.xml",
+              "error": "unclosed token: line 1225, column 0"
+            }
+          ],
+          "dates": 3613
+        },
+        "target_dates_in_window": 131,
+        "grid_rows": 786,
+        "calendar_origin_missing": 462,
+        "row_origin_missing": 0,
+        "refit": {
+          "1": {
+            "rows": 2896,
+            "n_estimators": 185,
+            "last_origin": "2020-12-30",
+            "last_target": "2020-12-31"
+          },
+          "7": {
+            "rows": 2890,
+            "n_estimators": 141,
+            "last_origin": "2020-12-24",
+            "last_target": "2020-12-31"
+          },
+          "14": {
+            "rows": 2883,
+            "n_estimators": 274,
+            "last_origin": "2020-12-17",
+            "last_target": "2020-12-31"
+          },
+          "30": {
+            "rows": 2867,
+            "n_estimators": 119,
+            "last_origin": "2020-12-01",
+            "last_target": "2020-12-31"
+          },
+          "60": {
+            "rows": 2837,
+            "n_estimators": 52,
+            "last_origin": "2020-11-01",
+            "last_target": "2020-12-31"
+          },
+          "90": {
+            "rows": 2807,
+            "n_estimators": 69,
+            "last_origin": "2020-10-02",
+            "last_target": "2020-12-31"
+          }
+        }
+      }
+    },
+    "pinned_n_estimators": {
+      "1": 185,
+      "7": 141,
+      "14": 274,
+      "30": 119,
+      "60": 52,
+      "90": 69
+    },
+    "hyperparameters": {
+      "objective": "regression_l1",
+      "metric": "mae",
+      "learning_rate": 0.03,
+      "num_leaves": 31,
+      "min_child_samples": 20,
+      "feature_fraction": 0.8,
+      "bagging_fraction": 0.8,
+      "bagging_freq": 5,
+      "reg_alpha": 0.05,
+      "reg_lambda": 0.1,
+      "verbose": -1,
+      "random_state": 42
+    },
+    "refit_note": "per contracts/end_model.json refit_champion_on_all_data: identical features, identical hyperparameters, n_estimators pinned to the early-stopped value, fitted through 2020-12-31. Never scored on validation - only on the holdout."
+  },
+  "sources": {
+    "agentic_shipped_calendar": "outputs/preds_{w}__agentic_shipped_calendar.csv",
+    "seasonal_naive_m7": "computed in score_all.py",
+    "automl_recipe": "automl-runs/.../contract_aernoudt_split/preds_{w}.csv",
+    "seasonal_median_52wk": "computed in score_all.py",
+    "agentic_refit_calendar": "outputs/preds_{w}__agentic_refit_calendar.csv",
+    "automl_no_fe": "automl-runs/.../naive_automl/preds_{w}.csv",
+    "agentic_shipped_row": "outputs/preds_{w}__agentic_shipped_row.csv",
+    "agentic_refit_row": "outputs/preds_{w}__agentic_refit_row.csv"
+  }
+}

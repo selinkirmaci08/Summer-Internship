@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>element61 · Diagnosis · Iteration 008</title>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Open+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+:root{
+  --e61-orange-red:#FC5B00;--e61-orange:#FC9808;--e61-yellow:#FCBA08;
+  --e61-magenta:#9D1D56;--e61-purple:#301D56;
+  --e61-ink:#1A1230;--e61-ink-2:#301D56;--e61-ink-3:#5B5070;--e61-ink-4:#8B8298;
+  --e61-line:#E6E2EC;--e61-line-2:#D8D2E0;--e61-surface:#FFFFFF;
+  --e61-bg:#FAF8F5;--e61-bg-warm:#FFF6EC;--e61-bg-cool:#F2EEF6;
+  --e61-success:#2F8F5C;--e61-warning:#FCBA08;--e61-danger:#C0294A;--e61-info:#2F6BB3;
+  --font-display:"Montserrat","Helvetica Neue",system-ui,sans-serif;
+  --font-body:"Open Sans","Helvetica Neue",Arial,system-ui,sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:24px;--space-6:32px;--space-7:48px;
+  --radius-sm:4px;--radius-md:8px;--radius-lg:14px;--radius-xl:22px;--radius-pill:999px;
+  --shadow-1:0 1px 2px rgba(48,29,86,.06),0 1px 1px rgba(48,29,86,.04);
+  --shadow-2:0 4px 16px rgba(48,29,86,.08),0 1px 2px rgba(48,29,86,.04);
+  --shadow-3:0 10px 28px rgba(48,29,86,.12),0 2px 6px rgba(48,29,86,.06);
+  --shadow-focus:0 0 0 3px rgba(14,124,134,.28);
+  --ease-standard:cubic-bezier(0.2,0.7,0.2,1);--dur-fast:120ms;--dur-base:200ms;
+  --accent:#0E7C86;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--e61-bg);color:var(--e61-ink-2);font-family:var(--font-body);line-height:1.6;scroll-snap-type:y proximity;height:100%;overflow-y:auto;scroll-behavior:smooth}
+h1,h2,h3,h4{font-family:var(--font-display);color:var(--e61-ink);margin:0 0 .5em;font-weight:700;text-wrap:balance}
+p{margin:0 0 1em}
+a{color:var(--e61-orange-red)}
+.mono{font-family:var(--font-mono)}
+img{max-width:100%;display:block}
+.topbar{position:fixed;top:0;left:0;right:0;height:3px;background:var(--e61-line);z-index:201}
+.topbar-fill{height:100%;background:linear-gradient(135deg,var(--accent) 0%,#12a3af 100%);width:0;transition:width .25s}
+.dotnav{position:fixed;right:20px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:9px;z-index:200}
+.dotnav button{width:9px;height:9px;border-radius:50%;border:none;background:var(--e61-line-2);cursor:pointer;padding:0;transition:background .2s,transform .2s}
+.dotnav button.active{background:var(--accent);transform:scale(1.5)}
+.dotnav button:hover{background:#12a3af}
+.navbar{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:14px;background:rgba(26,18,48,.88);backdrop-filter:blur(6px);border-radius:999px;padding:9px 18px;z-index:200;box-shadow:var(--shadow-3)}
+.navbar button{background:none;border:none;color:#fff;font-size:1rem;cursor:pointer;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.navbar button:hover{background:rgba(255,255,255,.15)}
+.navbar button:disabled{opacity:.3;cursor:default}
+.navbar .counter{font-family:var(--font-mono);font-size:.72rem;color:rgba(255,255,255,.85);min-width:52px;text-align:center}
+.slide{min-height:100vh;scroll-snap-align:start;display:flex;flex-direction:column;justify-content:center;padding:88px 64px 96px;position:relative;border-bottom:1px solid var(--e61-line);box-sizing:border-box}
+.slide-inner{max-width:1180px;margin:0 auto;width:100%}
+.slide-num{position:absolute;top:28px;left:64px;font-family:var(--font-mono);font-size:.72rem;letter-spacing:.1em;color:var(--e61-ink-4);text-transform:uppercase}
+.slide-tag{position:absolute;top:28px;right:64px;font-family:var(--font-mono);font-size:.72rem;color:var(--e61-ink-4)}
+@media(max-width:700px){.slide{padding:72px 24px 80px}.slide-num,.slide-tag{left:24px;right:24px}}
+.cover{min-height:100vh;scroll-snap-align:start;background:var(--e61-bg);color:var(--e61-ink);display:flex;flex-direction:column;justify-content:center;padding:64px 64px 64px 68px;position:relative;overflow:hidden;box-sizing:border-box;border-left:6px solid var(--accent)}
+.cover-inner{position:relative;max-width:980px;margin:0 auto;width:100%}
+.cover .logo{font-family:var(--font-display);font-weight:800;font-size:1rem;letter-spacing:.02em;color:var(--accent);margin-bottom:40px}
+.cover h1{font-family:var(--font-display);font-weight:700;font-size:2.6rem;color:var(--e61-purple);line-height:1.15;margin:0 0 18px}
+.cover .sub{font-size:1.05rem;color:var(--e61-ink-3);max-width:680px;margin-bottom:34px}
+@media(max-width:700px){.cover h1{font-size:1.9rem}}
+.slide.dark{background:var(--e61-bg-cool);border-left:6px solid var(--e61-purple)}
+.slide.dark h1,.slide.dark h2,.slide.dark h3,.slide.dark h4{color:var(--e61-purple)}
+.eyebrow{font-family:var(--font-body);font-size:.8125rem;font-weight:600;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);margin-bottom:10px;display:block}
+.kpi-row,.kpi-row-lt{display:flex;gap:14px;flex-wrap:wrap;margin-top:20px}
+.kpi{background:#fff;border:1px solid var(--e61-line);border-radius:14px;box-shadow:var(--shadow-1);padding:16px 22px;min-width:150px}
+.kpi-val{font-family:var(--font-display);font-size:1.7rem;font-weight:700;color:var(--e61-purple)}
+.kpi-lbl{font-size:.72rem;margin-top:4px;color:var(--e61-ink-3)}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:8px 22px;border-radius:999px;font-family:var(--font-display);font-weight:700;font-size:.9rem;margin-bottom:10px}
+.pill-ok{background:var(--e61-success);color:#fff}
+.pill-teal{background:var(--accent);color:#fff}
+.pill-danger{background:var(--e61-danger);color:#fff}
+.pill-big{font-size:1.3rem;padding:14px 36px}
+.badge{display:inline-block;font-family:var(--font-display);font-size:.62rem;font-weight:700;padding:3px 9px;border-radius:5px;letter-spacing:.05em;text-transform:uppercase}
+.b-hi{background:var(--e61-success);color:#fff}.b-med{background:var(--e61-warning);color:var(--e61-ink)}
+.b-lo{background:var(--e61-magenta);color:#fff}.b-lk{background:var(--e61-danger);color:#fff}
+.b-nc{background:var(--e61-line);color:var(--e61-ink-3)}.b-ok{background:#D1FAE5;color:#065F46}
+.b-continue{background:var(--accent);color:#fff}
+.card{background:var(--e61-surface);border:1px solid var(--e61-line);border-radius:16px;padding:22px 24px;box-shadow:var(--shadow-1)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid-lead{display:grid;grid-template-columns:2fr 1fr;gap:18px;align-items:start}
+@media(max-width:900px){.grid-2,.grid-3,.grid-lead{grid-template-columns:1fr}}
+.finding-card{background:#fff;border-left:4px solid var(--accent);border-radius:0 14px 14px 0;padding:18px 20px;box-shadow:var(--shadow-1);font-size:.92rem;color:var(--e61-ink-2);line-height:1.6}
+.hypo-card{background:#fff;border:1px solid var(--e61-line);border-radius:16px;padding:20px 22px;box-shadow:var(--shadow-1);position:relative}
+.hypo-rank{position:absolute;top:-10px;left:18px;font-family:var(--font-display);font-weight:800;font-size:.75rem;padding:3px 10px;border-radius:999px;background:var(--accent);color:#fff;letter-spacing:.05em}
+table{width:100%;border-collapse:collapse;font-size:.84rem}
+th{text-align:left;padding:9px 12px;font-family:var(--font-display);font-size:.7rem;color:var(--e61-ink-3);border-bottom:2px solid var(--e61-line);font-weight:600;background:var(--e61-bg-cool);text-transform:uppercase;letter-spacing:.04em}
+td{padding:9px 12px;border-bottom:1px solid var(--e61-line);color:var(--e61-ink-2);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr.ok-row td:first-child{border-left:3px solid var(--e61-success)}
+tr.warn-row td:first-child{border-left:3px solid var(--e61-warning)}
+tr.danger-row td:first-child{border-left:3px solid var(--e61-danger)}
+tr.cont-row td:first-child{border-left:3px solid var(--accent)}
+.insight-box{background:#E6F6F7;border-left:4px solid var(--accent);border-radius:0 12px 12px 0;padding:14px 18px;font-size:.88rem;color:#0a5a62;line-height:1.6;margin:14px 0}
+.details-btn{font-family:var(--font-display);font-weight:600;font-size:.78rem;color:var(--accent);background:#E6F6F7;border:1px solid #b2dee0;border-radius:999px;padding:8px 16px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .15s}
+.details-btn:hover{background:#c8ecee}
+.details-btn::after{content:"▾";font-size:.65rem;transition:transform .2s}
+.details-btn.open::after{transform:rotate(180deg)}
+.details-panel{max-height:0;overflow:hidden;transition:max-height .35s ease;margin-top:0}
+.details-panel.open{max-height:900px;margin-top:14px}
+.details-panel .inner{background:#fff;border-left:3px solid var(--e61-purple);border-radius:0 10px 10px 0;padding:14px 18px;font-size:.86rem;color:var(--e61-ink-2);line-height:1.7}
+.limits-list{list-style:none;padding:0;margin:0}
+.limits-list li{position:relative;padding-left:22px;margin-bottom:10px;font-size:.88rem;color:var(--e61-ink-2)}
+.limits-list li::before{content:"●";position:absolute;left:0;color:var(--e61-yellow);font-size:.6rem;top:.45em}
+@media print{.dotnav,.navbar,.topbar{display:none}.slide,.cover{min-height:0;page-break-after:always}}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="topbar-fill" id="topbarFill"></div></div>
+<div class="dotnav" id="dotnav"></div>
+<div class="navbar">
+  <button id="prevBtn" title="Previous (←)">‹</button>
+  <span class="counter" id="counter">1 / 7</span>
+  <button id="nextBtn" title="Next (→)">›</button>
+</div>
+
+<!-- SLIDE 0 — COVER -->
+<section class="cover slide-item" data-title="Cover">
+  <div class="cover-inner">
+    <div class="logo">element61 &nbsp;·&nbsp; pipeline</div>
+    <span class="eyebrow" style="color:var(--accent)">DIAGNOSIS REPORT &nbsp;·&nbsp; ITERATION 008 &nbsp;·&nbsp; run_20260908T075709Z</span>
+    <h1>Diagnosis — Root Cause Analysis</h1>
+    <p class="sub">Model performance evaluation against baseline floors across 6 horizons. Root cause identification for LightGBM underfitting, ranked hypotheses for the next iteration, and do-not-repeat registry. All numbers from <span class="mono">history/iteration_008_diagnosis.json</span>.</p>
+    <div style="margin-bottom:28px">
+      <span class="pill pill-teal pill-big">CONTINUE</span>
+    </div>
+    <div class="kpi-row-lt">
+      <div class="kpi"><div class="kpi-val">0 / 6</div><div class="kpi-lbl">Horizons beating floor</div></div>
+      <div class="kpi"><div class="kpi-val">48.58</div><div class="kpi-lbl">LGBM pooled val MAE</div></div>
+      <div class="kpi"><div class="kpi-val">35.58</div><div class="kpi-lbl">Baseline floor (pooled)</div></div>
+      <div class="kpi"><div class="kpi-val">12</div><div class="kpi-lbl">Trees at early stopping</div></div>
+      <div class="kpi"><div class="kpi-val">2026-09-08</div><div class="kpi-lbl">Date</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 1 — AGENDA -->
+<section class="slide slide-item" data-title="Agenda">
+  <div class="slide-num">01 / 07</div><div class="slide-tag">Agenda</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Contents</span>
+    <h2>Report Structure</h2>
+    <div class="grid-3" style="margin-top:24px">
+      <div class="card"><b class="mono" style="color:var(--accent)">02</b><br><b>Overall Verdict &amp; Stop Check</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">CONTINUE decision with guardrails that block stopping</span></div>
+      <div class="card"><b class="mono" style="color:var(--accent)">03</b><br><b>Per-Horizon Results</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">LightGBM val MAE vs. baseline floor for all 6 horizons</span></div>
+      <div class="card"><b class="mono" style="color:var(--accent)">04</b><br><b>Root Cause Analysis</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">Two compounding problems: COVID contamination and regime-change underfitting</span></div>
+      <div class="card"><b class="mono" style="color:var(--accent)">05</b><br><b>Ranked Hypotheses</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">Three actionable hypotheses ranked by confidence and cost</span></div>
+      <div class="card"><b class="mono" style="color:var(--accent)">06</b><br><b>Do-Not-Repeat Registry</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">Three confirmed-failed approaches with evidence and reopen conditions</span></div>
+      <div class="card"><b class="mono" style="color:var(--accent)">07</b><br><b>Next Steps</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">Handoff to Feature Engineering (iteration 009)</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 2 — OVERALL VERDICT -->
+<section class="slide dark slide-item" data-title="Verdict">
+  <div class="slide-num">02 / 07</div><div class="slide-tag">Overall Verdict</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Stop Check</span>
+    <h2>Verdict: CONTINUE — Three Guardrails Block Stopping</h2>
+    <div style="margin:20px 0 28px">
+      <span class="pill pill-teal pill-big">CONTINUE</span>
+    </div>
+    <div class="grid-lead">
+      <div>
+        <div class="card" style="margin-bottom:16px">
+          <h3 style="margin-bottom:12px">Why stopping is blocked</h3>
+          <ul class="limits-list">
+            <li><b>No hyperparameter search run</b> — Optuna (n_trials≥50) is a required guardrail before run close. Not yet executed.</li>
+            <li><b>Feature engineering visited only once</b> — No alternative feature rationale has been tested against validation evidence. The single FE iteration is insufficient to declare the feature set adequate.</li>
+            <li><b>No model beats floor on any horizon</b> — LightGBM pooled val MAE = 48.58 vs. floor = 35.58 (worse by 13.0 units). The baseline seasonal median is undefeated on all 6 horizons.</li>
+          </ul>
+        </div>
+        <p style="font-size:.9rem;color:var(--e61-ink-3)">Root cause is identified and actionable: COVID training contamination causes early stopping to fire at 12 trees, preventing the model from learning lag/calendar patterns that have Spearman r=0.76 with the target. At least two cheap, evidence-backed hypotheses remain untested.</p>
+      </div>
+      <div>
+        <div class="kpi" style="margin-bottom:12px"><div class="kpi-val" style="color:var(--e61-danger)">0 / 6</div><div class="kpi-lbl">Horizons beating baseline floor</div></div>
+        <div class="kpi" style="margin-bottom:12px"><div class="kpi-val">39.36</div><div class="kpi-lbl">Best LGBM val MAE (h=1)</div></div>
+        <div class="kpi" style="margin-bottom:12px"><div class="kpi-val">31.26</div><div class="kpi-lbl">Floor at h=1 (smedian_w4)</div></div>
+        <div class="kpi"><div class="kpi-val" style="color:var(--e61-danger)">12</div><div class="kpi-lbl">Trees at early stopping (severe underfitting)</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 3 — PER-HORIZON RESULTS -->
+<section class="slide slide-item" data-title="Per-Horizon">
+  <div class="slide-num">03 / 07</div><div class="slide-tag">Per-Horizon Results</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Validation Results vs. Baseline Floor</span>
+    <h2>LightGBM Loses to Naive Predictor on All 6 Horizons</h2>
+    <div class="grid-lead" style="margin-top:20px">
+      <div>
+        <div class="card">
+          <table>
+            <thead><tr><th>Horizon</th><th>LGBM Val MAE</th><th>Baseline Floor</th><th>Gap</th><th>Verdict</th></tr></thead>
+            <tbody>
+              <tr class="cont-row"><td><b>h = 1</b></td><td>39.360</td><td>31.263</td><td style="color:var(--e61-danger)">+8.10</td><td><span class="badge b-continue">CONTINUE</span></td></tr>
+              <tr class="cont-row"><td><b>h = 7</b></td><td>39.391</td><td>31.263</td><td style="color:var(--e61-danger)">+8.13</td><td><span class="badge b-continue">CONTINUE</span></td></tr>
+              <tr class="cont-row"><td><b>h = 14</b></td><td>40.189</td><td>32.846</td><td style="color:var(--e61-danger)">+7.34</td><td><span class="badge b-continue">CONTINUE</span></td></tr>
+              <tr class="cont-row"><td><b>h = 30</b></td><td>43.227</td><td>35.913</td><td style="color:var(--e61-danger)">+7.31</td><td><span class="badge b-continue">CONTINUE</span></td></tr>
+              <tr class="cont-row"><td><b>h = 60</b></td><td>50.080</td><td>40.042</td><td style="color:var(--e61-danger)">+10.04</td><td><span class="badge b-continue">CONTINUE</span></td></tr>
+              <tr class="cont-row"><td><b>h = 90</b></td><td>79.218</td><td>42.143</td><td style="color:var(--e61-danger)">+37.08</td><td><span class="badge b-continue">CONTINUE</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="font-size:.88rem;color:var(--e61-ink-3);margin-top:12px">Baseline floor = best of 22 naive candidate rules on fold-3 validation rows. Winner: smedian_w4 for h=1–30, smedian_w26 for h=60–90.</p>
+      </div>
+      <div>
+        <div class="finding-card" style="margin-bottom:14px">
+          <b>Only 12 trees</b><br>Permutation importance shows DOW group (4.8 MAE increase) and naive predictor group (2.1) dominating. Lag features — bread_lag_7d at Spearman r=0.76 — show near-zero importance. The model is too shallow to access them.
+        </div>
+        <div class="finding-card">
+          <b>h=90 worst gap: +37 units</b><br>The long-range horizon is most sensitive to underfitting. With only 12 trees, the model cannot capture seasonal structure beyond a few splits. smedian_w26 dominates because it looks back 26 same-DOW observations — a form of seasonal intelligence the 12-tree model cannot replicate.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 4 — ROOT CAUSE -->
+<section class="slide slide-item" data-title="Root Cause">
+  <div class="slide-num">04 / 07</div><div class="slide-tag">Root Cause Analysis</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Diagnosis</span>
+    <h2>Two Compounding Problems Prevent Model Learning</h2>
+    <div class="grid-2" style="margin-top:20px">
+      <div class="card">
+        <h3 style="color:var(--e61-danger);margin-bottom:12px">Problem 1 — COVID Training Contamination</h3>
+        <ul class="limits-list">
+          <li><b>57 COVID lockdown rows</b> in training (2020-03-18 to 2020-05-03, demand ≈ 0)</li>
+          <li>These rows have mean demand ≈ 263.6 vs. normal 318.5 — extreme downward gradient signal</li>
+          <li>LightGBM regression_l1 on the 95-row validation set fires <b>early stopping at 12 trees</b></li>
+          <li>At 12 trees, only ~60 splits possible across 38 features — lag/calendar features cannot be used</li>
+        </ul>
+        <div style="margin-top:12px;padding:10px 14px;background:var(--e61-bg-cool);border-radius:10px;font-size:.84rem">
+          <b>Evidence:</b> bread_lag_7d Spearman r = 0.76 with target (strong signal), yet permutation importance ≈ 0. The feature is available but the model is too shallow to use it.
+        </div>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--e61-danger);margin-bottom:12px">Problem 2 — Regime-Change Underfitting</h3>
+        <ul class="limits-list">
+          <li><b>30 post-regime training rows</b> (1.1% of 2,713 total) — all from 2020-06-01 to 2020-06-30</li>
+          <li>Post-regime Mondays in training: only <b>4–5 examples</b></li>
+          <li>Validation: <b>95 rows, all post-regime</b> — includes 14 Mondays</li>
+          <li>Monday demand is a structurally new pattern (shop was closed Mondays pre-2020-06-01)</li>
+        </ul>
+        <div style="margin-top:12px;padding:10px 14px;background:var(--e61-bg-cool);border-radius:10px;font-size:.84rem">
+          <b>Evidence:</b> 4–5 post-regime Monday training examples vs. 14 Monday validation rows. No model can reliably learn the Monday pattern from 4–5 examples.
+        </div>
+      </div>
+    </div>
+    <div class="insight-box" style="margin-top:20px">
+      <b>Why smedian_w4 is immune to both problems:</b> It uses only the 4 most recent same-DOW observations. This naturally excludes COVID-period observations (pre-lockdown same-DOW recency) and adapts quickly to post-regime demand levels as new Monday observations accumulate. The naive predictor is not "simple" — it is perfectly calibrated to this distribution shift.
+    </div>
+    <div style="margin-top:16px">
+      <b style="font-size:.88rem">Additional oracle checks:</b>
+      <div class="grid-2" style="margin-top:10px">
+        <div class="card" style="padding:14px 16px;font-size:.84rem">
+          <b>Ratio oracle (h=1):</b> naive × mean_noncovid_ratio → val MAE = <b>58.166</b> vs. floor 31.26. A constant ratio predictor fails by 26.9 units — ratio target alone is insufficient without informative features.
+        </div>
+        <div class="card" style="padding:14px 16px;font-size:.84rem">
+          <b>ARIMA/SARIMA:</b> pooled val MAE = <b>73.35</b> vs. floor 35.58. Forecasting 89–184 steps ahead from training end is fundamentally unreliable. Classical TS is eliminated on this split.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 5 — RANKED HYPOTHESES -->
+<section class="slide slide-item" data-title="Hypotheses">
+  <div class="slide-num">05 / 07</div><div class="slide-tag">Ranked Hypotheses</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Next Actions</span>
+    <h2>Three Ranked Hypotheses — Ordered by Confidence and Cost</h2>
+    <div class="grid-3" style="margin-top:28px">
+      <div class="hypo-card">
+        <div class="hypo-rank">RANK 1</div>
+        <div style="margin-top:16px">
+          <span class="badge b-med">Medium confidence</span> <span class="badge b-nc">Moderate cost</span>
+          <h3 style="margin-top:10px;font-size:1rem">Ratio target + COVID row exclusion</h3>
+          <p style="font-size:.86rem;color:var(--e61-ink-3)">FE adds <span class="mono">ratio_h{h} = bread_quantity_h{h} / anchor_h{h}</span> (clipped [0.1, 4.0]). Training filters <span class="mono">is_covid_lockdown_period==1</span> rows. Addresses BOTH root causes simultaneously: ratio removes level shift, COVID exclusion removes gradient contamination.</p>
+          <div style="margin-top:10px;font-size:.8rem;color:var(--e61-ink-4)">
+            <b>Anchors:</b> smedian_w4 for h≤30 · smedian_w26 for h≥60<br>
+            <b>Falsification:</b> If val MAE ≥ 31.263 for h=1 after both changes → reject
+          </div>
+        </div>
+        <button class="details-btn" style="margin-top:14px" onclick="toggleDetails(this)">Full reasoning</button>
+        <div class="details-panel"><div class="inner">The additive residual target (y − anchor) was tried in iter006 and failed: train residual mean = +13.45 vs. val residual mean = −13.15 for h=1, a 26.6-unit distribution shift that persists in residuals. The multiplicative ratio (y / anchor) is stationary for non-COVID rows (oracle: train ratio mean 1.0616 vs. val ratio mean 0.9724 — much closer). The combination of ratio target and COVID exclusion is therefore needed to remove both the COVID gradient contamination and the additive level shift simultaneously.</div></div>
+      </div>
+      <div class="hypo-card">
+        <div class="hypo-rank">RANK 2</div>
+        <div style="margin-top:16px">
+          <span class="badge b-med">Medium confidence</span> <span class="badge b-ok">Cheap</span>
+          <h3 style="margin-top:10px;font-size:1rem">COVID rows excluded from training only</h3>
+          <p style="font-size:.86rem;color:var(--e61-ink-3)">Filter <span class="mono">is_covid_lockdown_period==1</span> rows from LightGBM training (no FE change needed). Tests whether COVID contamination alone explains the 12-tree early stopping failure. Reduces training from 2,713 to ~2,656 rows.</p>
+          <div style="margin-top:10px;font-size:.8rem;color:var(--e61-ink-4)">
+            <b>Rationale:</b> Cheapest test — no FE required<br>
+            <b>Falsification:</b> If val MAE ≥ 31.263 after COVID exclusion → COVID rows are not the primary cause; look at regime underfitting instead
+          </div>
+        </div>
+        <button class="details-btn" style="margin-top:14px" onclick="toggleDetails(this)">Full reasoning</button>
+        <div class="details-panel"><div class="inner">Ranked 2 (below ratio target) because COVID exclusion alone may still leave the level-shift problem: train_noncovid_mean ≈ 318 vs. val_mean ≈ 306. The model trained without COVID rows would predict at the non-COVID historical level, which is still different from the post-regime validation level. If this alone beats the floor, the ratio target (rank 1) is unnecessary. Testing rank 2 before rank 1 isolates the COVID contamination hypothesis cleanly.</div></div>
+      </div>
+      <div class="hypo-card">
+        <div class="hypo-rank">RANK 3</div>
+        <div style="margin-top:16px">
+          <span class="badge b-lo">Low confidence</span> <span class="badge b-ok">Cheap</span>
+          <h3 style="margin-top:10px;font-size:1rem">Rolling training window (2019–2020)</h3>
+          <p style="font-size:.86rem;color:var(--e61-ink-3)">Filter training to <span class="mono">date ≥ 2019-01-01 AND is_covid_lockdown_period==0</span>, giving ~320 rows. Use aggressive regularisation (max_depth=3, min_child_samples=20, L2=1.0) to prevent overfitting. Tests whether recency beats breadth.</p>
+          <div style="margin-top:10px;font-size:.8rem;color:var(--e61-ink-4)">
+            <b>Risk:</b> 320 training rows for 38 features is very small for LightGBM — high overfitting risk<br>
+            <b>Falsification:</b> If val MAE ≥ 31.263 → dataset too small for tree-based learning
+          </div>
+        </div>
+        <button class="details-btn" style="margin-top:14px" onclick="toggleDetails(this)">Full reasoning</button>
+        <div class="details-panel"><div class="inner">Addresses both COVID contamination and the level trend simultaneously (recent normal data has mean demand closer to the validation period). Ranked 3 because lowest confidence: 320 training rows for 38 features is very small for LightGBM. Aggressive regularisation may prevent overfitting but will also prevent learning. However it is cheap to run alongside rank 2 in the same training iteration.</div></div>
+      </div>
+    </div>
+    <div style="margin-top:20px;padding:12px 16px;background:var(--e61-bg-cool);border-radius:10px;font-size:.84rem;color:var(--e61-ink-3)">
+      <b>Alternative if all three fail:</b> Accept smedian_w4 (h=1–30) and smedian_w26 (h=60–90) as per-horizon champions. Proceed to end_model with the naive predictor. Document that ML-as-regression cannot beat the naive predictor given COVID-distorted training distribution and limited post-regime data.
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 6 — DO-NOT-REPEAT -->
+<section class="slide slide-item" data-title="Do-Not-Repeat">
+  <div class="slide-num">06 / 07</div><div class="slide-tag">Do-Not-Repeat Registry</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Confirmed-Failed Approaches</span>
+    <h2>Three Approaches Are Eliminated — Do Not Re-run</h2>
+    <div class="card" style="margin-top:20px">
+      <table>
+        <thead><tr><th>Approach</th><th>Evidence</th><th>Why Not Again</th><th>Reopen If</th></tr></thead>
+        <tbody>
+          <tr class="danger-row">
+            <td><b>Additive residual target (y − anchor)</b><br><span class="mono" style="font-size:.78rem">iter006</span></td>
+            <td>val MAE = 49.20 for h=1 (worse than raw target 39.36). Train residual mean = +13.45 vs. val = −13.15 for h=1.</td>
+            <td>Distribution shift (26.6-unit train/val mean asymmetry) persists in residuals. COVID rows have residual ≈ −280, dominating the gradient. Use multiplicative ratio instead.</td>
+            <td>COVID rows excluded from training AND additive residual tested separately.</td>
+          </tr>
+          <tr class="danger-row">
+            <td><b>Inner-fold early stopping (last 15% of training rows)</b><br><span class="mono" style="font-size:.78rem">iter006</span></td>
+            <td>Last 15% of fold-3 training = Apr–Jun 2020 = COVID lockdown period. Inner val is even more contaminated than global val. Did not improve over global val early stopping.</td>
+            <td>Last 15% of training rows always falls in COVID period (training ends 2020-06-30, COVID began 2020-03-18 ≈ 15% of training). Use fold-1/fold-2 val rows for inner stopping instead.</td>
+            <td>Training run where COVID rows are excluded first, THEN last 15% of cleaned set used for inner stopping.</td>
+          </tr>
+          <tr class="danger-row">
+            <td><b>ARIMA / SARIMA (fixed origin at training end)</b><br><span class="mono" style="font-size:.78rem">iter007</span></td>
+            <td>ARIMA(2,1,2) pooled val MAE = 73.35 vs. floor 35.58. Forecasting 89–184 steps ahead from training end to val start.</td>
+            <td>The 89-day gap between training end (2020-06-30) and val start (2020-09-28) makes classical TS fundamentally unsuitable. Long-range extrapolation is unreliable for any univariate TS model without retraining.</td>
+            <td>Rolling-origin SARIMA that refits monthly using gap period data — not feasible without a preprocess change to the current split setup.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 7 — NEXT STEPS -->
+<section class="slide dark slide-item" data-title="Next Steps">
+  <div class="slide-num">07 / 07</div><div class="slide-tag">Handoff</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Handoff</span>
+    <h2>Next: Feature Engineering (Iteration 009)</h2>
+    <div class="grid-2" style="margin-top:24px">
+      <div>
+        <div class="card" style="margin-bottom:16px">
+          <h3 style="margin-bottom:12px">FE additions required (iteration 009)</h3>
+          <ul class="limits-list">
+            <li>Add <span class="mono">ratio_h{h} = bread_quantity_h{h} / anchor_h{h}</span> columns for each horizon (clip [0.1, 4.0])</li>
+            <li>Anchor columns: smedian_w4 for h≤30 · smedian_w26 for h≥60</li>
+            <li>Ensure <span class="mono">is_covid_lockdown_period</span> column is present in FE output (already exists)</li>
+            <li>Keep original <span class="mono">bread_quantity_h{h}</span> columns alongside ratio columns for floor comparison</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-bottom:12px">Training changes required (iteration 010)</h3>
+          <ul class="limits-list">
+            <li>Filter <span class="mono">is_covid_lockdown_period==1</span> rows from LightGBM training</li>
+            <li>Predict <span class="mono">ratio_h{h}</span> target; multiply by anchor for final bread_quantity prediction</li>
+            <li>Do NOT use additive residual target — multiplicative ratio only</li>
+            <li>Report val MAE in original units (after anchor multiplication) for floor comparison</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="finding-card" style="margin-bottom:14px">
+          <b>Durable rule carried forward:</b><br>
+          Anchor cols for ratio target are fixed: smedian_w4 for h≤30, smedian_w26 for h≥60. These are the Part A baseline winners. Changing the anchor changes the ratio distribution and invalidates the oracle check.
+        </div>
+        <div class="finding-card" style="margin-bottom:14px">
+          <b>Methodological caution:</b><br>
+          smedian_w4 for Mondays post-2020-06-01 averages pre-regime (zero) and post-regime observations for the first 4–8 Mondays. The anchor for those rows may be unreliably low, making the ratio target unusually high. Flag this in training output.
+        </div>
+        <div class="insight-box">
+          Open guardrail: Optuna hyperparameter search (n_trials≥50) must be run before the run closes. Defer until the ratio-target model is established. Run Optuna on the winning variant.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+const items=document.querySelectorAll('.slide-item');
+const N=items.length;
+let cur=0;
+const prevBtn=document.getElementById('prevBtn');
+const nextBtn=document.getElementById('nextBtn');
+const counter=document.getElementById('counter');
+const fill=document.getElementById('topbarFill');
+const dotnav=document.getElementById('dotnav');
+items.forEach((_,i)=>{const b=document.createElement('button');b.title='Slide '+(i+1);b.onclick=()=>goTo(i);dotnav.appendChild(b)});
+function goTo(i){cur=Math.max(0,Math.min(N-1,i));items[cur].scrollIntoView({behavior:'smooth'});update()}
+function update(){counter.textContent=(cur+1)+' / '+N;prevBtn.disabled=cur===0;nextBtn.disabled=cur===N-1;fill.style.width=((cur/(N-1))*100)+'%';dotnav.querySelectorAll('button').forEach((b,i)=>{b.classList.toggle('active',i===cur)})}
+prevBtn.onclick=()=>goTo(cur-1);nextBtn.onclick=()=>goTo(cur+1);
+document.addEventListener('keydown',e=>{if(e.key==='ArrowDown'||e.key==='ArrowRight')goTo(cur+1);else if(e.key==='ArrowUp'||e.key==='ArrowLeft')goTo(cur-1)});
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const i=[...items].indexOf(e.target);if(i>=0&&i!==cur){cur=i;update()}}})},{threshold:.5});
+items.forEach(s=>obs.observe(s));
+function toggleDetails(btn){btn.classList.toggle('open');const p=btn.nextElementSibling;p.classList.toggle('open')}
+update();
+</script>
+</body>
+</html>

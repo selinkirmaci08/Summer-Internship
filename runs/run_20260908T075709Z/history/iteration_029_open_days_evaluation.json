@@ -1,0 +1,145 @@
+{
+  "iteration": 29,
+  "type": "test_evaluation_open_days",
+  "timestamp": "2026-09-09",
+  "naive_definition": "seasonal median, last W same-DOW-as-target weeks, causal from origin D",
+  "naive_windows": {
+    "1": 4,
+    "7": 4,
+    "14": 4,
+    "30": 26,
+    "60": 26,
+    "90": 13
+  },
+  "zero_sales_days": {
+    "primary": 11,
+    "primary_total": 362,
+    "stress": 65,
+    "stress_total": 173
+  },
+  "results": {
+    "primary_all": {
+      "1": {
+        "mae": 39.31307274309121,
+        "naive_mae": 39.75487465181058,
+        "n": 359,
+        "beats": true
+      },
+      "7": {
+        "mae": 41.18694966426525,
+        "naive_mae": 41.25070422535211,
+        "n": 355,
+        "beats": true
+      },
+      "14": {
+        "mae": 44.89219634492404,
+        "naive_mae": 41.83428571428571,
+        "n": 350,
+        "beats": false
+      },
+      "30": {
+        "mae": 42.95021215602785,
+        "naive_mae": 43.34264705882353,
+        "n": 340,
+        "beats": true
+      },
+      "60": {
+        "mae": 46.302607527686746,
+        "naive_mae": 49.28105590062112,
+        "n": 322,
+        "beats": true
+      },
+      "90": {
+        "mae": 64.92358906527673,
+        "naive_mae": 51.75083056478405,
+        "n": 301,
+        "beats": false
+      }
+    },
+    "stress_all": {
+      "1": {
+        "mae": 102.39748153481108,
+        "naive_mae": 102.60843373493977,
+        "n": 83,
+        "beats": true
+      },
+      "7": {
+        "mae": 112.55977180945136,
+        "naive_mae": 104.68072289156626,
+        "n": 83,
+        "beats": false
+      },
+      "14": {
+        "mae": 129.8524020618449,
+        "naive_mae": 112.77439024390245,
+        "n": 82,
+        "beats": false
+      },
+      "30": {
+        "mae": 105.40019790898839,
+        "naive_mae": 107.04545454545455,
+        "n": 66,
+        "beats": true
+      },
+      "60": {
+        "mae": 111.95612790566175,
+        "naive_mae": 115.0909090909091,
+        "n": 55,
+        "beats": true
+      },
+      "90": {
+        "mae": 134.74068249729586,
+        "naive_mae": 93.72340425531915,
+        "n": 47,
+        "beats": false
+      }
+    },
+    "stress_open": {
+      "1": {
+        "mae": 93.62200009350276,
+        "naive_mae": 94.41176470588235,
+        "n": 51,
+        "beats": true
+      },
+      "7": {
+        "mae": 86.5774539463512,
+        "naive_mae": 90.26470588235294,
+        "n": 51,
+        "beats": true
+      },
+      "14": {
+        "mae": 48.350359269405295,
+        "naive_mae": 87.74528301886792,
+        "n": 53,
+        "beats": true
+      },
+      "30": {
+        "mae": 44.8315967051554,
+        "naive_mae": 44.853658536585364,
+        "n": 41,
+        "beats": true
+      },
+      "60": {
+        "mae": 37.991371706390645,
+        "naive_mae": 40.640625,
+        "n": 32,
+        "beats": true
+      },
+      "90": {
+        "mae": 53.78435849806136,
+        "naive_mae": 57.233333333333334,
+        "n": 30,
+        "beats": true
+      }
+    }
+  },
+  "val_mae_reference": {
+    "1": 29.835,
+    "7": 31.646,
+    "14": 34.782,
+    "30": 36.63,
+    "60": 36.229,
+    "90": 56.487
+  },
+  "report_html": "reports/iteration_029_open_days_evaluation.html"
+}

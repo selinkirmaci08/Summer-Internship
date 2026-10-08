@@ -1,0 +1,3134 @@
+{
+  "iteration": 4,
+  "node": "baseline",
+  "run_id": "run_20260908T075709Z",
+  "timestamp": "2026-09-08",
+  "code_file": "code/iteration_004_baseline.py",
+  "report_html": "reports/iteration_004_baseline.html",
+  "mode": "baseline",
+  "mode_reasoning": "First Training call of the run. Part A scores an expanded 22-candidate grid on validation rows to establish baseline_floor. Part B searches the same grid on fold-3 train rows to select naive predictor feature specs. No model is fitted. Re-run only if split or trading-day rule changes.",
+  "seasonal_parameters": {
+    "P": 7,
+    "S": 52,
+    "P_source": "EDA dominant_acf_lag=6 (weekly series)",
+    "S_source": "one seasonal year = 52 same-DOW season-slots",
+    "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows."
+  },
+  "part_a_scores": {
+    "n_candidates": 22,
+    "candidate_set": [
+      "last_value",
+      "seasonal_naive",
+      "smedian_4",
+      "smean_4",
+      "smedian_8",
+      "smean_8",
+      "smedian_13",
+      "smean_13",
+      "smedian_26",
+      "smean_26",
+      "smedian_52",
+      "smean_52",
+      "drift",
+      "train_mean",
+      "tmean_7",
+      "tmean_14",
+      "tmean_28",
+      "tmean_56",
+      "tmed_7",
+      "tmed_28",
+      "ddrift_0.25",
+      "ddrift_0.5"
+    ],
+    "fold_detail": {
+      "_fold_1": {
+        "1": {
+          "n": 81,
+          "cand_maes": {
+            "last_value": 78.926,
+            "seasonal_naive": 54.37,
+            "smedian_4": 38.759,
+            "smean_4": 44.843,
+            "smedian_8": 40.432,
+            "smean_8": 42.566,
+            "smedian_13": 40.37,
+            "smean_13": 41.481,
+            "smedian_26": 40.494,
+            "smean_26": 42.79,
+            "smedian_52": 39.623,
+            "smean_52": 42.204,
+            "drift": 78.943,
+            "train_mean": 67.358,
+            "tmean_7": 63.023,
+            "tmean_14": 60.075,
+            "tmean_28": 59.675,
+            "tmean_56": 58.643,
+            "tmed_7": 57.173,
+            "tmed_28": 58.426,
+            "ddrift_0.25": 78.93,
+            "ddrift_0.5": 78.935
+          }
+        },
+        "7": {
+          "n": 81,
+          "cand_maes": {
+            "last_value": 54.37,
+            "seasonal_naive": 54.37,
+            "smedian_4": 38.759,
+            "smean_4": 44.843,
+            "smedian_8": 40.432,
+            "smean_8": 42.566,
+            "smedian_13": 40.37,
+            "smean_13": 41.481,
+            "smedian_26": 40.494,
+            "smean_26": 42.79,
+            "smedian_52": 39.623,
+            "smean_52": 42.204,
+            "drift": 54.445,
+            "train_mean": 67.358,
+            "tmean_7": 61.492,
+            "tmean_14": 61.006,
+            "tmean_28": 58.828,
+            "tmean_56": 58.634,
+            "tmed_7": 55.074,
+            "tmed_28": 57.605,
+            "ddrift_0.25": 54.389,
+            "ddrift_0.5": 54.407
+          }
+        },
+        "14": {
+          "n": 81,
+          "cand_maes": {
+            "last_value": 51.494,
+            "seasonal_naive": 51.494,
+            "smedian_4": 40.191,
+            "smean_4": 46.04,
+            "smedian_8": 40.204,
+            "smean_8": 41.863,
+            "smedian_13": 41.21,
+            "smean_13": 42.459,
+            "smedian_26": 41.123,
+            "smean_26": 43.259,
+            "smedian_52": 39.728,
+            "smean_52": 42.437,
+            "drift": 51.73,
+            "train_mean": 67.358,
+            "tmean_7": 65.347,
+            "tmean_14": 61.895,
+            "tmean_28": 59.724,
+            "tmean_56": 59.337,
+            "tmed_7": 56.728,
+            "tmed_28": 58.0,
+            "ddrift_0.25": 51.553,
+            "ddrift_0.5": 51.612
+          }
+        },
+        "30": {
+          "n": 81,
+          "cand_maes": {
+            "last_value": 109.864,
+            "seasonal_naive": 58.593,
+            "smedian_4": 42.864,
+            "smean_4": 49.611,
+            "smedian_8": 40.981,
+            "smean_8": 44.293,
+            "smedian_13": 42.951,
+            "smean_13": 44.64,
+            "smedian_26": 41.846,
+            "smean_26": 43.959,
+            "smedian_52": 40.037,
+            "smean_52": 42.762,
+            "drift": 110.321,
+            "train_mean": 67.358,
+            "tmean_7": 67.203,
+            "tmean_14": 64.528,
+            "tmean_28": 62.217,
+            "tmean_56": 60.778,
+            "tmed_7": 62.198,
+            "tmed_28": 60.074,
+            "ddrift_0.25": 109.975,
+            "ddrift_0.5": 110.087
+          }
+        },
+        "60": {
+          "n": 81,
+          "cand_maes": {
+            "last_value": 114.617,
+            "seasonal_naive": 58.025,
+            "smedian_4": 46.772,
+            "smean_4": 49.432,
+            "smedian_8": 46.698,
+            "smean_8": 47.921,
+            "smedian_13": 44.901,
+            "smean_13": 46.468,
+            "smedian_26": 43.809,
+            "smean_26": 44.298,
+            "smedian_52": 40.395,
+            "smean_52": 42.732,
+            "drift": 115.843,
+            "train_mean": 67.358,
+            "tmean_7": 69.88,
+            "tmean_14": 64.419,
+            "tmean_28": 61.737,
+            "tmean_56": 61.355,
+            "tmed_7": 65.42,
+            "tmed_28": 60.352,
+            "ddrift_0.25": 114.915,
+            "ddrift_0.5": 115.218
+          }
+        },
+        "90": {
+          "n": 81,
+          "cand_maes": {
+            "last_value": 76.383,
+            "seasonal_naive": 60.815,
+            "smedian_4": 54.889,
+            "smean_4": 55.935,
+            "smedian_8": 49.586,
+            "smean_8": 50.969,
+            "smedian_13": 46.111,
+            "smean_13": 46.937,
+            "smedian_26": 42.494,
+            "smean_26": 43.902,
+            "smedian_52": 41.019,
+            "smean_52": 43.293,
+            "drift": 77.495,
+            "train_mean": 67.358,
+            "tmean_7": 64.84,
+            "tmean_14": 62.51,
+            "tmean_28": 62.027,
+            "tmean_56": 60.839,
+            "tmed_7": 64.148,
+            "tmed_28": 65.049,
+            "ddrift_0.25": 76.648,
+            "ddrift_0.5": 76.914
+          }
+        }
+      },
+      "_fold_2": {
+        "1": {
+          "n": 81,
+          "cand_maes": {
+            "last_value": 83.704,
+            "seasonal_naive": 56.728,
+            "smedian_4": 40.444,
+            "smean_4": 43.136,
+            "smedian_8": 42.327,
+            "smean_8": 42.079,
+            "smedian_13": 44.84,
+            "smean_13": 44.447,
+            "smedian_26": 44.191,
+            "smean_26": 46.136,
+            "smedian_52": 43.043,
+            "smean_52": 42.729,
+            "drift": 83.714,
+            "train_mean": 75.188,
+            "tmean_7": 62.136,
+            "tmean_14": 61.272,
+            "tmean_28": 59.765,
+            "tmean_56": 59.233,
+            "tmed_7": 64.84,
+            "tmed_28": 60.093,
+            "ddrift_0.25": 83.706,
+            "ddrift_0.5": 83.709
+          }
+        },
+        "7": {
+          "n": 81,
+          "cand_maes": {
+            "last_value": 56.728,
+            "seasonal_naive": 56.728,
+            "smedian_4": 40.444,
+            "smean_4": 43.136,
+            "smedian_8": 42.327,
+            "smean_8": 42.079,
+            "smedian_13": 44.84,
+            "smean_13": 44.447,
+            "smedian_26": 44.191,
+            "smean_26": 46.136,
+            "smedian_52": 43.043,
+            "smean_52": 42.729,
+            "drift": 56.802,
+            "train_mean": 75.188,
+            "tmean_7": 59.806,
+            "tmean_14": 56.562,
+            "tmean_28": 58.785,
+            "tmean_56": 59.231,
+            "tmed_7": 59.222,
+            "tmed_28": 58.84,
+            "ddrift_0.25": 56.747,
+            "ddrift_0.5": 56.765
+          }
+        },
+        "14": {
+          "n": 81,
+          "cand_maes": {
+            "last_value": 56.086,
+            "seasonal_naive": 56.086,
+            "smedian_4": 41.988,
+            "smean_4": 42.534,
+            "smedian_8": 43.481,
+            "smean_8": 43.1,
+            "smedian_13": 46.037,
+            "smean_13": 46.028,
+            "smedian_26": 44.377,
+            "smean_26": 46.781,
+            "smedian_52": 43.111,
+            "smean_52": 42.815,
+            "drift": 56.135,
+            "train_mean": 75.188,
+            "tmean_7": 57.945,
+            "tmean_14": 57.614,
+            "tmean_28": 60.482,
+            "tmean_56": 60.496,
+            "tmed_7": 56.605,
+            "tmed_28": 59.475,
+            "ddrift_0.25": 56.099,
+            "ddrift_0.5": 56.111
+          }
+        },
+        "30": {
+          "n": 81,
+          "cand_maes": {
+            "last_value": 102.148,
+            "seasonal_naive": 51.383,
+            "smedian_4": 46.222,
+            "smean_4": 47.478,
+            "smedian_8": 46.358,
+            "smean_8": 47.667,
+            "smedian_13": 49.679,
+            "smean_13": 50.561,
+            "smedian_26": 44.228,
+            "smean_26": 47.11,
+            "smedian_52": 43.594,
+            "smean_52": 42.984,
+            "drift": 102.308,
+            "train_mean": 75.188,
+            "tmean_7": 66.12,
+            "tmean_14": 65.147,
+            "tmean_28": 63.828,
+            "tmean_56": 63.289,
+            "tmed_7": 63.346,
+            "tmed_28": 62.031,
+            "ddrift_0.25": 102.188,
+            "ddrift_0.5": 102.228
+          }
+        },
+        "60": {
+          "n": 81,
+          "cand_maes": {
+            "last_value": 98.321,
+            "seasonal_naive": 50.556,
+            "smedian_4": 52.21,
+            "smean_4": 53.806,
+            "smedian_8": 53.889,
+            "smean_8": 55.677,
+            "smedian_13": 52.741,
+            "smean_13": 54.366,
+            "smedian_26": 43.284,
+            "smean_26": 46.1,
+            "smedian_52": 44.087,
+            "smean_52": 42.636,
+            "drift": 98.462,
+            "train_mean": 75.188,
+            "tmean_7": 67.76,
+            "tmean_14": 66.043,
+            "tmean_28": 65.515,
+            "tmean_56": 66.983,
+            "tmed_7": 67.728,
+            "tmed_28": 64.179,
+            "ddrift_0.25": 98.35,
+            "ddrift_0.5": 98.379
+          }
+        },
+        "90": {
+          "n": 81,
+          "cand_maes": {
+            "last_value": 73.901,
+            "seasonal_naive": 66.432,
+            "smedian_4": 60.907,
+            "smean_4": 65.198,
+            "smedian_8": 57.716,
+            "smean_8": 60.863,
+            "smedian_13": 49.049,
+            "smean_13": 53.551,
+            "smedian_26": 41.836,
+            "smean_26": 43.249,
+            "smedian_52": 45.032,
+            "smean_52": 42.084,
+            "drift": 74.014,
+            "train_mean": 75.188,
+            "tmean_7": 70.795,
+            "tmean_14": 72.608,
+            "tmean_28": 72.545,
+            "tmean_56": 66.089,
+            "tmed_7": 67.259,
+            "tmed_28": 67.296,
+            "ddrift_0.25": 73.91,
+            "ddrift_0.5": 73.923
+          }
+        }
+      },
+      "_fold_3": {
+        "1": {
+          "n": 95,
+          "cand_maes": {
+            "last_value": 59.958,
+            "seasonal_naive": 38.916,
+            "smedian_4": 31.263,
+            "smean_4": 35.263,
+            "smedian_8": 31.549,
+            "smean_8": 36.07,
+            "smedian_13": 33.345,
+            "smean_13": 41.016,
+            "smedian_26": 36.568,
+            "smean_26": 49.707,
+            "smedian_52": 40.089,
+            "smean_52": 59.214,
+            "drift": 59.971,
+            "train_mean": 40.504,
+            "tmean_7": 42.22,
+            "tmean_14": 39.526,
+            "tmean_28": 39.467,
+            "tmean_56": 40.673,
+            "tmed_7": 40.611,
+            "tmed_28": 39.574,
+            "ddrift_0.25": 59.961,
+            "ddrift_0.5": 59.965
+          }
+        },
+        "7": {
+          "n": 95,
+          "cand_maes": {
+            "last_value": 38.916,
+            "seasonal_naive": 38.916,
+            "smedian_4": 31.263,
+            "smean_4": 35.263,
+            "smedian_8": 31.549,
+            "smean_8": 36.07,
+            "smedian_13": 33.345,
+            "smean_13": 41.016,
+            "smedian_26": 36.568,
+            "smean_26": 49.707,
+            "smedian_52": 40.089,
+            "smean_52": 59.214,
+            "drift": 38.964,
+            "train_mean": 40.504,
+            "tmean_7": 38.854,
+            "tmean_14": 39.372,
+            "tmean_28": 40.373,
+            "tmean_56": 41.867,
+            "tmed_7": 39.379,
+            "tmed_28": 39.916,
+            "ddrift_0.25": 38.928,
+            "ddrift_0.5": 38.94
+          }
+        },
+        "14": {
+          "n": 95,
+          "cand_maes": {
+            "last_value": 40.179,
+            "seasonal_naive": 40.179,
+            "smedian_4": 32.846,
+            "smean_4": 37.594,
+            "smedian_8": 33.241,
+            "smean_8": 39.068,
+            "smedian_13": 34.535,
+            "smean_13": 44.014,
+            "smedian_26": 36.805,
+            "smean_26": 51.177,
+            "smedian_52": 40.311,
+            "smean_52": 59.805,
+            "drift": 40.26,
+            "train_mean": 40.504,
+            "tmean_7": 42.125,
+            "tmean_14": 41.221,
+            "tmean_28": 42.234,
+            "tmean_56": 43.475,
+            "tmed_7": 40.937,
+            "tmed_28": 40.211,
+            "ddrift_0.25": 40.199,
+            "ddrift_0.5": 40.219
+          }
+        },
+        "30": {
+          "n": 95,
+          "cand_maes": {
+            "last_value": 73.189,
+            "seasonal_naive": 48.619,
+            "smedian_4": 35.913,
+            "smean_4": 42.34,
+            "smedian_8": 36.828,
+            "smean_8": 45.026,
+            "smedian_13": 38.76,
+            "smean_13": 51.166,
+            "smedian_26": 38.384,
+            "smean_26": 56.483,
+            "smedian_52": 41.305,
+            "smean_52": 61.436,
+            "drift": 73.433,
+            "train_mean": 40.504,
+            "tmean_7": 46.071,
+            "tmean_14": 44.065,
+            "tmean_28": 43.841,
+            "tmean_56": 46.438,
+            "tmed_7": 43.084,
+            "tmed_28": 40.623,
+            "ddrift_0.25": 73.25,
+            "ddrift_0.5": 73.311
+          }
+        },
+        "60": {
+          "n": 95,
+          "cand_maes": {
+            "last_value": 74.724,
+            "seasonal_naive": 56.097,
+            "smedian_4": 40.287,
+            "smean_4": 52.144,
+            "smedian_8": 42.009,
+            "smean_8": 55.886,
+            "smedian_13": 40.347,
+            "smean_13": 59.232,
+            "smedian_26": 40.042,
+            "smean_26": 63.507,
+            "smedian_52": 42.105,
+            "smean_52": 63.176,
+            "drift": 75.923,
+            "train_mean": 40.504,
+            "tmean_7": 50.777,
+            "tmean_14": 50.486,
+            "tmean_28": 51.701,
+            "tmean_56": 57.925,
+            "tmed_7": 47.895,
+            "tmed_28": 46.53,
+            "ddrift_0.25": 75.024,
+            "ddrift_0.5": 75.323
+          }
+        },
+        "90": {
+          "n": 95,
+          "cand_maes": {
+            "last_value": 88.082,
+            "seasonal_naive": 73.903,
+            "smedian_4": 53.458,
+            "smean_4": 65.891,
+            "smedian_8": 43.436,
+            "smean_8": 65.044,
+            "smedian_13": 42.021,
+            "smean_13": 65.614,
+            "smedian_26": 42.105,
+            "smean_26": 69.752,
+            "smedian_52": 43.005,
+            "smean_52": 64.039,
+            "drift": 90.81,
+            "train_mean": 40.504,
+            "tmean_7": 68.678,
+            "tmean_14": 64.707,
+            "tmean_28": 65.402,
+            "tmean_56": 68.164,
+            "tmed_7": 58.242,
+            "tmed_28": 56.353,
+            "ddrift_0.25": 88.764,
+            "ddrift_0.5": 89.446
+          }
+        }
+      }
+    },
+    "h90_pooling_reason": "Fold 3 alone has only 5 scoreable h=90 validation rows (dataset ends 2020-12-31, last h=90 origin approx 2020-10-02). Pooled 3-fold MAE is weighted by n per fold."
+  },
+  "baseline_floor": {
+    "established_at_iteration": 4,
+    "baseline_type": "best of 22 candidates (winner per horizon, validation rows)",
+    "n_candidates_tested": 22,
+    "seasonal_period": 7,
+    "window": 52,
+    "window_source": "one seasonal year = 52 same-DOW season-slots; P=7 from EDA dominant_acf_lag=6",
+    "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows.",
+    "per_horizon": {
+      "1": {
+        "winner": "smedian_4",
+        "winner_col": "naive_h1_seasonal_median_w4",
+        "winner_mae": 31.263,
+        "n": 95,
+        "key_rules_mae": {
+          "last_value": 59.958,
+          "seasonal_naive": 38.916,
+          "smedian_52": 40.089,
+          "smean_52": 59.214,
+          "drift": 59.971,
+          "train_mean": 40.504,
+          "smedian_13": 33.345,
+          "smedian_26": 36.568,
+          "smedian_8": 31.549,
+          "smedian_4": 31.263,
+          "tmean_28": 39.467,
+          "tmed_28": 39.574
+        },
+        "eda_provisional_mae": 38.01,
+        "delta_winner_vs_snaive": -7.653,
+        "note": "fold 3 primary; n=95"
+      },
+      "7": {
+        "winner": "smedian_4",
+        "winner_col": "naive_h7_seasonal_median_w4",
+        "winner_mae": 31.263,
+        "n": 95,
+        "key_rules_mae": {
+          "last_value": 38.916,
+          "seasonal_naive": 38.916,
+          "smedian_52": 40.089,
+          "smean_52": 59.214,
+          "drift": 38.964,
+          "train_mean": 40.504,
+          "smedian_13": 33.345,
+          "smedian_26": 36.568,
+          "smedian_8": 31.549,
+          "smedian_4": 31.263,
+          "tmean_28": 40.373,
+          "tmed_28": 39.916
+        },
+        "eda_provisional_mae": 40.73,
+        "delta_winner_vs_snaive": -7.653,
+        "note": "fold 3 primary; n=95"
+      },
+      "14": {
+        "winner": "smedian_4",
+        "winner_col": "naive_h14_seasonal_median_w4",
+        "winner_mae": 32.846,
+        "n": 95,
+        "key_rules_mae": {
+          "last_value": 40.179,
+          "seasonal_naive": 40.179,
+          "smedian_52": 40.311,
+          "smean_52": 59.805,
+          "drift": 40.26,
+          "train_mean": 40.504,
+          "smedian_13": 34.535,
+          "smedian_26": 36.805,
+          "smedian_8": 33.241,
+          "smedian_4": 32.846,
+          "tmean_28": 42.234,
+          "tmed_28": 40.211
+        },
+        "eda_provisional_mae": 42.67,
+        "delta_winner_vs_snaive": -7.333,
+        "note": "fold 3 primary; n=95"
+      },
+      "30": {
+        "winner": "smedian_4",
+        "winner_col": "naive_h30_seasonal_median_w4",
+        "winner_mae": 35.913,
+        "n": 95,
+        "key_rules_mae": {
+          "last_value": 73.189,
+          "seasonal_naive": 48.619,
+          "smedian_52": 41.305,
+          "smean_52": 61.436,
+          "drift": 73.433,
+          "train_mean": 40.504,
+          "smedian_13": 38.76,
+          "smedian_26": 38.384,
+          "smedian_8": 36.828,
+          "smedian_4": 35.913,
+          "tmean_28": 43.841,
+          "tmed_28": 40.623
+        },
+        "eda_provisional_mae": 44.14,
+        "delta_winner_vs_snaive": -12.706,
+        "note": "fold 3 primary; n=95"
+      },
+      "60": {
+        "winner": "smedian_26",
+        "winner_col": "naive_h60_seasonal_median_w26",
+        "winner_mae": 40.042,
+        "n": 95,
+        "key_rules_mae": {
+          "last_value": 74.724,
+          "seasonal_naive": 56.097,
+          "smedian_52": 42.105,
+          "smean_52": 63.176,
+          "drift": 75.923,
+          "train_mean": 40.504,
+          "smedian_13": 40.347,
+          "smedian_26": 40.042,
+          "smedian_8": 42.009,
+          "smedian_4": 40.287,
+          "tmean_28": 51.701,
+          "tmed_28": 46.53
+        },
+        "eda_provisional_mae": 45.14,
+        "delta_winner_vs_snaive": -16.055,
+        "note": "fold 3 primary; n=95"
+      },
+      "90": {
+        "winner": "smedian_26",
+        "winner_col": "naive_h90_seasonal_median_w26",
+        "winner_mae": 42.143,
+        "n": 257,
+        "key_rules_mae": {
+          "last_value": 79.925,
+          "seasonal_naive": 67.423,
+          "smedian_52": 43.018,
+          "smean_52": 50.581,
+          "drift": 81.32,
+          "train_mean": 59.899,
+          "smedian_13": 45.525,
+          "smedian_26": 42.143,
+          "smedian_8": 49.875,
+          "smedian_4": 56.257,
+          "tmean_28": 66.59,
+          "tmed_28": 62.543
+        },
+        "eda_provisional_mae": 47.54,
+        "delta_winner_vs_snaive": -25.28,
+        "note": "pooled 3 folds (fold 3 alone has only 5 scoreable h=90 val rows); n=257"
+      }
+    },
+    "pooled": {
+      "mae": 35.578,
+      "note": "simple mean of per-horizon floor MAEs"
+    },
+    "note": "Floor at h=1: smedian_4 MAE=31.26. Floor at h=90: smedian_26 MAE=42.14 (pooled 3 folds). Every learned model must beat these floors per horizon. Expanded candidate set (22 rules) used in Part A."
+  },
+  "part_b_naive_predictors": {
+    "selection_basis": "fold-3 train rows only (n=2713); same 22-candidate grid as Part A",
+    "search_grid": {
+      "1": {
+        "n_train_scored": 2657,
+        "candidates_ranked": [
+          {
+            "name": "smedian_13",
+            "column_name": "naive_h1_seasonal_median_w13",
+            "train_mae": 33.319,
+            "rank": 1,
+            "kept": true
+          },
+          {
+            "name": "smedian_8",
+            "column_name": "naive_h1_seasonal_median_w8",
+            "train_mae": 33.69,
+            "rank": 2,
+            "kept": false
+          },
+          {
+            "name": "smedian_26",
+            "column_name": "naive_h1_seasonal_median_w26",
+            "train_mae": 34.115,
+            "rank": 3,
+            "kept": true
+          },
+          {
+            "name": "smean_13",
+            "column_name": "naive_h1_seasonal_mean_w13",
+            "train_mae": 34.647,
+            "rank": 4,
+            "kept": false
+          },
+          {
+            "name": "smedian_4",
+            "column_name": "naive_h1_seasonal_median_w4",
+            "train_mae": 34.789,
+            "rank": 5,
+            "kept": true
+          },
+          {
+            "name": "smedian_52",
+            "column_name": "naive_h1_seasonal_median_w52",
+            "train_mae": 34.815,
+            "rank": 6,
+            "kept": false
+          },
+          {
+            "name": "smean_26",
+            "column_name": "naive_h1_seasonal_mean_w26",
+            "train_mae": 34.998,
+            "rank": 7,
+            "kept": false
+          },
+          {
+            "name": "smean_8",
+            "column_name": "naive_h1_seasonal_mean_w8",
+            "train_mae": 35.231,
+            "rank": 8,
+            "kept": false
+          },
+          {
+            "name": "smean_52",
+            "column_name": "naive_h1_seasonal_mean_w52",
+            "train_mae": 35.472,
+            "rank": 9,
+            "kept": false
+          },
+          {
+            "name": "smean_4",
+            "column_name": "naive_h1_seasonal_mean_w4",
+            "train_mae": 36.204,
+            "rank": 10,
+            "kept": false
+          },
+          {
+            "name": "seasonal_naive",
+            "column_name": "naive_h1_seasonal_naive",
+            "train_mae": 40.882,
+            "rank": 11,
+            "kept": false
+          },
+          {
+            "name": "tmed_7",
+            "column_name": "naive_h1_trailing_median_w7td",
+            "train_mae": 53.448,
+            "rank": 12,
+            "kept": false
+          },
+          {
+            "name": "tmean_7",
+            "column_name": "naive_h1_trailing_mean_w7td",
+            "train_mae": 53.647,
+            "rank": 13,
+            "kept": false
+          },
+          {
+            "name": "tmean_14",
+            "column_name": "naive_h1_trailing_mean_w14td",
+            "train_mae": 54.428,
+            "rank": 14,
+            "kept": false
+          },
+          {
+            "name": "tmean_56",
+            "column_name": "naive_h1_trailing_mean_w56td",
+            "train_mae": 55.194,
+            "rank": 15,
+            "kept": false
+          },
+          {
+            "name": "tmed_28",
+            "column_name": "naive_h1_trailing_median_w28td",
+            "train_mae": 55.655,
+            "rank": 16,
+            "kept": false
+          },
+          {
+            "name": "tmean_28",
+            "column_name": "naive_h1_trailing_mean_w28td",
+            "train_mae": 56.269,
+            "rank": 17,
+            "kept": false
+          },
+          {
+            "name": "train_mean",
+            "column_name": "naive_h1_train_mean",
+            "train_mae": 60.877,
+            "rank": 18,
+            "kept": false
+          },
+          {
+            "name": "last_value",
+            "column_name": "naive_h1_last_value",
+            "train_mae": 71.181,
+            "rank": 19,
+            "kept": false
+          },
+          {
+            "name": "ddrift_0.25",
+            "column_name": "naive_h1_damped_drift_phi0.25",
+            "train_mae": 71.193,
+            "rank": 20,
+            "kept": false
+          },
+          {
+            "name": "ddrift_0.5",
+            "column_name": "naive_h1_damped_drift_phi0.5",
+            "train_mae": 71.205,
+            "rank": 21,
+            "kept": false
+          },
+          {
+            "name": "drift",
+            "column_name": "naive_h1_drift",
+            "train_mae": 71.23,
+            "rank": 22,
+            "kept": false
+          }
+        ],
+        "dedup_dropped": [
+          {
+            "candidate": "smedian_8",
+            "column_name": "naive_h1_seasonal_median_w8",
+            "train_mae": 33.69,
+            "max_corr": 0.9802,
+            "corr_with": "naive_h1_seasonal_median_w13",
+            "reason": "Pearson r=0.9802 > 0.98"
+          }
+        ],
+        "selection_basis": "train_rows_only (fold 3)"
+      },
+      "7": {
+        "n_train_scored": 2652,
+        "candidates_ranked": [
+          {
+            "name": "smedian_13",
+            "column_name": "naive_h7_seasonal_median_w13",
+            "train_mae": 33.321,
+            "rank": 1,
+            "kept": true
+          },
+          {
+            "name": "smedian_8",
+            "column_name": "naive_h7_seasonal_median_w8",
+            "train_mae": 33.686,
+            "rank": 2,
+            "kept": false
+          },
+          {
+            "name": "smedian_26",
+            "column_name": "naive_h7_seasonal_median_w26",
+            "train_mae": 34.119,
+            "rank": 3,
+            "kept": true
+          },
+          {
+            "name": "smean_13",
+            "column_name": "naive_h7_seasonal_mean_w13",
+            "train_mae": 34.648,
+            "rank": 4,
+            "kept": false
+          },
+          {
+            "name": "smedian_4",
+            "column_name": "naive_h7_seasonal_median_w4",
+            "train_mae": 34.792,
+            "rank": 5,
+            "kept": true
+          },
+          {
+            "name": "smedian_52",
+            "column_name": "naive_h7_seasonal_median_w52",
+            "train_mae": 34.819,
+            "rank": 6,
+            "kept": false
+          },
+          {
+            "name": "smean_26",
+            "column_name": "naive_h7_seasonal_mean_w26",
+            "train_mae": 35.0,
+            "rank": 7,
+            "kept": false
+          },
+          {
+            "name": "smean_8",
+            "column_name": "naive_h7_seasonal_mean_w8",
+            "train_mae": 35.228,
+            "rank": 8,
+            "kept": false
+          },
+          {
+            "name": "smean_52",
+            "column_name": "naive_h7_seasonal_mean_w52",
+            "train_mae": 35.474,
+            "rank": 9,
+            "kept": false
+          },
+          {
+            "name": "smean_4",
+            "column_name": "naive_h7_seasonal_mean_w4",
+            "train_mae": 36.204,
+            "rank": 10,
+            "kept": false
+          },
+          {
+            "name": "seasonal_naive",
+            "column_name": "naive_h7_seasonal_naive",
+            "train_mae": 40.908,
+            "rank": 11,
+            "kept": false
+          },
+          {
+            "name": "last_value",
+            "column_name": "naive_h7_last_value",
+            "train_mae": 42.313,
+            "rank": 12,
+            "kept": false
+          },
+          {
+            "name": "ddrift_0.25",
+            "column_name": "naive_h7_damped_drift_phi0.25",
+            "train_mae": 42.372,
+            "rank": 13,
+            "kept": false
+          },
+          {
+            "name": "ddrift_0.5",
+            "column_name": "naive_h7_damped_drift_phi0.5",
+            "train_mae": 42.43,
+            "rank": 14,
+            "kept": false
+          },
+          {
+            "name": "drift",
+            "column_name": "naive_h7_drift",
+            "train_mae": 42.555,
+            "rank": 15,
+            "kept": false
+          },
+          {
+            "name": "tmed_7",
+            "column_name": "naive_h7_trailing_median_w7td",
+            "train_mae": 51.314,
+            "rank": 16,
+            "kept": false
+          },
+          {
+            "name": "tmean_7",
+            "column_name": "naive_h7_trailing_mean_w7td",
+            "train_mae": 52.137,
+            "rank": 17,
+            "kept": false
+          },
+          {
+            "name": "tmean_14",
+            "column_name": "naive_h7_trailing_mean_w14td",
+            "train_mae": 52.773,
+            "rank": 18,
+            "kept": false
+          },
+          {
+            "name": "tmean_56",
+            "column_name": "naive_h7_trailing_mean_w56td",
+            "train_mae": 54.825,
+            "rank": 19,
+            "kept": false
+          },
+          {
+            "name": "tmed_28",
+            "column_name": "naive_h7_trailing_median_w28td",
+            "train_mae": 55.006,
+            "rank": 20,
+            "kept": false
+          },
+          {
+            "name": "tmean_28",
+            "column_name": "naive_h7_trailing_mean_w28td",
+            "train_mae": 55.331,
+            "rank": 21,
+            "kept": false
+          },
+          {
+            "name": "train_mean",
+            "column_name": "naive_h7_train_mean",
+            "train_mae": 60.739,
+            "rank": 22,
+            "kept": false
+          }
+        ],
+        "dedup_dropped": [
+          {
+            "candidate": "smedian_8",
+            "column_name": "naive_h7_seasonal_median_w8",
+            "train_mae": 33.686,
+            "max_corr": 0.9801,
+            "corr_with": "naive_h7_seasonal_median_w13",
+            "reason": "Pearson r=0.9801 > 0.98"
+          }
+        ],
+        "selection_basis": "train_rows_only (fold 3)"
+      },
+      "14": {
+        "n_train_scored": 2646,
+        "candidates_ranked": [
+          {
+            "name": "smedian_13",
+            "column_name": "naive_h14_seasonal_median_w13",
+            "train_mae": 33.973,
+            "rank": 1,
+            "kept": true
+          },
+          {
+            "name": "smedian_8",
+            "column_name": "naive_h14_seasonal_median_w8",
+            "train_mae": 34.366,
+            "rank": 2,
+            "kept": false
+          },
+          {
+            "name": "smedian_26",
+            "column_name": "naive_h14_seasonal_median_w26",
+            "train_mae": 34.518,
+            "rank": 3,
+            "kept": true
+          },
+          {
+            "name": "smedian_52",
+            "column_name": "naive_h14_seasonal_median_w52",
+            "train_mae": 35.074,
+            "rank": 4,
+            "kept": false
+          },
+          {
+            "name": "smean_13",
+            "column_name": "naive_h14_seasonal_mean_w13",
+            "train_mae": 35.348,
+            "rank": 5,
+            "kept": false
+          },
+          {
+            "name": "smean_26",
+            "column_name": "naive_h14_seasonal_mean_w26",
+            "train_mae": 35.352,
+            "rank": 6,
+            "kept": false
+          },
+          {
+            "name": "smean_52",
+            "column_name": "naive_h14_seasonal_mean_w52",
+            "train_mae": 35.704,
+            "rank": 7,
+            "kept": false
+          },
+          {
+            "name": "smean_8",
+            "column_name": "naive_h14_seasonal_mean_w8",
+            "train_mae": 35.921,
+            "rank": 8,
+            "kept": false
+          },
+          {
+            "name": "smedian_4",
+            "column_name": "naive_h14_seasonal_median_w4",
+            "train_mae": 36.279,
+            "rank": 9,
+            "kept": true
+          },
+          {
+            "name": "smean_4",
+            "column_name": "naive_h14_seasonal_mean_w4",
+            "train_mae": 37.871,
+            "rank": 10,
+            "kept": false
+          },
+          {
+            "name": "seasonal_naive",
+            "column_name": "naive_h14_seasonal_naive",
+            "train_mae": 43.907,
+            "rank": 11,
+            "kept": false
+          },
+          {
+            "name": "last_value",
+            "column_name": "naive_h14_last_value",
+            "train_mae": 45.566,
+            "rank": 12,
+            "kept": false
+          },
+          {
+            "name": "ddrift_0.25",
+            "column_name": "naive_h14_damped_drift_phi0.25",
+            "train_mae": 45.687,
+            "rank": 13,
+            "kept": false
+          },
+          {
+            "name": "ddrift_0.5",
+            "column_name": "naive_h14_damped_drift_phi0.5",
+            "train_mae": 45.817,
+            "rank": 14,
+            "kept": false
+          },
+          {
+            "name": "drift",
+            "column_name": "naive_h14_drift",
+            "train_mae": 46.097,
+            "rank": 15,
+            "kept": false
+          },
+          {
+            "name": "tmed_7",
+            "column_name": "naive_h14_trailing_median_w7td",
+            "train_mae": 52.487,
+            "rank": 16,
+            "kept": false
+          },
+          {
+            "name": "tmean_7",
+            "column_name": "naive_h14_trailing_mean_w7td",
+            "train_mae": 53.295,
+            "rank": 17,
+            "kept": false
+          },
+          {
+            "name": "tmean_14",
+            "column_name": "naive_h14_trailing_mean_w14td",
+            "train_mae": 54.366,
+            "rank": 18,
+            "kept": false
+          },
+          {
+            "name": "tmean_56",
+            "column_name": "naive_h14_trailing_mean_w56td",
+            "train_mae": 55.147,
+            "rank": 19,
+            "kept": false
+          },
+          {
+            "name": "tmed_28",
+            "column_name": "naive_h14_trailing_median_w28td",
+            "train_mae": 55.855,
+            "rank": 20,
+            "kept": false
+          },
+          {
+            "name": "tmean_28",
+            "column_name": "naive_h14_trailing_mean_w28td",
+            "train_mae": 56.172,
+            "rank": 21,
+            "kept": false
+          },
+          {
+            "name": "train_mean",
+            "column_name": "naive_h14_train_mean",
+            "train_mae": 60.734,
+            "rank": 22,
+            "kept": false
+          }
+        ],
+        "dedup_dropped": [
+          {
+            "candidate": "smedian_8",
+            "column_name": "naive_h14_seasonal_median_w8",
+            "train_mae": 34.366,
+            "max_corr": 0.98,
+            "corr_with": "naive_h14_seasonal_median_w13",
+            "reason": "Pearson r=0.9800 > 0.98"
+          }
+        ],
+        "selection_basis": "train_rows_only (fold 3)"
+      },
+      "30": {
+        "n_train_scored": 2632,
+        "candidates_ranked": [
+          {
+            "name": "smedian_26",
+            "column_name": "naive_h30_seasonal_median_w26",
+            "train_mae": 35.296,
+            "rank": 1,
+            "kept": true
+          },
+          {
+            "name": "smedian_8",
+            "column_name": "naive_h30_seasonal_median_w8",
+            "train_mae": 35.477,
+            "rank": 2,
+            "kept": true
+          },
+          {
+            "name": "smedian_13",
+            "column_name": "naive_h30_seasonal_median_w13",
+            "train_mae": 35.51,
+            "rank": 3,
+            "kept": false
+          },
+          {
+            "name": "smedian_52",
+            "column_name": "naive_h30_seasonal_median_w52",
+            "train_mae": 35.69,
+            "rank": 4,
+            "kept": false
+          },
+          {
+            "name": "smean_26",
+            "column_name": "naive_h30_seasonal_mean_w26",
+            "train_mae": 35.925,
+            "rank": 5,
+            "kept": false
+          },
+          {
+            "name": "smean_52",
+            "column_name": "naive_h30_seasonal_mean_w52",
+            "train_mae": 36.138,
+            "rank": 6,
+            "kept": false
+          },
+          {
+            "name": "smean_13",
+            "column_name": "naive_h30_seasonal_mean_w13",
+            "train_mae": 36.517,
+            "rank": 7,
+            "kept": false
+          },
+          {
+            "name": "smean_8",
+            "column_name": "naive_h30_seasonal_mean_w8",
+            "train_mae": 36.784,
+            "rank": 8,
+            "kept": false
+          },
+          {
+            "name": "smedian_4",
+            "column_name": "naive_h30_seasonal_median_w4",
+            "train_mae": 37.8,
+            "rank": 9,
+            "kept": true
+          },
+          {
+            "name": "smean_4",
+            "column_name": "naive_h30_seasonal_mean_w4",
+            "train_mae": 39.37,
+            "rank": 10,
+            "kept": false
+          },
+          {
+            "name": "seasonal_naive",
+            "column_name": "naive_h30_seasonal_naive",
+            "train_mae": 46.885,
+            "rank": 11,
+            "kept": false
+          },
+          {
+            "name": "tmean_56",
+            "column_name": "naive_h30_trailing_mean_w56td",
+            "train_mae": 56.523,
+            "rank": 12,
+            "kept": false
+          },
+          {
+            "name": "tmed_28",
+            "column_name": "naive_h30_trailing_median_w28td",
+            "train_mae": 57.779,
+            "rank": 13,
+            "kept": false
+          },
+          {
+            "name": "tmean_28",
+            "column_name": "naive_h30_trailing_mean_w28td",
+            "train_mae": 58.39,
+            "rank": 14,
+            "kept": false
+          },
+          {
+            "name": "tmean_14",
+            "column_name": "naive_h30_trailing_mean_w14td",
+            "train_mae": 59.597,
+            "rank": 15,
+            "kept": false
+          },
+          {
+            "name": "tmean_7",
+            "column_name": "naive_h30_trailing_mean_w7td",
+            "train_mae": 60.263,
+            "rank": 16,
+            "kept": false
+          },
+          {
+            "name": "train_mean",
+            "column_name": "naive_h30_train_mean",
+            "train_mae": 60.606,
+            "rank": 17,
+            "kept": false
+          },
+          {
+            "name": "tmed_7",
+            "column_name": "naive_h30_trailing_median_w7td",
+            "train_mae": 60.788,
+            "rank": 18,
+            "kept": false
+          },
+          {
+            "name": "last_value",
+            "column_name": "naive_h30_last_value",
+            "train_mae": 95.671,
+            "rank": 19,
+            "kept": false
+          },
+          {
+            "name": "ddrift_0.25",
+            "column_name": "naive_h30_damped_drift_phi0.25",
+            "train_mae": 96.214,
+            "rank": 20,
+            "kept": false
+          },
+          {
+            "name": "ddrift_0.5",
+            "column_name": "naive_h30_damped_drift_phi0.5",
+            "train_mae": 96.763,
+            "rank": 21,
+            "kept": false
+          },
+          {
+            "name": "drift",
+            "column_name": "naive_h30_drift",
+            "train_mae": 97.877,
+            "rank": 22,
+            "kept": false
+          }
+        ],
+        "dedup_dropped": [],
+        "selection_basis": "train_rows_only (fold 3)"
+      },
+      "60": {
+        "n_train_scored": 2607,
+        "candidates_ranked": [
+          {
+            "name": "smedian_26",
+            "column_name": "naive_h60_seasonal_median_w26",
+            "train_mae": 36.308,
+            "rank": 1,
+            "kept": true
+          },
+          {
+            "name": "smedian_52",
+            "column_name": "naive_h60_seasonal_median_w52",
+            "train_mae": 36.401,
+            "rank": 2,
+            "kept": false
+          },
+          {
+            "name": "smean_26",
+            "column_name": "naive_h60_seasonal_mean_w26",
+            "train_mae": 36.731,
+            "rank": 3,
+            "kept": false
+          },
+          {
+            "name": "smean_52",
+            "column_name": "naive_h60_seasonal_mean_w52",
+            "train_mae": 36.756,
+            "rank": 4,
+            "kept": true
+          },
+          {
+            "name": "smedian_13",
+            "column_name": "naive_h60_seasonal_median_w13",
+            "train_mae": 37.001,
+            "rank": 5,
+            "kept": false
+          },
+          {
+            "name": "smedian_8",
+            "column_name": "naive_h60_seasonal_median_w8",
+            "train_mae": 37.186,
+            "rank": 6,
+            "kept": true
+          },
+          {
+            "name": "smean_13",
+            "column_name": "naive_h60_seasonal_mean_w13",
+            "train_mae": 37.567,
+            "rank": 7,
+            "kept": false
+          },
+          {
+            "name": "smean_8",
+            "column_name": "naive_h60_seasonal_mean_w8",
+            "train_mae": 38.011,
+            "rank": 8,
+            "kept": false
+          },
+          {
+            "name": "smedian_4",
+            "column_name": "naive_h60_seasonal_median_w4",
+            "train_mae": 38.846,
+            "rank": 9,
+            "kept": false
+          },
+          {
+            "name": "smean_4",
+            "column_name": "naive_h60_seasonal_mean_w4",
+            "train_mae": 39.914,
+            "rank": 10,
+            "kept": false
+          },
+          {
+            "name": "seasonal_naive",
+            "column_name": "naive_h60_seasonal_naive",
+            "train_mae": 47.157,
+            "rank": 11,
+            "kept": false
+          },
+          {
+            "name": "tmed_28",
+            "column_name": "naive_h60_trailing_median_w28td",
+            "train_mae": 55.72,
+            "rank": 12,
+            "kept": false
+          },
+          {
+            "name": "tmean_28",
+            "column_name": "naive_h60_trailing_mean_w28td",
+            "train_mae": 56.61,
+            "rank": 13,
+            "kept": false
+          },
+          {
+            "name": "tmean_56",
+            "column_name": "naive_h60_trailing_mean_w56td",
+            "train_mae": 57.075,
+            "rank": 14,
+            "kept": false
+          },
+          {
+            "name": "tmean_14",
+            "column_name": "naive_h60_trailing_mean_w14td",
+            "train_mae": 60.097,
+            "rank": 15,
+            "kept": false
+          },
+          {
+            "name": "train_mean",
+            "column_name": "naive_h60_train_mean",
+            "train_mae": 60.124,
+            "rank": 16,
+            "kept": false
+          },
+          {
+            "name": "tmed_7",
+            "column_name": "naive_h60_trailing_median_w7td",
+            "train_mae": 62.652,
+            "rank": 17,
+            "kept": false
+          },
+          {
+            "name": "tmean_7",
+            "column_name": "naive_h60_trailing_mean_w7td",
+            "train_mae": 62.709,
+            "rank": 18,
+            "kept": false
+          },
+          {
+            "name": "last_value",
+            "column_name": "naive_h60_last_value",
+            "train_mae": 102.253,
+            "rank": 19,
+            "kept": false
+          },
+          {
+            "name": "ddrift_0.25",
+            "column_name": "naive_h60_damped_drift_phi0.25",
+            "train_mae": 103.57,
+            "rank": 20,
+            "kept": false
+          },
+          {
+            "name": "ddrift_0.5",
+            "column_name": "naive_h60_damped_drift_phi0.5",
+            "train_mae": 104.902,
+            "rank": 21,
+            "kept": false
+          },
+          {
+            "name": "drift",
+            "column_name": "naive_h60_drift",
+            "train_mae": 107.621,
+            "rank": 22,
+            "kept": false
+          }
+        ],
+        "dedup_dropped": [
+          {
+            "candidate": "smedian_52",
+            "column_name": "naive_h60_seasonal_median_w52",
+            "train_mae": 36.401,
+            "max_corr": 0.9853,
+            "corr_with": "naive_h60_seasonal_median_w26",
+            "reason": "Pearson r=0.9853 > 0.98"
+          },
+          {
+            "candidate": "smean_26",
+            "column_name": "naive_h60_seasonal_mean_w26",
+            "train_mae": 36.731,
+            "max_corr": 0.9866,
+            "corr_with": "naive_h60_seasonal_median_w26",
+            "reason": "Pearson r=0.9866 > 0.98"
+          },
+          {
+            "candidate": "smedian_13",
+            "column_name": "naive_h60_seasonal_median_w13",
+            "train_mae": 37.001,
+            "max_corr": 0.9815,
+            "corr_with": "naive_h60_seasonal_median_w26",
+            "reason": "Pearson r=0.9815 > 0.98"
+          }
+        ],
+        "selection_basis": "train_rows_only (fold 3)"
+      },
+      "90": {
+        "n_train_scored": 2581,
+        "candidates_ranked": [
+          {
+            "name": "smedian_26",
+            "column_name": "naive_h90_seasonal_median_w26",
+            "train_mae": 36.915,
+            "rank": 1,
+            "kept": true
+          },
+          {
+            "name": "smedian_52",
+            "column_name": "naive_h90_seasonal_median_w52",
+            "train_mae": 37.072,
+            "rank": 2,
+            "kept": false
+          },
+          {
+            "name": "smedian_13",
+            "column_name": "naive_h90_seasonal_median_w13",
+            "train_mae": 37.285,
+            "rank": 3,
+            "kept": false
+          },
+          {
+            "name": "smean_26",
+            "column_name": "naive_h90_seasonal_mean_w26",
+            "train_mae": 37.336,
+            "rank": 4,
+            "kept": false
+          },
+          {
+            "name": "smean_52",
+            "column_name": "naive_h90_seasonal_mean_w52",
+            "train_mae": 37.35,
+            "rank": 5,
+            "kept": true
+          },
+          {
+            "name": "smean_13",
+            "column_name": "naive_h90_seasonal_mean_w13",
+            "train_mae": 37.873,
+            "rank": 6,
+            "kept": true
+          },
+          {
+            "name": "smedian_8",
+            "column_name": "naive_h90_seasonal_median_w8",
+            "train_mae": 38.369,
+            "rank": 7,
+            "kept": false
+          },
+          {
+            "name": "smean_8",
+            "column_name": "naive_h90_seasonal_mean_w8",
+            "train_mae": 39.085,
+            "rank": 8,
+            "kept": false
+          },
+          {
+            "name": "smedian_4",
+            "column_name": "naive_h90_seasonal_median_w4",
+            "train_mae": 40.21,
+            "rank": 9,
+            "kept": false
+          },
+          {
+            "name": "smean_4",
+            "column_name": "naive_h90_seasonal_mean_w4",
+            "train_mae": 41.221,
+            "rank": 10,
+            "kept": false
+          },
+          {
+            "name": "seasonal_naive",
+            "column_name": "naive_h90_seasonal_naive",
+            "train_mae": 47.893,
+            "rank": 11,
+            "kept": false
+          },
+          {
+            "name": "tmed_28",
+            "column_name": "naive_h90_trailing_median_w28td",
+            "train_mae": 56.229,
+            "rank": 12,
+            "kept": false
+          },
+          {
+            "name": "tmean_56",
+            "column_name": "naive_h90_trailing_mean_w56td",
+            "train_mae": 56.52,
+            "rank": 13,
+            "kept": false
+          },
+          {
+            "name": "tmean_28",
+            "column_name": "naive_h90_trailing_mean_w28td",
+            "train_mae": 56.868,
+            "rank": 14,
+            "kept": false
+          },
+          {
+            "name": "tmean_14",
+            "column_name": "naive_h90_trailing_mean_w14td",
+            "train_mae": 57.248,
+            "rank": 15,
+            "kept": false
+          },
+          {
+            "name": "tmed_7",
+            "column_name": "naive_h90_trailing_median_w7td",
+            "train_mae": 57.7,
+            "rank": 16,
+            "kept": false
+          },
+          {
+            "name": "tmean_7",
+            "column_name": "naive_h90_trailing_mean_w7td",
+            "train_mae": 58.433,
+            "rank": 17,
+            "kept": false
+          },
+          {
+            "name": "train_mean",
+            "column_name": "naive_h90_train_mean",
+            "train_mae": 60.151,
+            "rank": 18,
+            "kept": false
+          },
+          {
+            "name": "last_value",
+            "column_name": "naive_h90_last_value",
+            "train_mae": 70.694,
+            "rank": 19,
+            "kept": false
+          },
+          {
+            "name": "ddrift_0.25",
+            "column_name": "naive_h90_damped_drift_phi0.25",
+            "train_mae": 72.266,
+            "rank": 20,
+            "kept": false
+          },
+          {
+            "name": "ddrift_0.5",
+            "column_name": "naive_h90_damped_drift_phi0.5",
+            "train_mae": 73.97,
+            "rank": 21,
+            "kept": false
+          },
+          {
+            "name": "drift",
+            "column_name": "naive_h90_drift",
+            "train_mae": 77.591,
+            "rank": 22,
+            "kept": false
+          }
+        ],
+        "dedup_dropped": [
+          {
+            "candidate": "smedian_52",
+            "column_name": "naive_h90_seasonal_median_w52",
+            "train_mae": 37.072,
+            "max_corr": 0.9851,
+            "corr_with": "naive_h90_seasonal_median_w26",
+            "reason": "Pearson r=0.9851 > 0.98"
+          },
+          {
+            "candidate": "smedian_13",
+            "column_name": "naive_h90_seasonal_median_w13",
+            "train_mae": 37.285,
+            "max_corr": 0.9825,
+            "corr_with": "naive_h90_seasonal_median_w26",
+            "reason": "Pearson r=0.9825 > 0.98"
+          },
+          {
+            "candidate": "smean_26",
+            "column_name": "naive_h90_seasonal_mean_w26",
+            "train_mae": 37.336,
+            "max_corr": 0.988,
+            "corr_with": "naive_h90_seasonal_median_w26",
+            "reason": "Pearson r=0.9880 > 0.98"
+          }
+        ],
+        "selection_basis": "train_rows_only (fold 3)"
+      }
+    },
+    "kept_predictors": {
+      "1": [
+        {
+          "horizon": 1,
+          "column_name": "naive_h1_seasonal_median_w4",
+          "rule": "seasonal median w=4 same-DOW at origin D-1",
+          "formula": "median(ts[dayofweek==target_dow].iloc[-4:]); O=D-1days",
+          "train_mae": 34.789,
+          "train_primary": 34.789,
+          "rank": 1,
+          "corr_with_kept": {
+            "naive_h1_seasonal_median_w13": 0.9355,
+            "naive_h1_seasonal_median_w26": 0.9112
+          },
+          "selected_by": "part_a_winner",
+          "protected": true,
+          "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows."
+        },
+        {
+          "horizon": 1,
+          "column_name": "naive_h1_seasonal_median_w13",
+          "rule": "seasonal median w=13 same-DOW at origin D-1",
+          "formula": "median(ts[dayofweek==target_dow].iloc[-13:]); O=D-1days",
+          "train_mae": 33.319,
+          "train_primary": 33.319,
+          "rank": 2,
+          "corr_with_kept": {
+            "naive_h1_seasonal_median_w4": 0.9355,
+            "naive_h1_seasonal_median_w26": 0.979
+          },
+          "selected_by": "train_search",
+          "protected": true,
+          "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows."
+        },
+        {
+          "horizon": 1,
+          "column_name": "naive_h1_seasonal_median_w26",
+          "rule": "seasonal median w=26 same-DOW at origin D-1",
+          "formula": "median(ts[dayofweek==target_dow].iloc[-26:]); O=D-1days",
+          "train_mae": 34.115,
+          "train_primary": 34.115,
+          "rank": 3,
+          "corr_with_kept": {
+            "naive_h1_seasonal_median_w4": 0.9112,
+            "naive_h1_seasonal_median_w13": 0.979
+          },
+          "selected_by": "train_search",
+          "protected": true,
+          "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows."
+        }
+      ],
+      "7": [
+        {
+          "horizon": 7,
+          "column_name": "naive_h7_seasonal_median_w4",
+          "rule": "seasonal median w=4 same-DOW at origin D-7",
+          "formula": "median(ts[dayofweek==target_dow].iloc[-4:]); O=D-7days",
+          "train_mae": 34.792,
+          "train_primary": 34.792,
+          "rank": 1,
+          "corr_with_kept": {
+            "naive_h7_seasonal_median_w13": 0.9351,
+            "naive_h7_seasonal_median_w26": 0.9106
+          },
+          "selected_by": "part_a_winner",
+          "protected": true,
+          "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows."
+        },
+        {
+          "horizon": 7,
+          "column_name": "naive_h7_seasonal_median_w13",
+          "rule": "seasonal median w=13 same-DOW at origin D-7",
+          "formula": "median(ts[dayofweek==target_dow].iloc[-13:]); O=D-7days",
+          "train_mae": 33.321,
+          "train_primary": 33.321,
+          "rank": 2,
+          "corr_with_kept": {
+            "naive_h7_seasonal_median_w4": 0.9351,
+            "naive_h7_seasonal_median_w26": 0.9788
+          },
+          "selected_by": "train_search",
+          "protected": true,
+          "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows."
+        },
+        {
+          "horizon": 7,
+          "column_name": "naive_h7_seasonal_median_w26",
+          "rule": "seasonal median w=26 same-DOW at origin D-7",
+          "formula": "median(ts[dayofweek==target_dow].iloc[-26:]); O=D-7days",
+          "train_mae": 34.119,
+          "train_primary": 34.119,
+          "rank": 3,
+          "corr_with_kept": {
+            "naive_h7_seasonal_median_w4": 0.9106,
+            "naive_h7_seasonal_median_w13": 0.9788
+          },
+          "selected_by": "train_search",
+          "protected": true,
+          "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows."
+        }
+      ],
+      "14": [
+        {
+          "horizon": 14,
+          "column_name": "naive_h14_seasonal_median_w4",
+          "rule": "seasonal median w=4 same-DOW at origin D-14",
+          "formula": "median(ts[dayofweek==target_dow].iloc[-4:]); O=D-14days",
+          "train_mae": 36.279,
+          "train_primary": 36.279,
+          "rank": 1,
+          "corr_with_kept": {
+            "naive_h14_seasonal_median_w13": 0.9347,
+            "naive_h14_seasonal_median_w26": 0.9102
+          },
+          "selected_by": "part_a_winner",
+          "protected": true,
+          "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows."
+        },
+        {
+          "horizon": 14,
+          "column_name": "naive_h14_seasonal_median_w13",
+          "rule": "seasonal median w=13 same-DOW at origin D-14",
+          "formula": "median(ts[dayofweek==target_dow].iloc[-13:]); O=D-14days",
+          "train_mae": 33.973,
+          "train_primary": 33.973,
+          "rank": 2,
+          "corr_with_kept": {
+            "naive_h14_seasonal_median_w4": 0.9347,
+            "naive_h14_seasonal_median_w26": 0.979
+          },
+          "selected_by": "train_search",
+          "protected": true,
+          "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows."
+        },
+        {
+          "horizon": 14,
+          "column_name": "naive_h14_seasonal_median_w26",
+          "rule": "seasonal median w=26 same-DOW at origin D-14",
+          "formula": "median(ts[dayofweek==target_dow].iloc[-26:]); O=D-14days",
+          "train_mae": 34.518,
+          "train_primary": 34.518,
+          "rank": 3,
+          "corr_with_kept": {
+            "naive_h14_seasonal_median_w4": 0.9102,
+            "naive_h14_seasonal_median_w13": 0.979
+          },
+          "selected_by": "train_search",
+          "protected": true,
+          "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows."
+        }
+      ],
+      "30": [
+        {
+          "horizon": 30,
+          "column_name": "naive_h30_seasonal_median_w4",
+          "rule": "seasonal median w=4 same-DOW at origin D-30",
+          "formula": "median(ts[dayofweek==target_dow].iloc[-4:]); O=D-30days",
+          "train_mae": 37.8,
+          "train_primary": 37.8,
+          "rank": 1,
+          "corr_with_kept": {
+            "naive_h30_seasonal_median_w26": 0.9116,
+            "naive_h30_seasonal_median_w8": 0.9545
+          },
+          "selected_by": "part_a_winner",
+          "protected": true,
+          "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows."
+        },
+        {
+          "horizon": 30,
+          "column_name": "naive_h30_seasonal_median_w26",
+          "rule": "seasonal median w=26 same-DOW at origin D-30",
+          "formula": "median(ts[dayofweek==target_dow].iloc[-26:]); O=D-30days",
+          "train_mae": 35.296,
+          "train_primary": 35.296,
+          "rank": 2,
+          "corr_with_kept": {
+            "naive_h30_seasonal_median_w4": 0.9116,
+            "naive_h30_seasonal_median_w8": 0.9576
+          },
+          "selected_by": "train_search",
+          "protected": true,
+          "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows."
+        },
+        {
+          "horizon": 30,
+          "column_name": "naive_h30_seasonal_median_w8",
+          "rule": "seasonal median w=8 same-DOW at origin D-30",
+          "formula": "median(ts[dayofweek==target_dow].iloc[-8:]); O=D-30days",
+          "train_mae": 35.477,
+          "train_primary": 35.477,
+          "rank": 3,
+          "corr_with_kept": {
+            "naive_h30_seasonal_median_w4": 0.9545,
+            "naive_h30_seasonal_median_w26": 0.9576
+          },
+          "selected_by": "train_search",
+          "protected": true,
+          "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows."
+        }
+      ],
+      "60": [
+        {
+          "horizon": 60,
+          "column_name": "naive_h60_seasonal_median_w26",
+          "rule": "seasonal median w=26 same-DOW at origin D-60",
+          "formula": "median(ts[dayofweek==target_dow].iloc[-26:]); O=D-60days",
+          "train_mae": 36.308,
+          "train_primary": 36.308,
+          "rank": 1,
+          "corr_with_kept": {
+            "naive_h60_seasonal_mean_w52": 0.9772,
+            "naive_h60_seasonal_median_w8": 0.9608
+          },
+          "selected_by": "part_a_winner",
+          "protected": true,
+          "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows."
+        },
+        {
+          "horizon": 60,
+          "column_name": "naive_h60_seasonal_mean_w52",
+          "rule": "seasonal mean w=52 same-DOW at origin D-60",
+          "formula": "mean(ts[dayofweek==target_dow].iloc[-52:]); O=D-60days",
+          "train_mae": 36.756,
+          "train_primary": 36.756,
+          "rank": 2,
+          "corr_with_kept": {
+            "naive_h60_seasonal_median_w26": 0.9772,
+            "naive_h60_seasonal_median_w8": 0.9439
+          },
+          "selected_by": "train_search",
+          "protected": true,
+          "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows."
+        },
+        {
+          "horizon": 60,
+          "column_name": "naive_h60_seasonal_median_w8",
+          "rule": "seasonal median w=8 same-DOW at origin D-60",
+          "formula": "median(ts[dayofweek==target_dow].iloc[-8:]); O=D-60days",
+          "train_mae": 37.186,
+          "train_primary": 37.186,
+          "rank": 3,
+          "corr_with_kept": {
+            "naive_h60_seasonal_median_w26": 0.9608,
+            "naive_h60_seasonal_mean_w52": 0.9439
+          },
+          "selected_by": "train_search",
+          "protected": true,
+          "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows."
+        }
+      ],
+      "90": [
+        {
+          "horizon": 90,
+          "column_name": "naive_h90_seasonal_median_w26",
+          "rule": "seasonal median w=26 same-DOW at origin D-90",
+          "formula": "median(ts[dayofweek==target_dow].iloc[-26:]); O=D-90days",
+          "train_mae": 36.915,
+          "train_primary": 36.915,
+          "rank": 1,
+          "corr_with_kept": {
+            "naive_h90_seasonal_mean_w52": 0.9776,
+            "naive_h90_seasonal_mean_w13": 0.9669
+          },
+          "selected_by": "part_a_winner",
+          "protected": true,
+          "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows."
+        },
+        {
+          "horizon": 90,
+          "column_name": "naive_h90_seasonal_mean_w52",
+          "rule": "seasonal mean w=52 same-DOW at origin D-90",
+          "formula": "mean(ts[dayofweek==target_dow].iloc[-52:]); O=D-90days",
+          "train_mae": 37.35,
+          "train_primary": 37.35,
+          "rank": 2,
+          "corr_with_kept": {
+            "naive_h90_seasonal_median_w26": 0.9776,
+            "naive_h90_seasonal_mean_w13": 0.961
+          },
+          "selected_by": "train_search",
+          "protected": true,
+          "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows."
+        },
+        {
+          "horizon": 90,
+          "column_name": "naive_h90_seasonal_mean_w13",
+          "rule": "seasonal mean w=13 same-DOW at origin D-90",
+          "formula": "mean(ts[dayofweek==target_dow].iloc[-13:]); O=D-90days",
+          "train_mae": 37.873,
+          "train_primary": 37.873,
+          "rank": 3,
+          "corr_with_kept": {
+            "naive_h90_seasonal_median_w26": 0.9669,
+            "naive_h90_seasonal_mean_w52": 0.961
+          },
+          "selected_by": "train_search",
+          "protected": true,
+          "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows."
+        }
+      ]
+    },
+    "note": "Part A winner always kept regardless of train rank. Max 3 per horizon. Dedup: Pearson r > 0.98 on train predictions -> drop lower-ranked."
+  },
+  "protected_features_emitted": [
+    {
+      "column": "naive_h1_seasonal_median_w4",
+      "reason": "naive predictor selected for h=1 (baseline iteration 004)",
+      "protected_since_iteration": 4,
+      "horizon": 1
+    },
+    {
+      "column": "naive_h1_seasonal_median_w13",
+      "reason": "naive predictor selected for h=1 (baseline iteration 004)",
+      "protected_since_iteration": 4,
+      "horizon": 1
+    },
+    {
+      "column": "naive_h1_seasonal_median_w26",
+      "reason": "naive predictor selected for h=1 (baseline iteration 004)",
+      "protected_since_iteration": 4,
+      "horizon": 1
+    },
+    {
+      "column": "naive_h7_seasonal_median_w4",
+      "reason": "naive predictor selected for h=7 (baseline iteration 004)",
+      "protected_since_iteration": 4,
+      "horizon": 7
+    },
+    {
+      "column": "naive_h7_seasonal_median_w13",
+      "reason": "naive predictor selected for h=7 (baseline iteration 004)",
+      "protected_since_iteration": 4,
+      "horizon": 7
+    },
+    {
+      "column": "naive_h7_seasonal_median_w26",
+      "reason": "naive predictor selected for h=7 (baseline iteration 004)",
+      "protected_since_iteration": 4,
+      "horizon": 7
+    },
+    {
+      "column": "naive_h14_seasonal_median_w4",
+      "reason": "naive predictor selected for h=14 (baseline iteration 004)",
+      "protected_since_iteration": 4,
+      "horizon": 14
+    },
+    {
+      "column": "naive_h14_seasonal_median_w13",
+      "reason": "naive predictor selected for h=14 (baseline iteration 004)",
+      "protected_since_iteration": 4,
+      "horizon": 14
+    },
+    {
+      "column": "naive_h14_seasonal_median_w26",
+      "reason": "naive predictor selected for h=14 (baseline iteration 004)",
+      "protected_since_iteration": 4,
+      "horizon": 14
+    },
+    {
+      "column": "naive_h30_seasonal_median_w4",
+      "reason": "naive predictor selected for h=30 (baseline iteration 004)",
+      "protected_since_iteration": 4,
+      "horizon": 30
+    },
+    {
+      "column": "naive_h30_seasonal_median_w26",
+      "reason": "naive predictor selected for h=30 (baseline iteration 004)",
+      "protected_since_iteration": 4,
+      "horizon": 30
+    },
+    {
+      "column": "naive_h30_seasonal_median_w8",
+      "reason": "naive predictor selected for h=30 (baseline iteration 004)",
+      "protected_since_iteration": 4,
+      "horizon": 30
+    },
+    {
+      "column": "naive_h60_seasonal_median_w26",
+      "reason": "naive predictor selected for h=60 (baseline iteration 004)",
+      "protected_since_iteration": 4,
+      "horizon": 60
+    },
+    {
+      "column": "naive_h60_seasonal_mean_w52",
+      "reason": "naive predictor selected for h=60 (baseline iteration 004)",
+      "protected_since_iteration": 4,
+      "horizon": 60
+    },
+    {
+      "column": "naive_h60_seasonal_median_w8",
+      "reason": "naive predictor selected for h=60 (baseline iteration 004)",
+      "protected_since_iteration": 4,
+      "horizon": 60
+    },
+    {
+      "column": "naive_h90_seasonal_median_w26",
+      "reason": "naive predictor selected for h=90 (baseline iteration 004)",
+      "protected_since_iteration": 4,
+      "horizon": 90
+    },
+    {
+      "column": "naive_h90_seasonal_mean_w52",
+      "reason": "naive predictor selected for h=90 (baseline iteration 004)",
+      "protected_since_iteration": 4,
+      "horizon": 90
+    },
+    {
+      "column": "naive_h90_seasonal_mean_w13",
+      "reason": "naive predictor selected for h=90 (baseline iteration 004)",
+      "protected_since_iteration": 4,
+      "horizon": 90
+    }
+  ],
+  "artifact_paths": {
+    "plots": [
+      {
+        "name": "Baseline MAE by horizon \u2014 6 key rules + best-rule floor",
+        "type": "grouped bar + line",
+        "path": "artifacts/training/iteration_004_baseline_mae_by_horizon.png",
+        "data_path": "artifacts/training/iteration_004_baseline_mae_by_horizon.csv",
+        "reason": "Shows original-6 rule MAEs + expanded-set floor winner per horizon"
+      },
+      {
+        "name": "Part B kept naive predictors \u2014 train MAE vs Part A validation floor",
+        "type": "grouped bar",
+        "path": "artifacts/training/iteration_004_baseline_naive_predictors.png",
+        "data_path": "artifacts/training/iteration_004_baseline_naive_predictors.csv",
+        "reason": "Shows train MAEs for kept predictors per horizon, with Part A floor for reference"
+      }
+    ]
+  },
+  "handoff": {
+    "written_by": "baseline",
+    "iteration": 4,
+    "context_clearable": true,
+    "read_this_first": "baseline_floor established from 22-candidate grid: per-horizon MAE floors every learned model must beat. naive_predictor_features carries the FULL SPEC (column_name + formula) that Feature Engineering must materialise as protected columns. h=90 floor uses pooled 3-fold val (fold 3 alone = 5 rows).",
+    "parameters": {
+      "baseline_floor": {
+        "value": {
+          "established_at_iteration": 4,
+          "baseline_type": "best of 22 candidates (winner per horizon, validation rows)",
+          "n_candidates_tested": 22,
+          "seasonal_period": 7,
+          "window": 52,
+          "window_source": "one seasonal year = 52 same-DOW season-slots; P=7 from EDA dominant_acf_lag=6",
+          "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows.",
+          "per_horizon": {
+            "1": {
+              "winner": "smedian_4",
+              "winner_col": "naive_h1_seasonal_median_w4",
+              "winner_mae": 31.263,
+              "n": 95,
+              "key_rules_mae": {
+                "last_value": 59.958,
+                "seasonal_naive": 38.916,
+                "smedian_52": 40.089,
+                "smean_52": 59.214,
+                "drift": 59.971,
+                "train_mean": 40.504,
+                "smedian_13": 33.345,
+                "smedian_26": 36.568,
+                "smedian_8": 31.549,
+                "smedian_4": 31.263,
+                "tmean_28": 39.467,
+                "tmed_28": 39.574
+              },
+              "eda_provisional_mae": 38.01,
+              "delta_winner_vs_snaive": -7.653,
+              "note": "fold 3 primary; n=95"
+            },
+            "7": {
+              "winner": "smedian_4",
+              "winner_col": "naive_h7_seasonal_median_w4",
+              "winner_mae": 31.263,
+              "n": 95,
+              "key_rules_mae": {
+                "last_value": 38.916,
+                "seasonal_naive": 38.916,
+                "smedian_52": 40.089,
+                "smean_52": 59.214,
+                "drift": 38.964,
+                "train_mean": 40.504,
+                "smedian_13": 33.345,
+                "smedian_26": 36.568,
+                "smedian_8": 31.549,
+                "smedian_4": 31.263,
+                "tmean_28": 40.373,
+                "tmed_28": 39.916
+              },
+              "eda_provisional_mae": 40.73,
+              "delta_winner_vs_snaive": -7.653,
+              "note": "fold 3 primary; n=95"
+            },
+            "14": {
+              "winner": "smedian_4",
+              "winner_col": "naive_h14_seasonal_median_w4",
+              "winner_mae": 32.846,
+              "n": 95,
+              "key_rules_mae": {
+                "last_value": 40.179,
+                "seasonal_naive": 40.179,
+                "smedian_52": 40.311,
+                "smean_52": 59.805,
+                "drift": 40.26,
+                "train_mean": 40.504,
+                "smedian_13": 34.535,
+                "smedian_26": 36.805,
+                "smedian_8": 33.241,
+                "smedian_4": 32.846,
+                "tmean_28": 42.234,
+                "tmed_28": 40.211
+              },
+              "eda_provisional_mae": 42.67,
+              "delta_winner_vs_snaive": -7.333,
+              "note": "fold 3 primary; n=95"
+            },
+            "30": {
+              "winner": "smedian_4",
+              "winner_col": "naive_h30_seasonal_median_w4",
+              "winner_mae": 35.913,
+              "n": 95,
+              "key_rules_mae": {
+                "last_value": 73.189,
+                "seasonal_naive": 48.619,
+                "smedian_52": 41.305,
+                "smean_52": 61.436,
+                "drift": 73.433,
+                "train_mean": 40.504,
+                "smedian_13": 38.76,
+                "smedian_26": 38.384,
+                "smedian_8": 36.828,
+                "smedian_4": 35.913,
+                "tmean_28": 43.841,
+                "tmed_28": 40.623
+              },
+              "eda_provisional_mae": 44.14,
+              "delta_winner_vs_snaive": -12.706,
+              "note": "fold 3 primary; n=95"
+            },
+            "60": {
+              "winner": "smedian_26",
+              "winner_col": "naive_h60_seasonal_median_w26",
+              "winner_mae": 40.042,
+              "n": 95,
+              "key_rules_mae": {
+                "last_value": 74.724,
+                "seasonal_naive": 56.097,
+                "smedian_52": 42.105,
+                "smean_52": 63.176,
+                "drift": 75.923,
+                "train_mean": 40.504,
+                "smedian_13": 40.347,
+                "smedian_26": 40.042,
+                "smedian_8": 42.009,
+                "smedian_4": 40.287,
+                "tmean_28": 51.701,
+                "tmed_28": 46.53
+              },
+              "eda_provisional_mae": 45.14,
+              "delta_winner_vs_snaive": -16.055,
+              "note": "fold 3 primary; n=95"
+            },
+            "90": {
+              "winner": "smedian_26",
+              "winner_col": "naive_h90_seasonal_median_w26",
+              "winner_mae": 42.143,
+              "n": 257,
+              "key_rules_mae": {
+                "last_value": 79.925,
+                "seasonal_naive": 67.423,
+                "smedian_52": 43.018,
+                "smean_52": 50.581,
+                "drift": 81.32,
+                "train_mean": 59.899,
+                "smedian_13": 45.525,
+                "smedian_26": 42.143,
+                "smedian_8": 49.875,
+                "smedian_4": 56.257,
+                "tmean_28": 66.59,
+                "tmed_28": 62.543
+              },
+              "eda_provisional_mae": 47.54,
+              "delta_winner_vs_snaive": -25.28,
+              "note": "pooled 3 folds (fold 3 alone has only 5 scoreable h=90 val rows); n=257"
+            }
+          },
+          "pooled": {
+            "mae": 35.578,
+            "note": "simple mean of per-horizon floor MAEs"
+          },
+          "note": "Floor at h=1: smedian_4 MAE=31.26. Floor at h=90: smedian_26 MAE=42.14 (pooled 3 folds). Every learned model must beat these floors per horizon. Expanded candidate set (22 rules) used in Part A."
+        },
+        "why": "Floor every later model must beat per horizon. Established on val rows.",
+        "must_not_change": true
+      },
+      "naive_predictor_features": {
+        "value": {
+          "1": [
+            {
+              "horizon": 1,
+              "column_name": "naive_h1_seasonal_median_w4",
+              "rule": "seasonal median w=4 same-DOW at origin D-1",
+              "formula": "median(ts[dayofweek==target_dow].iloc[-4:]); O=D-1days",
+              "train_mae": 34.789,
+              "train_primary": 34.789,
+              "rank": 1,
+              "corr_with_kept": {
+                "naive_h1_seasonal_median_w13": 0.9355,
+                "naive_h1_seasonal_median_w26": 0.9112
+              },
+              "selected_by": "part_a_winner",
+              "protected": true,
+              "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows."
+            },
+            {
+              "horizon": 1,
+              "column_name": "naive_h1_seasonal_median_w13",
+              "rule": "seasonal median w=13 same-DOW at origin D-1",
+              "formula": "median(ts[dayofweek==target_dow].iloc[-13:]); O=D-1days",
+              "train_mae": 33.319,
+              "train_primary": 33.319,
+              "rank": 2,
+              "corr_with_kept": {
+                "naive_h1_seasonal_median_w4": 0.9355,
+                "naive_h1_seasonal_median_w26": 0.979
+              },
+              "selected_by": "train_search",
+              "protected": true,
+              "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows."
+            },
+            {
+              "horizon": 1,
+              "column_name": "naive_h1_seasonal_median_w26",
+              "rule": "seasonal median w=26 same-DOW at origin D-1",
+              "formula": "median(ts[dayofweek==target_dow].iloc[-26:]); O=D-1days",
+              "train_mae": 34.115,
+              "train_primary": 34.115,
+              "rank": 3,
+              "corr_with_kept": {
+                "naive_h1_seasonal_median_w4": 0.9112,
+                "naive_h1_seasonal_median_w13": 0.979
+              },
+              "selected_by": "train_search",
+              "protected": true,
+              "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows."
+            }
+          ],
+          "7": [
+            {
+              "horizon": 7,
+              "column_name": "naive_h7_seasonal_median_w4",
+              "rule": "seasonal median w=4 same-DOW at origin D-7",
+              "formula": "median(ts[dayofweek==target_dow].iloc[-4:]); O=D-7days",
+              "train_mae": 34.792,
+              "train_primary": 34.792,
+              "rank": 1,
+              "corr_with_kept": {
+                "naive_h7_seasonal_median_w13": 0.9351,
+                "naive_h7_seasonal_median_w26": 0.9106
+              },
+              "selected_by": "part_a_winner",
+              "protected": true,
+              "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows."
+            },
+            {
+              "horizon": 7,
+              "column_name": "naive_h7_seasonal_median_w13",
+              "rule": "seasonal median w=13 same-DOW at origin D-7",
+              "formula": "median(ts[dayofweek==target_dow].iloc[-13:]); O=D-7days",
+              "train_mae": 33.321,
+              "train_primary": 33.321,
+              "rank": 2,
+              "corr_with_kept": {
+                "naive_h7_seasonal_median_w4": 0.9351,
+                "naive_h7_seasonal_median_w26": 0.9788
+              },
+              "selected_by": "train_search",
+              "protected": true,
+              "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows."
+            },
+            {
+              "horizon": 7,
+              "column_name": "naive_h7_seasonal_median_w26",
+              "rule": "seasonal median w=26 same-DOW at origin D-7",
+              "formula": "median(ts[dayofweek==target_dow].iloc[-26:]); O=D-7days",
+              "train_mae": 34.119,
+              "train_primary": 34.119,
+              "rank": 3,
+              "corr_with_kept": {
+                "naive_h7_seasonal_median_w4": 0.9106,
+                "naive_h7_seasonal_median_w13": 0.9788
+              },
+              "selected_by": "train_search",
+              "protected": true,
+              "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows."
+            }
+          ],
+          "14": [
+            {
+              "horizon": 14,
+              "column_name": "naive_h14_seasonal_median_w4",
+              "rule": "seasonal median w=4 same-DOW at origin D-14",
+              "formula": "median(ts[dayofweek==target_dow].iloc[-4:]); O=D-14days",
+              "train_mae": 36.279,
+              "train_primary": 36.279,
+              "rank": 1,
+              "corr_with_kept": {
+                "naive_h14_seasonal_median_w13": 0.9347,
+                "naive_h14_seasonal_median_w26": 0.9102
+              },
+              "selected_by": "part_a_winner",
+              "protected": true,
+              "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows."
+            },
+            {
+              "horizon": 14,
+              "column_name": "naive_h14_seasonal_median_w13",
+              "rule": "seasonal median w=13 same-DOW at origin D-14",
+              "formula": "median(ts[dayofweek==target_dow].iloc[-13:]); O=D-14days",
+              "train_mae": 33.973,
+              "train_primary": 33.973,
+              "rank": 2,
+              "corr_with_kept": {
+                "naive_h14_seasonal_median_w4": 0.9347,
+                "naive_h14_seasonal_median_w26": 0.979
+              },
+              "selected_by": "train_search",
+              "protected": true,
+              "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows."
+            },
+            {
+              "horizon": 14,
+              "column_name": "naive_h14_seasonal_median_w26",
+              "rule": "seasonal median w=26 same-DOW at origin D-14",
+              "formula": "median(ts[dayofweek==target_dow].iloc[-26:]); O=D-14days",
+              "train_mae": 34.518,
+              "train_primary": 34.518,
+              "rank": 3,
+              "corr_with_kept": {
+                "naive_h14_seasonal_median_w4": 0.9102,
+                "naive_h14_seasonal_median_w13": 0.979
+              },
+              "selected_by": "train_search",
+              "protected": true,
+              "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows."
+            }
+          ],
+          "30": [
+            {
+              "horizon": 30,
+              "column_name": "naive_h30_seasonal_median_w4",
+              "rule": "seasonal median w=4 same-DOW at origin D-30",
+              "formula": "median(ts[dayofweek==target_dow].iloc[-4:]); O=D-30days",
+              "train_mae": 37.8,
+              "train_primary": 37.8,
+              "rank": 1,
+              "corr_with_kept": {
+                "naive_h30_seasonal_median_w26": 0.9116,
+                "naive_h30_seasonal_median_w8": 0.9545
+              },
+              "selected_by": "part_a_winner",
+              "protected": true,
+              "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows."
+            },
+            {
+              "horizon": 30,
+              "column_name": "naive_h30_seasonal_median_w26",
+              "rule": "seasonal median w=26 same-DOW at origin D-30",
+              "formula": "median(ts[dayofweek==target_dow].iloc[-26:]); O=D-30days",
+              "train_mae": 35.296,
+              "train_primary": 35.296,
+              "rank": 2,
+              "corr_with_kept": {
+                "naive_h30_seasonal_median_w4": 0.9116,
+                "naive_h30_seasonal_median_w8": 0.9576
+              },
+              "selected_by": "train_search",
+              "protected": true,
+              "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows."
+            },
+            {
+              "horizon": 30,
+              "column_name": "naive_h30_seasonal_median_w8",
+              "rule": "seasonal median w=8 same-DOW at origin D-30",
+              "formula": "median(ts[dayofweek==target_dow].iloc[-8:]); O=D-30days",
+              "train_mae": 35.477,
+              "train_primary": 35.477,
+              "rank": 3,
+              "corr_with_kept": {
+                "naive_h30_seasonal_median_w4": 0.9545,
+                "naive_h30_seasonal_median_w26": 0.9576
+              },
+              "selected_by": "train_search",
+              "protected": true,
+              "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows."
+            }
+          ],
+          "60": [
+            {
+              "horizon": 60,
+              "column_name": "naive_h60_seasonal_median_w26",
+              "rule": "seasonal median w=26 same-DOW at origin D-60",
+              "formula": "median(ts[dayofweek==target_dow].iloc[-26:]); O=D-60days",
+              "train_mae": 36.308,
+              "train_primary": 36.308,
+              "rank": 1,
+              "corr_with_kept": {
+                "naive_h60_seasonal_mean_w52": 0.9772,
+                "naive_h60_seasonal_median_w8": 0.9608
+              },
+              "selected_by": "part_a_winner",
+              "protected": true,
+              "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows."
+            },
+            {
+              "horizon": 60,
+              "column_name": "naive_h60_seasonal_mean_w52",
+              "rule": "seasonal mean w=52 same-DOW at origin D-60",
+              "formula": "mean(ts[dayofweek==target_dow].iloc[-52:]); O=D-60days",
+              "train_mae": 36.756,
+              "train_primary": 36.756,
+              "rank": 2,
+              "corr_with_kept": {
+                "naive_h60_seasonal_median_w26": 0.9772,
+                "naive_h60_seasonal_median_w8": 0.9439
+              },
+              "selected_by": "train_search",
+              "protected": true,
+              "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows."
+            },
+            {
+              "horizon": 60,
+              "column_name": "naive_h60_seasonal_median_w8",
+              "rule": "seasonal median w=8 same-DOW at origin D-60",
+              "formula": "median(ts[dayofweek==target_dow].iloc[-8:]); O=D-60days",
+              "train_mae": 37.186,
+              "train_primary": 37.186,
+              "rank": 3,
+              "corr_with_kept": {
+                "naive_h60_seasonal_median_w26": 0.9608,
+                "naive_h60_seasonal_mean_w52": 0.9439
+              },
+              "selected_by": "train_search",
+              "protected": true,
+              "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows."
+            }
+          ],
+          "90": [
+            {
+              "horizon": 90,
+              "column_name": "naive_h90_seasonal_median_w26",
+              "rule": "seasonal median w=26 same-DOW at origin D-90",
+              "formula": "median(ts[dayofweek==target_dow].iloc[-26:]); O=D-90days",
+              "train_mae": 36.915,
+              "train_primary": 36.915,
+              "rank": 1,
+              "corr_with_kept": {
+                "naive_h90_seasonal_mean_w52": 0.9776,
+                "naive_h90_seasonal_mean_w13": 0.9669
+              },
+              "selected_by": "part_a_winner",
+              "protected": true,
+              "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows."
+            },
+            {
+              "horizon": 90,
+              "column_name": "naive_h90_seasonal_mean_w52",
+              "rule": "seasonal mean w=52 same-DOW at origin D-90",
+              "formula": "mean(ts[dayofweek==target_dow].iloc[-52:]); O=D-90days",
+              "train_mae": 37.35,
+              "train_primary": 37.35,
+              "rank": 2,
+              "corr_with_kept": {
+                "naive_h90_seasonal_median_w26": 0.9776,
+                "naive_h90_seasonal_mean_w13": 0.961
+              },
+              "selected_by": "train_search",
+              "protected": true,
+              "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows."
+            },
+            {
+              "horizon": 90,
+              "column_name": "naive_h90_seasonal_mean_w13",
+              "rule": "seasonal mean w=13 same-DOW at origin D-90",
+              "formula": "mean(ts[dayofweek==target_dow].iloc[-13:]); O=D-90days",
+              "train_mae": 37.873,
+              "train_primary": 37.873,
+              "rank": 3,
+              "corr_with_kept": {
+                "naive_h90_seasonal_median_w26": 0.9669,
+                "naive_h90_seasonal_mean_w52": 0.961
+              },
+              "selected_by": "train_search",
+              "protected": true,
+              "zero_handling": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows."
+            }
+          ]
+        },
+        "why": "FE must materialise these columns exactly. Protected \u2014 may NOT be dropped without user approval.",
+        "must_not_change": true
+      },
+      "protected_features": {
+        "value": [
+          {
+            "column": "naive_h1_seasonal_median_w4",
+            "reason": "naive predictor selected for h=1 (baseline iteration 004)",
+            "protected_since_iteration": 4,
+            "horizon": 1
+          },
+          {
+            "column": "naive_h1_seasonal_median_w13",
+            "reason": "naive predictor selected for h=1 (baseline iteration 004)",
+            "protected_since_iteration": 4,
+            "horizon": 1
+          },
+          {
+            "column": "naive_h1_seasonal_median_w26",
+            "reason": "naive predictor selected for h=1 (baseline iteration 004)",
+            "protected_since_iteration": 4,
+            "horizon": 1
+          },
+          {
+            "column": "naive_h7_seasonal_median_w4",
+            "reason": "naive predictor selected for h=7 (baseline iteration 004)",
+            "protected_since_iteration": 4,
+            "horizon": 7
+          },
+          {
+            "column": "naive_h7_seasonal_median_w13",
+            "reason": "naive predictor selected for h=7 (baseline iteration 004)",
+            "protected_since_iteration": 4,
+            "horizon": 7
+          },
+          {
+            "column": "naive_h7_seasonal_median_w26",
+            "reason": "naive predictor selected for h=7 (baseline iteration 004)",
+            "protected_since_iteration": 4,
+            "horizon": 7
+          },
+          {
+            "column": "naive_h14_seasonal_median_w4",
+            "reason": "naive predictor selected for h=14 (baseline iteration 004)",
+            "protected_since_iteration": 4,
+            "horizon": 14
+          },
+          {
+            "column": "naive_h14_seasonal_median_w13",
+            "reason": "naive predictor selected for h=14 (baseline iteration 004)",
+            "protected_since_iteration": 4,
+            "horizon": 14
+          },
+          {
+            "column": "naive_h14_seasonal_median_w26",
+            "reason": "naive predictor selected for h=14 (baseline iteration 004)",
+            "protected_since_iteration": 4,
+            "horizon": 14
+          },
+          {
+            "column": "naive_h30_seasonal_median_w4",
+            "reason": "naive predictor selected for h=30 (baseline iteration 004)",
+            "protected_since_iteration": 4,
+            "horizon": 30
+          },
+          {
+            "column": "naive_h30_seasonal_median_w26",
+            "reason": "naive predictor selected for h=30 (baseline iteration 004)",
+            "protected_since_iteration": 4,
+            "horizon": 30
+          },
+          {
+            "column": "naive_h30_seasonal_median_w8",
+            "reason": "naive predictor selected for h=30 (baseline iteration 004)",
+            "protected_since_iteration": 4,
+            "horizon": 30
+          },
+          {
+            "column": "naive_h60_seasonal_median_w26",
+            "reason": "naive predictor selected for h=60 (baseline iteration 004)",
+            "protected_since_iteration": 4,
+            "horizon": 60
+          },
+          {
+            "column": "naive_h60_seasonal_mean_w52",
+            "reason": "naive predictor selected for h=60 (baseline iteration 004)",
+            "protected_since_iteration": 4,
+            "horizon": 60
+          },
+          {
+            "column": "naive_h60_seasonal_median_w8",
+            "reason": "naive predictor selected for h=60 (baseline iteration 004)",
+            "protected_since_iteration": 4,
+            "horizon": 60
+          },
+          {
+            "column": "naive_h90_seasonal_median_w26",
+            "reason": "naive predictor selected for h=90 (baseline iteration 004)",
+            "protected_since_iteration": 4,
+            "horizon": 90
+          },
+          {
+            "column": "naive_h90_seasonal_mean_w52",
+            "reason": "naive predictor selected for h=90 (baseline iteration 004)",
+            "protected_since_iteration": 4,
+            "horizon": 90
+          },
+          {
+            "column": "naive_h90_seasonal_mean_w13",
+            "reason": "naive predictor selected for h=90 (baseline iteration 004)",
+            "protected_since_iteration": 4,
+            "horizon": 90
+          }
+        ],
+        "why": "Every subsequent FE, Training, and Diagnosis call must respect these.",
+        "must_not_change": true
+      },
+      "seasonal_period_P": {
+        "value": 7,
+        "why": "Weekly seasonal period",
+        "must_not_change": true
+      },
+      "seasonal_window_S": {
+        "value": 52,
+        "why": "Season-slot window for median/mean rules",
+        "must_not_change": true
+      },
+      "zero_handling": {
+        "value": "zeros included as valid observations \u2014 recorded trading days with zero demand (closures, public holidays). Season-slot statistics include zero-demand rows.",
+        "must_not_change": true,
+        "why": "Closure/zero policy consistent across nodes"
+      }
+    },
+    "durable_rules": [
+      {
+        "rule": "Every learned model must report MAE vs baseline_floor PER HORIZON before any stop decision.",
+        "why": "A model below the naive floor is worse than doing nothing.",
+        "applies_to": [
+          "training",
+          "diagnosis",
+          "end_model"
+        ],
+        "cost_if_broken": "A deployed model that loses to a trivial rule goes undetected."
+      },
+      {
+        "rule": "naive_predictor_features must be materialised in every FE call: exact column names, exact formulas, horizon-scoped.",
+        "why": "These are the run's guaranteed floor-level signal.",
+        "applies_to": [
+          "feature_engineering"
+        ],
+        "cost_if_broken": "Feature set missing the floor-level anchor."
+      },
+      {
+        "rule": "A node proposing to DROP any column in protected_features MUST raise a BLOCKING clarification and NOT drop on its own.",
+        "why": "Naive predictor columns score near-zero in masked importance and flag in multicollinearity \u2014 known artefacts.",
+        "applies_to": [
+          "feature_engineering",
+          "training",
+          "diagnosis"
+        ],
+        "cost_if_broken": "Naive predictor silently removed."
+      }
+    ],
+    "methodological_cautions": [
+      {
+        "caution": "h=90 floor (pooled 3 folds, n=257) is modest.",
+        "why": "Dataset ends 2020-12-31; origins for h=90 are early in the gap.",
+        "cost_if_ignored": "h=90 champion selection based on fold-3 alone = 5 rows (random)."
+      },
+      {
+        "caution": "Monday (DOW=0) has only 5 training observations post-regime (June 2020). Seasonal lookbacks for Mondays include pre-regime zero rows, biasing seasonal statistics downward.",
+        "why": "Pre-regime Mondays are closed (zero demand); the seasonal window w=52 will include ~47 zero-demand pre-regime Mondays for any post-regime Monday origin.",
+        "cost_if_ignored": "seasonal_mean_w52 is severely biased for Monday targets; FE must include regime_x_monday feature."
+      }
+    ],
+    "do_not_repeat": [
+      {
+        "tried": "Restricting Part A to only 6 fixed rules",
+        "outcome": "rejected",
+        "evidence": "Part B showed shorter windows (smedian_w13) have substantially lower train MAE; expanding Part A to the same grid finds better floor rules.",
+        "why_not_again": "6 rules is an arbitrary restriction that misses better trivial predictors."
+      },
+      {
+        "tried": "Scoring h=90 baseline on fold 3 alone",
+        "outcome": "rejected",
+        "evidence": "Fold 3 has only 5 scoreable h=90 val rows; SE of MAE is ~45% of mean.",
+        "why_not_again": "5 rows insufficient for reliable MAE estimation."
+      }
+    ],
+    "content_carried_forward": {
+      "baseline_floor_per_horizon": {
+        "1": {
+          "winner": "smedian_4",
+          "winner_mae": 31.263,
+          "n": 95
+        },
+        "7": {
+          "winner": "smedian_4",
+          "winner_mae": 31.263,
+          "n": 95
+        },
+        "14": {
+          "winner": "smedian_4",
+          "winner_mae": 32.846,
+          "n": 95
+        },
+        "30": {
+          "winner": "smedian_4",
+          "winner_mae": 35.913,
+          "n": 95
+        },
+        "60": {
+          "winner": "smedian_26",
+          "winner_mae": 40.042,
+          "n": 95
+        },
+        "90": {
+          "winner": "smedian_26",
+          "winner_mae": 42.143,
+          "n": 257
+        }
+      },
+      "naive_predictor_features_all_horizons": {
+        "1": [
+          {
+            "column_name": "naive_h1_seasonal_median_w4",
+            "rule": "seasonal median w=4 same-DOW at origin D-1",
+            "formula": "median(ts[dayofweek==target_dow].iloc[-4:]); O=D-1days",
+            "train_mae": 34.789,
+            "selected_by": "part_a_winner",
+            "protected": true
+          },
+          {
+            "column_name": "naive_h1_seasonal_median_w13",
+            "rule": "seasonal median w=13 same-DOW at origin D-1",
+            "formula": "median(ts[dayofweek==target_dow].iloc[-13:]); O=D-1days",
+            "train_mae": 33.319,
+            "selected_by": "train_search",
+            "protected": true
+          },
+          {
+            "column_name": "naive_h1_seasonal_median_w26",
+            "rule": "seasonal median w=26 same-DOW at origin D-1",
+            "formula": "median(ts[dayofweek==target_dow].iloc[-26:]); O=D-1days",
+            "train_mae": 34.115,
+            "selected_by": "train_search",
+            "protected": true
+          }
+        ],
+        "7": [
+          {
+            "column_name": "naive_h7_seasonal_median_w4",
+            "rule": "seasonal median w=4 same-DOW at origin D-7",
+            "formula": "median(ts[dayofweek==target_dow].iloc[-4:]); O=D-7days",
+            "train_mae": 34.792,
+            "selected_by": "part_a_winner",
+            "protected": true
+          },
+          {
+            "column_name": "naive_h7_seasonal_median_w13",
+            "rule": "seasonal median w=13 same-DOW at origin D-7",
+            "formula": "median(ts[dayofweek==target_dow].iloc[-13:]); O=D-7days",
+            "train_mae": 33.321,
+            "selected_by": "train_search",
+            "protected": true
+          },
+          {
+            "column_name": "naive_h7_seasonal_median_w26",
+            "rule": "seasonal median w=26 same-DOW at origin D-7",
+            "formula": "median(ts[dayofweek==target_dow].iloc[-26:]); O=D-7days",
+            "train_mae": 34.119,
+            "selected_by": "train_search",
+            "protected": true
+          }
+        ],
+        "14": [
+          {
+            "column_name": "naive_h14_seasonal_median_w4",
+            "rule": "seasonal median w=4 same-DOW at origin D-14",
+            "formula": "median(ts[dayofweek==target_dow].iloc[-4:]); O=D-14days",
+            "train_mae": 36.279,
+            "selected_by": "part_a_winner",
+            "protected": true
+          },
+          {
+            "column_name": "naive_h14_seasonal_median_w13",
+            "rule": "seasonal median w=13 same-DOW at origin D-14",
+            "formula": "median(ts[dayofweek==target_dow].iloc[-13:]); O=D-14days",
+            "train_mae": 33.973,
+            "selected_by": "train_search",
+            "protected": true
+          },
+          {
+            "column_name": "naive_h14_seasonal_median_w26",
+            "rule": "seasonal median w=26 same-DOW at origin D-14",
+            "formula": "median(ts[dayofweek==target_dow].iloc[-26:]); O=D-14days",
+            "train_mae": 34.518,
+            "selected_by": "train_search",
+            "protected": true
+          }
+        ],
+        "30": [
+          {
+            "column_name": "naive_h30_seasonal_median_w4",
+            "rule": "seasonal median w=4 same-DOW at origin D-30",
+            "formula": "median(ts[dayofweek==target_dow].iloc[-4:]); O=D-30days",
+            "train_mae": 37.8,
+            "selected_by": "part_a_winner",
+            "protected": true
+          },
+          {
+            "column_name": "naive_h30_seasonal_median_w26",
+            "rule": "seasonal median w=26 same-DOW at origin D-30",
+            "formula": "median(ts[dayofweek==target_dow].iloc[-26:]); O=D-30days",
+            "train_mae": 35.296,
+            "selected_by": "train_search",
+            "protected": true
+          },
+          {
+            "column_name": "naive_h30_seasonal_median_w8",
+            "rule": "seasonal median w=8 same-DOW at origin D-30",
+            "formula": "median(ts[dayofweek==target_dow].iloc[-8:]); O=D-30days",
+            "train_mae": 35.477,
+            "selected_by": "train_search",
+            "protected": true
+          }
+        ],
+        "60": [
+          {
+            "column_name": "naive_h60_seasonal_median_w26",
+            "rule": "seasonal median w=26 same-DOW at origin D-60",
+            "formula": "median(ts[dayofweek==target_dow].iloc[-26:]); O=D-60days",
+            "train_mae": 36.308,
+            "selected_by": "part_a_winner",
+            "protected": true
+          },
+          {
+            "column_name": "naive_h60_seasonal_mean_w52",
+            "rule": "seasonal mean w=52 same-DOW at origin D-60",
+            "formula": "mean(ts[dayofweek==target_dow].iloc[-52:]); O=D-60days",
+            "train_mae": 36.756,
+            "selected_by": "train_search",
+            "protected": true
+          },
+          {
+            "column_name": "naive_h60_seasonal_median_w8",
+            "rule": "seasonal median w=8 same-DOW at origin D-60",
+            "formula": "median(ts[dayofweek==target_dow].iloc[-8:]); O=D-60days",
+            "train_mae": 37.186,
+            "selected_by": "train_search",
+            "protected": true
+          }
+        ],
+        "90": [
+          {
+            "column_name": "naive_h90_seasonal_median_w26",
+            "rule": "seasonal median w=26 same-DOW at origin D-90",
+            "formula": "median(ts[dayofweek==target_dow].iloc[-26:]); O=D-90days",
+            "train_mae": 36.915,
+            "selected_by": "part_a_winner",
+            "protected": true
+          },
+          {
+            "column_name": "naive_h90_seasonal_mean_w52",
+            "rule": "seasonal mean w=52 same-DOW at origin D-90",
+            "formula": "mean(ts[dayofweek==target_dow].iloc[-52:]); O=D-90days",
+            "train_mae": 37.35,
+            "selected_by": "train_search",
+            "protected": true
+          },
+          {
+            "column_name": "naive_h90_seasonal_mean_w13",
+            "rule": "seasonal mean w=13 same-DOW at origin D-90",
+            "formula": "mean(ts[dayofweek==target_dow].iloc[-13:]); O=D-90days",
+            "train_mae": 37.873,
+            "selected_by": "train_search",
+            "protected": true
+          }
+        ]
+      },
+      "protected_features": [
+        {
+          "column": "naive_h1_seasonal_median_w4",
+          "reason": "naive predictor selected for h=1 (baseline iteration 004)",
+          "protected_since_iteration": 4,
+          "horizon": 1
+        },
+        {
+          "column": "naive_h1_seasonal_median_w13",
+          "reason": "naive predictor selected for h=1 (baseline iteration 004)",
+          "protected_since_iteration": 4,
+          "horizon": 1
+        },
+        {
+          "column": "naive_h1_seasonal_median_w26",
+          "reason": "naive predictor selected for h=1 (baseline iteration 004)",
+          "protected_since_iteration": 4,
+          "horizon": 1
+        },
+        {
+          "column": "naive_h7_seasonal_median_w4",
+          "reason": "naive predictor selected for h=7 (baseline iteration 004)",
+          "protected_since_iteration": 4,
+          "horizon": 7
+        },
+        {
+          "column": "naive_h7_seasonal_median_w13",
+          "reason": "naive predictor selected for h=7 (baseline iteration 004)",
+          "protected_since_iteration": 4,
+          "horizon": 7
+        },
+        {
+          "column": "naive_h7_seasonal_median_w26",
+          "reason": "naive predictor selected for h=7 (baseline iteration 004)",
+          "protected_since_iteration": 4,
+          "horizon": 7
+        },
+        {
+          "column": "naive_h14_seasonal_median_w4",
+          "reason": "naive predictor selected for h=14 (baseline iteration 004)",
+          "protected_since_iteration": 4,
+          "horizon": 14
+        },
+        {
+          "column": "naive_h14_seasonal_median_w13",
+          "reason": "naive predictor selected for h=14 (baseline iteration 004)",
+          "protected_since_iteration": 4,
+          "horizon": 14
+        },
+        {
+          "column": "naive_h14_seasonal_median_w26",
+          "reason": "naive predictor selected for h=14 (baseline iteration 004)",
+          "protected_since_iteration": 4,
+          "horizon": 14
+        },
+        {
+          "column": "naive_h30_seasonal_median_w4",
+          "reason": "naive predictor selected for h=30 (baseline iteration 004)",
+          "protected_since_iteration": 4,
+          "horizon": 30
+        },
+        {
+          "column": "naive_h30_seasonal_median_w26",
+          "reason": "naive predictor selected for h=30 (baseline iteration 004)",
+          "protected_since_iteration": 4,
+          "horizon": 30
+        },
+        {
+          "column": "naive_h30_seasonal_median_w8",
+          "reason": "naive predictor selected for h=30 (baseline iteration 004)",
+          "protected_since_iteration": 4,
+          "horizon": 30
+        },
+        {
+          "column": "naive_h60_seasonal_median_w26",
+          "reason": "naive predictor selected for h=60 (baseline iteration 004)",
+          "protected_since_iteration": 4,
+          "horizon": 60
+        },
+        {
+          "column": "naive_h60_seasonal_mean_w52",
+          "reason": "naive predictor selected for h=60 (baseline iteration 004)",
+          "protected_since_iteration": 4,
+          "horizon": 60
+        },
+        {
+          "column": "naive_h60_seasonal_median_w8",
+          "reason": "naive predictor selected for h=60 (baseline iteration 004)",
+          "protected_since_iteration": 4,
+          "horizon": 60
+        },
+        {
+          "column": "naive_h90_seasonal_median_w26",
+          "reason": "naive predictor selected for h=90 (baseline iteration 004)",
+          "protected_since_iteration": 4,
+          "horizon": 90
+        },
+        {
+          "column": "naive_h90_seasonal_mean_w52",
+          "reason": "naive predictor selected for h=90 (baseline iteration 004)",
+          "protected_since_iteration": 4,
+          "horizon": 90
+        },
+        {
+          "column": "naive_h90_seasonal_mean_w13",
+          "reason": "naive predictor selected for h=90 (baseline iteration 004)",
+          "protected_since_iteration": 4,
+          "horizon": 90
+        }
+      ],
+      "f3_train_mean": 317.6798,
+      "seasonal_period_P": 7,
+      "seasonal_window_S": 52
+    }
+  }
+}

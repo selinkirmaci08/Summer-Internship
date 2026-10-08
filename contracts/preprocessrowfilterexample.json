@@ -1,0 +1,70 @@
+{
+  "note": "Reference example for row filtering — based on the actual bread-demand dataset run where EDA flagged 350 anomalous low-order-count rows as likely non-representative, raised it as a blocking clarification, and the user confirmed they should be excluded. This authorization is what allows Preprocess to filter here — it never infers this from EDA's flags alone.",
+  "input": {
+    "dataset_path": "data/aernoudt_bread_daily_all_years.csv",
+    "target_column": "bread_quantity",
+    "features_to_process": [],
+    "mode": "initial",
+    "mode_reasoning": "first Preprocess call for this dataset — this call handles row filtering and split creation before any feature-level work begins",
+    "context": [
+      {
+        "type": "previous_step",
+        "source_node": "eda",
+        "source_iteration": 1,
+        "content": {
+          "recommended_strategy": {
+            "narrative": "Exclude the 350 anomalous low-order-count rows (num_orders<10) before training — they are not genuine trading days. Drop num_items_sold, non_bread_quantity, and bread_revenue as features (mechanically tied to the target). day_of_week is a genuine, non-leaky predictor worth engineering directly.",
+            "confidence": "high"
+          },
+          "key_findings": [
+            "350/3809 rows (9.2%) are anomalous low-order-count records confined entirely to 2015-2023, coinciding exactly with a schema migration — strongly suggesting a system artifact, not real trading behavior"
+          ],
+          "limitations": []
+        }
+      }
+    ],
+    "rows_to_filter": [
+      {
+        "condition": "num_orders < 10",
+        "reason": "confirmed by user clarification (iteration 1, clarification_needed) to be non-representative records (system-migration artifact), not genuine trading days",
+        "source": "eda iteration 1 data_quality_issues.out_of_range_values (num_orders)"
+      }
+    ],
+    "already_processed": [],
+    "iteration": 2
+  },
+  "output": {
+    "schema_version": "2026-08-13",
+    "processed_dataset_path": "data/iteration_002_preprocess.csv",
+    "rows_filtered": [
+      {
+        "condition": "num_orders < 10",
+        "rows_removed": 350,
+        "rows_remaining": 3459,
+        "reason": "confirmed non-representative records (system-migration artifact per user clarification) — removing them before the split so neither train nor validation rows include this anomalous cluster"
+      }
+    ],
+    "split_info": {
+      "created_this_call": true,
+      "method": "time_based",
+      "train_pct": 80,
+      "validation_pct": 20,
+      "note": "time-series task (per EDA feasibility) — split is chronological two-way (earliest 80% of remaining rows as train, most recent 20% as validation), not random, so evaluation reflects genuine forecasting rather than interpolation. validation is reused each iteration for Diagnosis's evidence. There is no test partition: the held-out data was removed before this run began and is scored after the pipeline finishes. Created after row filtering, so the anomalous rows never entered either split."
+    },
+    "transformations_applied": [],
+    "encoding_applied": [],
+    "dropped_columns": [],
+    "post_transform_stats": [],
+    "clarification_needed": [],
+    "issues": [],
+    "artifact_paths": {
+      "plots": [
+        {
+          "path": "artifacts/preprocess/iteration_002_preprocess_row_filter_before_after.png",
+          "data_path": "artifacts/preprocess/iteration_002_preprocess_row_filter_before_after.csv",
+          "reason": "verify the target distribution after removing the anomalous cluster looks like genuine trading-day demand, not a mix of two populations"
+        }
+      ]
+    }
+  }
+}

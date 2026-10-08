@@ -1,0 +1,66 @@
+{
+  "iteration": 19,
+  "node": "feature_engineering",
+  "timestamp": "2026-09-09",
+  "schema_version": "2026-09-04",
+  "type": "feature_engineering_4",
+  "summary": "FE iteration 4. Added 11 new features from iter002 domain research that were never included: official Belgian/Flemish public holidays (is_official_public_holiday, is_day_before_holiday), all Flemish school holiday periods (herfstvakantie, kerstvakantie, krokusvakantie, paasvakantie, zomervakantie), Gentse Feesten, and short lag features (bread_lag_1d, bread_lag_2d, bread_lag_3d). Output: iteration_019_feature_engineering.csv (2897 x 90 cols). Herfstvakantie, Kerstvakantie, and official holidays appear directly in the fold-3 val period (Sep-Dec 2020), making them immediately testable.",
+  "new_features": [
+    "is_official_public_holiday",
+    "is_day_before_holiday",
+    "is_herfstvakantie",
+    "is_kerstvakantie",
+    "is_krokusvakantie",
+    "is_paasvakantie",
+    "is_zomervakantie",
+    "is_gentse_feesten",
+    "bread_lag_1d",
+    "bread_lag_2d",
+    "bread_lag_3d"
+  ],
+  "val_period_coverage": {
+    "fold3_val_herfstvakantie_rows": 7,
+    "fold3_val_kerstvakantie_rows": 11,
+    "fold3_val_official_holiday_rows": 3,
+    "note": "Herfstvakantie and Kerstvakantie periods fall directly in all 3 fold val periods (Sep-Dec). Official holidays Nov 1, Nov 11, Dec 25 all appear in fold-3 val."
+  },
+  "output_csv": "iteration_019_feature_engineering.csv",
+  "handoff": {
+    "written_by": "feature_engineering",
+    "iteration": 19,
+    "context_clearable": true,
+    "read_this_first": "New FE CSV is iteration_019_feature_engineering.csv with 90 columns. All models in iter020 must use this new CSV. Key new features: is_official_public_holiday, is_herfstvakantie, is_kerstvakantie, bread_lag_1d/2d/3d. These appear in fold-3 val so they are directly testable.",
+    "parameters": {
+      "fe_csv": "data/iteration_019_feature_engineering.csv",
+      "new_feature_count": 11,
+      "total_cols": 90
+    },
+    "durable_rules": [
+      {
+        "rule": "All training from iter020 onward uses iteration_019_feature_engineering.csv (90 cols), not iter012 (79 cols).",
+        "why": "11 domain-recommended features added, including holiday and school break features directly in the val period.",
+        "applies_to": [
+          "training",
+          "end_model"
+        ]
+      }
+    ],
+    "do_not_repeat": [],
+    "content_carried_forward": {
+      "fe_csv_path": "data/iteration_019_feature_engineering.csv",
+      "new_features": [
+        "is_official_public_holiday",
+        "is_day_before_holiday",
+        "is_herfstvakantie",
+        "is_kerstvakantie",
+        "is_krokusvakantie",
+        "is_paasvakantie",
+        "is_zomervakantie",
+        "is_gentse_feesten",
+        "bread_lag_1d",
+        "bread_lag_2d",
+        "bread_lag_3d"
+      ]
+    }
+  }
+}

@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>element61 · Evaluation · Iteration 029</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Open+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+    :root {
+      --e61-orange-red: #FC5B00;
+      --e61-orange:     #FC9808;
+      --e61-yellow:     #FCBA08;
+      --e61-magenta:    #9D1D56;
+      --e61-purple:     #301D56;
+      --e61-ink:        #1A1230;
+      --e61-ink-2:      #301D56;
+      --e61-ink-3:      #5B5070;
+      --e61-ink-4:      #8B8298;
+      --e61-line:       #E6E2EC;
+      --e61-line-2:     #D8D2E0;
+      --e61-surface:    #FFFFFF;
+      --e61-bg:         #FAF8F5;
+      --e61-bg-warm:    #FFF6EC;
+      --e61-bg-cool:    #F2EEF6;
+      --e61-success:    #2F8F5C;
+      --e61-warning:    #FCBA08;
+      --e61-danger:     #C0294A;
+      --e61-info:       #2F6BB3;
+      --font-display:   "Montserrat", "Helvetica Neue", system-ui, sans-serif;
+      --font-body:      "Open Sans", "Helvetica Neue", Arial, system-ui, sans-serif;
+      --font-mono:      "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+      --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-5:24px;
+      --space-6:32px; --space-7:48px;
+      --radius-sm:4px; --radius-md:8px; --radius-lg:14px; --radius-xl:22px; --radius-pill:999px;
+      --shadow-1: 0 1px 2px rgba(48,29,86,.06), 0 1px 1px rgba(48,29,86,.04);
+      --shadow-2: 0 4px 16px rgba(48,29,86,.08), 0 1px 2px rgba(48,29,86,.04);
+      --shadow-3: 0 10px 28px rgba(48,29,86,.12), 0 2px 6px rgba(48,29,86,.06);
+      --shadow-focus: 0 0 0 3px rgba(252,91,0,.28);
+      --ease-standard: cubic-bezier(0.2, 0.7, 0.2, 1);
+      --dur-fast: 120ms;
+      --dur-base: 200ms;
+      --accent: #FC9808;
+    }
+
+    /* ── RESET & SHELL ── */
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--e61-bg);color:var(--e61-ink-2);
+      font-family:var(--font-body);line-height:1.6;
+      scroll-snap-type:y proximity;height:100%;overflow-y:auto;scroll-behavior:smooth}
+    h1,h2,h3,h4{font-family:var(--font-display);color:var(--e61-ink);margin:0 0 .5em;font-weight:700;text-wrap:balance}
+    p{margin:0 0 1em}
+    a{color:var(--e61-orange-red)}
+    .mono{font-family:var(--font-mono)}
+    img{max-width:100%;display:block}
+
+    /* ── TOP BAR ── */
+    .topbar{position:fixed;top:0;left:0;right:0;height:3px;background:var(--e61-line);z-index:201}
+    .topbar-fill{height:100%;background:linear-gradient(135deg,var(--e61-yellow) 0%,var(--e61-orange) 50%,var(--e61-orange-red) 100%);
+      width:0;transition:width .25s}
+
+    /* ── DOT NAV ── */
+    .dotnav{position:fixed;right:20px;top:50%;transform:translateY(-50%);display:flex;
+      flex-direction:column;gap:9px;z-index:200}
+    .dotnav button{width:9px;height:9px;border-radius:50%;border:none;background:var(--e61-line-2);
+      cursor:pointer;padding:0;transition:background .2s,transform .2s}
+    .dotnav button.active{background:var(--accent);transform:scale(1.5)}
+    .dotnav button:hover{background:var(--e61-orange)}
+
+    /* ── NAVBAR ── */
+    .navbar{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);display:flex;
+      align-items:center;gap:14px;background:rgba(26,18,48,.88);backdrop-filter:blur(6px);
+      border-radius:999px;padding:9px 18px;z-index:200;box-shadow:var(--shadow-3)}
+    .navbar button{background:none;border:none;color:#fff;font-size:1rem;cursor:pointer;width:30px;
+      height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+      transition:background .15s}
+    .navbar button:hover{background:rgba(255,255,255,.15)}
+    .navbar button:disabled{opacity:.3;cursor:default}
+    .navbar .counter{font-family:var(--font-mono);font-size:.72rem;color:rgba(255,255,255,.85);
+      min-width:52px;text-align:center}
+
+    /* ── SLIDES ── */
+    .cover{min-height:100vh;scroll-snap-align:start;background:var(--e61-bg);color:var(--e61-ink);
+      display:flex;flex-direction:column;justify-content:center;padding:64px 64px 64px 68px;
+      position:relative;overflow:hidden;box-sizing:border-box;border-left:6px solid var(--accent)}
+    .cover-inner{position:relative;max-width:980px;margin:0 auto;width:100%}
+    .cover .logo{font-family:var(--font-display);font-weight:800;font-size:1rem;letter-spacing:.02em;
+      color:var(--accent);margin-bottom:40px}
+    .cover h1{font-family:var(--font-display);font-weight:700;font-size:2.6rem;color:var(--e61-purple);
+      line-height:1.15;margin:0 0 18px}
+    .cover .sub{font-size:1.05rem;color:var(--e61-ink-3);max-width:680px;margin-bottom:34px}
+    .slide{min-height:100vh;scroll-snap-align:start;display:flex;flex-direction:column;
+      justify-content:center;padding:88px 64px 96px;position:relative;
+      border-bottom:1px solid var(--e61-line);box-sizing:border-box}
+    .slide-inner{max-width:1180px;margin:0 auto;width:100%}
+    .slide-num{position:absolute;top:28px;left:64px;font-family:var(--font-mono);font-size:.72rem;
+      letter-spacing:.1em;color:var(--e61-ink-4);text-transform:uppercase}
+    .slide-tag{position:absolute;top:28px;right:64px;font-family:var(--font-mono);font-size:.72rem;
+      color:var(--e61-ink-4)}
+    .slide.dark{background:var(--e61-bg-cool);border-left:6px solid var(--e61-purple)}
+    .slide.dark h1,.slide.dark h2,.slide.dark h3,.slide.dark h4{color:var(--e61-purple)}
+    .slide.warm{background:var(--e61-bg-warm);border-left:6px solid var(--e61-orange-red)}
+    @media(max-width:700px){.slide{padding:72px 24px 80px}.slide-num,.slide-tag{left:24px;right:24px}
+      .cover{padding:48px 24px 48px 28px}}
+
+    /* ── COMPONENTS ── */
+    .eyebrow{font-family:var(--font-body);font-size:.8125rem;font-weight:600;text-transform:uppercase;
+      letter-spacing:.14em;color:var(--accent);margin-bottom:10px;display:block}
+    .kpi-row,.kpi-row-lt{display:flex;gap:14px;flex-wrap:wrap;margin-top:20px}
+    .kpi{background:#fff;border:1px solid var(--e61-line);border-radius:14px;box-shadow:var(--shadow-1);
+      padding:16px 22px;min-width:150px}
+    .kpi-val{font-family:var(--font-display);font-size:1.7rem;font-weight:700;color:var(--e61-purple)}
+    .kpi-lbl{font-size:.72rem;margin-top:4px;color:var(--e61-ink-3)}
+    .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 22px;border-radius:999px;
+      font-family:var(--font-display);font-weight:700;font-size:.9rem;margin-bottom:10px}
+    .pill-ok{background:var(--e61-success);color:#fff}
+    .pill-danger{background:var(--e61-danger);color:#fff}
+    .pill-warn{background:var(--e61-warning);color:var(--e61-ink)}
+    .badge{display:inline-block;font-family:var(--font-display);font-size:.62rem;font-weight:700;
+      padding:3px 9px;border-radius:5px;letter-spacing:.05em;text-transform:uppercase}
+    .b-hi{background:var(--e61-success);color:#fff}
+    .b-med{background:var(--e61-warning);color:var(--e61-ink)}
+    .b-lo{background:var(--e61-magenta);color:#fff}
+    .b-ok{background:#D1FAE5;color:#065F46}
+    .b-warn{background:#FEF3C7;color:#92400E}
+    .card{background:var(--e61-surface);border:1px solid var(--e61-line);border-radius:16px;
+      padding:22px 24px;box-shadow:var(--shadow-1)}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .grid-lead{display:grid;grid-template-columns:2fr 1fr;gap:18px;align-items:start}
+    @media(max-width:900px){.grid-2,.grid-3,.grid-lead{grid-template-columns:1fr}}
+    .finding-card{background:#fff;border-left:4px solid var(--accent);border-radius:0 14px 14px 0;
+      padding:18px 20px;box-shadow:var(--shadow-1);font-size:.92rem;color:var(--e61-ink-2);line-height:1.6}
+    .plot-card{background:#fff;border-radius:16px;border:1px solid var(--e61-line);overflow:hidden;
+      box-shadow:var(--shadow-2)}
+    .plot-card img{width:100%}
+    .plot-cap{padding:14px 18px;font-size:.8rem;color:var(--e61-ink-3);border-top:1px solid var(--e61-line)}
+    .plot-cap b{color:var(--e61-ink-2)}
+    .kpi-mini-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    @media(max-width:900px){.kpi-mini-row{grid-template-columns:1fr}}
+    .kpi-mini{background:#fff;border:1px solid var(--e61-line);border-radius:12px;box-shadow:var(--shadow-1);padding:16px 18px}
+    .kpi-mini-label{font-size:.7rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--e61-ink-3);margin-bottom:4px}
+    .kpi-mini-val{font-family:var(--font-display);font-size:1.25rem;font-weight:700;color:var(--accent)}
+    .kpi-mini-note{font-size:.72rem;color:var(--e61-ink-3);margin-top:4px;line-height:1.4}
+    .details-btn{font-family:var(--font-display);font-weight:600;font-size:.78rem;color:var(--e61-orange-red);
+      background:var(--e61-bg-warm);border:1px solid #FCE0BE;border-radius:999px;padding:8px 16px;
+      cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .15s}
+    .details-btn:hover{background:#FFE8CC}
+    .details-btn::after{content:"▾";font-size:.65rem;transition:transform .2s}
+    .details-btn.open::after{transform:rotate(180deg)}
+    .details-panel{max-height:0;overflow:hidden;transition:max-height .35s ease;margin-top:0}
+    .details-panel.open{max-height:900px;margin-top:14px}
+    .details-panel .inner{background:#fff;border-left:3px solid var(--e61-purple);
+      border-radius:0 10px 10px 0;padding:14px 18px;font-size:.86rem;color:var(--e61-ink-2);line-height:1.7}
+    .limits-list{list-style:none;padding:0;margin:0}
+    .limits-list li{position:relative;padding-left:22px;margin-bottom:10px;font-size:.88rem;color:var(--e61-ink-2)}
+    .limits-list li::before{content:"●";position:absolute;left:0;color:var(--e61-yellow);font-size:.6rem;top:.45em}
+    table{width:100%;border-collapse:collapse;font-size:.84rem}
+    th{text-align:left;padding:9px 12px;font-family:var(--font-display);font-size:.7rem;color:var(--e61-ink-3);
+      border-bottom:2px solid var(--e61-line);font-weight:600;background:var(--e61-bg-cool);
+      text-transform:uppercase;letter-spacing:.04em}
+    td{padding:9px 12px;border-bottom:1px solid var(--e61-line);color:var(--e61-ink-2);vertical-align:top}
+    tr:last-child td{border-bottom:none}
+    tr.beat-yes td:nth-child(5){color:var(--e61-success);font-weight:700}
+    tr.beat-no td:nth-child(5){color:var(--e61-danger);font-weight:700}
+    .img-modal{display:none;position:fixed;inset:0;background:rgba(26,18,48,.6);z-index:500;
+      align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(3px)}
+    .img-modal.open{display:flex}
+    .img-modal-inner{background:#fff;border-radius:18px;box-shadow:var(--shadow-3);
+      display:grid;grid-template-columns:1.4fr 1fr;max-width:1040px;width:100%;max-height:88vh;
+      overflow:hidden;position:relative}
+    .img-modal-close{position:absolute;top:12px;right:12px;background:var(--e61-line);border:none;
+      border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:.85rem;color:var(--e61-ink-2);z-index:10}
+    .img-modal-close:hover{background:var(--e61-danger);color:#fff}
+    .img-modal-img-wrap{background:var(--e61-bg);display:flex;align-items:center;justify-content:center;
+      padding:24px;overflow:hidden}
+    .img-modal-img-wrap img{max-width:100%;max-height:76vh;height:auto;border-radius:10px;object-fit:contain}
+    .img-modal-meta{padding:28px 26px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;
+      border-left:1px solid var(--e61-line)}
+    .img-modal-name{font-family:var(--font-display);font-size:1.05rem;font-weight:700;color:var(--e61-purple)}
+    .img-modal-body{font-size:.9rem;color:var(--e61-ink-2);line-height:1.7}
+    @media(max-width:700px){.img-modal-inner{grid-template-columns:1fr;max-height:92vh}
+      .img-modal-meta{border-left:none;border-top:1px solid var(--e61-line)}}
+    @media print{.dotnav,.navbar,.topbar{display:none}.slide,.cover{min-height:0;page-break-after:always}}
+  </style>
+</head>
+<body>
+
+<div class="topbar"><div class="topbar-fill" id="topbarFill"></div></div>
+<div class="dotnav" id="dotnav"></div>
+<div class="navbar">
+  <button id="prevBtn" title="Previous (←)">‹</button>
+  <span class="counter" id="counter">1 / 9</span>
+  <button id="nextBtn" title="Next (→)">›</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SLIDE 0 — COVER
+     ═══════════════════════════════════════════════════════ -->
+<section class="cover slide-item" data-title="Cover">
+  <div class="cover-inner">
+    <div class="logo">element61 &nbsp;·&nbsp; pipeline</div>
+    <span class="eyebrow">EVALUATION REPORT &nbsp;·&nbsp; ITERATION 029 &nbsp;·&nbsp; run_20260908T075709Z</span>
+    <h1>Holdout Test Evaluation — Primary (2021) and Stress (2022–2023)</h1>
+    <p class="sub">Final out-of-sample assessment of 6 LightGBM horizon models against a corrected seasonal-naive baseline. Evaluation covers 362 primary test days (2021) and 173 stress test days (2022–2023), with an open-days-only filter applied to the stress set to reflect production conditions. All numbers trace to <span class="mono">history/iteration_029_open_days_evaluation.json</span>.</p>
+    <div class="kpi-row-lt">
+      <div class="kpi">
+        <div class="kpi-val">4 / 6</div>
+        <div class="kpi-lbl">Primary horizons beating naive</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-val" style="color:var(--e61-success)">6 / 6</div>
+        <div class="kpi-lbl">Stress open-days horizons beating naive</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-val" style="color:var(--e61-danger)">37.6%</div>
+        <div class="kpi-lbl">Stress test closure rate (zero-sales days)</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-val">3%</div>
+        <div class="kpi-lbl">Primary test closure rate</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SLIDE 1 — AGENDA
+     ═══════════════════════════════════════════════════════ -->
+<section class="slide slide-item" data-title="Agenda">
+  <div class="slide-num">01 / 09</div>
+  <div class="slide-tag">Agenda</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Contents</span>
+    <h2>Report Structure</h2>
+    <div class="grid-3" style="margin-top:24px">
+      <div class="card"><b class="mono" style="color:var(--accent)">03</b><br><b>Primary Test Results</b><br>
+        <span style="font-size:.85rem;color:var(--e61-ink-3)">Model vs naive across all 6 horizons on the 2021 holdout (362 days)</span></div>
+      <div class="card"><b class="mono" style="color:var(--accent)">04</b><br><b>Distribution Shift</b><br>
+        <span style="font-size:.85rem;color:var(--e61-ink-3)">Why stress test raw MAEs are so much higher — 37.6% zero-sales days</span></div>
+      <div class="card"><b class="mono" style="color:var(--accent)">05</b><br><b>Closure Pattern</b><br>
+        <span style="font-size:.85rem;color:var(--e61-ink-3)">Calendar heatmap and day-of-week closure rate in the stress period</span></div>
+      <div class="card"><b class="mono" style="color:var(--accent)">06</b><br><b>Closure Evolution</b><br>
+        <span style="font-size:.85rem;color:var(--e61-ink-3)">How the store closure rate changed from training through stress (2010–2023)</span></div>
+      <div class="card"><b class="mono" style="color:var(--accent)">07</b><br><b>Stress Open-Days Evaluation</b><br>
+        <span style="font-size:.85rem;color:var(--e61-ink-3)">Correct evaluation excluding closure days — model beats naive on all 6 horizons</span></div>
+      <div class="card"><b class="mono" style="color:var(--accent)">08</b><br><b>h=1,7 Degradation &amp; Limitations</b><br>
+        <span style="font-size:.85rem;color:var(--e61-ink-3)">Lag contamination from surrounding closure days; known limitations and next steps</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SLIDE 2 — PRIMARY TEST RESULTS
+     ═══════════════════════════════════════════════════════ -->
+<section class="slide slide-item" data-title="Primary Test Results">
+  <div class="slide-num">03 / 09</div>
+  <div class="slide-tag">Primary Test</div>
+  <div class="slide-inner">
+    <span class="eyebrow">2021 Holdout — 362 days, 3% closure rate</span>
+    <h2>Primary Test Results: Model vs Corrected Seasonal Naive</h2>
+    <p>The primary test covers January–December 2021 (362 days, 11 zero-sales days, 3% closure). The naive baseline is the seasonal median of the last W same-day-of-week observations before the origin date, where W varies by horizon (W=4 for h≤14, W=26 for h=30/60, W=13 for h=90). The model beats naive on 4 of 6 horizons; h=14 and h=90 remain above the naive floor.</p>
+
+    <div style="margin-top:24px">
+      <table>
+        <thead>
+          <tr>
+            <th>Horizon (h)</th>
+            <th>Val MAE (fold 3)</th>
+            <th>Model MAE (primary)</th>
+            <th>Naive MAE (corrected)</th>
+            <th>Beats Naive?</th>
+            <th>Naive Window (W)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="beat-yes">
+            <td class="mono">h = 1</td>
+            <td>29.8</td>
+            <td><b>39.3</b></td>
+            <td>39.8</td>
+            <td>✓</td>
+            <td>4 weeks</td>
+          </tr>
+          <tr class="beat-yes">
+            <td class="mono">h = 7</td>
+            <td>31.6</td>
+            <td><b>41.2</b></td>
+            <td>41.3</td>
+            <td>✓</td>
+            <td>4 weeks</td>
+          </tr>
+          <tr class="beat-no">
+            <td class="mono">h = 14</td>
+            <td>34.8</td>
+            <td>44.9</td>
+            <td><b>41.8</b></td>
+            <td>✗</td>
+            <td>4 weeks</td>
+          </tr>
+          <tr class="beat-yes">
+            <td class="mono">h = 30</td>
+            <td>36.6</td>
+            <td><b>43.0</b></td>
+            <td>43.3</td>
+            <td>✓</td>
+            <td>26 weeks</td>
+          </tr>
+          <tr class="beat-yes">
+            <td class="mono">h = 60</td>
+            <td>36.2</td>
+            <td><b>46.3</b></td>
+            <td>49.3</td>
+            <td>✓</td>
+            <td>26 weeks</td>
+          </tr>
+          <tr class="beat-no">
+            <td class="mono">h = 90</td>
+            <td>56.5</td>
+            <td>64.9</td>
+            <td><b>51.8</b></td>
+            <td>✗</td>
+            <td>13 weeks</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:20px">
+      <button class="details-btn" onclick="toggleDetails(this)">Full analysis: h=14 and h=90</button>
+      <div class="details-panel"><div class="inner">
+        <p><b>h=14:</b> The 4-week same-DOW window (W=4) is a very strong prior for a 14-day-ahead forecast — it looks back at exactly the same weekday 1, 2, 3, and 4 weeks ago, capturing the recent weekly pattern tightly. The model uses the same anchor via the ratio_correct transform but adds lag-14 and other features that introduce additional estimation error. At 14-day horizons, the seasonal naive's simplicity is a genuine advantage.</p>
+        <p><b>h=90:</b> The h=90 model had only 5 scoreable validation rows in fold 3, making hyperparameter selection statistically uncertain. The model uses direct (non-ratio) prediction in absolute units, which is harder to calibrate over a 90-day window where the underlying demand trend has moved. The naive's 13-week lookback window (W=13) effectively averages the same quarter last year — a very solid seasonal reference that the model does not consistently beat.</p>
+      </div></div>
+    </div>
+
+    <div class="kpi-mini-row" style="margin-top:24px">
+      <div class="kpi-mini">
+        <div class="kpi-mini-label">Val MAE gap h=1</div>
+        <div class="kpi-mini-val">+9.5</div>
+        <div class="kpi-mini-note">Val 29.8 → Primary 39.3 (+32%). Train–test gap expected; test is an unseen year.</div>
+      </div>
+      <div class="kpi-mini">
+        <div class="kpi-mini-label">Best primary improvement</div>
+        <div class="kpi-mini-val">h=60: −6.0</div>
+        <div class="kpi-mini-note">Model MAE 46.3 vs naive 49.3 — largest absolute margin over naive.</div>
+      </div>
+      <div class="kpi-mini">
+        <div class="kpi-mini-label">Worst primary shortfall</div>
+        <div class="kpi-mini-val">h=90: +13.1</div>
+        <div class="kpi-mini-note">Model MAE 64.9 vs naive 51.8 — statistically noisy due to 5-row fold-3 training signal.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SLIDE 3 — DISTRIBUTION SHIFT (DARK emphasis)
+     ═══════════════════════════════════════════════════════ -->
+<section class="slide dark slide-item" data-title="Distribution Shift">
+  <div class="slide-num">04 / 09</div>
+  <div class="slide-tag">Stress Test — Distribution Shift</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Key Finding</span>
+    <h2>37.6% of Stress Test Days Have Zero Bread Sales — Store Closures, Not Demand Collapse</h2>
+    <p>The stress test (2022–2023) shows dramatically higher raw MAEs than the primary test. The root cause is not degraded model quality: <b>65 of 173 stress test days (37.6%) have zero bread sales</b>, indicating store closure, compared to just 3% in the primary test and 1–7% during the training years. On these closure days, any demand forecast is meaningless — the store does not operate.</p>
+
+    <div class="plot-card" style="margin-top:20px">
+      <img src="../artifacts/plots/distribution_shift.png"
+           alt="Distribution shift: monthly sales timeline and DOW breakdown"
+           data-modal-title="Distribution Shift Analysis"
+           data-modal-body="Three-panel figure: (1) Monthly average bread quantity 2010–2023, showing the long-term downward trend and the apparent drop in stress years. (2) DOW average including all days — stress bars are much lower due to closure-day zeros. (3) DOW average on open days only plus stress closure rate line — on open days, demand (244/day) is consistent with the trend extrapolation (~249 expected); the closure rate per DOW (Fri 65%, Mon–Thu 38–48%, Sat 0%) is the structural explanation.">
+      <div class="plot-cap"><b>distribution_shift</b> — Monthly sales timeline (left), DOW breakdown including closures (centre), DOW on open days only + closure rate (right). On open days, stress demand is consistent with the training trend.</div>
+    </div>
+
+    <div style="margin-top:18px">
+      <button class="details-btn" onclick="toggleDetails(this)">Full analysis: closure cause and training exclusion</button>
+      <div class="details-panel"><div class="inner">
+        <p>The bakery shifted to a weekend-dominant operating model in 2022–2023, closing on most weekdays. The closure rate by day-of-week in the stress period: Saturday 0%, Sunday ~11%, Monday–Thursday 38–48%, Friday 65%. This pattern did not exist in the training data (training closure rate: 1–7% across all years). The COVID-19 lockdown (March–June 2020) was explicitly excluded from the training set, which means the model was never exposed to any sustained consecutive-closure sequence. As a result, it cannot reliably predict whether a given day is open or closed — but more importantly, in production the model would <em>not be called</em> for days known to be closed. Open-days-only evaluation is therefore the correct production-aligned metric.</p>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SLIDE 4 — CLOSURE PATTERN
+     ═══════════════════════════════════════════════════════ -->
+<section class="slide slide-item" data-title="Closure Pattern">
+  <div class="slide-num">05 / 09</div>
+  <div class="slide-tag">Stress Test — Closure Pattern</div>
+  <div class="slide-inner">
+    <span class="eyebrow">2022–2023 Operating Pattern</span>
+    <h2>Weekend-Dominant Operation: Saturdays Never Close, Fridays Close 65% of the Time</h2>
+    <p>The stress period shows a structured closure pattern — not random closures. Saturdays are always open (0% closure rate), while Fridays are closed nearly two-thirds of the time. The calendar heatmap reveals that 2022 data is only ~35% complete (missing XML files), while January–February 2023 has full coverage with the pattern clearly visible.</p>
+
+    <div class="plot-card" style="margin-top:20px">
+      <img src="../artifacts/plots/closure_pattern.png"
+           alt="Closure pattern: calendar heatmap, DOW closure rate, monthly coverage"
+           data-modal-title="Stress Test Closure Pattern"
+           data-modal-body="Three-panel figure: (1) Calendar heatmap (week × day-of-week) — green = open, red = closed, grey = no XML data. Shows the structured weekday-closure pattern clearly in Jan–Feb 2023 (complete data). (2) Bar chart of closure rate by day of week: Mon 48%, Tue 38%, Wed 38%, Thu 38%, Fri 65%, Sat 0%, Sun 11%. (3) Monthly data coverage: 2022 months range from 0–60% coverage, Jan–Feb 2023 near 100%.">
+      <div class="plot-cap"><b>closure_pattern</b> — Calendar heatmap (left), DOW closure rate (centre), monthly data coverage (right). The pattern is structural: Saturdays never close, Fridays close 65%.</div>
+    </div>
+
+    <div class="kpi-mini-row" style="margin-top:20px">
+      <div class="kpi-mini">
+        <div class="kpi-mini-label">Saturday closure rate</div>
+        <div class="kpi-mini-val" style="color:var(--e61-success)">0%</div>
+        <div class="kpi-mini-note">Saturdays always open in stress period.</div>
+      </div>
+      <div class="kpi-mini">
+        <div class="kpi-mini-label">Friday closure rate</div>
+        <div class="kpi-mini-val" style="color:var(--e61-danger)">65%</div>
+        <div class="kpi-mini-note">Most common closure day — closed 2 of every 3 Fridays.</div>
+      </div>
+      <div class="kpi-mini">
+        <div class="kpi-mini-label">2022 data coverage</div>
+        <div class="kpi-mini-val" style="color:var(--e61-warning)">~35%</div>
+        <div class="kpi-mini-note">Many 2022 XML files missing; Jan–Feb 2023 has ~100% coverage.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SLIDE 5 — CLOSURE EVOLUTION
+     ═══════════════════════════════════════════════════════ -->
+<section class="slide slide-item" data-title="Closure Evolution">
+  <div class="slide-num">06 / 09</div>
+  <div class="slide-tag">Closure Evolution</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Training → Primary → Stress</span>
+    <h2>Closure Rate Jumped from 1–7% During Training to 37–38% in the Stress Period</h2>
+    <p>During the training years (2010–2020), the zero-sales closure rate ranged from 1% to 7% per year — primarily public holidays and occasional closures. The primary test year (2021) had a 3% closure rate, consistent with training. The stress period (2022–2023) represents a fundamental operational shift: the store adopted a weekend-dominant schedule that the model was never exposed to during training.</p>
+
+    <div class="plot-card" style="margin-top:20px">
+      <img src="../artifacts/plots/closure_evolution.png"
+           alt="Closure rate evolution: yearly bars, monthly timeline, DOW by period"
+           data-modal-title="Closure Rate Evolution (2010–2023)"
+           data-modal-body="Three-panel figure: (1) Yearly closure rate bar chart — training years (blue, 1–7%), 2020 COVID annotated (orange arrow, ~33%), primary 2021 (green, 3%), stress 2022–2023 (red, 37–38%). (2) Monthly closure rate timeline with shading for each period and COVID lockdown annotated. (3) DOW closure rate by period — training and primary bars barely visible at 1–7%, stress bars visible at 38–65% for weekdays, 0% for Saturday.">
+      <div class="plot-cap"><b>closure_evolution</b> — Yearly closure rate (left), monthly timeline (centre), DOW comparison across periods (right). The 2022–2023 jump is a regime shift, not gradual drift.</div>
+    </div>
+
+    <p style="margin-top:16px;font-size:.9rem;color:var(--e61-ink-3)">Note: The COVID lockdown year (2020) had a 33% closure rate but was explicitly excluded from model training. The model therefore has no learned representation of high-closure-rate regimes.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SLIDE 6 — STRESS OPEN-DAYS EVALUATION (key result)
+     ═══════════════════════════════════════════════════════ -->
+<section class="slide warm slide-item" data-title="Stress Open-Days Evaluation">
+  <div class="slide-num">07 / 09</div>
+  <div class="slide-tag">Stress Test — Open Days</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Correct Production-Aligned Evaluation</span>
+    <h2>Model Beats Corrected Naive on All 6 Horizons When Evaluated on Open Days Only</h2>
+    <p>In production, the forecasting model is <em>only called for days expected to be open</em>. Evaluating on closure days inflates MAE artificially — any non-zero forecast is wrong when the store is closed with zero sales. Filtering to open-days-only (n_open = 30–53 per horizon) gives the correct picture: the model beats the corrected seasonal naive on every horizon.</p>
+
+    <div style="margin-top:20px">
+      <table>
+        <thead>
+          <tr>
+            <th>Horizon (h)</th>
+            <th>Model MAE (stress open)</th>
+            <th>Naive MAE (stress open)</th>
+            <th>Margin</th>
+            <th>Beats Naive?</th>
+            <th>n Open Days</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="beat-yes">
+            <td class="mono">h = 1</td>
+            <td><b>93.6</b></td>
+            <td>94.4</td>
+            <td>−0.8</td>
+            <td>✓</td>
+            <td>51</td>
+          </tr>
+          <tr class="beat-yes">
+            <td class="mono">h = 7</td>
+            <td><b>86.6</b></td>
+            <td>90.3</td>
+            <td>−3.7</td>
+            <td>✓</td>
+            <td>51</td>
+          </tr>
+          <tr class="beat-yes">
+            <td class="mono">h = 14</td>
+            <td><b>48.4</b></td>
+            <td>87.7</td>
+            <td><b>−39.3</b></td>
+            <td>✓ <span class="badge b-hi" style="font-size:.55rem">LARGE WIN</span></td>
+            <td>53</td>
+          </tr>
+          <tr class="beat-yes">
+            <td class="mono">h = 30</td>
+            <td><b>44.8</b></td>
+            <td>44.9</td>
+            <td>−0.1</td>
+            <td>✓</td>
+            <td>41</td>
+          </tr>
+          <tr class="beat-yes">
+            <td class="mono">h = 60</td>
+            <td><b>38.0</b></td>
+            <td>40.6</td>
+            <td>−2.6</td>
+            <td>✓</td>
+            <td>32</td>
+          </tr>
+          <tr class="beat-yes">
+            <td class="mono">h = 90</td>
+            <td><b>53.8</b></td>
+            <td>57.2</td>
+            <td>−3.4</td>
+            <td>✓</td>
+            <td>30</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:20px">
+      <span class="pill pill-ok">✓ Model beats naive on all 6 horizons (stress, open days)</span>
+    </div>
+
+    <p style="margin-top:16px;font-size:.9rem;color:var(--e61-ink-3)">The largest win is at h=14 (model 48.4 vs naive 87.7 — a 45% improvement). The naive's short lookback window (W=4) for h=14 picks up zeros from nearby closure days in its 4-week median, severely under-estimating demand. The model's ratio transform and longer-horizon features are less contaminated by surrounding closure days.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SLIDE 7 — WHY h=1,7 STILL DEGRADE
+     ═══════════════════════════════════════════════════════ -->
+<section class="slide slide-item" data-title="h=1,7 Degradation">
+  <div class="slide-num">08 / 09</div>
+  <div class="slide-tag">Diagnostics</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Residual Degradation Explained</span>
+    <h2>h=1 and h=7 Stress Open-Day MAEs (93.6, 86.6) Remain High Due to Lag Contamination</h2>
+
+    <div class="grid-lead" style="margin-top:20px">
+      <div>
+        <p>Even on open days, the h=1 and h=7 model MAEs are much higher than their primary-test equivalents (39.3 and 41.2 respectively). The mechanism is <strong>lag feature contamination</strong>: the model's short-horizon lag features (lag_1d, lag_7d) look back at the immediately preceding days. In the stress period, those adjacent days frequently have zero bread sales (closure days). When the model sees a zero in lag_1d or lag_7d, it interprets that as a signal of low near-term demand — but on an open day, the store is operating normally and demand returns to typical levels.</p>
+
+        <p>This is the same root cause as the naive's degradation at h=1,7 — the W=4 lookback window for the naive also picks up zeros — but the model's lag features are even more directly affected because they reference single prior days rather than a median over 4 weeks.</p>
+
+        <div class="card" style="margin-top:16px;border-left:4px solid var(--e61-warning)">
+          <h4>Why naive is also bad at h=1,7 on stress open days</h4>
+          <p style="font-size:.9rem;margin-top:8px">The seasonal naive for h=1 uses W=4 (4-week lookback). In the stress period, those 4 same-DOW weeks may include 1–3 zero-sales days, pulling the median down to zero or near-zero. The model and naive share the same contamination mechanism — but the model's margin over naive is preserved because both are impacted roughly equally.</p>
+        </div>
+
+        <button class="details-btn" onclick="toggleDetails(this)" style="margin-top:16px">Full explanation: why h=14 is unaffected</button>
+        <div class="details-panel"><div class="inner">
+          <p>At h=14, the model's primary lag feature looks back 14 days (bread_lag_14d). Fourteen days ago, the closure pattern is less likely to fall exactly on that same weekday — the contamination is diluted over a longer lookback. Additionally, the h=14 model uses a ratio_correct transform anchored to a longer-horizon seasonal median, which is more robust to a single zero entry. This is why h=14's model MAE (48.4) is far below the naive's (87.7): the naive's W=4 window almost certainly includes at least one zero-sales same-DOW day in the stress period, while the model's longer features are more insulated.</p>
+        </div></div>
+      </div>
+
+      <div>
+        <div class="kpi-mini" style="margin-bottom:14px">
+          <div class="kpi-mini-label">h=1 degradation vs primary</div>
+          <div class="kpi-mini-val" style="color:var(--e61-danger)">+54.3</div>
+          <div class="kpi-mini-note">Primary 39.3 → Stress open 93.6. Lag_1d sees zero on closure-adjacent days.</div>
+        </div>
+        <div class="kpi-mini" style="margin-bottom:14px">
+          <div class="kpi-mini-label">h=7 degradation vs primary</div>
+          <div class="kpi-mini-val" style="color:var(--e61-danger)">+45.4</div>
+          <div class="kpi-mini-note">Primary 41.2 → Stress open 86.6. Lag_7d also picks up closure-adjacent zeros.</div>
+        </div>
+        <div class="kpi-mini" style="margin-bottom:14px">
+          <div class="kpi-mini-label">h=14 degradation vs primary</div>
+          <div class="kpi-mini-val" style="color:var(--e61-success)">+3.6</div>
+          <div class="kpi-mini-note">Primary 44.9 → Stress open 48.4. Minimal degradation — long lags less contaminated.</div>
+        </div>
+        <div class="kpi-mini">
+          <div class="kpi-mini-label">h=60 degradation vs primary</div>
+          <div class="kpi-mini-val" style="color:var(--e61-success)">−8.3</div>
+          <div class="kpi-mini-note">Primary 46.3 → Stress open 38.0. Model performs better on stress open days than primary.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SLIDE 8 — SUMMARY & LIMITATIONS
+     ═══════════════════════════════════════════════════════ -->
+<section class="slide slide-item" data-title="Summary & Limitations">
+  <div class="slide-num">09 / 09</div>
+  <div class="slide-tag">Summary</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Evaluation Summary</span>
+    <h2>Summary and Known Limitations</h2>
+
+    <div class="grid-2" style="margin-top:20px">
+      <div>
+        <h3 style="color:var(--e61-success);font-size:1rem;margin-bottom:14px">Strengths</h3>
+        <ul class="limits-list">
+          <li>Model beats corrected seasonal naive on 4 of 6 primary horizons (2021, stable conditions).</li>
+          <li>Model beats corrected naive on <b>all 6 horizons</b> on stress open days — the production-aligned metric.</li>
+          <li>Large margin at h=14 on stress open days (model 48.4 vs naive 87.7) — ratio transform and longer lags are robust to closure contamination.</li>
+          <li>h=30 and h=60 perform comparably to primary test on stress open days, showing good long-horizon generalisation.</li>
+          <li>Naive baseline correctly defined with target-DOW (not origin-DOW) — closing a historical bug in iteration 027.</li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="color:var(--e61-danger);font-size:1rem;margin-bottom:14px">Known Limitations</h3>
+        <ul class="limits-list">
+          <li><b>h=14 and h=90 do not beat naive on the primary test.</b> The seasonal naive is a strong baseline at 14-day horizons; h=90 has high estimation variance due to 5-row fold-3 training signal.</li>
+          <li><b>h=1 and h=7 degrade significantly on stress open days</b> due to lag contamination from surrounding closure days. A two-stage model (closure classifier + quantity forecaster) would address this.</li>
+          <li><b>Stress test sample is small</b> (n_open = 30–53 per horizon). Margins at h=30 (−0.1) and h=1 (−0.8) are not statistically meaningful at this sample size.</li>
+          <li><b>Model never saw the weekend-dominant closure regime</b> in training. COVID lockdown was excluded from training, so no consecutive-closure sequences were learned.</li>
+          <li><b>2022 data is 35% complete</b> (missing XMLs); the stress evaluation relies primarily on January–February 2023.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;padding:16px 20px;background:var(--e61-bg-cool);border-radius:12px;border-left:4px solid var(--e61-purple)">
+      <h4 style="margin-bottom:8px">Recommended Future Work</h4>
+      <p style="font-size:.9rem;color:var(--e61-ink-3)">A two-stage model — (1) a closure classifier predicting whether each future day is open or closed, followed by (2) the existing demand forecaster conditioned on open days — would fully decouple the closure and demand problems. Additionally, retraining with a <em>recent-closure-rate</em> feature (rolling 30-day closure rate in the lookback window) would allow the model to adapt to the weekend-dominant regime without requiring explicit closure-day labels in the feature set.</p>
+    </div>
+
+    <div style="margin-top:20px;font-size:.8rem;color:var(--e61-ink-4)">
+      <a href="index.html">← Back to Run Index</a> &nbsp;|&nbsp;
+      Raw JSON: <span class="mono">history/iteration_029_open_days_evaluation.json</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     IMAGE MODAL
+     ═══════════════════════════════════════════════════════ -->
+<div class="img-modal" id="imgModal" onclick="if(event.target.id==='imgModal')closeImgModal()">
+  <div class="img-modal-inner">
+    <button class="img-modal-close" onclick="closeImgModal()">✕</button>
+    <div class="img-modal-img-wrap"><img id="imgModalImg" src="" alt=""></div>
+    <div class="img-modal-meta">
+      <div class="img-modal-name" id="imgModalName"></div>
+      <div class="img-modal-body" id="imgModalBody"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DECK ENGINE ──────────────────────────────────────────
+const slides = Array.from(document.querySelectorAll('.cover, .slide'));
+const dotnav = document.getElementById('dotnav');
+slides.forEach((s,i)=>{
+  const dot = document.createElement('button');
+  dot.title = s.dataset.title || ('Slide '+(i+1));
+  dot.onclick = ()=> s.scrollIntoView({behavior:'smooth'});
+  dotnav.appendChild(dot);
+});
+const dots = Array.from(dotnav.children);
+const counter = document.getElementById('counter');
+const topbarFill = document.getElementById('topbarFill');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+let current = 0;
+
+function setActive(idx){
+  current = idx;
+  dots.forEach((d,i)=> d.classList.toggle('active', i===idx));
+  counter.textContent = (idx+1) + ' / ' + slides.length;
+  topbarFill.style.width = (((idx+1)/slides.length)*100) + '%';
+  prevBtn.disabled = idx===0;
+  nextBtn.disabled = idx===slides.length-1;
+}
+setActive(0);
+
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting && e.intersectionRatio>0.55){
+      const idx = slides.indexOf(e.target);
+      if(idx>-1) setActive(idx);
+    }
+  });
+}, {threshold:[0.55]});
+slides.forEach(s=>io.observe(s));
+
+function goTo(idx){
+  idx = Math.max(0, Math.min(slides.length-1, idx));
+  slides[idx].scrollIntoView({behavior:'smooth'});
+}
+prevBtn.onclick = ()=> goTo(current-1);
+nextBtn.onclick = ()=> goTo(current+1);
+document.addEventListener('keydown', e=>{
+  if(['ArrowDown','ArrowRight','PageDown',' '].includes(e.key)){ e.preventDefault(); goTo(current+1); }
+  if(['ArrowUp','ArrowLeft','PageUp'].includes(e.key)){ e.preventDefault(); goTo(current-1); }
+});
+
+// ── DETAILS DISCLOSURE ───────────────────────────────────
+function toggleDetails(btn){
+  btn.classList.toggle('open');
+  const panel = btn.nextElementSibling;
+  panel.classList.toggle('open');
+  btn.textContent = panel.classList.contains('open')
+    ? btn.textContent.replace(/^Full/, 'Hide')
+    : (btn.dataset.orig || btn.textContent.replace(/^Hide/, 'Full'));
+}
+document.querySelectorAll('.details-btn').forEach(b=>{ b.dataset.orig = b.textContent; });
+
+// ── IMAGE MODAL ──────────────────────────────────────────
+function openImgModal(imgEl){
+  document.getElementById('imgModalImg').src = imgEl.currentSrc || imgEl.src;
+  document.getElementById('imgModalImg').alt = imgEl.alt;
+  document.getElementById('imgModalName').textContent = imgEl.dataset.modalTitle || imgEl.alt;
+  document.getElementById('imgModalBody').textContent = imgEl.dataset.modalBody || '';
+  document.getElementById('imgModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeImgModal(){
+  document.getElementById('imgModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function wireImgModals(){
+  document.querySelectorAll('.plot-card img').forEach(img=>{
+    img.style.cursor = 'zoom-in';
+    img.addEventListener('click', ()=>openImgModal(img));
+  });
+}
+document.addEventListener('keydown', e=>{
+  if(document.getElementById('imgModal')?.classList.contains('open') && e.key==='Escape') closeImgModal();
+});
+wireImgModals();
+</script>
+</body>
+</html>

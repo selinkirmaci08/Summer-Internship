@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>element61 · End Model · Iteration 021</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Open+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+    :root {
+      --e61-orange-red: #FC5B00;
+      --e61-orange:     #FC9808;
+      --e61-yellow:     #FCBA08;
+      --e61-magenta:    #9D1D56;
+      --e61-purple:     #301D56;
+
+      --e61-ink:        #1A1230;
+      --e61-ink-2:      #301D56;
+      --e61-ink-3:      #5B5070;
+      --e61-ink-4:      #8B8298;
+      --e61-line:       #E6E2EC;
+      --e61-line-2:     #D8D2E0;
+      --e61-surface:    #FFFFFF;
+      --e61-bg:         #FAF8F5;
+      --e61-bg-warm:    #FFF6EC;
+      --e61-bg-cool:    #F2EEF6;
+
+      --e61-success: #2F8F5C;
+      --e61-warning: #FCBA08;
+      --e61-danger:  #C0294A;
+      --e61-info:    #2F6BB3;
+
+      --font-display: "Montserrat", "Helvetica Neue", system-ui, sans-serif;
+      --font-body:    "Open Sans", "Helvetica Neue", Arial, system-ui, sans-serif;
+      --font-mono:    "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+      --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-5:24px;
+      --space-6:32px; --space-7:48px;
+
+      --radius-sm:4px; --radius-md:8px; --radius-lg:14px; --radius-xl:22px; --radius-pill:999px;
+
+      --shadow-1: 0 1px 2px rgba(48,29,86,.06), 0 1px 1px rgba(48,29,86,.04);
+      --shadow-2: 0 4px 16px rgba(48,29,86,.08), 0 1px 2px rgba(48,29,86,.04);
+      --shadow-3: 0 10px 28px rgba(48,29,86,.12), 0 2px 6px rgba(48,29,86,.06);
+      --shadow-focus: 0 0 0 3px rgba(252,91,0,.28);
+
+      --ease-standard: cubic-bezier(0.2, 0.7, 0.2, 1);
+      --dur-fast: 120ms;
+      --dur-base: 200ms;
+
+      --accent: #301D56;
+    }
+
+    /* ── Deck shell ── */
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--e61-bg);color:var(--e61-ink-2);
+      font-family:var(--font-body);line-height:1.6;
+      scroll-snap-type:y proximity;height:100%;overflow-y:auto;scroll-behavior:smooth}
+
+    /* ── Top progress bar ── */
+    .topbar{position:fixed;top:0;left:0;right:0;height:3px;background:var(--e61-line);z-index:201}
+    .topbar-fill{height:100%;background:linear-gradient(135deg,var(--e61-purple) 0%,var(--e61-magenta) 100%);
+      width:0;transition:width .25s}
+
+    /* ── Dot nav ── */
+    .dotnav{position:fixed;right:20px;top:50%;transform:translateY(-50%);display:flex;
+      flex-direction:column;gap:9px;z-index:200}
+    .dotnav button{width:9px;height:9px;border-radius:50%;border:none;background:var(--e61-line-2);
+      cursor:pointer;padding:0;transition:background .2s,transform .2s}
+    .dotnav button.active{background:var(--accent);transform:scale(1.5)}
+    .dotnav button:hover{background:var(--e61-magenta)}
+
+    /* ── Navbar ── */
+    .navbar{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);display:flex;
+      align-items:center;gap:14px;background:rgba(26,18,48,.88);backdrop-filter:blur(6px);
+      border-radius:999px;padding:9px 18px;z-index:200;box-shadow:var(--shadow-3)}
+    .navbar button{background:none;border:none;color:#fff;font-size:1rem;cursor:pointer;width:30px;
+      height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+      transition:background .15s}
+    .navbar button:hover{background:rgba(255,255,255,.15)}
+    .navbar button:disabled{opacity:.3;cursor:default}
+    .navbar .counter{font-family:var(--font-mono);font-size:.72rem;color:rgba(255,255,255,.85);
+      min-width:52px;text-align:center}
+
+    /* ── Slides ── */
+    .slide{min-height:100vh;scroll-snap-align:start;display:flex;flex-direction:column;
+      justify-content:center;padding:88px 64px 96px;position:relative;
+      border-bottom:1px solid var(--e61-line);box-sizing:border-box}
+    .slide-inner{max-width:1180px;margin:0 auto;width:100%}
+    .slide-num{position:absolute;top:28px;left:64px;font-family:var(--font-mono);font-size:.72rem;
+      letter-spacing:.1em;color:var(--e61-ink-4);text-transform:uppercase}
+    .slide-tag{position:absolute;top:28px;right:64px;font-family:var(--font-mono);font-size:.72rem;
+      color:var(--e61-ink-4)}
+    @media(max-width:700px){.slide{padding:72px 24px 80px}.slide-num,.slide-tag{left:24px;right:24px}}
+
+    /* ── Cover ── */
+    .cover{min-height:100vh;scroll-snap-align:start;background:var(--e61-bg);color:var(--e61-ink);
+      display:flex;flex-direction:column;justify-content:center;padding:64px 64px 64px 68px;
+      position:relative;overflow:hidden;box-sizing:border-box;border-left:6px solid var(--accent)}
+    .cover-inner{position:relative;max-width:980px;margin:0 auto;width:100%}
+    .cover .logo{font-family:var(--font-display);font-weight:800;font-size:1rem;letter-spacing:.02em;
+      color:var(--accent);margin-bottom:40px}
+    .cover h1{font-family:var(--font-display);font-weight:700;font-size:2.6rem;color:var(--e61-purple);
+      line-height:1.15;margin:0 0 18px}
+    .cover .sub{font-size:1.05rem;color:var(--e61-ink-3);max-width:680px;margin-bottom:34px}
+    @media(max-width:700px){.cover h1{font-size:1.9rem}}
+
+    /* ── Emphasis slides ── */
+    .slide.dark{background:var(--e61-bg-cool);border-left:6px solid var(--e61-purple)}
+    .slide.dark h1,.slide.dark h2,.slide.dark h3,.slide.dark h4{color:var(--e61-purple)}
+    .slide.warm{background:var(--e61-bg-warm);border-left:6px solid var(--e61-orange-red)}
+    .slide.warm h1,.slide.warm h2,.slide.warm h3{color:var(--e61-ink)}
+
+    /* ── Component vocabulary ── */
+    h1,h2,h3,h4{font-family:var(--font-display);color:var(--e61-ink);margin:0 0 .5em;font-weight:700;text-wrap:balance}
+    p{margin:0 0 1em}
+    a{color:var(--e61-orange-red)}
+    .mono{font-family:var(--font-mono)}
+    img{max-width:100%;display:block}
+    .eyebrow{font-family:var(--font-body);font-size:.8125rem;font-weight:600;text-transform:uppercase;
+      letter-spacing:.14em;color:var(--accent);margin-bottom:10px;display:block}
+    .kpi-row,.kpi-row-lt{display:flex;gap:14px;flex-wrap:wrap;margin-top:20px}
+    .kpi{background:#fff;border:1px solid var(--e61-line);border-radius:14px;box-shadow:var(--shadow-1);
+      padding:16px 22px;min-width:150px}
+    .kpi-val{font-family:var(--font-display);font-size:1.7rem;font-weight:700;color:var(--e61-purple)}
+    .kpi-lbl{font-size:.72rem;margin-top:4px;color:var(--e61-ink-3)}
+    .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 22px;border-radius:999px;
+      font-family:var(--font-display);font-weight:700;font-size:.9rem;margin-bottom:10px}
+    .pill-ok{background:var(--e61-success);color:#fff}
+    .pill-danger{background:var(--e61-danger);color:#fff}
+    .pill-warn{background:var(--e61-warning);color:var(--e61-ink)}
+    .badge{display:inline-block;font-family:var(--font-display);font-size:.62rem;font-weight:700;
+      padding:3px 9px;border-radius:5px;letter-spacing:.05em;text-transform:uppercase}
+    .b-hi{background:var(--e61-success);color:#fff}
+    .b-med{background:var(--e61-warning);color:var(--e61-ink)}
+    .b-lo{background:var(--e61-magenta);color:#fff}
+    .b-lk{background:var(--e61-danger);color:#fff}
+    .b-nc{background:var(--e61-line);color:var(--e61-ink-3)}
+    .b-ok{background:#D1FAE5;color:#065F46}
+    .b-warn{background:var(--e61-warning);color:var(--e61-ink)}
+    .b-naive{background:var(--e61-purple);color:#fff}
+    .card{background:var(--e61-surface);border:1px solid var(--e61-line);border-radius:16px;
+      padding:22px 24px;box-shadow:var(--shadow-1)}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+    .grid-lead{display:grid;grid-template-columns:2fr 1fr;gap:18px;align-items:start}
+    @media(max-width:900px){.grid-2,.grid-3,.grid-4,.grid-lead{grid-template-columns:1fr}}
+    .finding-card{background:#fff;border-left:4px solid var(--accent);border-radius:0 14px 14px 0;
+      padding:18px 20px;box-shadow:var(--shadow-1);font-size:.92rem;color:var(--e61-ink-2);line-height:1.6}
+    .kpi-mini-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    @media(max-width:900px){.kpi-mini-row{grid-template-columns:1fr}}
+    .kpi-mini{background:#fff;border:1px solid var(--e61-line);border-radius:12px;box-shadow:var(--shadow-1);padding:16px 18px}
+    .kpi-mini-label{font-size:.7rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--e61-ink-3);margin-bottom:4px}
+    .kpi-mini-val{font-family:var(--font-display);font-size:1.25rem;font-weight:700;color:var(--accent)}
+    .kpi-mini-note{font-size:.72rem;color:var(--e61-ink-3);margin-top:4px;line-height:1.4}
+    .hero-stat-lbl{font-size:.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--e61-ink-3);margin-bottom:4px}
+    .hero-stat-val{font-family:var(--font-display);font-size:2.4rem;font-weight:700;color:var(--accent);line-height:1.05}
+    .hero-stat-note{font-size:.86rem;color:var(--e61-ink-3);margin-top:6px;max-width:520px;line-height:1.5}
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+    .chip{background:var(--e61-bg-cool);border:1px solid var(--e61-line-2);border-radius:8px;
+      padding:5px 12px;font-size:.78rem;font-family:var(--font-mono);color:var(--e61-ink-3)}
+    .chip span{color:var(--e61-purple);font-weight:500}
+    table{width:100%;border-collapse:collapse;font-size:.84rem}
+    th{text-align:left;padding:9px 12px;font-family:var(--font-display);font-size:.7rem;color:var(--e61-ink-3);
+      border-bottom:2px solid var(--e61-line);font-weight:600;background:var(--e61-bg-cool);
+      text-transform:uppercase;letter-spacing:.04em}
+    td{padding:9px 12px;border-bottom:1px solid var(--e61-line);color:var(--e61-ink-2);vertical-align:top}
+    tr:last-child td{border-bottom:none}
+    tr.row-ok{background:#F0FBF4}
+    tr.row-warn{background:#FFF8E1}
+    tr.row-naive{background:#F2EEF6}
+    .details-btn{font-family:var(--font-display);font-weight:600;font-size:.78rem;color:var(--e61-orange-red);
+      background:var(--e61-bg-warm);border:1px solid #FCE0BE;border-radius:999px;padding:8px 16px;
+      cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .15s}
+    .details-btn:hover{background:#FFE8CC}
+    .details-btn::after{content:"▾";font-size:.65rem;transition:transform .2s}
+    .details-btn.open::after{transform:rotate(180deg)}
+    .details-panel{max-height:0;overflow:hidden;transition:max-height .35s ease;margin-top:0}
+    .details-panel.open{max-height:900px;margin-top:14px}
+    .details-panel .inner{background:#fff;border-left:3px solid var(--e61-purple);
+      border-radius:0 10px 10px 0;padding:14px 18px;font-size:.86rem;color:var(--e61-ink-2);line-height:1.7}
+    .limits-list{list-style:none;padding:0;margin:0}
+    .limits-list li{position:relative;padding-left:22px;margin-bottom:10px;font-size:.88rem;color:var(--e61-ink-2)}
+    .limits-list li::before{content:"●";position:absolute;left:0;color:var(--e61-yellow);font-size:.6rem;top:.45em}
+    .callout-ok{background:#F0FBF4;border-left:4px solid var(--e61-success);border-radius:0 12px 12px 0;padding:14px 18px;margin-bottom:14px}
+    .callout-warn{background:var(--e61-bg-warm);border-left:4px solid var(--e61-warning);border-radius:0 12px 12px 0;padding:14px 18px;margin-bottom:14px}
+    .callout-info{background:var(--e61-bg-cool);border-left:4px solid var(--accent);border-radius:0 12px 12px 0;padding:14px 18px;margin-bottom:14px}
+    .code-block{background:var(--e61-ink);color:#C3E8C3;font-family:var(--font-mono);font-size:.8rem;
+      border-radius:10px;padding:16px 20px;line-height:1.7;overflow-x:auto;margin-top:8px}
+    .img-modal{display:none;position:fixed;inset:0;background:rgba(26,18,48,.6);z-index:500;
+      align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(3px)}
+    .img-modal.open{display:flex}
+    .img-modal-inner{background:#fff;border-radius:18px;box-shadow:var(--shadow-3);
+      display:grid;grid-template-columns:1.4fr 1fr;max-width:1040px;width:100%;max-height:88vh;
+      overflow:hidden;position:relative}
+    .img-modal-close{position:absolute;top:12px;right:12px;background:var(--e61-line);border:none;
+      border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:.85rem;color:var(--e61-ink-2);z-index:10}
+    .img-modal-close:hover{background:var(--e61-danger);color:#fff}
+    .img-modal-img-wrap{background:var(--e61-bg);display:flex;align-items:center;justify-content:center;
+      padding:24px;overflow:hidden}
+    .img-modal-img-wrap img{max-width:100%;max-height:76vh;height:auto;border-radius:10px;object-fit:contain}
+    .img-modal-meta{padding:28px 26px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;
+      border-left:1px solid var(--e61-line)}
+    .img-modal-name{font-family:var(--font-display);font-size:1.05rem;font-weight:700;color:var(--e61-purple)}
+    .img-modal-body{font-size:.9rem;color:var(--e61-ink-2);line-height:1.7}
+    @media(max-width:700px){.img-modal-inner{grid-template-columns:1fr;max-height:92vh}
+      .img-modal-meta{border-left:none;border-top:1px solid var(--e61-line)}}
+    @media print{.dotnav,.navbar,.topbar{display:none}.slide,.cover{min-height:0;page-break-after:always}}
+  </style>
+</head>
+<body>
+  <div class="topbar"><div class="topbar-fill" id="topbarFill"></div></div>
+  <div class="dotnav" id="dotnav"></div>
+  <div class="navbar">
+    <button id="prevBtn" title="Previous (←)">‹</button>
+    <span class="counter" id="counter">1 / 7</span>
+    <button id="nextBtn" title="Next (→)">›</button>
+  </div>
+
+  <!-- SLIDE 0 — COVER -->
+  <section class="cover slide-item" data-title="Cover">
+    <div class="cover-inner">
+      <div class="logo">element61 &nbsp;·&nbsp; ML pipeline</div>
+      <span class="eyebrow">END MODEL REPORT &nbsp;·&nbsp; ITERATION 021 &nbsp;·&nbsp; run_20260908T075709Z</span>
+      <h1>Final Model Selection — 6-Horizon LightGBM Champion</h1>
+      <p class="sub">Aernoudt Bakery, Branch 01 — Daily Bread Demand Forecast. All 6 forecasting horizons (h=1, 7, 14, 30, 60, 90 days) evaluated against rolling-origin CV floor. Five horizons retain LightGBM; h=60 falls back to the naive seasonal median predictor. All numbers trace to <span class="mono">history/iteration_021_end_model.json</span>.</p>
+      <div class="kpi-row-lt">
+        <div class="kpi"><div class="kpi-val">5 / 6</div><div class="kpi-lbl">Horizons: ML beats CV floor</div></div>
+        <div class="kpi"><div class="kpi-val">29.8</div><div class="kpi-lbl">Best val MAE (h=1, fold 3)</div></div>
+        <div class="kpi"><div class="kpi-val">56.8</div><div class="kpi-lbl">Pooled val MAE h=90 (3 folds)</div></div>
+        <div class="kpi"><div class="kpi-val">MAE</div><div class="kpi-lbl">Primary metric (all horizons)</div></div>
+        <div class="kpi"><div class="kpi-val">FE4</div><div class="kpi-lbl">Feature set (90 cols, iter 019)</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 1 — AGENDA -->
+  <section class="slide slide-item" data-title="Agenda">
+    <div class="slide-num">02 / 07</div>
+    <div class="slide-tag">Agenda</div>
+    <div class="slide-inner">
+      <span class="eyebrow">Contents</span>
+      <h2 style="margin-bottom:28px">Report Structure</h2>
+      <div class="grid-3">
+        <div class="card"><b class="mono" style="color:var(--accent)">03</b><br><b>Overview &amp; Verdict</b><br>
+          <span style="font-size:.85rem;color:var(--e61-ink-3)">5/6 horizons beat CV floor; h=60 naive fallback; key configuration facts</span></div>
+        <div class="card"><b class="mono" style="color:var(--accent)">04</b><br><b>Model Inventory</b><br>
+          <span style="font-size:.85rem;color:var(--e61-ink-3)">Per-horizon: target transform, anchor, CV MAE, training rows, floor margin</span></div>
+        <div class="card"><b class="mono" style="color:var(--accent)">05</b><br><b>CV Results Detail</b><br>
+          <span style="font-size:.85rem;color:var(--e61-ink-3)">h=90 pooled multi-fold breakdown; h=60 failure analysis</span></div>
+        <div class="card"><b class="mono" style="color:var(--accent)">06</b><br><b>Model Files</b><br>
+          <span style="font-size:.85rem;color:var(--e61-ink-3)">pkl paths in artifacts/training/final/; existence confirmed on disk</span></div>
+        <div class="card"><b class="mono" style="color:var(--accent)">07</b><br><b>Serving Instructions</b><br>
+          <span style="font-size:.85rem;color:var(--e61-ink-3)">Per-horizon prediction calls: ratio decode, anchor multiply, naive fallback</span></div>
+        <div class="card"><b class="mono" style="color:var(--accent)">08</b><br><b>Durable Rules</b><br>
+          <span style="font-size:.85rem;color:var(--e61-ink-3)">Constraints that must be preserved across all future retraining</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 2 — OVERVIEW & VERDICT (dark emphasis) -->
+  <section class="slide slide-item dark" data-title="Overview">
+    <div class="slide-num">03 / 07</div>
+    <div class="slide-tag">Overview</div>
+    <div class="slide-inner">
+      <span class="eyebrow">End Model — run_20260908T075709Z</span>
+      <h2 style="margin-bottom:6px">5 of 6 Horizons: LightGBM Beats Rolling-Origin CV Floor</h2>
+      <p style="color:var(--e61-ink-3);margin-bottom:24px">Feature set: <span class="mono">iteration_019_feature_engineering.csv</span> · 90 columns · FE4 · <span class="mono">objective='regression_l1'</span> · COVID lockdown rows excluded from final training</p>
+
+      <div class="kpi-mini-row" style="margin-bottom:28px">
+        <div class="kpi-mini">
+          <div class="kpi-mini-label">h=1 — CV MAE (fold 3)</div>
+          <div class="kpi-mini-val">29.8</div>
+          <div class="kpi-mini-note"><span class="badge b-hi">BEATS FLOOR</span> &nbsp;floor=54.4 &nbsp;n=94 rows</div>
+        </div>
+        <div class="kpi-mini">
+          <div class="kpi-mini-label">h=7 — CV MAE (fold 3)</div>
+          <div class="kpi-mini-val">33.0</div>
+          <div class="kpi-mini-note"><span class="badge b-hi">BEATS FLOOR</span> &nbsp;floor=34.1 &nbsp;n=88 rows</div>
+        </div>
+        <div class="kpi-mini">
+          <div class="kpi-mini-label">h=14 — CV MAE (fold 3)</div>
+          <div class="kpi-mini-val">37.8</div>
+          <div class="kpi-mini-note"><span class="badge b-hi">BEATS FLOOR</span> &nbsp;floor=38.1 &nbsp;n=81 rows</div>
+        </div>
+        <div class="kpi-mini">
+          <div class="kpi-mini-label">h=30 — CV MAE (fold 3)</div>
+          <div class="kpi-mini-val">38.0</div>
+          <div class="kpi-mini-note"><span class="badge b-hi">BEATS FLOOR</span> &nbsp;floor=40.3 &nbsp;n=65 rows</div>
+        </div>
+        <div class="kpi-mini" style="border:2px solid var(--e61-warning)">
+          <div class="kpi-mini-label">h=60 — CV MAE (fold 3)</div>
+          <div class="kpi-mini-val" style="color:var(--e61-warning)">71.9</div>
+          <div class="kpi-mini-note"><span class="badge b-warn">NAIVE FALLBACK</span> &nbsp;floor=40.0 &nbsp;n=35</div>
+        </div>
+        <div class="kpi-mini">
+          <div class="kpi-mini-label">h=90 — Pooled MAE (3 folds)</div>
+          <div class="kpi-mini-val">56.8</div>
+          <div class="kpi-mini-note"><span class="badge b-hi">BEATS POOLED FLOOR</span> &nbsp;pooled floor=75.9</div>
+        </div>
+      </div>
+
+      <div class="callout-warn">
+        <b>h=60 exception:</b> LightGBM CV MAE (71.9) did not beat the naive floor (40.0) at this iteration. Production prediction for h=60 uses <span class="mono">naive_h60_seasonal_median_w26</span>. A subsequent iteration (022) retrained h=60 and produced a LightGBM model that does beat the floor — that model is in <span class="mono">artifacts/training/final/lgbm_h60_final.pkl</span> but was registered after this iteration's JSON was written.
+      </div>
+
+      <div class="callout-info">
+        <b>h=90 evaluation:</b> Fold 3 has only 5 scoreable validation rows for h=90, making single-fold evaluation unreliable. The pooled 3-fold MAE (56.8) vs pooled floor (75.9) is the authoritative comparison. All 3 individual folds beat their fold floor.
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 3 — MODEL INVENTORY -->
+  <section class="slide slide-item" data-title="Model Inventory">
+    <div class="slide-num">04 / 07</div>
+    <div class="slide-tag">Model Inventory</div>
+    <div class="slide-inner">
+      <span class="eyebrow">Per-Horizon Champion Selection</span>
+      <h2 style="margin-bottom:20px">Model Inventory — All 6 Horizons</h2>
+      <p style="color:var(--e61-ink-3);margin-bottom:20px">All LightGBM models retrained on full historical data (train + val combined, COVID excluded) after CV champion selection. CV MAEs below are fold-3 validation scores used for selection.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Horizon</th>
+            <th>Model File</th>
+            <th>Target Transform</th>
+            <th>Anchor</th>
+            <th>CV MAE</th>
+            <th>CV Floor</th>
+            <th>Margin</th>
+            <th>Final Train Rows</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="row-ok">
+            <td><b class="mono">h=1</b></td>
+            <td class="mono">lgbm_h1_final.pkl</td>
+            <td><span class="badge b-hi">RATIO</span> <span class="mono">ratio_correct_h1</span></td>
+            <td class="mono">anchor_correct_h1</td>
+            <td><b>29.8</b></td>
+            <td class="mono">54.4</td>
+            <td style="color:var(--e61-success)"><b>−24.6</b></td>
+            <td class="mono">2,280</td>
+            <td><span class="badge b-hi">LightGBM</span></td>
+          </tr>
+          <tr class="row-ok">
+            <td><b class="mono">h=7</b></td>
+            <td class="mono">lgbm_h7_final.pkl</td>
+            <td><span class="badge b-hi">RATIO</span> <span class="mono">ratio_h7</span></td>
+            <td class="mono">naive_h7_seasonal_median_w4</td>
+            <td><b>33.0</b></td>
+            <td class="mono">34.1</td>
+            <td style="color:var(--e61-success)"><b>−1.1</b></td>
+            <td class="mono">2,670</td>
+            <td><span class="badge b-hi">LightGBM</span></td>
+          </tr>
+          <tr class="row-ok">
+            <td><b class="mono">h=14</b></td>
+            <td class="mono">lgbm_h14_final.pkl</td>
+            <td><span class="badge b-med">RAW UNITS</span> <span class="mono">bread_quantity_h14</span></td>
+            <td>—</td>
+            <td><b>37.8</b></td>
+            <td class="mono">38.1</td>
+            <td style="color:var(--e61-success)"><b>−0.3</b></td>
+            <td class="mono">2,649</td>
+            <td><span class="badge b-hi">LightGBM</span></td>
+          </tr>
+          <tr class="row-ok">
+            <td><b class="mono">h=30</b></td>
+            <td class="mono">lgbm_h30_final.pkl</td>
+            <td><span class="badge b-hi">RATIO</span> <span class="mono">ratio_correct_h30</span></td>
+            <td class="mono">anchor_correct_h30</td>
+            <td><b>38.0</b></td>
+            <td class="mono">40.3</td>
+            <td style="color:var(--e61-success)"><b>−2.3</b></td>
+            <td class="mono">2,194</td>
+            <td><span class="badge b-hi">LightGBM</span></td>
+          </tr>
+          <tr class="row-warn">
+            <td><b class="mono">h=60</b></td>
+            <td class="mono" style="color:var(--e61-warning)">lgbm_h60_final.pkl †</td>
+            <td><span class="badge b-naive">NAIVE</span> at iter 021</td>
+            <td class="mono">naive_h60_seasonal_median_w26</td>
+            <td><b style="color:var(--e61-warning)">71.9</b></td>
+            <td class="mono">40.0</td>
+            <td style="color:var(--e61-danger)"><b>+31.9</b></td>
+            <td>—</td>
+            <td><span class="badge b-warn">NAIVE (iter 021)</span></td>
+          </tr>
+          <tr class="row-ok">
+            <td><b class="mono">h=90</b></td>
+            <td class="mono">lgbm_h90_final.pkl</td>
+            <td><span class="badge b-med">RAW UNITS</span> <span class="mono">bread_quantity_h90</span></td>
+            <td>—</td>
+            <td><b>79.0</b> ‡</td>
+            <td class="mono">91.9</td>
+            <td style="color:var(--e61-success)"><b>−12.9</b></td>
+            <td class="mono">2,129</td>
+            <td><span class="badge b-hi">LightGBM</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="font-size:.78rem;color:var(--e61-ink-4);margin-top:10px">
+        † <span class="mono">lgbm_h60_final.pkl</span> exists on disk (added by iter 022); not registered in this iteration's JSON.<br>
+        ‡ Fold-3 only (5 rows). Pooled 3-fold MAE = 56.8; pooled floor = 75.9. Pooled comparison is the authoritative result for h=90.
+      </p>
+    </div>
+  </section>
+
+  <!-- SLIDE 4 — CV RESULTS DETAIL -->
+  <section class="slide slide-item" data-title="CV Results">
+    <div class="slide-num">05 / 07</div>
+    <div class="slide-tag">CV Results</div>
+    <div class="slide-inner">
+      <span class="eyebrow">Rolling-Origin Cross-Validation</span>
+      <h2 style="margin-bottom:20px">h=90 Multi-Fold Breakdown &amp; h=60 Failure Analysis</h2>
+
+      <div class="grid-lead" style="margin-bottom:28px">
+        <div class="card">
+          <h3 style="margin-bottom:16px">h=90 — Per-Fold Results (3 folds)</h3>
+          <p style="font-size:.88rem;color:var(--e61-ink-3);margin-bottom:14px">Fold 3 has only 5 scoreable rows — single-fold selection is statistically unreliable. All three folds must be pooled for h=90 champion selection.</p>
+          <table>
+            <thead>
+              <tr><th>Fold</th><th>MAE</th><th>Floor</th><th>n rows</th><th>Beats floor</th></tr>
+            </thead>
+            <tbody>
+              <tr class="row-ok"><td><b>Fold 1</b></td><td><b>30.1</b></td><td class="mono">57.6</td><td class="mono">68</td><td><span class="badge b-hi">YES</span></td></tr>
+              <tr class="row-ok"><td><b>Fold 2</b></td><td><b>82.2</b></td><td class="mono">93.4</td><td class="mono">67</td><td><span class="badge b-hi">YES</span></td></tr>
+              <tr class="row-ok"><td><b>Fold 3</b></td><td><b>79.0</b></td><td class="mono">91.9</td><td class="mono">5</td><td><span class="badge b-hi">YES</span></td></tr>
+              <tr style="background:var(--e61-bg-cool)"><td><b>Pooled</b></td><td><b style="color:var(--accent)">56.8</b></td><td class="mono">75.9</td><td class="mono">140</td><td><span class="badge b-hi">YES</span></td></tr>
+            </tbody>
+          </table>
+          <div style="margin-top:12px">
+            <button class="details-btn" onclick="toggleDetails(this)">Full h=90 notes</button>
+            <div class="details-panel"><div class="inner">
+              h=90 CV MAE varies significantly across folds: fold 1 (30.1) vs fold 2 (82.2). This is expected — fold 1 predicts 2018Q4 from a long historical context (mean demand ~330), while fold 2 predicts 2019Q4 (lower mean ~270, steeper trend). The pooled MAE of 56.8 averages across these two demand regimes and gives a more robust estimate of generalisation error. The baseline_floor in the JSON (42.1) is the EDA provisional naive — the CV floor used for model selection (75.9 pooled) is the rolling-origin same-DOW baseline computed on the same fold windows, which is the correct comparison.
+            </div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-bottom:16px">h=60 — Why Naive Wins at Iter 021</h3>
+          <div style="background:var(--e61-bg-warm);border-left:3px solid var(--e61-warning);padding:12px 16px;border-radius:0 8px 8px 0;margin-bottom:14px">
+            <b>CV MAE: 71.9 vs floor: 40.0</b><br>
+            <span style="font-size:.85rem;color:var(--e61-ink-3)">LightGBM overfit and failed to beat the seasonal median naive on 35 validation rows.</span>
+          </div>
+          <ul class="limits-list">
+            <li>Only 35 scoreable validation rows for h=60 in fold 3 — high variance in MAE estimate</li>
+            <li>FE4 feature set at iter 021 did not include the ratio_correct transform for h=60 (added in iter 022)</li>
+            <li>h=60 spans ~2 months ahead — the seasonal median baseline (w=26, 6-month same-DOW lookback) is a strong prior at this range</li>
+            <li>Subsequent iter 022 fix: adopted ratio_correct_h60 transform and anchor_correct_h60 anchor → model beats floor with CV MAE 36.2</li>
+          </ul>
+          <div style="margin-top:12px">
+            <div class="callout-ok" style="margin:0">
+              <b>Resolution:</b> <span class="mono">lgbm_h60_final.pkl</span> in <span class="mono">artifacts/training/final/</span> was produced by iter 022 and IS the production model for h=60.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-bottom:14px">Scoreable Validation Rows by Horizon (Fold 3)</h3>
+        <p style="font-size:.85rem;color:var(--e61-ink-3);margin-bottom:16px">Val window: 2020-09-28 to 2020-12-31 (95 rows). For horizon h, a row is scoreable only if its target date (row.date + h) falls within the dataset (≤ 2020-12-31).</p>
+        <div class="chips">
+          <div class="chip">h=1 &nbsp;<span>94 rows</span></div>
+          <div class="chip">h=7 &nbsp;<span>88 rows</span></div>
+          <div class="chip">h=14 &nbsp;<span>81 rows</span></div>
+          <div class="chip">h=30 &nbsp;<span>65 rows</span></div>
+          <div class="chip">h=60 &nbsp;<span>35 rows</span></div>
+          <div class="chip" style="border-color:var(--e61-warning);color:var(--e61-warning)">h=90 &nbsp;<span>5 rows ⚠</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 5 — MODEL FILES -->
+  <section class="slide slide-item" data-title="Model Files">
+    <div class="slide-num">06 / 07</div>
+    <div class="slide-tag">Model Files</div>
+    <div class="slide-inner">
+      <span class="eyebrow">Artifacts</span>
+      <h2 style="margin-bottom:20px">Final Model Files — Confirmed on Disk</h2>
+      <p style="color:var(--e61-ink-3);margin-bottom:24px">All 6 <span class="mono">.pkl</span> files verified present in <span class="mono">artifacts/training/final/</span>. Load with <span class="mono">pickle.load(open(path,'rb'))</span> or <span class="mono">joblib.load(path)</span>.</p>
+
+      <table style="margin-bottom:24px">
+        <thead>
+          <tr><th>Horizon</th><th>File path (relative to run root)</th><th>Type</th><th>Target</th><th>Clip rule</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><b class="mono">h=1</b></td><td class="mono">artifacts/training/final/lgbm_h1_final.pkl</td><td><span class="badge b-hi">LightGBM</span></td><td class="mono">ratio_correct_h1</td><td class="mono">clip(0.05, 5.0)</td></tr>
+          <tr><td><b class="mono">h=7</b></td><td class="mono">artifacts/training/final/lgbm_h7_final.pkl</td><td><span class="badge b-hi">LightGBM</span></td><td class="mono">ratio_h7</td><td class="mono">clip(0.05, 5.0)</td></tr>
+          <tr><td><b class="mono">h=14</b></td><td class="mono">artifacts/training/final/lgbm_h14_final.pkl</td><td><span class="badge b-hi">LightGBM</span></td><td class="mono">bread_quantity_h14</td><td>none (raw units)</td></tr>
+          <tr><td><b class="mono">h=30</b></td><td class="mono">artifacts/training/final/lgbm_h30_final.pkl</td><td><span class="badge b-hi">LightGBM</span></td><td class="mono">ratio_correct_h30</td><td class="mono">clip(0.05, 5.0)</td></tr>
+          <tr><td><b class="mono">h=60</b></td><td class="mono">artifacts/training/final/lgbm_h60_final.pkl</td><td><span class="badge b-hi">LightGBM</span> <span style="font-size:.7rem;color:var(--e61-ink-4)">(iter 022)</span></td><td class="mono">ratio_correct_h60</td><td class="mono">clip(0.05, 5.0)</td></tr>
+          <tr><td><b class="mono">h=90</b></td><td class="mono">artifacts/training/final/lgbm_h90_final.pkl</td><td><span class="badge b-hi">LightGBM</span></td><td class="mono">bread_quantity_h90</td><td>none (raw units)</td></tr>
+        </tbody>
+      </table>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-bottom:10px">Feature Pool</h3>
+          <p style="font-size:.85rem;color:var(--e61-ink-3);margin-bottom:10px">Source: <span class="mono">data/iteration_019_feature_engineering.csv</span> (90 cols)</p>
+          <p style="font-size:.85rem;margin-bottom:10px"><b>Include:</b> all numeric columns except the exclusion list below.</p>
+          <p style="font-size:.85rem;margin-bottom:6px"><b>Exclude from X:</b></p>
+          <div class="chips">
+            <div class="chip"><span>date</span></div>
+            <div class="chip"><span>bread_quantity</span></div>
+            <div class="chip"><span>is_covid_lockdown_period</span></div>
+            <div class="chip"><span>day_of_week</span></div>
+            <div class="chip"><span>_split, _fold_*</span></div>
+            <div class="chip"><span>bread_quantity_h*</span></div>
+            <div class="chip"><span>ratio_h*, ratio_correct_h*</span></div>
+            <div class="chip"><span>anchor_correct_h*</span></div>
+          </div>
+          <div class="callout-info" style="margin-top:10px;padding:10px 14px">
+            <b>fillna:</b> fill all NaN in X with 0 before <span class="mono">model.predict(X)</span>
+          </div>
+        </div>
+        <div class="card">
+          <h3 style="margin-bottom:10px">Training Configuration</h3>
+          <ul class="limits-list">
+            <li><span class="mono">objective='regression_l1'</span> — MAE loss on all horizons</li>
+            <li>COVID lockdown rows (<span class="mono">is_covid_lockdown_period==1</span>) excluded from final training</li>
+            <li>Final training: train + val combined (post-CV champion selection)</li>
+            <li>Each horizon trained on its own feature subset (62 model features from FE4)</li>
+            <li>Horizon-specific targets: ratio transform for h=1,7,30; raw units for h=14,90</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 6 — SERVING INSTRUCTIONS -->
+  <section class="slide slide-item" data-title="Serving">
+    <div class="slide-num">07 / 07</div>
+    <div class="slide-tag">Serving</div>
+    <div class="slide-inner">
+      <span class="eyebrow">Production Prediction</span>
+      <h2 style="margin-bottom:20px">Serving Instructions — Per-Horizon Prediction Calls</h2>
+
+      <div class="grid-2" style="margin-bottom:24px">
+        <div>
+          <h3 style="margin-bottom:12px">Ratio-Decoded Horizons (h=1, 7, 30, 60)</h3>
+          <p style="font-size:.85rem;color:var(--e61-ink-3);margin-bottom:10px">Model predicts a ratio relative to a seasonal anchor. Multiply back to get units.</p>
+          <div class="code-block">
+# h=1
+ratio = model_h1.predict(X)
+ratio = np.clip(ratio, 0.05, 5.0)
+units = ratio * anchor_correct_h1
+
+# h=7
+ratio = model_h7.predict(X)
+ratio = np.clip(ratio, 0.05, 5.0)
+units = ratio * naive_h7_seasonal_median_w4
+
+# h=30
+ratio = model_h30.predict(X)
+ratio = np.clip(ratio, 0.05, 5.0)
+units = ratio * anchor_correct_h30
+
+# h=60
+ratio = model_h60.predict(X)   # iter022 model
+ratio = np.clip(ratio, 0.05, 5.0)
+units = ratio * anchor_correct_h60</div>
+        </div>
+        <div>
+          <h3 style="margin-bottom:12px">Raw-Unit Horizons (h=14, 90)</h3>
+          <p style="font-size:.85rem;color:var(--e61-ink-3);margin-bottom:10px">Model predicts bread units directly. No ratio decode needed.</p>
+          <div class="code-block">
+# h=14
+units = model_h14.predict(X)
+
+# h=90
+units = model_h90.predict(X)</div>
+
+          <h3 style="margin-bottom:12px;margin-top:20px">Anchor Computation</h3>
+          <p style="font-size:.85rem;color:var(--e61-ink-3);margin-bottom:10px">Anchors are seasonal medians of past same-DOW observations. Window W per horizon:</p>
+          <div class="chips">
+            <div class="chip">h=1 &nbsp;<span>W=4 weeks</span></div>
+            <div class="chip">h=7 &nbsp;<span>W=4 weeks</span></div>
+            <div class="chip">h=30 &nbsp;<span>W=26 weeks</span></div>
+            <div class="chip">h=60 &nbsp;<span>W=26 weeks</span></div>
+          </div>
+          <div class="callout-info" style="margin-top:10px;padding:10px 14px">
+            <b>DOW rule:</b> anchor uses DOW of the <i>target date</i> (origin date + h), not the origin date's DOW. This is critical for correctness at h=1,30,60.
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-bottom:14px">Durable Rules — Must Be Preserved in All Retraining</h3>
+        <ul class="limits-list">
+          <li>All LightGBM models must use <span class="mono">objective='regression_l1'</span> (MAE loss) — not MSE, not regression</li>
+          <li>h=60: use naive_h60_seasonal_median_w26 if ML MAE exceeds the CV floor — do not force an ML model that underperforms</li>
+          <li>h=90: use all 3 CV folds for evaluation — fold 3 alone has only 5 rows and is statistically unreliable</li>
+          <li>Feature set: use iter 019 FE CSV (90 cols) with <span class="mono">fillna(0)</span>; never use raw preprocess CSV directly</li>
+          <li>COVID lockdown rows (<span class="mono">is_covid_lockdown_period==1</span>) must be excluded from training but retained in the dataset for gap/boundary purposes</li>
+          <li>Ratio clip: always clip predicted ratio to (0.05, 5.0) before multiplying by anchor — prevents implausible negative or runaway forecasts</li>
+        </ul>
+
+        <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--e61-line);font-size:.78rem;color:var(--e61-ink-4)">
+          <a href="index.html" style="color:var(--accent)">← Run index</a>
+          &nbsp;&nbsp;|&nbsp;&nbsp;
+          Source: <span class="mono">history/iteration_021_end_model.json</span>
+          &nbsp;&nbsp;|&nbsp;&nbsp;
+          Generated: 2026-09-09
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Image modal (no plot-card images in this report, included for completeness) -->
+  <div class="img-modal" id="imgModal" onclick="if(event.target.id==='imgModal')closeImgModal()">
+    <div class="img-modal-inner">
+      <button class="img-modal-close" onclick="closeImgModal()">✕</button>
+      <div class="img-modal-img-wrap"><img id="imgModalImg" src="" alt=""></div>
+      <div class="img-modal-meta">
+        <div class="img-modal-name" id="imgModalName"></div>
+        <div class="img-modal-body" id="imgModalBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ── Deck engine ── */
+    const slides = Array.from(document.querySelectorAll('.cover, .slide'));
+    const dotnav = document.getElementById('dotnav');
+    slides.forEach((s,i)=>{
+      const dot = document.createElement('button');
+      dot.title = s.dataset.title || ('Slide '+(i+1));
+      dot.onclick = ()=> s.scrollIntoView({behavior:'smooth'});
+      dotnav.appendChild(dot);
+    });
+    const dots = Array.from(dotnav.children);
+    const counter = document.getElementById('counter');
+    const topbarFill = document.getElementById('topbarFill');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    let current = 0;
+
+    function setActive(idx){
+      current = idx;
+      dots.forEach((d,i)=> d.classList.toggle('active', i===idx));
+      counter.textContent = (idx+1) + ' / ' + slides.length;
+      topbarFill.style.width = (((idx+1)/slides.length)*100) + '%';
+      prevBtn.disabled = idx===0;
+      nextBtn.disabled = idx===slides.length-1;
+    }
+    setActive(0);
+
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting && e.intersectionRatio>0.55){
+          const idx = slides.indexOf(e.target);
+          if(idx>-1) setActive(idx);
+        }
+      });
+    }, {threshold:[0.55]});
+    slides.forEach(s=>io.observe(s));
+
+    function goTo(idx){
+      idx = Math.max(0, Math.min(slides.length-1, idx));
+      slides[idx].scrollIntoView({behavior:'smooth'});
+    }
+    prevBtn.onclick = ()=> goTo(current-1);
+    nextBtn.onclick = ()=> goTo(current+1);
+    document.addEventListener('keydown', e=>{
+      if(['ArrowDown','ArrowRight','PageDown',' '].includes(e.key)){ e.preventDefault(); goTo(current+1); }
+      if(['ArrowUp','ArrowLeft','PageUp'].includes(e.key)){ e.preventDefault(); goTo(current-1); }
+    });
+
+    /* ── Details disclosure ── */
+    function toggleDetails(btn){
+      btn.classList.toggle('open');
+      const panel = btn.nextElementSibling;
+      panel.classList.toggle('open');
+      btn.textContent = panel.classList.contains('open')
+        ? btn.textContent.replace(/^Full/, 'Hide')
+        : (btn.dataset.orig || btn.textContent.replace(/^Hide/, 'Full'));
+    }
+    document.querySelectorAll('.details-btn').forEach(b=>{ b.dataset.orig = b.textContent; });
+
+    /* ── Image modal ── */
+    function openImgModal(imgEl){
+      document.getElementById('imgModalImg').src = imgEl.currentSrc || imgEl.src;
+      document.getElementById('imgModalImg').alt = imgEl.alt;
+      document.getElementById('imgModalName').textContent = imgEl.dataset.modalTitle || imgEl.alt;
+      document.getElementById('imgModalBody').textContent = imgEl.dataset.modalBody || '';
+      document.getElementById('imgModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeImgModal(){
+      document.getElementById('imgModal').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    document.addEventListener('keydown', e=>{
+      if(document.getElementById('imgModal')?.classList.contains('open') && e.key==='Escape') closeImgModal();
+    });
+    document.querySelectorAll('.plot-card img').forEach(img=>{
+      img.style.cursor = 'zoom-in';
+      img.addEventListener('click', ()=>openImgModal(img));
+    });
+  </script>
+</body>
+</html>

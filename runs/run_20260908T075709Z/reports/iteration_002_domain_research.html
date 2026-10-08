@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>element61 · Domain Research · Iteration 002</title>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Open+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+:root{
+  --e61-orange-red:#FC5B00;--e61-orange:#FC9808;--e61-yellow:#FCBA08;
+  --e61-magenta:#9D1D56;--e61-purple:#301D56;
+  --e61-ink:#1A1230;--e61-ink-2:#301D56;--e61-ink-3:#5B5070;--e61-ink-4:#8B8298;
+  --e61-line:#E6E2EC;--e61-line-2:#D8D2E0;--e61-surface:#FFFFFF;
+  --e61-bg:#FAF8F5;--e61-bg-warm:#FFF6EC;--e61-bg-cool:#F2EEF6;
+  --e61-success:#2F8F5C;--e61-warning:#FCBA08;--e61-danger:#C0294A;--e61-info:#2F6BB3;
+  --font-display:"Montserrat","Helvetica Neue",system-ui,sans-serif;
+  --font-body:"Open Sans","Helvetica Neue",Arial,system-ui,sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:24px;--space-6:32px;--space-7:48px;
+  --radius-sm:4px;--radius-md:8px;--radius-lg:14px;--radius-xl:22px;--radius-pill:999px;
+  --shadow-1:0 1px 2px rgba(48,29,86,.06),0 1px 1px rgba(48,29,86,.04);
+  --shadow-2:0 4px 16px rgba(48,29,86,.08),0 1px 2px rgba(48,29,86,.04);
+  --shadow-3:0 10px 28px rgba(48,29,86,.12),0 2px 6px rgba(48,29,86,.06);
+  --shadow-focus:0 0 0 3px rgba(92,78,168,.28);
+  --ease-standard:cubic-bezier(0.2,0.7,0.2,1);--dur-fast:120ms;--dur-base:200ms;
+  --accent:#5C4EA8;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--e61-bg);color:var(--e61-ink-2);font-family:var(--font-body);line-height:1.6;scroll-snap-type:y proximity;height:100%;overflow-y:auto;scroll-behavior:smooth}
+h1,h2,h3,h4{font-family:var(--font-display);color:var(--e61-ink);margin:0 0 .5em;font-weight:700;text-wrap:balance}
+p{margin:0 0 1em}
+a{color:var(--e61-orange-red)}
+.mono{font-family:var(--font-mono)}
+img{max-width:100%;display:block}
+.topbar{position:fixed;top:0;left:0;right:0;height:3px;background:var(--e61-line);z-index:201}
+.topbar-fill{height:100%;background:linear-gradient(135deg,var(--e61-yellow) 0%,var(--e61-orange) 50%,var(--accent) 100%);width:0;transition:width .25s}
+.dotnav{position:fixed;right:20px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:9px;z-index:200}
+.dotnav button{width:9px;height:9px;border-radius:50%;border:none;background:var(--e61-line-2);cursor:pointer;padding:0;transition:background .2s,transform .2s}
+.dotnav button.active{background:var(--accent);transform:scale(1.5)}
+.dotnav button:hover{background:var(--e61-orange)}
+.navbar{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:14px;background:rgba(26,18,48,.88);backdrop-filter:blur(6px);border-radius:999px;padding:9px 18px;z-index:200;box-shadow:var(--shadow-3)}
+.navbar button{background:none;border:none;color:#fff;font-size:1rem;cursor:pointer;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.navbar button:hover{background:rgba(255,255,255,.15)}
+.navbar button:disabled{opacity:.3;cursor:default}
+.navbar .counter{font-family:var(--font-mono);font-size:.72rem;color:rgba(255,255,255,.85);min-width:52px;text-align:center}
+.slide{min-height:100vh;scroll-snap-align:start;display:flex;flex-direction:column;justify-content:center;padding:88px 64px 96px;position:relative;border-bottom:1px solid var(--e61-line);box-sizing:border-box}
+.slide-inner{max-width:1180px;margin:0 auto;width:100%}
+.slide-num{position:absolute;top:28px;left:64px;font-family:var(--font-mono);font-size:.72rem;letter-spacing:.1em;color:var(--e61-ink-4);text-transform:uppercase}
+.slide-tag{position:absolute;top:28px;right:64px;font-family:var(--font-mono);font-size:.72rem;color:var(--e61-ink-4)}
+@media(max-width:700px){.slide{padding:72px 24px 80px}.slide-num,.slide-tag{left:24px;right:24px}}
+.cover{min-height:100vh;scroll-snap-align:start;background:var(--e61-bg);color:var(--e61-ink);display:flex;flex-direction:column;justify-content:center;padding:64px 64px 64px 68px;position:relative;overflow:hidden;box-sizing:border-box;border-left:6px solid var(--accent)}
+.cover-inner{position:relative;max-width:980px;margin:0 auto;width:100%}
+.cover .logo{font-family:var(--font-display);font-weight:800;font-size:1rem;letter-spacing:.02em;color:var(--accent);margin-bottom:40px}
+.cover h1{font-family:var(--font-display);font-weight:700;font-size:2.6rem;color:var(--e61-purple);line-height:1.15;margin:0 0 18px}
+.cover .sub{font-size:1.05rem;color:var(--e61-ink-3);max-width:680px;margin-bottom:34px}
+@media(max-width:700px){.cover h1{font-size:1.9rem}}
+.slide.dark{background:var(--e61-bg-cool);border-left:6px solid var(--e61-purple)}
+.slide.dark h1,.slide.dark h2,.slide.dark h3,.slide.dark h4{color:var(--e61-purple)}
+.slide.warm{background:var(--e61-bg-warm);border-left:6px solid var(--e61-orange-red)}
+.slide.warm h1,.slide.warm h2,.slide.warm h3{color:var(--e61-ink)}
+.eyebrow{font-family:var(--font-body);font-size:.8125rem;font-weight:600;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);margin-bottom:10px;display:block}
+.kpi-row,.kpi-row-lt{display:flex;gap:14px;flex-wrap:wrap;margin-top:20px}
+.kpi{background:#fff;border:1px solid var(--e61-line);border-radius:14px;box-shadow:var(--shadow-1);padding:16px 22px;min-width:150px}
+.kpi-val{font-family:var(--font-display);font-size:1.7rem;font-weight:700;color:var(--e61-purple)}
+.kpi-lbl{font-size:.72rem;margin-top:4px;color:var(--e61-ink-3)}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:8px 22px;border-radius:999px;font-family:var(--font-display);font-weight:700;font-size:.9rem;margin-bottom:10px}
+.pill-ok{background:var(--e61-success);color:#fff}
+.pill-danger{background:var(--e61-danger);color:#fff}
+.pill-warn{background:var(--e61-warning);color:var(--e61-ink)}
+.badge{display:inline-block;font-family:var(--font-display);font-size:.62rem;font-weight:700;padding:3px 9px;border-radius:5px;letter-spacing:.05em;text-transform:uppercase}
+.b-hi{background:var(--e61-success);color:#fff}.b-med{background:var(--e61-warning);color:var(--e61-ink)}
+.b-lo{background:var(--e61-magenta);color:#fff}.b-lk{background:var(--e61-danger);color:#fff}
+.b-nc{background:var(--e61-line);color:var(--e61-ink-3)}.b-ok{background:#D1FAE5;color:#065F46}
+.b-used{background:#D1FAE5;color:#065F46}.b-notused{background:#FEE2E2;color:#991B1B}
+.b-sparse{background:#EDE9FE;color:#4C1D95}
+.card{background:var(--e61-surface);border:1px solid var(--e61-line);border-radius:16px;padding:22px 24px;box-shadow:var(--shadow-1)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.grid-lead{display:grid;grid-template-columns:2fr 1fr;gap:18px;align-items:start}
+@media(max-width:900px){.grid-2,.grid-3,.grid-4,.grid-lead{grid-template-columns:1fr}}
+.finding-card{background:#fff;border-left:4px solid var(--accent);border-radius:0 14px 14px 0;padding:18px 20px;box-shadow:var(--shadow-1);font-size:.92rem;color:var(--e61-ink-2);line-height:1.6}
+.kpi-mini-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:900px){.kpi-mini-row{grid-template-columns:1fr}}
+.kpi-mini{background:#fff;border:1px solid var(--e61-line);border-radius:12px;box-shadow:var(--shadow-1);padding:16px 18px}
+.kpi-mini-label{font-size:.7rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--e61-ink-3);margin-bottom:4px}
+.kpi-mini-val{font-family:var(--font-display);font-size:1.25rem;font-weight:700;color:var(--accent)}
+.kpi-mini-note{font-size:.72rem;color:var(--e61-ink-3);margin-top:4px;line-height:1.4}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+.chip{background:var(--e61-bg-cool);border:1px solid var(--e61-line-2);border-radius:8px;padding:5px 12px;font-size:.78rem;font-family:var(--font-mono);color:var(--e61-ink-3)}
+.chip span{color:var(--e61-purple);font-weight:500}
+table{width:100%;border-collapse:collapse;font-size:.84rem}
+th{text-align:left;padding:9px 12px;font-family:var(--font-display);font-size:.7rem;color:var(--e61-ink-3);border-bottom:2px solid var(--e61-line);font-weight:600;background:var(--e61-bg-cool);text-transform:uppercase;letter-spacing:.04em}
+td{padding:9px 12px;border-bottom:1px solid var(--e61-line);color:var(--e61-ink-2);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr.ok-row td:first-child{border-left:3px solid var(--e61-success)}
+tr.warn-row td:first-child{border-left:3px solid var(--e61-warning)}
+tr.danger-row td:first-child{border-left:3px solid var(--e61-danger)}
+.limits-list{list-style:none;padding:0;margin:0}
+.limits-list li{position:relative;padding-left:22px;margin-bottom:10px;font-size:.88rem;color:var(--e61-ink-2)}
+.limits-list li::before{content:"●";position:absolute;left:0;color:var(--accent);font-size:.6rem;top:.45em}
+@media print{.dotnav,.navbar,.topbar{display:none}.slide,.cover{min-height:0;page-break-after:always}}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="topbar-fill" id="topbarFill"></div></div>
+<div class="dotnav" id="dotnav"></div>
+<div class="navbar">
+  <button id="prevBtn" title="Previous (←)">‹</button>
+  <span class="counter" id="counter">1 / 8</span>
+  <button id="nextBtn" title="Next (→)">›</button>
+</div>
+
+<!-- SLIDE 0 — COVER -->
+<section class="cover slide-item" data-title="Cover">
+  <div class="cover-inner">
+    <div class="logo">element61 &nbsp;·&nbsp; pipeline</div>
+    <span class="eyebrow">DOMAIN RESEARCH &nbsp;·&nbsp; ITERATION 002 &nbsp;·&nbsp; run_20260908T075709Z</span>
+    <h1>Domain Research — Aernoudt Bakery Branch 01, Ghent</h1>
+    <p class="sub">Structured domain investigation triggered by 4 EDA findings. Covers Belgian public holidays, Gentse Feesten, COVID-19 structural shock, 2014 data sparsity, Ghent city demographics, school holiday schedules, and assessment of two external data sources (weather, competitor closures). Produces 15 feature recommendations and 5 open questions for stakeholder resolution. All numbers trace to <span class="mono">history/iteration_002_domain_research.json</span>.</p>
+    <div class="kpi-row-lt">
+      <div class="kpi"><div class="kpi-val">4</div><div class="kpi-lbl">EDA triggers addressed</div></div>
+      <div class="kpi"><div class="kpi-val">15</div><div class="kpi-lbl">Feature recommendations</div></div>
+      <div class="kpi"><div class="kpi-val">5</div><div class="kpi-lbl">Open questions</div></div>
+      <div class="kpi"><div class="kpi-val">2</div><div class="kpi-lbl">Data sources assessed</div></div>
+      <div class="kpi"><div class="kpi-val">11</div><div class="kpi-lbl">Belgian public holidays (Flanders)</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 1 — AGENDA -->
+<section class="slide slide-item" data-title="Agenda">
+  <div class="slide-num">01 / 08</div><div class="slide-tag">Agenda</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Contents</span>
+    <h2>Report Structure</h2>
+    <div class="grid-3" style="margin-top:24px">
+      <div class="card"><b class="mono" style="color:var(--accent)">02</b><br><b>EDA Triggers Addressed</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">4 triggers: Belgian holidays, Gentse Feesten, COVID-19 lockdown, 2014 sparse data</span></div>
+      <div class="card"><b class="mono" style="color:var(--accent)">03</b><br><b>Calendar Demand Drivers</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">DOW pattern, school holidays, Zomervakantie, floating holiday rules, anticipation effects</span></div>
+      <div class="card"><b class="mono" style="color:var(--accent)">04</b><br><b>Structural Shocks</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">COVID-19 lockdown demand impact, regime change, 2014 POS migration</span></div>
+      <div class="card"><b class="mono" style="color:var(--accent)">05</b><br><b>Data Source Assessment</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">Weather Ghent (2015–2020) and competitor closures (2017–2020) — coverage, signal, confounds</span></div>
+      <div class="card"><b class="mono" style="color:var(--accent)">06</b><br><b>Feature Recommendations</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">15 engineered features with priority (high/medium/low) and data source</span></div>
+      <div class="card"><b class="mono" style="color:var(--accent)">07</b><br><b>Open Questions &amp; Durable Rules</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">5 stakeholder open questions and 4 binding durable rules for downstream skills</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 2 — EDA TRIGGERS ADDRESSED -->
+<section class="slide slide-item" data-title="EDA Triggers">
+  <div class="slide-num">02 / 08</div><div class="slide-tag">EDA Triggers</div>
+  <div class="slide-inner">
+    <span class="eyebrow">4 EDA Triggers Addressed</span>
+    <h2>Public Holidays, Gentse Feesten, COVID, and 2014 Sparsity</h2>
+    <div class="kpi-row-lt" style="margin-bottom:24px">
+      <div class="kpi"><div class="kpi-val">4</div><div class="kpi-lbl">Triggers resolved</div></div>
+      <div class="kpi"><div class="kpi-val">11</div><div class="kpi-lbl">Flemish public holidays/year</div></div>
+      <div class="kpi"><div class="kpi-val">10</div><div class="kpi-lbl">Gentse Feesten days (annual)</div></div>
+      <div class="kpi"><div class="kpi-val">64</div><div class="kpi-lbl">2014 trading days recorded (vs ~250 expected)</div></div>
+    </div>
+    <div class="grid-2" style="gap:14px">
+      <div class="finding-card">
+        <b>Trigger 1 · Belgian Public Holidays</b><br>
+        Belgium has 10 federal + 1 Flemish Community holiday = <b>11 official non-working days per year</b> in Flanders. 8 are fixed calendar dates; 3 float with Easter (Easter Monday = Easter+1, Ascension = Easter+39, Whit Monday = Easter+50). Easter can shift by up to 5 weeks between years. <br><br>
+        <span class="badge b-hi" style="font-size:.6rem">HIGH CONFIDENCE</span>&nbsp; Feature implication: compute floating holidays from Easter formula — never hardcode by month/day.
+      </div>
+      <div class="finding-card">
+        <b>Trigger 2 · Gentse Feesten</b><br>
+        Annual 10-day summer festival in central Ghent (~200,000 visitors/day, ~2 million total per edition). Runs from the Friday before Belgian National Day (July 21). <b>2020: CANCELLED due to COVID-19.</b> Demand impact on branch 01 depends on its location relative to festival routes — unresolved without stakeholder confirmation (OQ-4).<br><br>
+        <span class="badge b-med" style="font-size:.6rem">MEDIUM CONFIDENCE</span>&nbsp; Feature implication: <span class="mono">is_gentse_feesten</span> must explicitly set 2020 = 0.
+      </div>
+      <div class="finding-card">
+        <b>Trigger 3 · COVID-19 Lockdown (2020-03-18 to 2020-05-03)</b><br>
+        Belgian bakeries were classified as <b>essential food retail — permitted to remain OPEN</b> throughout all lockdown phases. The 24 zero-demand days in 2020 are a mix of ~11 official holidays + voluntary closures. Expected demand during lockdown: <b>ELEVATED</b> (restaurant closures drove home cooking). An <span class="mono">is_covid_lockdown_period</span> binary covers the 47-day window.<br><br>
+        <span class="badge b-hi" style="font-size:.6rem">HIGH CONFIDENCE</span>
+      </div>
+      <div class="finding-card">
+        <b>Trigger 4 · 2014 Sparse Data (64 / ~250 expected trading days)</b><br>
+        Almost certainly caused by the POS system migration documented in <span class="mono">storedata/Winkelfile.csv</span>. The 64 days represent partial-year export from one side of the migration. Rolling statistics crossing 2014 are unreliable; lag-365 features from 2015 looking back to 2014 will find sparse data. <b>Do not drop or impute</b> — flag with <span class="mono">is_2014_sparse_period</span>.<br><br>
+        <span class="badge b-hi" style="font-size:.6rem">HIGH CONFIDENCE</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 3 — CALENDAR DEMAND DRIVERS -->
+<section class="slide slide-item" data-title="Calendar Drivers">
+  <div class="slide-num">03 / 08</div><div class="slide-tag">Calendar Drivers</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Demand Driver Ranking</span>
+    <h2>DOW Pattern Dominant; School Holidays and Seasonality Also Significant</h2>
+    <div class="grid-2" style="margin-top:20px">
+      <div>
+        <div class="card" style="margin-bottom:16px">
+          <h3 style="margin-bottom:12px">Top Demand Drivers (ranked)</h3>
+          <table>
+            <thead><tr><th>Rank</th><th>Driver</th><th>Type</th><th>Strength</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>Day-of-week (DOW) pattern</td><td>Calendar</td><td><span class="badge b-hi">Very High</span></td></tr>
+              <tr><td>2</td><td>Long-term structural decline in Belgian bread consumption</td><td>External shock</td><td><span class="badge b-hi">Very High</span></td></tr>
+              <tr><td>3</td><td>Official public holidays — shop closure</td><td>Calendar</td><td><span class="badge b-hi">High</span></td></tr>
+              <tr><td>4</td><td>Annual seasonal pattern (summer trough, winter peak)</td><td>Calendar</td><td><span class="badge b-hi">High</span></td></tr>
+              <tr><td>5</td><td>COVID-19 structural shock</td><td>External shock</td><td><span class="badge b-hi">High</span></td></tr>
+              <tr><td>6</td><td>School holidays — Zomervakantie and other breaks</td><td>Calendar</td><td><span class="badge b-med">Medium</span></td></tr>
+              <tr><td>7</td><td>Holiday anticipation (day-before elevated demand)</td><td>Calendar</td><td><span class="badge b-med">Medium</span></td></tr>
+              <tr><td>8</td><td>Competitor closures (demand redirection)</td><td>Operational</td><td><span class="badge b-med">Medium</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="margin-bottom:14px">
+          <h3 style="margin-bottom:10px">Flemish School Holiday Structure</h3>
+          <table>
+            <thead><tr><th>Holiday</th><th>Timing</th><th>Floats?</th></tr></thead>
+            <tbody>
+              <tr><td>Zomervakantie</td><td>July 1 – Aug 31 (62 days)</td><td>Fixed every year</td></tr>
+              <tr><td>Kerstvakantie</td><td>~Dec 25 – Jan 6</td><td>Anchored to Dec 25</td></tr>
+              <tr><td>Herfstvakantie</td><td>Week containing Nov 1</td><td>Minor float</td></tr>
+              <tr><td>Paasvakantie</td><td>2 weeks around Easter</td><td><b>Floats with Easter</b></td></tr>
+              <tr><td>Krokusvakantie</td><td>7th Monday before Easter</td><td><b>Floats with Easter</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="background:var(--e61-bg-cool);border-left:4px solid var(--accent);border-radius:0 12px 12px 0;padding:14px 18px">
+          <b style="font-size:.85rem">Key implementation constraint</b>
+          <p style="font-size:.82rem;color:var(--e61-ink-2);margin:6px 0 0">Krokusvakantie and Paasvakantie float with Easter by up to <b>3 weeks</b>. Any feature using fixed month-day windows (e.g. "Feb 15–22 = Krokus") will misclassify roughly 1–2 weeks per year. Easter formula computation is mandatory — not optional.</p>
+        </div>
+        <div style="margin-top:14px;background:var(--e61-bg-warm);border-left:4px solid var(--e61-orange);border-radius:0 12px 12px 0;padding:14px 18px">
+          <b style="font-size:.85rem">Anticipation effect</b>
+          <p style="font-size:.82rem;color:var(--e61-ink-3);margin:6px 0 0">Day BEFORE a public holiday shows elevated bread demand in Belgian retail. Christmas Eve (Dec 24), Oct 31 (before All Saints'), and Good Friday are the strongest anticipation days. Feature: <span class="mono">days_until_next_holiday</span> (capped at 30).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 4 — STRUCTURAL SHOCKS -->
+<section class="slide dark slide-item" data-title="Structural Shocks">
+  <div class="slide-num">04 / 08</div><div class="slide-tag">Structural Shocks</div>
+  <div class="slide-inner">
+    <span class="eyebrow">COVID-19 and 2014 POS Migration</span>
+    <h2>Two Structural Shocks Require Explicit Feature Flags</h2>
+    <div class="grid-2" style="margin-top:24px">
+      <div>
+        <div class="card" style="margin-bottom:16px">
+          <h3 style="color:var(--e61-danger);margin-bottom:14px">COVID-19 Structural Shock</h3>
+          <div class="kpi-mini-row" style="grid-template-columns:1fr 1fr;margin-bottom:14px">
+            <div class="kpi-mini">
+              <div class="kpi-mini-label">Lockdown window</div>
+              <div class="kpi-mini-val" style="font-size:1rem">2020-03-18<br>to 2020-05-03</div>
+              <div class="kpi-mini-note">47 days; bakeries OPEN as essential food retail</div>
+            </div>
+            <div class="kpi-mini">
+              <div class="kpi-mini-label">Zero-demand days 2020</div>
+              <div class="kpi-mini-val">24</div>
+              <div class="kpi-mini-note">~11 official holidays + voluntary closures</div>
+            </div>
+          </div>
+          <p style="font-size:.86rem;color:var(--e61-ink-2)">Belgian bakeries were permitted to stay open throughout all lockdown phases (essential food retail). Expected demand: <b>ELEVATED</b> — restaurant and cafe closures drove customers to cook at home, increasing bread consumption. Working from home increased weekday morning demand. Belgian supermarket scanner data confirms pantry-stocking in March 2020.</p>
+          <p style="font-size:.86rem;color:var(--e61-ink-3)">The 2020-06-01 regime change (shop went 7/7, opening Mondays) is almost certainly a COVID-driven decision: home-working customers created Monday demand that previously didn't exist (office workers formerly bought bread near their workplaces on weekdays).</p>
+          <div style="background:var(--e61-bg-warn);border-radius:8px;padding:10px 14px;margin-top:10px;border:1px solid #FCE0BE">
+            <b style="font-size:.8rem;color:var(--e61-orange-red)">Modelling caution</b>
+            <p style="font-size:.8rem;color:var(--e61-ink-3);margin:4px 0 0">Rolling means that span March–May 2020 will be biased HIGH (lockdown-elevated demand). <span class="mono">is_covid_lockdown_period</span> and <span class="mono">is_official_public_holiday</span> are separate flags with different mechanisms — do not conflate them.</p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <h3 style="color:var(--e61-purple);margin-bottom:14px">2014 POS Migration</h3>
+          <div class="kpi-mini" style="margin-bottom:14px">
+            <div class="kpi-mini-label">Days recorded in 2014</div>
+            <div class="kpi-mini-val">64 / ~250</div>
+            <div class="kpi-mini-note">Only 26% of expected trading days; POS schema migration artifact</div>
+          </div>
+          <p style="font-size:.86rem;color:var(--e61-ink-2)">The sparse 2014 data (64 trading days vs ~250 expected) is a direct consequence of the POS system migration documented in <span class="mono">storedata/Winkelfile.csv</span>. The migration changed the XML schema (pre-migration: <span class="mono">order/orderdetail</span> → post-migration: <span class="mono">sale/saledetail</span>), and incomplete coverage for the migration year is a standard data transition artifact.</p>
+          <p style="font-size:.86rem;color:var(--e61-ink-3)">Rolling statistics (e.g. lag-365, annual seasonal components) that span 2014 will encounter this sparsity and produce incorrect values. The 64 days should remain in the series — flagged, not dropped.</p>
+          <div style="background:var(--e61-bg-cool);border-left:4px solid var(--accent);border-radius:0 10px 10px 0;padding:12px 16px;margin-top:10px">
+            <b style="font-size:.8rem">Feature required:</b>
+            <p style="font-size:.8rem;color:var(--e61-ink-2);margin:4px 0 0"><span class="mono">is_2014_sparse_period</span> — binary 1 for all 2014 dates. Allows tree-based models to learn a different intercept and prevents rolling stats from treating 2014 as a representative year.</p>
+          </div>
+        </div>
+        <div class="card" style="margin-top:14px">
+          <h3 style="margin-bottom:10px">Gentse Feesten 2020 — Unique Confound</h3>
+          <p style="font-size:.86rem;color:var(--e61-ink-2)">July 2020 is the ONLY July in the training set without Gentse Feesten (festival cancelled due to COVID). July 2020 is simultaneously affected by: no festival, ongoing COVID behavioral changes, and the first weeks of the new Monday-trading regime. This makes July 2020 structurally unique and difficult for any model to predict correctly from prior Julys.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 5 — DATA SOURCE ASSESSMENT -->
+<section class="slide slide-item" data-title="Data Sources">
+  <div class="slide-num">05 / 08</div><div class="slide-tag">Data Sources</div>
+  <div class="slide-inner">
+    <span class="eyebrow">External Data Source Assessment</span>
+    <h2>Weather: Conditionally Useful; Competitor Closures: Real but Sparse</h2>
+    <div class="grid-2" style="margin-top:20px">
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+          <h3 style="margin:0">Weather Data (Ghent)</h3>
+          <span class="badge b-med">CONDITIONALLY USEFUL</span>
+        </div>
+        <div class="chips">
+          <div class="chip">Coverage: <span>2015-01-01 to 2020-12-31</span></div>
+          <div class="chip">Gap: <span>2010–2014 (no data)</span></div>
+          <div class="chip">Climate: <span>Cfb — maritime temperate</span></div>
+        </div>
+        <table>
+          <thead><tr><th>Feature</th><th>Signal</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr class="ok-row"><td>Temperature</td><td>Weak secondary — hot days (&gt;25°C) suppress foot traffic</td><td>Include as <span class="mono">is_hot_day</span> binary</td></tr>
+            <tr class="ok-row"><td>Precipitation</td><td>Small negative foot-traffic effect for heavy rain</td><td>Include as <span class="mono">is_heavy_rain</span> binary</td></tr>
+            <tr class="danger-row"><td>Wind_Chill</td><td>40.3% null — derived, not direct driver</td><td>Drop in favour of raw Temperature</td></tr>
+            <tr class="danger-row"><td>Heat_Index</td><td>94.9% null — effectively unusable</td><td>Drop</td></tr>
+            <tr class="danger-row"><td>Location</td><td>100% null</td><td>Drop</td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:12px;font-size:.82rem;color:var(--e61-ink-3)">Pre-2015 rows (5 years) require a <span class="mono">weather_data_available</span> indicator to distinguish missing from zero. Temperature seasonal autocorrelation is nearly collinear with month-of-year features — marginal contribution reduced by collinearity.</div>
+      </div>
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+          <h3 style="margin:0">Competitor Closures (VerlofConcurrent)</h3>
+          <span class="badge b-med">REAL BUT SPARSE</span>
+        </div>
+        <div class="chips">
+          <div class="chip">Competitors tracked: <span>23</span></div>
+          <div class="chip">Coverage: <span>2017-07-01 to 2020-09-15</span></div>
+          <div class="chip">Gap at end: <span>~3.5 months</span></div>
+        </div>
+        <p style="font-size:.86rem;color:var(--e61-ink-2)">Genuine mechanism: when multiple competitors simultaneously close (primarily August summer vacation), a fraction of their customers redirect to open bakeries including Aernoudt branch 01. The redirection effect scales with the number of competitors simultaneously closed — a count/proportion is better than a binary flag.</p>
+        <div style="background:var(--e61-bg-warn);border-radius:8px;padding:10px 14px;border:1px solid #FCE0BE;margin-top:10px">
+          <b style="font-size:.8rem;color:var(--e61-orange-red)">Holiday confound</b>
+          <p style="font-size:.8rem;color:var(--e61-ink-3);margin:4px 0 0">On public holidays, n_competitors_closed is high (most bakeries closed) AND Aernoudt demand may be zero. A naive correlation will be downward-biased. The genuine August vacation redirection signal is buried under this confound if not handled carefully.</p>
+        </div>
+        <div style="margin-top:10px;font-size:.82rem;color:var(--e61-ink-3)">Use <span class="mono">competitor_closure_density</span> (n / 23.0) with <span class="mono">competitor_data_available</span> indicator. VC2 is an exact duplicate of VC1 — do not use VC2.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 6 — FEATURE RECOMMENDATIONS -->
+<section class="slide slide-item" data-title="Feature Recommendations">
+  <div class="slide-num">06 / 08</div><div class="slide-tag">Feature Recommendations</div>
+  <div class="slide-inner">
+    <span class="eyebrow">15 Feature Recommendations</span>
+    <h2>Priority-Ranked Features Derived from Domain Research</h2>
+    <table style="margin-top:20px">
+      <thead>
+        <tr><th>Feature</th><th>Priority</th><th>Type</th><th>Data Source</th><th>Rationale</th></tr>
+      </thead>
+      <tbody>
+        <tr class="ok-row"><td class="mono">year_trend</td><td><span class="badge b-hi">HIGH</span></td><td>Continuous</td><td>Calendar</td><td>Captures −28.7% structural decline; ADF p=0.0005 (trend-stationary)</td></tr>
+        <tr class="ok-row"><td class="mono">is_official_public_holiday</td><td><span class="badge b-hi">HIGH</span></td><td>Binary</td><td>Calendar</td><td>11 Flemish holidays; explains zero-demand days; floating holidays computed from Easter formula</td></tr>
+        <tr class="ok-row"><td class="mono">days_until_next_holiday</td><td><span class="badge b-hi">HIGH</span></td><td>Continuous</td><td>Calendar</td><td>Anticipation effect; capped at 30; Christmas Eve, Oct 31, Good Friday strongest</td></tr>
+        <tr class="ok-row"><td class="mono">is_school_holiday_flanders</td><td><span class="badge b-hi">HIGH</span></td><td>Binary</td><td>Calendar</td><td>All 5 school holiday periods; Krokus and Paas must be computed (float with Easter)</td></tr>
+        <tr class="ok-row"><td class="mono">is_zomervakantie</td><td><span class="badge b-hi">HIGH</span></td><td>Binary</td><td>Calendar</td><td>July 1–Aug 31 fixed; 62-day demand suppression; ~50,000 Ghent students absent</td></tr>
+        <tr class="ok-row"><td class="mono">regime_x_monday</td><td><span class="badge b-hi">HIGH</span></td><td>Binary</td><td>Domain</td><td>Interaction: date ≥ 2020-06-01 AND DOW=Monday; all Monday training rows are post-regime</td></tr>
+        <tr class="ok-row"><td class="mono">is_2014_sparse_period</td><td><span class="badge b-hi">HIGH</span></td><td>Binary</td><td>Domain</td><td>Year == 2014; flags POS migration sparsity for rolling stats and lag features</td></tr>
+        <tr class="warn-row"><td class="mono">days_since_last_holiday</td><td><span class="badge b-med">MED</span></td><td>Continuous</td><td>Calendar</td><td>Post-holiday mild demand suppression; capped at 14</td></tr>
+        <tr class="warn-row"><td class="mono">is_gentse_feesten</td><td><span class="badge b-med">MED</span></td><td>Binary</td><td>Calendar</td><td>10-day July festival; 2020 = 0 (cancelled); conditional on branch 01 location (OQ-4)</td></tr>
+        <tr class="warn-row"><td class="mono">is_sinterklaas_period</td><td><span class="badge b-med">MED</span></td><td>Binary</td><td>Calendar</td><td>Dec 1–6; specialty bakery products drive elevated demand</td></tr>
+        <tr class="warn-row"><td class="mono">is_easter_period</td><td><span class="badge b-med">MED</span></td><td>Binary</td><td>Calendar</td><td>Good Friday to Easter Monday (4 days); Easter specialty breads</td></tr>
+        <tr class="warn-row"><td class="mono">is_covid_lockdown_period</td><td><span class="badge b-med">MED</span></td><td>Binary</td><td>Domain</td><td>2020-03-18 to 2020-05-03 (47 days); structural demand change window</td></tr>
+        <tr class="warn-row"><td class="mono">competitor_closure_density</td><td><span class="badge b-med">MED</span></td><td>Continuous</td><td>Competitor</td><td>n_competitors_closed / 23.0; dose-response better than binary</td></tr>
+        <tr class="warn-row"><td class="mono">competitor_data_available</td><td><span class="badge b-med">MED</span></td><td>Binary</td><td>Competitor</td><td>1 within 2017-07-01 to 2020-09-15; required to distinguish no-data from no-closures</td></tr>
+        <tr><td class="mono">is_hot_day</td><td><span class="badge b-lo">LOW</span></td><td>Binary</td><td>Weather</td><td>Temperature &gt; 25°C; Belgian climate mild; secondary signal; weather 2015+ only</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- SLIDE 7 — OPEN QUESTIONS & DURABLE RULES -->
+<section class="slide slide-item" data-title="Open Questions & Rules">
+  <div class="slide-num">07 / 08</div><div class="slide-tag">Open Questions &amp; Durable Rules</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Stakeholder Questions &amp; Binding Constraints</span>
+    <h2>5 Open Questions for Stakeholder Resolution · 4 Durable Rules</h2>
+    <div class="grid-2" style="margin-top:20px">
+      <div>
+        <h3 style="margin-bottom:14px">Open Questions</h3>
+        <ul class="limits-list">
+          <li><span class="badge b-hi" style="font-size:.55rem">HIGH</span> <b>OQ-1:</b> Is the 2020-06-01 regime change to 7/7 permanent, or a temporary COVID measure? Was the shop open 7/7 before 2010? <em style="font-size:.8rem;color:var(--e61-ink-3)">— if not permanent, regime_x_monday could harm holdout accuracy.</em></li>
+          <li><span class="badge b-hi" style="font-size:.55rem">HIGH</span> <b>OQ-2:</b> Does branch 01 close for an annual summer vacation (typically 1–3 weeks in August)? Fixed or variable dates? <em style="font-size:.8rem;color:var(--e61-ink-3)">— a planned annual closure should be a predictable feature, not treated as demand suppression.</em></li>
+          <li><span class="badge b-med" style="font-size:.55rem">MED</span> <b>OQ-3:</b> What products does bread_quantity capture exactly — all argcod=1 (278 catalog articles) or a subset? Specialty holiday breads included? <em style="font-size:.8rem;color:var(--e61-ink-3)">— affects relevance of Sinterklaas, Easter, and Christmas period features.</em></li>
+          <li><span class="badge b-med" style="font-size:.55rem">MED</span> <b>OQ-4:</b> Is branch 01 in or near central Ghent (within the Gentse Feesten festival footprint), or in a residential neighbourhood removed from festival routes? <em style="font-size:.8rem;color:var(--e61-ink-3)">— determines whether is_gentse_feesten is low or high priority.</em></li>
+          <li><span class="badge b-med" style="font-size:.55rem">MED</span> <b>OQ-5:</b> What explains 14 zero-demand trading days in 2019 (up from 3–6 in 2016–2018)? Policy change or anomaly? <em style="font-size:.8rem;color:var(--e61-ink-3)">— may warrant an is_planned_closure feature if a closure policy changed.</em></li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="margin-bottom:14px">Durable Rules (must not change)</h3>
+        <ul class="limits-list">
+          <li><b>Floating holidays must be computed, not hardcoded.</b> Easter Monday, Ascension, Whit Monday, Krokusvakantie, Paasvakantie all move by up to 5 weeks between years. A fixed month-day approximation will be wrong for roughly half the training years, diluting the holiday signal.</li>
+          <li><b>Gentse Feesten 2020 must be explicitly set to 0 (cancelled).</b> A generic "mid-July" date rule would set is_gentse_feesten=1 for 2020 — encoding elevated foot traffic that did not occur. This would corrupt the coefficient for all other years.</li>
+          <li><b>regime_x_monday cannot be replaced by day_of_week alone.</b> All Monday training rows are post-2020-06-01. A plain DOW=Monday feature has no pre-regime Monday to anchor on; without the regime interaction, the model cannot distinguish regime-Monday from pre-regime Monday (which was a structural closure).</li>
+          <li><b>year_trend (continuous) is required; do NOT difference the target.</b> The −28.7% decline is structural and trend-stationary (ADF p=0.0005). Differencing removes the most predictable trend component and prevents extrapolation of the decline into the 2021+ holdout.</li>
+        </ul>
+        <div style="margin-top:16px;padding:10px 0;border-top:1px solid var(--e61-line);font-size:.78rem;color:var(--e61-ink-4)">
+          <a href="index.html" style="color:var(--e61-orange-red)">← Run index</a>
+          &nbsp;|&nbsp;
+          <a href="../history/iteration_002_domain_research.json" style="color:var(--e61-orange-red)">Raw JSON</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+const slides = Array.from(document.querySelectorAll('.cover,.slide'));
+const dotnav = document.getElementById('dotnav');
+slides.forEach((s,i)=>{
+  const dot = document.createElement('button');
+  dot.title = s.dataset.title || ('Slide '+(i+1));
+  dot.onclick = ()=> s.scrollIntoView({behavior:'smooth'});
+  dotnav.appendChild(dot);
+});
+const dots = Array.from(dotnav.children);
+const counter = document.getElementById('counter');
+const topbarFill = document.getElementById('topbarFill');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+let current = 0;
+function setActive(idx){
+  current = idx;
+  dots.forEach((d,i)=> d.classList.toggle('active', i===idx));
+  counter.textContent = (idx+1) + ' / ' + slides.length;
+  topbarFill.style.width = (((idx+1)/slides.length)*100) + '%';
+  prevBtn.disabled = idx===0;
+  nextBtn.disabled = idx===slides.length-1;
+}
+setActive(0);
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting && e.intersectionRatio>0.55){
+      const idx = slides.indexOf(e.target);
+      if(idx>-1) setActive(idx);
+    }
+  });
+}, {threshold:[0.55]});
+slides.forEach(s=>io.observe(s));
+function goTo(idx){
+  idx = Math.max(0, Math.min(slides.length-1, idx));
+  slides[idx].scrollIntoView({behavior:'smooth'});
+}
+prevBtn.onclick = ()=> goTo(current-1);
+nextBtn.onclick = ()=> goTo(current+1);
+document.addEventListener('keydown', e=>{
+  if(['ArrowDown','ArrowRight','PageDown',' '].includes(e.key)){ e.preventDefault(); goTo(current+1); }
+  if(['ArrowUp','ArrowLeft','PageUp'].includes(e.key)){ e.preventDefault(); goTo(current-1); }
+});
+</script>
+</body>
+</html>

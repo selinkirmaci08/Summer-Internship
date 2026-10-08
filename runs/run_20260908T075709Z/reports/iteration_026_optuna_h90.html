@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>element61 · Training · Iteration 026</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Open+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+    :root {
+      --accent: #2F8F5C;
+      --e61-orange-red: #FC5B00;
+      --e61-orange:     #FC9808;
+      --e61-yellow:     #FCBA08;
+      --e61-magenta:    #9D1D56;
+      --e61-purple:     #301D56;
+      --e61-ink:        #1A1230;
+      --e61-ink-2:      #301D56;
+      --e61-ink-3:      #5B5070;
+      --e61-ink-4:      #8B8298;
+      --e61-line:       #E6E2EC;
+      --e61-line-2:     #D8D2E0;
+      --e61-surface:    #FFFFFF;
+      --e61-bg:         #FAF8F5;
+      --e61-bg-warm:    #FFF6EC;
+      --e61-bg-cool:    #F2EEF6;
+      --e61-success:    #2F8F5C;
+      --e61-warning:    #FCBA08;
+      --e61-danger:     #C0294A;
+      --e61-info:       #2F6BB3;
+      --font-display:   "Montserrat","Helvetica Neue",system-ui,sans-serif;
+      --font-body:      "Open Sans","Helvetica Neue",Arial,system-ui,sans-serif;
+      --font-mono:      "JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+      --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:24px;--space-6:32px;--space-7:48px;
+      --radius-sm:4px;--radius-md:8px;--radius-lg:14px;--radius-xl:22px;--radius-pill:999px;
+      --shadow-1:0 1px 2px rgba(48,29,86,.06),0 1px 1px rgba(48,29,86,.04);
+      --shadow-2:0 4px 16px rgba(48,29,86,.08),0 1px 2px rgba(48,29,86,.04);
+      --shadow-3:0 10px 28px rgba(48,29,86,.12),0 2px 6px rgba(48,29,86,.06);
+    }
+
+    /* ── Shell ── */
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--e61-bg);color:var(--e61-ink-2);font-family:var(--font-body);line-height:1.6;scroll-snap-type:y proximity;height:100%;overflow-y:auto;scroll-behavior:smooth}
+    h1,h2,h3,h4{font-family:var(--font-display);color:var(--e61-ink);margin:0 0 .5em;font-weight:700;text-wrap:balance}
+    p{margin:0 0 1em}
+    a{color:var(--e61-orange-red)}
+    .mono{font-family:var(--font-mono)}
+    img{max-width:100%;display:block}
+
+    /* ── Progress bar ── */
+    .topbar{position:fixed;top:0;left:0;right:0;height:3px;background:var(--e61-line);z-index:201}
+    .topbar-fill{height:100%;background:linear-gradient(135deg,var(--e61-yellow) 0%,var(--e61-orange) 50%,var(--e61-orange-red) 100%);width:0;transition:width .25s}
+
+    /* ── Dot nav ── */
+    .dotnav{position:fixed;right:20px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:9px;z-index:200}
+    .dotnav button{width:9px;height:9px;border-radius:50%;border:none;background:var(--e61-line-2);cursor:pointer;padding:0;transition:background .2s,transform .2s}
+    .dotnav button.active{background:var(--e61-orange-red);transform:scale(1.5)}
+    .dotnav button:hover{background:var(--e61-orange)}
+
+    /* ── Navbar ── */
+    .navbar{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:14px;background:rgba(26,18,48,.88);backdrop-filter:blur(6px);border-radius:999px;padding:9px 18px;z-index:200;box-shadow:var(--shadow-3)}
+    .navbar button{background:none;border:none;color:#fff;font-size:1rem;cursor:pointer;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background .15s}
+    .navbar button:hover{background:rgba(255,255,255,.15)}
+    .navbar button:disabled{opacity:.3;cursor:default}
+    .navbar .counter{font-family:var(--font-mono);font-size:.72rem;color:rgba(255,255,255,.85);min-width:52px;text-align:center}
+
+    /* ── Slides ── */
+    .slide{min-height:100vh;scroll-snap-align:start;display:flex;flex-direction:column;justify-content:center;padding:88px 64px 96px;position:relative;border-bottom:1px solid var(--e61-line);box-sizing:border-box}
+    .slide-inner{max-width:1180px;margin:0 auto;width:100%}
+    .slide-num{position:absolute;top:28px;left:64px;font-family:var(--font-mono);font-size:.72rem;letter-spacing:.1em;color:var(--e61-ink-4);text-transform:uppercase}
+    .slide-tag{position:absolute;top:28px;right:64px;font-family:var(--font-mono);font-size:.72rem;color:var(--e61-ink-4)}
+    @media(max-width:700px){.slide{padding:72px 24px 80px}.slide-num,.slide-tag{left:24px;right:24px}}
+
+    /* ── Cover ── */
+    .cover{min-height:100vh;scroll-snap-align:start;background:var(--e61-bg);color:var(--e61-ink);display:flex;flex-direction:column;justify-content:center;padding:64px 64px 64px 68px;position:relative;overflow:hidden;box-sizing:border-box;border-left:6px solid var(--accent)}
+    .cover-inner{position:relative;max-width:980px;margin:0 auto;width:100%}
+    .cover .logo{font-family:var(--font-display);font-weight:800;font-size:1rem;letter-spacing:.02em;color:var(--accent);margin-bottom:40px}
+    .cover h1{font-family:var(--font-display);font-weight:700;font-size:2.6rem;color:var(--e61-purple);line-height:1.15;margin:0 0 18px}
+    .cover .sub{font-size:1.05rem;color:var(--e61-ink-3);max-width:680px;margin-bottom:34px}
+    @media(max-width:700px){.cover h1{font-size:1.9rem}}
+
+    /* ── Emphasis slides ── */
+    .slide.dark{background:var(--e61-bg-cool);border-left:6px solid var(--e61-purple)}
+    .slide.dark h1,.slide.dark h2,.slide.dark h3,.slide.dark h4{color:var(--e61-purple)}
+    .slide.warm{background:var(--e61-bg-warm);border-left:6px solid var(--e61-orange-red)}
+    .slide.warm h1,.slide.warm h2,.slide.warm h3{color:var(--e61-ink)}
+
+    /* ── Components ── */
+    .eyebrow{font-family:var(--font-body);font-size:.8125rem;font-weight:600;text-transform:uppercase;letter-spacing:.14em;color:var(--e61-orange-red);margin-bottom:10px;display:block}
+    .kpi-row,.kpi-row-lt{display:flex;gap:14px;flex-wrap:wrap;margin-top:20px}
+    .kpi{background:#fff;border:1px solid var(--e61-line);border-radius:14px;box-shadow:var(--shadow-1);padding:16px 22px;min-width:150px}
+    .kpi-val{font-family:var(--font-display);font-size:1.7rem;font-weight:700;color:var(--e61-purple)}
+    .kpi-lbl{font-size:.72rem;margin-top:4px;color:var(--e61-ink-3)}
+    .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 22px;border-radius:999px;font-family:var(--font-display);font-weight:700;font-size:.9rem;margin-bottom:10px}
+    .pill-ok{background:var(--e61-success);color:#fff}
+    .pill-danger{background:var(--e61-danger);color:#fff}
+    .badge{display:inline-block;font-family:var(--font-display);font-size:.62rem;font-weight:700;padding:3px 9px;border-radius:5px;letter-spacing:.05em;text-transform:uppercase}
+    .b-hi{background:var(--e61-success);color:#fff} .b-med{background:var(--e61-warning);color:var(--e61-ink)}
+    .b-lo{background:var(--e61-magenta);color:#fff} .b-ok{background:#D1FAE5;color:#065F46}
+    .b-reg{background:var(--e61-purple);color:#fff} .b-nc{background:var(--e61-line);color:var(--e61-ink-3)}
+    .card{background:var(--e61-surface);border:1px solid var(--e61-line);border-radius:16px;padding:22px 24px;box-shadow:var(--shadow-1)}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .grid-lead{display:grid;grid-template-columns:2fr 1fr;gap:18px;align-items:start}
+    @media(max-width:900px){.grid-2,.grid-3,.grid-lead{grid-template-columns:1fr}}
+    .finding-card{background:#fff;border-left:4px solid var(--accent);border-radius:0 14px 14px 0;padding:18px 20px;box-shadow:var(--shadow-1);font-size:.92rem;color:var(--e61-ink-2);line-height:1.6}
+    .plot-card{background:#fff;border-radius:16px;border:1px solid var(--e61-line);overflow:hidden;box-shadow:var(--shadow-2)}
+    .plot-card img{width:100%}
+    .plot-cap{padding:14px 18px;font-size:.8rem;color:var(--e61-ink-3);border-top:1px solid var(--e61-line)}
+    .plot-cap b{color:var(--e61-ink-2)}
+    .kpi-mini-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    @media(max-width:900px){.kpi-mini-row{grid-template-columns:1fr}}
+    .kpi-mini{background:#fff;border:1px solid var(--e61-line);border-radius:12px;box-shadow:var(--shadow-1);padding:16px 18px}
+    .kpi-mini-label{font-size:.7rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--e61-ink-3);margin-bottom:4px}
+    .kpi-mini-val{font-family:var(--font-display);font-size:1.25rem;font-weight:700;color:var(--accent)}
+    .kpi-mini-note{font-size:.72rem;color:var(--e61-ink-3);margin-top:4px;line-height:1.4}
+    .hero-stat-lbl{font-size:.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--e61-ink-3);margin-bottom:4px}
+    .hero-stat-val{font-family:var(--font-display);font-size:2.4rem;font-weight:700;color:var(--accent);line-height:1.05}
+    .hero-stat-note{font-size:.86rem;color:var(--e61-ink-3);margin-top:6px;max-width:520px;line-height:1.5}
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+    .chip{background:var(--e61-bg-cool);border:1px solid var(--e61-line-2);border-radius:8px;padding:5px 12px;font-size:.78rem;font-family:var(--font-mono);color:var(--e61-ink-3)}
+    .chip span{color:var(--e61-purple);font-weight:500}
+    table{width:100%;border-collapse:collapse;font-size:.84rem}
+    th{text-align:left;padding:9px 12px;font-family:var(--font-display);font-size:.7rem;color:var(--e61-ink-3);border-bottom:2px solid var(--e61-line);font-weight:600;background:var(--e61-bg-cool);text-transform:uppercase;letter-spacing:.04em}
+    td{padding:9px 12px;border-bottom:1px solid var(--e61-line);color:var(--e61-ink-2);vertical-align:top}
+    tr:last-child td{border-bottom:none}
+    .details-btn{font-family:var(--font-display);font-weight:600;font-size:.78rem;color:var(--e61-orange-red);background:var(--e61-bg-warm);border:1px solid #FCE0BE;border-radius:999px;padding:8px 16px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .15s;margin-top:10px}
+    .details-btn:hover{background:#FFE8CC}
+    .details-btn::after{content:"▾";font-size:.65rem;transition:transform .2s}
+    .details-btn.open::after{transform:rotate(180deg)}
+    .details-panel{max-height:0;overflow:hidden;transition:max-height .35s ease;margin-top:0}
+    .details-panel.open{max-height:900px;margin-top:14px}
+    .details-panel .inner{background:#fff;border-left:3px solid var(--e61-purple);border-radius:0 10px 10px 0;padding:14px 18px;font-size:.86rem;color:var(--e61-ink-2);line-height:1.7}
+    .limits-list{list-style:none;padding:0;margin:0}
+    .limits-list li{position:relative;padding-left:22px;margin-bottom:10px;font-size:.88rem;color:var(--e61-ink-2)}
+    .limits-list li::before{content:"●";position:absolute;left:0;color:var(--e61-yellow);font-size:.6rem;top:.45em}
+
+    /* ── Image modal ── */
+    .img-modal{display:none;position:fixed;inset:0;background:rgba(26,18,48,.6);z-index:500;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(3px)}
+    .img-modal.open{display:flex}
+    .img-modal-inner{background:#fff;border-radius:18px;box-shadow:var(--shadow-3);display:grid;grid-template-columns:1.4fr 1fr;max-width:1040px;width:100%;max-height:88vh;overflow:hidden;position:relative}
+    .img-modal-close{position:absolute;top:12px;right:12px;background:var(--e61-line);border:none;border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:.85rem;color:var(--e61-ink-2);z-index:10}
+    .img-modal-close:hover{background:var(--e61-danger);color:#fff}
+    .img-modal-img-wrap{background:var(--e61-bg);display:flex;align-items:center;justify-content:center;padding:24px;overflow:hidden}
+    .img-modal-img-wrap img{max-width:100%;max-height:76vh;height:auto;border-radius:10px;object-fit:contain}
+    .img-modal-meta{padding:28px 26px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;border-left:1px solid var(--e61-line)}
+    .img-modal-name{font-family:var(--font-display);font-size:1.05rem;font-weight:700;color:var(--e61-purple)}
+    .img-modal-body{font-size:.9rem;color:var(--e61-ink-2);line-height:1.7}
+    @media(max-width:700px){.img-modal-inner{grid-template-columns:1fr;max-height:92vh}.img-modal-meta{border-left:none;border-top:1px solid var(--e61-line)}}
+
+    @media print{.dotnav,.navbar,.topbar{display:none}.slide,.cover{min-height:0;page-break-after:always}}
+  </style>
+</head>
+<body>
+
+<div class="topbar"><div class="topbar-fill" id="topbarFill"></div></div>
+<div class="dotnav" id="dotnav"></div>
+<div class="navbar">
+  <button id="prevBtn" title="Previous (←)">‹</button>
+  <span class="counter" id="counter">1 / 6</span>
+  <button id="nextBtn" title="Next (→)">›</button>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 0 — COVER
+═══════════════════════════════════════════════ -->
+<section class="cover slide-item" data-title="Cover">
+  <div class="cover-inner">
+    <div class="logo">element61 &nbsp;·&nbsp; pipeline</div>
+    <span class="eyebrow">TRAINING REPORT &nbsp;·&nbsp; ITERATION 026 &nbsp;·&nbsp; run_20260908T075709Z</span>
+    <h1>LightGBM Multi-Horizon Forecasting — Final Model Set (Optuna h=90 Pass)</h1>
+    <p class="sub">Iteration 026 completes the Optuna hyperparameter search for h=90 (200 trials, FE4 features, 3-fold pooled evaluation), finalising the six-horizon LightGBM model set. All numbers trace to iteration_026_optuna_h90.json and the per-horizon run records from iterations 019–026; nothing here is invented for presentation.</p>
+    <div class="kpi-row kpi-row-lt">
+      <div class="kpi"><div class="kpi-val">6</div><div class="kpi-lbl">Horizons (h=1,7,14,30,60,90)</div></div>
+      <div class="kpi"><div class="kpi-val">31.6</div><div class="kpi-lbl">Best val MAE (h=7)</div></div>
+      <div class="kpi"><div class="kpi-val">56.5</div><div class="kpi-lbl">Val MAE h=90 (pooled)</div></div>
+      <div class="kpi"><div class="kpi-val">200</div><div class="kpi-lbl">Optuna trials this iteration</div></div>
+      <div class="kpi"><div class="kpi-val">MAE</div><div class="kpi-lbl">Primary metric (regression_l1)</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 1 — AGENDA
+═══════════════════════════════════════════════ -->
+<section class="slide slide-item" data-title="Agenda">
+  <div class="slide-num">01 / 06</div>
+  <div class="slide-tag">Agenda</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Contents</span>
+    <h2>Report Structure</h2>
+    <div class="grid-3" style="margin-top:24px">
+      <div class="card"><b class="mono" style="color:var(--accent)">02</b><br><b>Overview</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">Model family, deployment scenario, and configuration summary for all six horizons</span></div>
+      <div class="card"><b class="mono" style="color:var(--accent)">03</b><br><b>Metrics per Horizon</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">Val MAE, feature set, target transform, and n_estimators — one row per horizon</span></div>
+      <div class="card"><b class="mono" style="color:var(--accent)">04</b><br><b>Optuna h=90 Detail</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">Per-fold Optuna results, best hyperparameters, and improvement over prior</span></div>
+      <div class="card"><b class="mono" style="color:var(--accent)">05</b><br><b>Final Model Files</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">Saved model paths, serving instructions, and durable rules for inference</span></div>
+      <div class="card"><b class="mono" style="color:var(--accent)">06</b><br><b>Limitations</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">Known constraints: h=90 fold-3 sample size, ratio transform behaviour, validation representativeness</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 2 — OVERVIEW
+═══════════════════════════════════════════════ -->
+<section class="slide slide-item" data-title="Overview">
+  <div class="slide-num">02 / 06</div>
+  <div class="slide-tag">Overview</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Configuration</span>
+    <h2>Model Family &amp; Deployment Scenario</h2>
+    <div class="grid-2" style="margin-top:20px">
+      <div class="card">
+        <span class="pill pill-ok" style="font-size:.8rem">✓ LightGBMRegressor</span>
+        <h3 style="margin-top:12px">Deployment: Live Forecast</h3>
+        <p style="font-size:.9rem;color:var(--e61-ink-3)">One model per horizon. At inference, the origin date D is known; the model predicts bread quantity for D+h using only features causal from D — no future data leakage. Weather features included only for h≤7 (7-day forecast availability constraint).</p>
+        <button class="details-btn" onclick="toggleDetails(this)">Full scenario reasoning</button>
+        <div class="details-panel"><div class="inner">
+          Each of the six LightGBM models is trained independently on fold-3 training rows (2010-11-16 to 2020-06-30, n=2,713) using a rolling-origin CV design. Validation is fold 3 (Sep–Dec 2020, n=95 rows post-regime). Features are constructed causally from origin date D: lag windows look back from D, seasonal anchors use only same-DOW observations prior to D. The ratio target transform (predict ratio = target / anchor, then multiply back) uses the same causal anchor at inference. h=90's 5 scoreable fold-3 validation rows required pooling all three folds for model selection.
+        </div></div>
+      </div>
+      <div class="card">
+        <h3>Training Configuration</h3>
+        <table style="margin-top:8px">
+          <tr><th>Parameter</th><th>Value</th></tr>
+          <tr><td>Objective</td><td class="mono">regression_l1 (MAE)</td></tr>
+          <tr><td>CV folds</td><td>3 rolling-origin folds</td></tr>
+          <tr><td>Fold 3 train rows</td><td class="mono">2,713</td></tr>
+          <tr><td>Fold 3 val rows</td><td class="mono">95</td></tr>
+          <tr><td>Val period</td><td class="mono">2020-09-28 → 2020-12-31</td></tr>
+          <tr><td>Horizon gap</td><td class="mono">90 days</td></tr>
+          <tr><td>HPO method</td><td>Optuna (h=90, h=7, h=14); manual for others</td></tr>
+          <tr><td>RATIO_CLIP</td><td class="mono">(0.05, 5.0)</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 3 — METRICS PER HORIZON
+═══════════════════════════════════════════════ -->
+<section class="slide dark slide-item" data-title="Metrics per Horizon">
+  <div class="slide-num">03 / 06</div>
+  <div class="slide-tag">Metrics per Horizon</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Final Val MAE — All Six Horizons</span>
+    <h2>Per-Horizon Model Results</h2>
+    <p style="font-size:.9rem;color:var(--e61-ink-3);margin-bottom:18px">Every metric is a validation figure from the fold-3 split (Sep–Dec 2020). h=90 uses pooled 3-fold MAE. Ascending horizon order; no single pooled figure hides the per-horizon picture.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Horizon h</th>
+          <th>Val MAE</th>
+          <th>n_estimators</th>
+          <th>Feature Set</th>
+          <th>Target Transform</th>
+          <th>Val Rows</th>
+          <th>HPO</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="mono" style="font-weight:700">h = 1</td>
+          <td class="mono" style="color:var(--e61-success);font-weight:700">29.835</td>
+          <td class="mono">97</td>
+          <td><span class="badge b-reg">FE4</span></td>
+          <td class="mono" style="font-size:.78rem">ratio_correct (÷ anchor_h1)</td>
+          <td class="mono">94</td>
+          <td><span class="badge b-nc">Manual</span></td>
+        </tr>
+        <tr>
+          <td class="mono" style="font-weight:700">h = 7</td>
+          <td class="mono" style="color:var(--e61-success);font-weight:700">31.646</td>
+          <td class="mono">1,996</td>
+          <td><span class="badge b-info" style="background:var(--e61-info);color:#fff">FE5</span></td>
+          <td class="mono" style="font-size:.78rem">ratio (÷ anchor_h7)</td>
+          <td class="mono">88</td>
+          <td><span class="badge b-hi">Optuna</span></td>
+        </tr>
+        <tr>
+          <td class="mono" style="font-weight:700">h = 14</td>
+          <td class="mono" style="color:var(--e61-success);font-weight:700">34.782</td>
+          <td class="mono">204</td>
+          <td><span class="badge b-reg">FE4</span></td>
+          <td class="mono" style="font-size:.78rem">direct (units)</td>
+          <td class="mono">81</td>
+          <td><span class="badge b-hi">Optuna</span></td>
+        </tr>
+        <tr>
+          <td class="mono" style="font-weight:700">h = 30</td>
+          <td class="mono" style="color:var(--e61-success);font-weight:700">36.630</td>
+          <td class="mono">54</td>
+          <td><span class="badge b-info" style="background:var(--e61-info);color:#fff">FE5</span></td>
+          <td class="mono" style="font-size:.78rem">ratio_correct (÷ anchor_h30)</td>
+          <td class="mono">65</td>
+          <td><span class="badge b-nc">Manual</span></td>
+        </tr>
+        <tr>
+          <td class="mono" style="font-weight:700">h = 60</td>
+          <td class="mono" style="color:var(--e61-success);font-weight:700">36.229</td>
+          <td class="mono">14</td>
+          <td><span class="badge b-reg">FE4</span></td>
+          <td class="mono" style="font-size:.78rem">ratio_correct (÷ anchor_h60)</td>
+          <td class="mono">35</td>
+          <td><span class="badge b-nc">Manual</span></td>
+        </tr>
+        <tr style="background:rgba(47,143,92,.06)">
+          <td class="mono" style="font-weight:700">h = 90</td>
+          <td class="mono" style="color:var(--e61-success);font-weight:700">56.487</td>
+          <td class="mono">198 <span style="font-size:.7rem;color:var(--e61-ink-4)">(pooled)</span></td>
+          <td><span class="badge b-reg">FE4</span></td>
+          <td class="mono" style="font-size:.78rem">direct (units)</td>
+          <td class="mono">5 <span style="font-size:.7rem;color:var(--e61-danger)">⚠ fold-3 only</span></td>
+          <td><span class="badge b-hi">Optuna</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size:.8rem;color:var(--e61-ink-4);margin-top:10px">⚠ h=90 fold-3 has only 5 scoreable val rows. Pooled 3-fold MAE (n=140 combined) is the authoritative metric. See Slide 04 for per-fold breakdown.</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 4 — OPTUNA h=90 DETAIL
+═══════════════════════════════════════════════ -->
+<section class="slide slide-item" data-title="Optuna h=90 Detail">
+  <div class="slide-num">04 / 06</div>
+  <div class="slide-tag">Optuna h=90 Detail</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Iteration 026 — 200 Optuna Trials, h=90, FE4</span>
+    <h2>h=90 Hyperparameter Search Results</h2>
+    <div class="grid-2" style="margin-top:20px">
+      <div>
+        <div style="margin-bottom:20px">
+          <span class="pill pill-ok">✓ Improved vs Prior</span>
+          <p style="font-size:.9rem;color:var(--e61-ink-3);margin-top:8px">Pooled MAE improved from <b>56.767</b> (prior) to <b>56.487</b> (−0.28 units). Margin over naive floor of 75.937: <b>+19.45 units</b>. The 200-trial search found a configuration with moderate regularisation and conservative learning rate.</p>
+        </div>
+        <h3 style="margin-bottom:10px">Per-Fold Breakdown</h3>
+        <table>
+          <thead>
+            <tr><th>Fold</th><th>MAE</th><th>n</th><th>n_est</th><th>Floor</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono">Fold 1</td>
+              <td class="mono" style="color:var(--e61-success);font-weight:600">30.243</td>
+              <td class="mono">68</td>
+              <td class="mono">355</td>
+              <td class="mono">57.60</td>
+            </tr>
+            <tr>
+              <td class="mono">Fold 2</td>
+              <td class="mono">81.535</td>
+              <td class="mono">67</td>
+              <td class="mono">122</td>
+              <td class="mono">93.35</td>
+            </tr>
+            <tr>
+              <td class="mono">Fold 3</td>
+              <td class="mono">77.778</td>
+              <td class="mono" style="color:var(--e61-danger)">5 ⚠</td>
+              <td class="mono">117</td>
+              <td class="mono">91.90</td>
+            </tr>
+            <tr style="background:var(--e61-bg-cool)">
+              <td class="mono"><b>Pooled</b></td>
+              <td class="mono" style="font-weight:700">56.487</td>
+              <td class="mono"><b>140</b></td>
+              <td class="mono">198 avg</td>
+              <td class="mono">75.94</td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="font-size:.78rem;color:var(--e61-ink-4);margin-top:8px">Fold 1 (MAE=30.2) is much better than folds 2–3 (MAE 78–82). This reflects that fold 1's validation period (Autumn 2018) has lower demand variance than folds 2–3 which include the 2019 holiday dip and 2020 COVID-adjacent rows.</p>
+      </div>
+      <div>
+        <h3 style="margin-bottom:10px">Best Hyperparameters</h3>
+        <div class="chips">
+          <div class="chip">num_leaves <span>109</span></div>
+          <div class="chip">learning_rate <span>0.02487</span></div>
+          <div class="chip">max_depth <span>8</span></div>
+          <div class="chip">min_child_samples <span>48</span></div>
+          <div class="chip">reg_alpha <span>0.367</span></div>
+          <div class="chip">reg_lambda <span>2.102</span></div>
+          <div class="chip">subsample <span>0.590</span></div>
+          <div class="chip">colsample_bytree <span>0.429</span></div>
+          <div class="chip">min_split_gain <span>0.240</span></div>
+          <div class="chip">objective <span>regression_l1</span></div>
+        </div>
+        <div class="card" style="margin-top:14px">
+          <b style="font-size:.85rem">Parameter interpretation:</b>
+          <p style="font-size:.82rem;color:var(--e61-ink-3);margin-top:6px">Conservative learning rate (0.025) with moderate tree complexity (num_leaves=109, max_depth=8) and strong regularisation (reg_lambda=2.1, reg_alpha=0.37). Aggressive feature subsampling (colsample_bytree=0.43) reduces overfitting in a small-sample regime — fold 3 has only 5 h=90 val rows. The final pkl uses n_estimators=198 (Optuna best-trial checkpoint).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 5 — FINAL MODEL FILES
+═══════════════════════════════════════════════ -->
+<section class="slide slide-item" data-title="Final Model Files">
+  <div class="slide-num">05 / 06</div>
+  <div class="slide-tag">Final Model Files</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Saved Models &amp; Serving</span>
+    <h2>Production Model Set</h2>
+    <p style="font-size:.9rem;color:var(--e61-ink-3);margin-bottom:20px">All six final LightGBM models are serialised as pickle files in <span class="mono">artifacts/training/final/</span>. Each model was saved from its respective champion iteration and is paired with its feature set CSV and the preprocessing pipeline from iteration_003_preprocess.csv.</p>
+    <table>
+      <thead>
+        <tr><th>Horizon</th><th>Model File</th><th>Feature Set</th><th>Transform</th><th>Val MAE</th><th>Champion Iteration</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="mono">h=1</td><td class="mono" style="font-size:.8rem">lgbm_h1_final.pkl</td><td>FE4</td><td class="mono" style="font-size:.8rem">ratio_correct ÷ anchor_h1</td><td class="mono">29.835</td><td>iter 021</td></tr>
+        <tr><td class="mono">h=7</td><td class="mono" style="font-size:.8rem">lgbm_h7_final.pkl</td><td>FE5</td><td class="mono" style="font-size:.8rem">ratio ÷ anchor_h7</td><td class="mono">31.646</td><td>iter 025</td></tr>
+        <tr><td class="mono">h=14</td><td class="mono" style="font-size:.8rem">lgbm_h14_final.pkl</td><td>FE4</td><td class="mono" style="font-size:.8rem">direct (units)</td><td class="mono">34.782</td><td>iter 025</td></tr>
+        <tr><td class="mono">h=30</td><td class="mono" style="font-size:.8rem">lgbm_h30_final.pkl</td><td>FE5</td><td class="mono" style="font-size:.8rem">ratio_correct ÷ anchor_h30</td><td class="mono">36.630</td><td>iter 024</td></tr>
+        <tr><td class="mono">h=60</td><td class="mono" style="font-size:.8rem">lgbm_h60_final.pkl</td><td>FE4</td><td class="mono" style="font-size:.8rem">ratio_correct ÷ anchor_h60</td><td class="mono">36.229</td><td>iter 022</td></tr>
+        <tr style="background:rgba(47,143,92,.06)"><td class="mono">h=90</td><td class="mono" style="font-size:.8rem">lgbm_h90_final.pkl</td><td>FE4</td><td class="mono" style="font-size:.8rem">direct (units)</td><td class="mono">56.487</td><td>iter 026 ← this run</td></tr>
+      </tbody>
+    </table>
+    <div class="card" style="margin-top:20px;border-left:4px solid var(--accent)">
+      <h3 style="color:var(--accent)">Serving Instructions</h3>
+      <ul class="limits-list" style="margin-top:8px">
+        <li>Compute anchor_correct_h{h} for each horizon at inference time: seasonal median of last W same-DOW-as-TARGET observations from origin D. NAIVE_WINDOWS = {1:4, 7:4, 14:4, 30:26, 60:26, 90:13}.</li>
+        <li>For ratio-transform horizons (h=1,7,30,60): predicted_ratio = model.predict(features); prediction = predicted_ratio × anchor_correct_h{h}. Clip ratio to (0.05, 5.0) before multiplying.</li>
+        <li>For direct horizons (h=14, h=90): prediction = model.predict(features) directly in bread_quantity units.</li>
+        <li>Only call the model for days the store is expected to be open. Do not call for known closure days (public holidays, weekend-only operations).</li>
+        <li>Weather features are only valid for h≤7; set wx_* to NaN or imputed month-median for h&gt;7 predictions.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 6 — LIMITATIONS
+═══════════════════════════════════════════════ -->
+<section class="slide slide-item" data-title="Limitations">
+  <div class="slide-num">06 / 06</div>
+  <div class="slide-tag">Limitations</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Known Constraints</span>
+    <h2>Model Limitations &amp; Caveats</h2>
+    <div class="grid-2" style="margin-top:20px">
+      <div>
+        <ul class="limits-list">
+          <li><b>h=90 fold-3 sample size (5 rows):</b> The fold-3 validation window ends at 2020-12-31; only 5 origins satisfy D+90 ≤ 2020-12-31. All h=90 model selection uses pooled 3-fold MAE (n=140). Val MAE for h=90 carries substantially higher uncertainty than shorter horizons.</li>
+          <li><b>Ratio transform behaviour near zero:</b> When anchor_correct_h{h} is near zero (e.g., origin window contains closure days), the ratio feature becomes numerically unstable. RATIO_CLIP (0.05, 5.0) mitigates but does not eliminate this at inference on atypical store patterns.</li>
+          <li><b>Validation representativeness:</b> Fold 3 validation (Sep–Dec 2020, 95 rows) is fully post-regime but overlaps with COVID-related behavioural changes. The model has not been evaluated on a "clean" post-regime period (2021+). All metrics are optimistic by an unknown margin.</li>
+          <li><b>h=60 (14 estimators):</b> The very low n_estimators for h=60 reflects early stopping on a 35-row validation window. This model is likely underfit; the test MAE of 46.3 (vs val 36.2) is consistent with high variance.</li>
+          <li><b>Stress test (2022–2023):</b> The model was not trained on the bakery's weekend-dominant operating pattern (38% closure rate in 2022–2023). On open days only, h=14–90 performance is comparable to primary test; h=1,7 degrade due to lag contamination from surrounding closure days.</li>
+          <li><b>No retraining pipeline:</b> These models are point-in-time. Demand trend (-28.7% over 2010–2020) continues; models should be retrained periodically with fresh data.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card" style="border-left:4px solid var(--e61-warning)">
+          <h3>Durable Rules for Inference</h3>
+          <ul class="limits-list" style="margin-top:8px">
+            <li>All LightGBM models must use <span class="mono">objective='regression_l1'</span> if retrained.</li>
+            <li>h=60 eval: 95 val target dates (Sep–Dec 2020), features from origin D−60.</li>
+            <li>h=90 eval: pooled multi-fold (fold-3 alone has only 5 rows).</li>
+            <li>Per-horizon targets must be created by DATE JOIN (row.date + h calendar days), never by positional shift.</li>
+          </ul>
+        </div>
+        <div class="card" style="margin-top:14px">
+          <h3>Primary Test Results (2021, corrected naive)</h3>
+          <table>
+            <thead><tr><th>h</th><th>Model MAE</th><th>Naive MAE</th><th>Beats?</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td class="mono">39.3</td><td class="mono">39.8</td><td>✓</td></tr>
+              <tr><td>7</td><td class="mono">41.2</td><td class="mono">41.3</td><td>✓</td></tr>
+              <tr><td>14</td><td class="mono">44.9</td><td class="mono">41.8</td><td>✗</td></tr>
+              <tr><td>30</td><td class="mono">43.0</td><td class="mono">43.3</td><td>✓</td></tr>
+              <tr><td>60</td><td class="mono">46.3</td><td class="mono">49.3</td><td>✓</td></tr>
+              <tr><td>90</td><td class="mono">64.9</td><td class="mono">51.8</td><td>✗</td></tr>
+            </tbody>
+          </table>
+          <p style="font-size:.75rem;color:var(--e61-ink-4);margin-top:8px">Source: iteration_029_open_days_evaluation.json. Naive = corrected seasonal median (target DOW). These are test set (2021) figures, not validation figures above.</p>
+          <p style="font-size:.75rem;color:var(--e61-ink-4)"><a href="iteration_029_open_days_evaluation.html">See evaluation report →</a> &nbsp;|&nbsp; <a href="index.html">← Back to run index</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     IMAGE MODAL
+═══════════════════════════════════════════════ -->
+<div class="img-modal" id="imgModal" onclick="if(event.target.id==='imgModal')closeImgModal()">
+  <div class="img-modal-inner">
+    <button class="img-modal-close" onclick="closeImgModal()">✕</button>
+    <div class="img-modal-img-wrap"><img id="imgModalImg" src="" alt=""></div>
+    <div class="img-modal-meta">
+      <div class="img-modal-name" id="imgModalName"></div>
+      <div class="img-modal-body" id="imgModalBody"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── Deck engine ── */
+const slides = Array.from(document.querySelectorAll('.cover, .slide'));
+const dotnav = document.getElementById('dotnav');
+slides.forEach((s,i)=>{
+  const dot = document.createElement('button');
+  dot.title = s.dataset.title || ('Slide '+(i+1));
+  dot.onclick = ()=> s.scrollIntoView({behavior:'smooth'});
+  dotnav.appendChild(dot);
+});
+const dots = Array.from(dotnav.children);
+const counter = document.getElementById('counter');
+const topbarFill = document.getElementById('topbarFill');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+let current = 0;
+
+function setActive(idx){
+  current = idx;
+  dots.forEach((d,i)=> d.classList.toggle('active', i===idx));
+  counter.textContent = (idx+1) + ' / ' + slides.length;
+  topbarFill.style.width = (((idx+1)/slides.length)*100) + '%';
+  prevBtn.disabled = idx===0;
+  nextBtn.disabled = idx===slides.length-1;
+}
+setActive(0);
+
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting && e.intersectionRatio>0.55){
+      const idx = slides.indexOf(e.target);
+      if(idx>-1) setActive(idx);
+    }
+  });
+}, {threshold:[0.55]});
+slides.forEach(s=>io.observe(s));
+
+function goTo(idx){
+  idx = Math.max(0, Math.min(slides.length-1, idx));
+  slides[idx].scrollIntoView({behavior:'smooth'});
+}
+prevBtn.onclick = ()=> goTo(current-1);
+nextBtn.onclick = ()=> goTo(current+1);
+document.addEventListener('keydown', e=>{
+  if(['ArrowDown','ArrowRight','PageDown',' '].includes(e.key)){ e.preventDefault(); goTo(current+1); }
+  if(['ArrowUp','ArrowLeft','PageUp'].includes(e.key)){ e.preventDefault(); goTo(current-1); }
+});
+
+/* ── Details disclosure ── */
+function toggleDetails(btn){
+  btn.classList.toggle('open');
+  const panel = btn.nextElementSibling;
+  panel.classList.toggle('open');
+  btn.textContent = panel.classList.contains('open')
+    ? btn.textContent.replace(/^Full/, 'Hide')
+    : (btn.dataset.orig || btn.textContent.replace(/^Hide/, 'Full'));
+}
+document.querySelectorAll('.details-btn').forEach(b=>{ b.dataset.orig = b.textContent; });
+
+/* ── Image modal ── */
+function openImgModal(imgEl){
+  document.getElementById('imgModalImg').src = imgEl.currentSrc || imgEl.src;
+  document.getElementById('imgModalImg').alt = imgEl.alt;
+  document.getElementById('imgModalName').textContent = imgEl.dataset.modalTitle || imgEl.alt;
+  document.getElementById('imgModalBody').textContent = imgEl.dataset.modalBody || '';
+  document.getElementById('imgModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeImgModal(){
+  document.getElementById('imgModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function wireImgModals(){
+  document.querySelectorAll('.plot-card img').forEach(img=>{
+    img.style.cursor = 'zoom-in';
+    img.addEventListener('click', ()=>openImgModal(img));
+  });
+}
+document.addEventListener('keydown', e=>{
+  if(document.getElementById('imgModal')?.classList.contains('open') && e.key==='Escape') closeImgModal();
+});
+wireImgModals();
+</script>
+</body>
+</html>

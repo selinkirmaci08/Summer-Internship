@@ -1,0 +1,38 @@
+{
+  "decisions": {
+    "target_groups": [
+      1
+    ],
+    "target_measure": "quantity",
+    "scope": "chain",
+    "duplicate_policy": "newest"
+  },
+  "stats": {
+    "files_parsed": 11828,
+    "superseded_dropped": 160,
+    "duplicate_policy": "newest",
+    "detail_lines": 9377211,
+    "unmapped_article_lines": 305445,
+    "unmapped_share": 0.0326,
+    "parse_errors": 1,
+    "seconds": 145.1,
+    "product_groups": {
+      "1": "g01_bread",
+      "3": "g03_bread_rolls",
+      "4": "g04_cream_cake_small",
+      "5": "g05_cream_cake_large",
+      "6": "g06_dry_pastry_small",
+      "7": "g07_dry_pastry_large",
+      "8": "g08_ice_cream",
+      "9": "g09_breakfast_pastry",
+      "10": "g10_filled_sandwich",
+      "11": "g11_confectionery",
+      "12": "g12_cocks",
+      "13": "g13_drinks",
+      "32": "g32_packaging"
+    },
+    "scope": "chain",
+    "rows": 4756,
+    "columns": 95
+  }
+}

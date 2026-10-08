@@ -1,0 +1,2514 @@
+{
+  "iteration": 5,
+  "node": "feature_engineering",
+  "run_id": "run_20260908T075709Z",
+  "timestamp": "2026-09-08",
+  "code_file": "code/iteration_005_feature_engineering.py",
+  "mode": "initial",
+  "mode_reasoning": "First Feature Engineering call this run. Builds on iteration_003_preprocess.csv. Triggered by EDA findings (trend, DOW, holidays, regime change) and domain research recs.",
+  "inputs": {
+    "dataset_path": "data/iteration_003_preprocess.csv",
+    "input_shape": [
+      2897,
+      35
+    ],
+    "target_column": "bread_quantity",
+    "context_source": "iterations 1-4 (EDA, domain_research, preprocess, baseline)",
+    "naive_predictor_features_source": "history/iteration_004_baseline.json Part B"
+  },
+  "target_representation": {
+    "form": "raw",
+    "target_column": "bread_quantity",
+    "anchor_column": "naive_h{h}_seasonal_median_w4 (per horizon)",
+    "anchor_role": "level anchor feature; model effectively learns residual vs recent smedian_w4",
+    "inverse": "none (raw target)",
+    "trigger": "significant downward trend (ADF p=0.0005, -28.7%); fold 3 level gap = -3.7%",
+    "reasoning": "Level gap -3.7% in fold 3 is small; the seasonal median naive predictor conditions the tree model on the current level at each prediction origin, effectively creating a residual-like target. Override valid while fold 3 remains the primary evaluation window. Expires if deployment window shows larger level gap \u2014 revert to ratio target then.",
+    "confidence": "medium",
+    "override": {
+      "reason": "raw target kept to maintain compatibility with ARIMA family and avoid re-scaling issues",
+      "family_that_required_it": "ARIMA-family (classical TS)",
+      "expires_when": "ARIMA family dropped from live candidates; or Diagnosis shows systematic level-shift bias"
+    }
+  },
+  "features_created": [
+    {
+      "column": "naive_h1_seasonal_median_w4",
+      "technique": "naive_predictor",
+      "fit_on": "row_local_causal",
+      "horizon": 1,
+      "window": 4,
+      "kind": "smedian",
+      "baseline_train_mae": 34.789,
+      "verified_mae": 34.696,
+      "verified": true,
+      "protected": true,
+      "min_horizon": 1,
+      "max_horizon": 1,
+      "known_future_horizon": 0,
+      "nan_fill": "ffill then bfill (expanding window)",
+      "reasoning": "Baseline Part A winner or Part B rank for h=1; protects floor-level signal.",
+      "confidence": "high",
+      "spearman_r_train": 0.805
+    },
+    {
+      "column": "naive_h1_seasonal_median_w13",
+      "technique": "naive_predictor",
+      "fit_on": "row_local_causal",
+      "horizon": 1,
+      "window": 13,
+      "kind": "smedian",
+      "baseline_train_mae": 33.319,
+      "verified_mae": 33.13,
+      "verified": true,
+      "protected": true,
+      "min_horizon": 1,
+      "max_horizon": 1,
+      "known_future_horizon": 0,
+      "nan_fill": "ffill then bfill (expanding window)",
+      "reasoning": "Baseline Part A winner or Part B rank for h=1; protects floor-level signal.",
+      "confidence": "high",
+      "spearman_r_train": 0.8143
+    },
+    {
+      "column": "naive_h1_seasonal_median_w26",
+      "technique": "naive_predictor",
+      "fit_on": "row_local_causal",
+      "horizon": 1,
+      "window": 26,
+      "kind": "smedian",
+      "baseline_train_mae": 34.115,
+      "verified_mae": 33.834,
+      "verified": true,
+      "protected": true,
+      "min_horizon": 1,
+      "max_horizon": 1,
+      "known_future_horizon": 0,
+      "nan_fill": "ffill then bfill (expanding window)",
+      "reasoning": "Baseline Part A winner or Part B rank for h=1; protects floor-level signal.",
+      "confidence": "high",
+      "spearman_r_train": 0.8104
+    },
+    {
+      "column": "naive_h7_seasonal_median_w4",
+      "technique": "naive_predictor",
+      "fit_on": "row_local_causal",
+      "horizon": 7,
+      "window": 4,
+      "kind": "smedian",
+      "baseline_train_mae": 34.792,
+      "verified_mae": 34.696,
+      "verified": true,
+      "protected": true,
+      "min_horizon": 7,
+      "max_horizon": 7,
+      "known_future_horizon": 0,
+      "nan_fill": "ffill then bfill (expanding window)",
+      "reasoning": "Baseline Part A winner or Part B rank for h=7; protects floor-level signal.",
+      "confidence": "high",
+      "spearman_r_train": 0.805
+    },
+    {
+      "column": "naive_h7_seasonal_median_w13",
+      "technique": "naive_predictor",
+      "fit_on": "row_local_causal",
+      "horizon": 7,
+      "window": 13,
+      "kind": "smedian",
+      "baseline_train_mae": 33.321,
+      "verified_mae": 33.13,
+      "verified": true,
+      "protected": true,
+      "min_horizon": 7,
+      "max_horizon": 7,
+      "known_future_horizon": 0,
+      "nan_fill": "ffill then bfill (expanding window)",
+      "reasoning": "Baseline Part A winner or Part B rank for h=7; protects floor-level signal.",
+      "confidence": "high",
+      "spearman_r_train": 0.8143
+    },
+    {
+      "column": "naive_h7_seasonal_median_w26",
+      "technique": "naive_predictor",
+      "fit_on": "row_local_causal",
+      "horizon": 7,
+      "window": 26,
+      "kind": "smedian",
+      "baseline_train_mae": 34.119,
+      "verified_mae": 33.834,
+      "verified": true,
+      "protected": true,
+      "min_horizon": 7,
+      "max_horizon": 7,
+      "known_future_horizon": 0,
+      "nan_fill": "ffill then bfill (expanding window)",
+      "reasoning": "Baseline Part A winner or Part B rank for h=7; protects floor-level signal.",
+      "confidence": "high",
+      "spearman_r_train": 0.8104
+    },
+    {
+      "column": "naive_h14_seasonal_median_w4",
+      "technique": "naive_predictor",
+      "fit_on": "row_local_causal",
+      "horizon": 14,
+      "window": 4,
+      "kind": "smedian",
+      "baseline_train_mae": 36.279,
+      "verified_mae": 36.06,
+      "verified": true,
+      "protected": true,
+      "min_horizon": 14,
+      "max_horizon": 14,
+      "known_future_horizon": 0,
+      "nan_fill": "ffill then bfill (expanding window)",
+      "reasoning": "Baseline Part A winner or Part B rank for h=14; protects floor-level signal.",
+      "confidence": "high",
+      "spearman_r_train": 0.7865
+    },
+    {
+      "column": "naive_h14_seasonal_median_w13",
+      "technique": "naive_predictor",
+      "fit_on": "row_local_causal",
+      "horizon": 14,
+      "window": 13,
+      "kind": "smedian",
+      "baseline_train_mae": 33.973,
+      "verified_mae": 33.712,
+      "verified": true,
+      "protected": true,
+      "min_horizon": 14,
+      "max_horizon": 14,
+      "known_future_horizon": 0,
+      "nan_fill": "ffill then bfill (expanding window)",
+      "reasoning": "Baseline Part A winner or Part B rank for h=14; protects floor-level signal.",
+      "confidence": "high",
+      "spearman_r_train": 0.8047
+    },
+    {
+      "column": "naive_h14_seasonal_median_w26",
+      "technique": "naive_predictor",
+      "fit_on": "row_local_causal",
+      "horizon": 14,
+      "window": 26,
+      "kind": "smedian",
+      "baseline_train_mae": 34.518,
+      "verified_mae": 34.249,
+      "verified": true,
+      "protected": true,
+      "min_horizon": 14,
+      "max_horizon": 14,
+      "known_future_horizon": 0,
+      "nan_fill": "ffill then bfill (expanding window)",
+      "reasoning": "Baseline Part A winner or Part B rank for h=14; protects floor-level signal.",
+      "confidence": "high",
+      "spearman_r_train": 0.8044
+    },
+    {
+      "column": "naive_h30_seasonal_median_w4",
+      "technique": "naive_predictor",
+      "fit_on": "row_local_causal",
+      "horizon": 30,
+      "window": 4,
+      "kind": "smedian",
+      "baseline_train_mae": 37.8,
+      "verified_mae": 37.426,
+      "verified": true,
+      "protected": true,
+      "min_horizon": 30,
+      "max_horizon": 30,
+      "known_future_horizon": 0,
+      "nan_fill": "ffill then bfill (expanding window)",
+      "reasoning": "Baseline Part A winner or Part B rank for h=30; protects floor-level signal.",
+      "confidence": "high",
+      "spearman_r_train": 0.7634
+    },
+    {
+      "column": "naive_h30_seasonal_median_w26",
+      "technique": "naive_predictor",
+      "fit_on": "row_local_causal",
+      "horizon": 30,
+      "window": 26,
+      "kind": "smedian",
+      "baseline_train_mae": 35.296,
+      "verified_mae": 35.141,
+      "verified": true,
+      "protected": true,
+      "min_horizon": 30,
+      "max_horizon": 30,
+      "known_future_horizon": 0,
+      "nan_fill": "ffill then bfill (expanding window)",
+      "reasoning": "Baseline Part A winner or Part B rank for h=30; protects floor-level signal.",
+      "confidence": "high",
+      "spearman_r_train": 0.7927
+    },
+    {
+      "column": "naive_h30_seasonal_median_w8",
+      "technique": "naive_predictor",
+      "fit_on": "row_local_causal",
+      "horizon": 30,
+      "window": 8,
+      "kind": "smedian",
+      "baseline_train_mae": 35.477,
+      "verified_mae": 35.315,
+      "verified": true,
+      "protected": true,
+      "min_horizon": 30,
+      "max_horizon": 30,
+      "known_future_horizon": 0,
+      "nan_fill": "ffill then bfill (expanding window)",
+      "reasoning": "Baseline Part A winner or Part B rank for h=30; protects floor-level signal.",
+      "confidence": "high",
+      "spearman_r_train": 0.7866
+    },
+    {
+      "column": "naive_h60_seasonal_median_w26",
+      "technique": "naive_predictor",
+      "fit_on": "row_local_causal",
+      "horizon": 60,
+      "window": 26,
+      "kind": "smedian",
+      "baseline_train_mae": 36.308,
+      "verified_mae": 36.418,
+      "verified": true,
+      "protected": true,
+      "min_horizon": 60,
+      "max_horizon": 60,
+      "known_future_horizon": 0,
+      "nan_fill": "ffill then bfill (expanding window)",
+      "reasoning": "Baseline Part A winner or Part B rank for h=60; protects floor-level signal.",
+      "confidence": "high",
+      "spearman_r_train": 0.7838
+    },
+    {
+      "column": "naive_h60_seasonal_mean_w52",
+      "technique": "naive_predictor",
+      "fit_on": "row_local_causal",
+      "horizon": 60,
+      "window": 52,
+      "kind": "smean",
+      "baseline_train_mae": 36.756,
+      "verified_mae": 36.527,
+      "verified": true,
+      "protected": true,
+      "min_horizon": 60,
+      "max_horizon": 60,
+      "known_future_horizon": 0,
+      "nan_fill": "ffill then bfill (expanding window)",
+      "reasoning": "Baseline Part A winner or Part B rank for h=60; protects floor-level signal.",
+      "confidence": "high",
+      "spearman_r_train": 0.7834
+    },
+    {
+      "column": "naive_h60_seasonal_median_w8",
+      "technique": "naive_predictor",
+      "fit_on": "row_local_causal",
+      "horizon": 60,
+      "window": 8,
+      "kind": "smedian",
+      "baseline_train_mae": 37.186,
+      "verified_mae": 37.28,
+      "verified": true,
+      "protected": true,
+      "min_horizon": 60,
+      "max_horizon": 60,
+      "known_future_horizon": 0,
+      "nan_fill": "ffill then bfill (expanding window)",
+      "reasoning": "Baseline Part A winner or Part B rank for h=60; protects floor-level signal.",
+      "confidence": "high",
+      "spearman_r_train": 0.7724
+    },
+    {
+      "column": "naive_h90_seasonal_median_w26",
+      "technique": "naive_predictor",
+      "fit_on": "row_local_causal",
+      "horizon": 90,
+      "window": 26,
+      "kind": "smedian",
+      "baseline_train_mae": 36.915,
+      "verified_mae": 37.066,
+      "verified": true,
+      "protected": true,
+      "min_horizon": 90,
+      "max_horizon": 90,
+      "known_future_horizon": 0,
+      "nan_fill": "ffill then bfill (expanding window)",
+      "reasoning": "Baseline Part A winner or Part B rank for h=90; protects floor-level signal.",
+      "confidence": "high",
+      "spearman_r_train": 0.7763
+    },
+    {
+      "column": "naive_h90_seasonal_mean_w52",
+      "technique": "naive_predictor",
+      "fit_on": "row_local_causal",
+      "horizon": 90,
+      "window": 52,
+      "kind": "smean",
+      "baseline_train_mae": 37.35,
+      "verified_mae": 37.133,
+      "verified": true,
+      "protected": true,
+      "min_horizon": 90,
+      "max_horizon": 90,
+      "known_future_horizon": 0,
+      "nan_fill": "ffill then bfill (expanding window)",
+      "reasoning": "Baseline Part A winner or Part B rank for h=90; protects floor-level signal.",
+      "confidence": "high",
+      "spearman_r_train": 0.775
+    },
+    {
+      "column": "naive_h90_seasonal_mean_w13",
+      "technique": "naive_predictor",
+      "fit_on": "row_local_causal",
+      "horizon": 90,
+      "window": 13,
+      "kind": "smean",
+      "baseline_train_mae": 37.873,
+      "verified_mae": 38.081,
+      "verified": true,
+      "protected": true,
+      "min_horizon": 90,
+      "max_horizon": 90,
+      "known_future_horizon": 0,
+      "nan_fill": "ffill then bfill (expanding window)",
+      "reasoning": "Baseline Part A winner or Part B rank for h=90; protects floor-level signal.",
+      "confidence": "high",
+      "spearman_r_train": 0.7706
+    },
+    {
+      "column": "is_official_public_holiday",
+      "technique": "calendar_encoding",
+      "fit_on": "row_local_causal",
+      "min_horizon": 1,
+      "known_future_horizon": "unbounded",
+      "protected": false,
+      "reasoning": "Domain research recommendation; calendar features are known arbitrarily far ahead.",
+      "confidence": "high"
+    },
+    {
+      "column": "days_until_next_holiday",
+      "technique": "calendar_encoding",
+      "fit_on": "row_local_causal",
+      "min_horizon": 1,
+      "known_future_horizon": "unbounded",
+      "protected": false,
+      "reasoning": "Domain research recommendation; calendar features are known arbitrarily far ahead.",
+      "confidence": "high"
+    },
+    {
+      "column": "days_since_last_holiday",
+      "technique": "calendar_encoding",
+      "fit_on": "row_local_causal",
+      "min_horizon": 1,
+      "known_future_horizon": "unbounded",
+      "protected": false,
+      "reasoning": "Domain research recommendation; calendar features are known arbitrarily far ahead.",
+      "confidence": "high"
+    },
+    {
+      "column": "is_school_holiday_flanders",
+      "technique": "calendar_encoding",
+      "fit_on": "row_local_causal",
+      "min_horizon": 1,
+      "known_future_horizon": "unbounded",
+      "protected": false,
+      "reasoning": "Domain research recommendation; calendar features are known arbitrarily far ahead.",
+      "confidence": "high"
+    },
+    {
+      "column": "is_zomervakantie",
+      "technique": "calendar_encoding",
+      "fit_on": "row_local_causal",
+      "min_horizon": 1,
+      "known_future_horizon": "unbounded",
+      "protected": false,
+      "reasoning": "Domain research recommendation; calendar features are known arbitrarily far ahead.",
+      "confidence": "high"
+    },
+    {
+      "column": "is_gentse_feesten",
+      "technique": "calendar_encoding",
+      "fit_on": "row_local_causal",
+      "min_horizon": 1,
+      "known_future_horizon": "unbounded",
+      "protected": false,
+      "reasoning": "Domain research recommendation; calendar features are known arbitrarily far ahead.",
+      "confidence": "high"
+    },
+    {
+      "column": "year_trend",
+      "technique": "calendar_encoding",
+      "fit_on": "row_local_causal",
+      "min_horizon": 1,
+      "known_future_horizon": "unbounded",
+      "protected": false,
+      "reasoning": "Domain research recommendation; calendar features are known arbitrarily far ahead.",
+      "confidence": "high"
+    },
+    {
+      "column": "regime_x_monday",
+      "technique": "calendar_encoding",
+      "fit_on": "row_local_causal",
+      "min_horizon": 1,
+      "known_future_horizon": "unbounded",
+      "protected": false,
+      "reasoning": "Domain research recommendation; calendar features are known arbitrarily far ahead.",
+      "confidence": "high"
+    },
+    {
+      "column": "is_2014_sparse_period",
+      "technique": "calendar_encoding",
+      "fit_on": "row_local_causal",
+      "min_horizon": 1,
+      "known_future_horizon": "unbounded",
+      "protected": false,
+      "reasoning": "Domain research recommendation; calendar features are known arbitrarily far ahead.",
+      "confidence": "high"
+    },
+    {
+      "column": "is_sinterklaas_period",
+      "technique": "calendar_encoding",
+      "fit_on": "row_local_causal",
+      "min_horizon": 1,
+      "known_future_horizon": "unbounded",
+      "protected": false,
+      "reasoning": "Domain research recommendation; calendar features are known arbitrarily far ahead.",
+      "confidence": "high"
+    },
+    {
+      "column": "is_easter_period",
+      "technique": "calendar_encoding",
+      "fit_on": "row_local_causal",
+      "min_horizon": 1,
+      "known_future_horizon": "unbounded",
+      "protected": false,
+      "reasoning": "Domain research recommendation; calendar features are known arbitrarily far ahead.",
+      "confidence": "high"
+    },
+    {
+      "column": "is_covid_lockdown_period",
+      "technique": "calendar_encoding",
+      "fit_on": "row_local_causal",
+      "min_horizon": 1,
+      "known_future_horizon": "unbounded",
+      "protected": false,
+      "reasoning": "Domain research recommendation; calendar features are known arbitrarily far ahead.",
+      "confidence": "high"
+    },
+    {
+      "column": "is_hot_day",
+      "technique": "weather_binary",
+      "fit_on": "row_local_causal",
+      "min_horizon": 1,
+      "known_future_horizon": "7 (weather forecast horizon)",
+      "protected": false,
+      "reasoning": "Domain research recommendation; available as forecast for h<=7, unavailable at target date for h>7.",
+      "confidence": "medium"
+    },
+    {
+      "column": "is_heavy_rain",
+      "technique": "weather_binary",
+      "fit_on": "row_local_causal",
+      "min_horizon": 1,
+      "known_future_horizon": "7 (weather forecast horizon)",
+      "protected": false,
+      "reasoning": "Domain research recommendation; available as forecast for h<=7, unavailable at target date for h>7.",
+      "confidence": "medium"
+    },
+    {
+      "column": "weather_data_available",
+      "technique": "weather_binary",
+      "fit_on": "row_local_causal",
+      "min_horizon": 1,
+      "known_future_horizon": "7 (weather forecast horizon)",
+      "protected": false,
+      "reasoning": "Domain research recommendation; available as forecast for h<=7, unavailable at target date for h>7.",
+      "confidence": "medium"
+    },
+    {
+      "column": "bread_lag_7d",
+      "technique": "lag",
+      "fit_on": "row_local_causal",
+      "min_horizon": 7,
+      "known_future_horizon": 0,
+      "protected": false,
+      "reasoning": "DOW-aligned lag (same weekday 1 week(s) before target); causal for h<=7.",
+      "confidence": "high"
+    },
+    {
+      "column": "bread_lag_14d",
+      "technique": "lag",
+      "fit_on": "row_local_causal",
+      "min_horizon": 14,
+      "known_future_horizon": 0,
+      "protected": false,
+      "reasoning": "DOW-aligned lag (same weekday 2 week(s) before target); causal for h<=14.",
+      "confidence": "high"
+    },
+    {
+      "column": "bread_lag_35d",
+      "technique": "lag",
+      "fit_on": "row_local_causal",
+      "min_horizon": 35,
+      "known_future_horizon": 0,
+      "protected": false,
+      "reasoning": "DOW-aligned lag (same weekday 5 week(s) before target); causal for h<=35.",
+      "confidence": "high"
+    },
+    {
+      "column": "bread_lag_63d",
+      "technique": "lag",
+      "fit_on": "row_local_causal",
+      "min_horizon": 63,
+      "known_future_horizon": 0,
+      "protected": false,
+      "reasoning": "DOW-aligned lag (same weekday 9 week(s) before target); causal for h<=63.",
+      "confidence": "high"
+    },
+    {
+      "column": "bread_lag_91d",
+      "technique": "lag",
+      "fit_on": "row_local_causal",
+      "min_horizon": 91,
+      "known_future_horizon": 0,
+      "protected": false,
+      "reasoning": "DOW-aligned lag (same weekday 13 week(s) before target); causal for h<=91.",
+      "confidence": "high"
+    }
+  ],
+  "features_dropped": [
+    {
+      "column": "pistolet_quantity",
+      "reason": "leakage_risk \u2014 concurrent same-day operational metric",
+      "fit_on": "n/a",
+      "confidence": "high"
+    },
+    {
+      "column": "total_quantity",
+      "reason": "leakage_risk \u2014 concurrent same-day operational metric",
+      "fit_on": "n/a",
+      "confidence": "high"
+    },
+    {
+      "column": "total_revenue",
+      "reason": "leakage_risk \u2014 concurrent same-day operational metric",
+      "fit_on": "n/a",
+      "confidence": "high"
+    },
+    {
+      "column": "bread_revenue",
+      "reason": "leakage_risk \u2014 concurrent same-day operational metric",
+      "fit_on": "n/a",
+      "confidence": "high"
+    },
+    {
+      "column": "num_orders",
+      "reason": "leakage_risk \u2014 concurrent same-day operational metric",
+      "fit_on": "n/a",
+      "confidence": "high"
+    },
+    {
+      "column": "payment_mode_1",
+      "reason": "leakage_risk \u2014 concurrent same-day operational metric",
+      "fit_on": "n/a",
+      "confidence": "high"
+    },
+    {
+      "column": "payment_mode_2",
+      "reason": "leakage_risk \u2014 concurrent same-day operational metric",
+      "fit_on": "n/a",
+      "confidence": "high"
+    },
+    {
+      "column": "payment_mode_4",
+      "reason": "leakage_risk \u2014 concurrent same-day operational metric",
+      "fit_on": "n/a",
+      "confidence": "high"
+    },
+    {
+      "column": "had_reduction",
+      "reason": "near-constant: 99.9% of rows = 1; zero variance in train",
+      "fit_on": "n/a",
+      "confidence": "high"
+    },
+    {
+      "column": "is_official_public_holiday",
+      "reason": "drop_low_relevance",
+      "spearman_r": -0.0028,
+      "confidence": "high"
+    },
+    {
+      "column": "days_since_last_holiday",
+      "reason": "drop_low_relevance",
+      "spearman_r": 0.0037,
+      "confidence": "high"
+    },
+    {
+      "column": "is_school_holiday_flanders",
+      "reason": "drop_low_relevance",
+      "spearman_r": -0.0113,
+      "confidence": "high"
+    },
+    {
+      "column": "is_zomervakantie",
+      "reason": "drop_low_relevance",
+      "spearman_r": -0.0068,
+      "confidence": "high"
+    },
+    {
+      "column": "is_gentse_feesten",
+      "reason": "drop_low_relevance",
+      "spearman_r": -0.0102,
+      "confidence": "high"
+    }
+  ],
+  "naive_predictor_verification": {
+    "naive_h1_seasonal_median_w4": {
+      "baseline_train_mae": 34.789,
+      "verified_mae": 34.696,
+      "delta": 0.093,
+      "verified": true,
+      "n_nan_filled": 7
+    },
+    "naive_h1_seasonal_median_w13": {
+      "baseline_train_mae": 33.319,
+      "verified_mae": 33.13,
+      "delta": 0.189,
+      "verified": true,
+      "n_nan_filled": 7
+    },
+    "naive_h1_seasonal_median_w26": {
+      "baseline_train_mae": 34.115,
+      "verified_mae": 33.834,
+      "delta": 0.281,
+      "verified": true,
+      "n_nan_filled": 7
+    },
+    "naive_h7_seasonal_median_w4": {
+      "baseline_train_mae": 34.792,
+      "verified_mae": 34.696,
+      "delta": 0.096,
+      "verified": true,
+      "n_nan_filled": 7
+    },
+    "naive_h7_seasonal_median_w13": {
+      "baseline_train_mae": 33.321,
+      "verified_mae": 33.13,
+      "delta": 0.191,
+      "verified": true,
+      "n_nan_filled": 7
+    },
+    "naive_h7_seasonal_median_w26": {
+      "baseline_train_mae": 34.119,
+      "verified_mae": 33.834,
+      "delta": 0.285,
+      "verified": true,
+      "n_nan_filled": 7
+    },
+    "naive_h14_seasonal_median_w4": {
+      "baseline_train_mae": 36.279,
+      "verified_mae": 36.06,
+      "delta": 0.219,
+      "verified": true,
+      "n_nan_filled": 14
+    },
+    "naive_h14_seasonal_median_w13": {
+      "baseline_train_mae": 33.973,
+      "verified_mae": 33.712,
+      "delta": 0.261,
+      "verified": true,
+      "n_nan_filled": 14
+    },
+    "naive_h14_seasonal_median_w26": {
+      "baseline_train_mae": 34.518,
+      "verified_mae": 34.249,
+      "delta": 0.269,
+      "verified": true,
+      "n_nan_filled": 14
+    },
+    "naive_h30_seasonal_median_w4": {
+      "baseline_train_mae": 37.8,
+      "verified_mae": 37.426,
+      "delta": 0.374,
+      "verified": true,
+      "n_nan_filled": 35
+    },
+    "naive_h30_seasonal_median_w26": {
+      "baseline_train_mae": 35.296,
+      "verified_mae": 35.141,
+      "delta": 0.155,
+      "verified": true,
+      "n_nan_filled": 35
+    },
+    "naive_h30_seasonal_median_w8": {
+      "baseline_train_mae": 35.477,
+      "verified_mae": 35.315,
+      "delta": 0.162,
+      "verified": true,
+      "n_nan_filled": 35
+    },
+    "naive_h60_seasonal_median_w26": {
+      "baseline_train_mae": 36.308,
+      "verified_mae": 36.418,
+      "delta": 0.11,
+      "verified": true,
+      "n_nan_filled": 55
+    },
+    "naive_h60_seasonal_mean_w52": {
+      "baseline_train_mae": 36.756,
+      "verified_mae": 36.527,
+      "delta": 0.229,
+      "verified": true,
+      "n_nan_filled": 55
+    },
+    "naive_h60_seasonal_median_w8": {
+      "baseline_train_mae": 37.186,
+      "verified_mae": 37.28,
+      "delta": 0.094,
+      "verified": true,
+      "n_nan_filled": 55
+    },
+    "naive_h90_seasonal_median_w26": {
+      "baseline_train_mae": 36.915,
+      "verified_mae": 37.066,
+      "delta": 0.151,
+      "verified": true,
+      "n_nan_filled": 83
+    },
+    "naive_h90_seasonal_mean_w52": {
+      "baseline_train_mae": 37.35,
+      "verified_mae": 37.133,
+      "delta": 0.217,
+      "verified": true,
+      "n_nan_filled": 83
+    },
+    "naive_h90_seasonal_mean_w13": {
+      "baseline_train_mae": 37.873,
+      "verified_mae": 38.081,
+      "delta": 0.208,
+      "verified": true,
+      "n_nan_filled": 83
+    }
+  },
+  "variance_checks": {
+    "is_official_public_holiday": {
+      "n_unique": 2,
+      "most_common_frac": 0.9783,
+      "zero_variance": false,
+      "near_zero_variance": true
+    },
+    "days_until_next_holiday": {
+      "n_unique": 30,
+      "most_common_frac": 0.4117,
+      "zero_variance": false,
+      "near_zero_variance": false
+    },
+    "days_since_last_holiday": {
+      "n_unique": 15,
+      "most_common_frac": 0.6502,
+      "zero_variance": false,
+      "near_zero_variance": false
+    },
+    "is_school_holiday_flanders": {
+      "n_unique": 2,
+      "most_common_frac": 0.7424,
+      "zero_variance": false,
+      "near_zero_variance": false
+    },
+    "is_zomervakantie": {
+      "n_unique": 2,
+      "most_common_frac": 0.8386,
+      "zero_variance": false,
+      "near_zero_variance": false
+    },
+    "is_gentse_feesten": {
+      "n_unique": 2,
+      "most_common_frac": 0.9724,
+      "zero_variance": false,
+      "near_zero_variance": true
+    },
+    "year_trend": {
+      "n_unique": 2713,
+      "most_common_frac": 0.0004,
+      "zero_variance": false,
+      "near_zero_variance": false
+    },
+    "regime_x_monday": {
+      "n_unique": 2,
+      "most_common_frac": 0.9982,
+      "zero_variance": false,
+      "near_zero_variance": true
+    },
+    "is_2014_sparse_period": {
+      "n_unique": 2,
+      "most_common_frac": 0.9764,
+      "zero_variance": false,
+      "near_zero_variance": true
+    },
+    "is_sinterklaas_period": {
+      "n_unique": 2,
+      "most_common_frac": 0.9819,
+      "zero_variance": false,
+      "near_zero_variance": true
+    },
+    "is_easter_period": {
+      "n_unique": 2,
+      "most_common_frac": 0.99,
+      "zero_variance": false,
+      "near_zero_variance": true
+    },
+    "is_covid_lockdown_period": {
+      "n_unique": 2,
+      "most_common_frac": 0.9849,
+      "zero_variance": false,
+      "near_zero_variance": true
+    },
+    "is_hot_day": {
+      "n_unique": 2,
+      "most_common_frac": 0.9971,
+      "zero_variance": false,
+      "near_zero_variance": true
+    },
+    "is_heavy_rain": {
+      "n_unique": 2,
+      "most_common_frac": 0.9259,
+      "zero_variance": false,
+      "near_zero_variance": false
+    },
+    "weather_data_available": {
+      "n_unique": 2,
+      "most_common_frac": 0.6259,
+      "zero_variance": false,
+      "near_zero_variance": false
+    },
+    "bread_lag_7d": {
+      "n_unique": 394,
+      "most_common_frac": 0.0144,
+      "zero_variance": false,
+      "near_zero_variance": false
+    },
+    "bread_lag_14d": {
+      "n_unique": 393,
+      "most_common_frac": 0.014,
+      "zero_variance": false,
+      "near_zero_variance": false
+    },
+    "bread_lag_35d": {
+      "n_unique": 389,
+      "most_common_frac": 0.0144,
+      "zero_variance": false,
+      "near_zero_variance": false
+    },
+    "bread_lag_63d": {
+      "n_unique": 391,
+      "most_common_frac": 0.0199,
+      "zero_variance": false,
+      "near_zero_variance": false
+    },
+    "bread_lag_91d": {
+      "n_unique": 381,
+      "most_common_frac": 0.0288,
+      "zero_variance": false,
+      "near_zero_variance": false
+    }
+  },
+  "relevance_checks": {
+    "is_official_public_holiday": {
+      "r": -0.0028,
+      "p": 0.8847,
+      "verdict": "drop_low_relevance"
+    },
+    "days_until_next_holiday": {
+      "r": 0.1,
+      "p": 0.0,
+      "verdict": "keep"
+    },
+    "days_since_last_holiday": {
+      "r": 0.0037,
+      "p": 0.8492,
+      "verdict": "drop_low_relevance"
+    },
+    "is_school_holiday_flanders": {
+      "r": -0.0113,
+      "p": 0.556,
+      "verdict": "drop_low_relevance"
+    },
+    "is_zomervakantie": {
+      "r": -0.0068,
+      "p": 0.7238,
+      "verdict": "drop_low_relevance"
+    },
+    "is_gentse_feesten": {
+      "r": -0.0102,
+      "p": 0.5936,
+      "verdict": "drop_low_relevance"
+    },
+    "year_trend": {
+      "r": -0.3947,
+      "p": 0.0,
+      "verdict": "keep"
+    },
+    "regime_x_monday": {
+      "r": -0.063,
+      "p": 0.001,
+      "verdict": "keep"
+    },
+    "is_2014_sparse_period": {
+      "r": 0.0587,
+      "p": 0.0022,
+      "verdict": "keep"
+    },
+    "is_sinterklaas_period": {
+      "r": 0.0241,
+      "p": 0.2099,
+      "verdict": "flag_low_confidence"
+    },
+    "is_easter_period": {
+      "r": -0.0525,
+      "p": 0.0063,
+      "verdict": "keep"
+    },
+    "is_covid_lockdown_period": {
+      "r": -0.0502,
+      "p": 0.009,
+      "verdict": "keep"
+    },
+    "is_hot_day": {
+      "r": -0.0675,
+      "p": 0.0004,
+      "verdict": "keep"
+    },
+    "is_heavy_rain": {
+      "r": -0.0844,
+      "p": 0.0,
+      "verdict": "keep"
+    },
+    "weather_data_available": {
+      "r": -0.4318,
+      "p": 0.0,
+      "verdict": "keep"
+    },
+    "bread_lag_7d": {
+      "r": 0.7576,
+      "p": 0.0,
+      "verdict": "keep"
+    },
+    "bread_lag_14d": {
+      "r": 0.6999,
+      "p": 0.0,
+      "verdict": "keep"
+    },
+    "bread_lag_35d": {
+      "r": 0.668,
+      "p": 0.0,
+      "verdict": "keep"
+    },
+    "bread_lag_63d": {
+      "r": 0.6587,
+      "p": 0.0,
+      "verdict": "keep"
+    },
+    "bread_lag_91d": {
+      "r": 0.6478,
+      "p": 0.0,
+      "verdict": "keep"
+    }
+  },
+  "horizon_feature_subsets": {
+    "1": {
+      "n_features": 38,
+      "naive_predictors": [
+        "naive_h1_seasonal_median_w4",
+        "naive_h1_seasonal_median_w13",
+        "naive_h1_seasonal_median_w26"
+      ],
+      "lag_column": "bread_lag_7d",
+      "weather_included": true,
+      "target_col": "bread_quantity_h1",
+      "evaluated_at_target": [
+        "days_until_next_holiday",
+        "year_trend",
+        "regime_x_monday",
+        "is_2014_sparse_period",
+        "is_sinterklaas_period",
+        "is_easter_period",
+        "is_covid_lockdown_period",
+        "is_hot_day",
+        "is_heavy_rain"
+      ],
+      "feature_list": [
+        "bread_quantity",
+        "day_of_week",
+        "is_closed_monday",
+        "year",
+        "month",
+        "dow",
+        "week",
+        "doy",
+        "wx_Maximum_Temperature",
+        "wx_Minimum_Temperature",
+        "wx_Temperature",
+        "wx_Precipitation",
+        "wx_Snow_depth",
+        "wx_Wind_Speed",
+        "wx_Wind_Gust",
+        "wx_Cloud_Cover",
+        "wx_Relative_Humidity",
+        "comp_n_competitors_closed",
+        "comp_any_closed",
+        "comp_closure_density",
+        "comp_data_available",
+        "_fold_1",
+        "_fold_2",
+        "_fold_3",
+        "_split",
+        "days_until_next_holiday",
+        "year_trend",
+        "regime_x_monday",
+        "is_2014_sparse_period",
+        "is_sinterklaas_period",
+        "is_easter_period",
+        "is_covid_lockdown_period",
+        "naive_h1_seasonal_median_w4",
+        "naive_h1_seasonal_median_w13",
+        "naive_h1_seasonal_median_w26",
+        "bread_lag_7d",
+        "is_hot_day",
+        "is_heavy_rain"
+      ]
+    },
+    "7": {
+      "n_features": 38,
+      "naive_predictors": [
+        "naive_h7_seasonal_median_w4",
+        "naive_h7_seasonal_median_w13",
+        "naive_h7_seasonal_median_w26"
+      ],
+      "lag_column": "bread_lag_7d",
+      "weather_included": true,
+      "target_col": "bread_quantity_h7",
+      "evaluated_at_target": [
+        "days_until_next_holiday",
+        "year_trend",
+        "regime_x_monday",
+        "is_2014_sparse_period",
+        "is_sinterklaas_period",
+        "is_easter_period",
+        "is_covid_lockdown_period",
+        "is_hot_day",
+        "is_heavy_rain"
+      ],
+      "feature_list": [
+        "bread_quantity",
+        "day_of_week",
+        "is_closed_monday",
+        "year",
+        "month",
+        "dow",
+        "week",
+        "doy",
+        "wx_Maximum_Temperature",
+        "wx_Minimum_Temperature",
+        "wx_Temperature",
+        "wx_Precipitation",
+        "wx_Snow_depth",
+        "wx_Wind_Speed",
+        "wx_Wind_Gust",
+        "wx_Cloud_Cover",
+        "wx_Relative_Humidity",
+        "comp_n_competitors_closed",
+        "comp_any_closed",
+        "comp_closure_density",
+        "comp_data_available",
+        "_fold_1",
+        "_fold_2",
+        "_fold_3",
+        "_split",
+        "days_until_next_holiday",
+        "year_trend",
+        "regime_x_monday",
+        "is_2014_sparse_period",
+        "is_sinterklaas_period",
+        "is_easter_period",
+        "is_covid_lockdown_period",
+        "naive_h7_seasonal_median_w4",
+        "naive_h7_seasonal_median_w13",
+        "naive_h7_seasonal_median_w26",
+        "bread_lag_7d",
+        "is_hot_day",
+        "is_heavy_rain"
+      ]
+    },
+    "14": {
+      "n_features": 36,
+      "naive_predictors": [
+        "naive_h14_seasonal_median_w4",
+        "naive_h14_seasonal_median_w13",
+        "naive_h14_seasonal_median_w26"
+      ],
+      "lag_column": "bread_lag_14d",
+      "weather_included": false,
+      "target_col": "bread_quantity_h14",
+      "evaluated_at_target": [
+        "days_until_next_holiday",
+        "year_trend",
+        "regime_x_monday",
+        "is_2014_sparse_period",
+        "is_sinterklaas_period",
+        "is_easter_period",
+        "is_covid_lockdown_period"
+      ],
+      "feature_list": [
+        "bread_quantity",
+        "day_of_week",
+        "is_closed_monday",
+        "year",
+        "month",
+        "dow",
+        "week",
+        "doy",
+        "wx_Maximum_Temperature",
+        "wx_Minimum_Temperature",
+        "wx_Temperature",
+        "wx_Precipitation",
+        "wx_Snow_depth",
+        "wx_Wind_Speed",
+        "wx_Wind_Gust",
+        "wx_Cloud_Cover",
+        "wx_Relative_Humidity",
+        "comp_n_competitors_closed",
+        "comp_any_closed",
+        "comp_closure_density",
+        "comp_data_available",
+        "_fold_1",
+        "_fold_2",
+        "_fold_3",
+        "_split",
+        "days_until_next_holiday",
+        "year_trend",
+        "regime_x_monday",
+        "is_2014_sparse_period",
+        "is_sinterklaas_period",
+        "is_easter_period",
+        "is_covid_lockdown_period",
+        "naive_h14_seasonal_median_w4",
+        "naive_h14_seasonal_median_w13",
+        "naive_h14_seasonal_median_w26",
+        "bread_lag_14d"
+      ]
+    },
+    "30": {
+      "n_features": 36,
+      "naive_predictors": [
+        "naive_h30_seasonal_median_w4",
+        "naive_h30_seasonal_median_w26",
+        "naive_h30_seasonal_median_w8"
+      ],
+      "lag_column": "bread_lag_35d",
+      "weather_included": false,
+      "target_col": "bread_quantity_h30",
+      "evaluated_at_target": [
+        "days_until_next_holiday",
+        "year_trend",
+        "regime_x_monday",
+        "is_2014_sparse_period",
+        "is_sinterklaas_period",
+        "is_easter_period",
+        "is_covid_lockdown_period"
+      ],
+      "feature_list": [
+        "bread_quantity",
+        "day_of_week",
+        "is_closed_monday",
+        "year",
+        "month",
+        "dow",
+        "week",
+        "doy",
+        "wx_Maximum_Temperature",
+        "wx_Minimum_Temperature",
+        "wx_Temperature",
+        "wx_Precipitation",
+        "wx_Snow_depth",
+        "wx_Wind_Speed",
+        "wx_Wind_Gust",
+        "wx_Cloud_Cover",
+        "wx_Relative_Humidity",
+        "comp_n_competitors_closed",
+        "comp_any_closed",
+        "comp_closure_density",
+        "comp_data_available",
+        "_fold_1",
+        "_fold_2",
+        "_fold_3",
+        "_split",
+        "days_until_next_holiday",
+        "year_trend",
+        "regime_x_monday",
+        "is_2014_sparse_period",
+        "is_sinterklaas_period",
+        "is_easter_period",
+        "is_covid_lockdown_period",
+        "naive_h30_seasonal_median_w4",
+        "naive_h30_seasonal_median_w26",
+        "naive_h30_seasonal_median_w8",
+        "bread_lag_35d"
+      ]
+    },
+    "60": {
+      "n_features": 36,
+      "naive_predictors": [
+        "naive_h60_seasonal_median_w26",
+        "naive_h60_seasonal_mean_w52",
+        "naive_h60_seasonal_median_w8"
+      ],
+      "lag_column": "bread_lag_63d",
+      "weather_included": false,
+      "target_col": "bread_quantity_h60",
+      "evaluated_at_target": [
+        "days_until_next_holiday",
+        "year_trend",
+        "regime_x_monday",
+        "is_2014_sparse_period",
+        "is_sinterklaas_period",
+        "is_easter_period",
+        "is_covid_lockdown_period"
+      ],
+      "feature_list": [
+        "bread_quantity",
+        "day_of_week",
+        "is_closed_monday",
+        "year",
+        "month",
+        "dow",
+        "week",
+        "doy",
+        "wx_Maximum_Temperature",
+        "wx_Minimum_Temperature",
+        "wx_Temperature",
+        "wx_Precipitation",
+        "wx_Snow_depth",
+        "wx_Wind_Speed",
+        "wx_Wind_Gust",
+        "wx_Cloud_Cover",
+        "wx_Relative_Humidity",
+        "comp_n_competitors_closed",
+        "comp_any_closed",
+        "comp_closure_density",
+        "comp_data_available",
+        "_fold_1",
+        "_fold_2",
+        "_fold_3",
+        "_split",
+        "days_until_next_holiday",
+        "year_trend",
+        "regime_x_monday",
+        "is_2014_sparse_period",
+        "is_sinterklaas_period",
+        "is_easter_period",
+        "is_covid_lockdown_period",
+        "naive_h60_seasonal_median_w26",
+        "naive_h60_seasonal_mean_w52",
+        "naive_h60_seasonal_median_w8",
+        "bread_lag_63d"
+      ]
+    },
+    "90": {
+      "n_features": 36,
+      "naive_predictors": [
+        "naive_h90_seasonal_median_w26",
+        "naive_h90_seasonal_mean_w52",
+        "naive_h90_seasonal_mean_w13"
+      ],
+      "lag_column": "bread_lag_91d",
+      "weather_included": false,
+      "target_col": "bread_quantity_h90",
+      "evaluated_at_target": [
+        "days_until_next_holiday",
+        "year_trend",
+        "regime_x_monday",
+        "is_2014_sparse_period",
+        "is_sinterklaas_period",
+        "is_easter_period",
+        "is_covid_lockdown_period"
+      ],
+      "feature_list": [
+        "bread_quantity",
+        "day_of_week",
+        "is_closed_monday",
+        "year",
+        "month",
+        "dow",
+        "week",
+        "doy",
+        "wx_Maximum_Temperature",
+        "wx_Minimum_Temperature",
+        "wx_Temperature",
+        "wx_Precipitation",
+        "wx_Snow_depth",
+        "wx_Wind_Speed",
+        "wx_Wind_Gust",
+        "wx_Cloud_Cover",
+        "wx_Relative_Humidity",
+        "comp_n_competitors_closed",
+        "comp_any_closed",
+        "comp_closure_density",
+        "comp_data_available",
+        "_fold_1",
+        "_fold_2",
+        "_fold_3",
+        "_split",
+        "days_until_next_holiday",
+        "year_trend",
+        "regime_x_monday",
+        "is_2014_sparse_period",
+        "is_sinterklaas_period",
+        "is_easter_period",
+        "is_covid_lockdown_period",
+        "naive_h90_seasonal_median_w26",
+        "naive_h90_seasonal_mean_w52",
+        "naive_h90_seasonal_mean_w13",
+        "bread_lag_91d"
+      ]
+    }
+  },
+  "output": {
+    "dataset_path": "data/iteration_005_feature_engineering.csv",
+    "shape": [
+      2897,
+      65
+    ],
+    "columns": [
+      "date",
+      "bread_quantity",
+      "day_of_week",
+      "is_closed_monday",
+      "year",
+      "month",
+      "dow",
+      "week",
+      "doy",
+      "wx_Maximum_Temperature",
+      "wx_Minimum_Temperature",
+      "wx_Temperature",
+      "wx_Precipitation",
+      "wx_Snow_depth",
+      "wx_Wind_Speed",
+      "wx_Wind_Gust",
+      "wx_Cloud_Cover",
+      "wx_Relative_Humidity",
+      "comp_n_competitors_closed",
+      "comp_any_closed",
+      "comp_closure_density",
+      "comp_data_available",
+      "_fold_1",
+      "_fold_2",
+      "_fold_3",
+      "_split",
+      "naive_h1_seasonal_median_w4",
+      "naive_h1_seasonal_median_w13",
+      "naive_h1_seasonal_median_w26",
+      "naive_h7_seasonal_median_w4",
+      "naive_h7_seasonal_median_w13",
+      "naive_h7_seasonal_median_w26",
+      "naive_h14_seasonal_median_w4",
+      "naive_h14_seasonal_median_w13",
+      "naive_h14_seasonal_median_w26",
+      "naive_h30_seasonal_median_w4",
+      "naive_h30_seasonal_median_w26",
+      "naive_h30_seasonal_median_w8",
+      "naive_h60_seasonal_median_w26",
+      "naive_h60_seasonal_mean_w52",
+      "naive_h60_seasonal_median_w8",
+      "naive_h90_seasonal_median_w26",
+      "naive_h90_seasonal_mean_w52",
+      "naive_h90_seasonal_mean_w13",
+      "days_until_next_holiday",
+      "year_trend",
+      "regime_x_monday",
+      "is_2014_sparse_period",
+      "is_sinterklaas_period",
+      "is_easter_period",
+      "is_covid_lockdown_period",
+      "is_hot_day",
+      "is_heavy_rain",
+      "weather_data_available",
+      "bread_lag_7d",
+      "bread_lag_14d",
+      "bread_lag_35d",
+      "bread_lag_63d",
+      "bread_lag_91d",
+      "bread_quantity_h1",
+      "bread_quantity_h7",
+      "bread_quantity_h14",
+      "bread_quantity_h30",
+      "bread_quantity_h60",
+      "bread_quantity_h90"
+    ],
+    "naive_predictor_cols": [
+      "naive_h1_seasonal_median_w4",
+      "naive_h1_seasonal_median_w13",
+      "naive_h1_seasonal_median_w26",
+      "naive_h7_seasonal_median_w4",
+      "naive_h7_seasonal_median_w13",
+      "naive_h7_seasonal_median_w26",
+      "naive_h14_seasonal_median_w4",
+      "naive_h14_seasonal_median_w13",
+      "naive_h14_seasonal_median_w26",
+      "naive_h30_seasonal_median_w4",
+      "naive_h30_seasonal_median_w26",
+      "naive_h30_seasonal_median_w8",
+      "naive_h60_seasonal_median_w26",
+      "naive_h60_seasonal_mean_w52",
+      "naive_h60_seasonal_median_w8",
+      "naive_h90_seasonal_median_w26",
+      "naive_h90_seasonal_mean_w52",
+      "naive_h90_seasonal_mean_w13"
+    ],
+    "calendar_cols": [
+      "days_until_next_holiday",
+      "year_trend",
+      "regime_x_monday",
+      "is_2014_sparse_period",
+      "is_sinterklaas_period",
+      "is_easter_period",
+      "is_covid_lockdown_period"
+    ],
+    "weather_binary_cols": [
+      "is_hot_day",
+      "is_heavy_rain",
+      "weather_data_available"
+    ],
+    "lag_cols": [
+      "bread_lag_7d",
+      "bread_lag_14d",
+      "bread_lag_35d",
+      "bread_lag_63d",
+      "bread_lag_91d"
+    ],
+    "target_cols": [
+      "bread_quantity_h1",
+      "bread_quantity_h7",
+      "bread_quantity_h14",
+      "bread_quantity_h30",
+      "bread_quantity_h60",
+      "bread_quantity_h90"
+    ]
+  },
+  "artifact_paths": {
+    "plots": [
+      {
+        "name": "Feature relevance \u2014 Spearman r vs bread_quantity (train only)",
+        "type": "horizontal bar",
+        "path": "artifacts/feature_engineering/iteration_005_fe_spearman.png",
+        "data_path": "artifacts/feature_engineering/iteration_005_fe_spearman.csv"
+      },
+      {
+        "name": "Naive predictor verification: baseline vs FE computed MAE",
+        "type": "grouped bar",
+        "path": "artifacts/feature_engineering/iteration_005_fe_naive_verification.png",
+        "data_path": "artifacts/feature_engineering/iteration_005_fe_naive_verification.csv"
+      },
+      {
+        "name": "Calendar feature prevalence (train rows)",
+        "type": "horizontal bar",
+        "path": "artifacts/feature_engineering/iteration_005_fe_calendar_prevalence.png",
+        "data_path": "artifacts/feature_engineering/iteration_005_fe_calendar_prevalence.csv"
+      }
+    ]
+  },
+  "clarification_needed": [
+    {
+      "id": "CQ-FE-001",
+      "blocking": false,
+      "topic": "weather forecast feed at serving time",
+      "question": "is_hot_day and is_heavy_rain are included for h=1 and h=7 models, evaluated at the TARGET date. This assumes a 7-day weather forecast will be available at serving time. If no weather forecast feed is integrated, these columns should be evaluated at ORIGIN instead (or dropped for h>1).",
+      "recommendation": "use weather at TARGET date for h<=7 (forecast feed assumed)",
+      "recommendation_reasoning": "A 7-day weather forecast is widely available; using origin weather for h=7 gives a 7-day-old observation with no predictive value.",
+      "impact_if_wrong": "Model trained on observed weather at target date but served on origin weather; scores optimistic at h=7; mild MAE degradation at serving time.",
+      "confidence": "medium"
+    }
+  ],
+  "issues": [],
+  "agent_initiated_findings": [
+    {
+      "related_step": "2a",
+      "title": "smedian_w4 Part A winner introduces different NaN pattern than smedian_w52",
+      "method": "design analysis",
+      "findings": "smedian_w4 (4-week window) requires only 4 same-DOW observations at origin. This means valid predictions start ~28 days into the series, versus ~364 days for smedian_w52. NaN rows at series start are fewer (4 vs 52 same-DOW obs needed). All NaN rows are ffill/bfill filled with expanding window stats.",
+      "reasoning": "smedian_w4 is the new Part A winner post-revised baseline; its NaN pattern differs from prior runs.",
+      "confidence": "high"
+    },
+    {
+      "related_step": "7",
+      "title": "h=1 and h=7 share the same lag column (bread_lag_7d) and same naive predictors",
+      "method": "design analysis",
+      "findings": "ceil(1/7)=1 and ceil(7/7)=1, so both h=1 and h=7 use bread_lag_7d. Similarly, naive_h1_smedian_w4 and naive_h7_smedian_w4 are computed at different origins (D-1 vs D-7) but both look at the same 4 same-DOW observations (D-7, D-14, D-21, D-28 relative to target D), making them identical. Training should verify this redundancy and may choose to train a single model for both horizons or include only one of the two predictors.",
+      "reasoning": "Noted to avoid Training from treating h=1 and h=7 as informationally different when their naive predictors are identical.",
+      "confidence": "high"
+    }
+  ],
+  "handoff": {
+    "written_by": "feature_engineering",
+    "iteration": 5,
+    "context_clearable": true,
+    "read_this_first": "FE output is a wide-format CSV indexed by TARGET date. naive_h{h}_* columns are computed at origin D-h for that h only \u2014 do not cross-use. horizon_feature_subsets in parameters gives the exact feature list for each h-model. Weather (is_hot_day, is_heavy_rain) evaluated at TARGET date \u2014 available only for h<=7 (7-day forecast horizon). Clarification CQ-FE-001 (non-blocking) on weather feed.",
+    "parameters": {
+      "feature_engineering_output_path": {
+        "value": "data/iteration_005_feature_engineering.csv",
+        "why": "Input for Training node",
+        "must_not_change": true
+      },
+      "output_shape": {
+        "value": [
+          2897,
+          65
+        ],
+        "why": "Expected shape for downstream validation",
+        "must_not_change": false
+      },
+      "target_column": {
+        "value": "bread_quantity",
+        "why": "Raw target \u2014 Training must use bread_quantity_h{h} as target for h-model",
+        "must_not_change": true
+      },
+      "target_representation": {
+        "value": {
+          "form": "raw",
+          "target_column": "bread_quantity",
+          "anchor_column": "naive_h{h}_seasonal_median_w4 (per horizon)",
+          "anchor_role": "level anchor feature; model effectively learns residual vs recent smedian_w4",
+          "inverse": "none (raw target)",
+          "trigger": "significant downward trend (ADF p=0.0005, -28.7%); fold 3 level gap = -3.7%",
+          "reasoning": "Level gap -3.7% in fold 3 is small; the seasonal median naive predictor conditions the tree model on the current level at each prediction origin, effectively creating a residual-like target. Override valid while fold 3 remains the primary evaluation window. Expires if deployment window shows larger level gap \u2014 revert to ratio target then.",
+          "confidence": "medium",
+          "override": {
+            "reason": "raw target kept to maintain compatibility with ARIMA family and avoid re-scaling issues",
+            "family_that_required_it": "ARIMA-family (classical TS)",
+            "expires_when": "ARIMA family dropped from live candidates; or Diagnosis shows systematic level-shift bias"
+          }
+        },
+        "why": "Raw target kept; see override reasoning. Seasonal median anchor is the feature, not the target transform.",
+        "must_not_change": false
+      },
+      "horizon_feature_subsets": {
+        "value": {
+          "1": {
+            "n_features": 38,
+            "naive_predictors": [
+              "naive_h1_seasonal_median_w4",
+              "naive_h1_seasonal_median_w13",
+              "naive_h1_seasonal_median_w26"
+            ],
+            "lag_column": "bread_lag_7d",
+            "weather_included": true,
+            "target_col": "bread_quantity_h1",
+            "evaluated_at_target": [
+              "days_until_next_holiday",
+              "year_trend",
+              "regime_x_monday",
+              "is_2014_sparse_period",
+              "is_sinterklaas_period",
+              "is_easter_period",
+              "is_covid_lockdown_period",
+              "is_hot_day",
+              "is_heavy_rain"
+            ],
+            "feature_list": [
+              "bread_quantity",
+              "day_of_week",
+              "is_closed_monday",
+              "year",
+              "month",
+              "dow",
+              "week",
+              "doy",
+              "wx_Maximum_Temperature",
+              "wx_Minimum_Temperature",
+              "wx_Temperature",
+              "wx_Precipitation",
+              "wx_Snow_depth",
+              "wx_Wind_Speed",
+              "wx_Wind_Gust",
+              "wx_Cloud_Cover",
+              "wx_Relative_Humidity",
+              "comp_n_competitors_closed",
+              "comp_any_closed",
+              "comp_closure_density",
+              "comp_data_available",
+              "_fold_1",
+              "_fold_2",
+              "_fold_3",
+              "_split",
+              "days_until_next_holiday",
+              "year_trend",
+              "regime_x_monday",
+              "is_2014_sparse_period",
+              "is_sinterklaas_period",
+              "is_easter_period",
+              "is_covid_lockdown_period",
+              "naive_h1_seasonal_median_w4",
+              "naive_h1_seasonal_median_w13",
+              "naive_h1_seasonal_median_w26",
+              "bread_lag_7d",
+              "is_hot_day",
+              "is_heavy_rain"
+            ]
+          },
+          "7": {
+            "n_features": 38,
+            "naive_predictors": [
+              "naive_h7_seasonal_median_w4",
+              "naive_h7_seasonal_median_w13",
+              "naive_h7_seasonal_median_w26"
+            ],
+            "lag_column": "bread_lag_7d",
+            "weather_included": true,
+            "target_col": "bread_quantity_h7",
+            "evaluated_at_target": [
+              "days_until_next_holiday",
+              "year_trend",
+              "regime_x_monday",
+              "is_2014_sparse_period",
+              "is_sinterklaas_period",
+              "is_easter_period",
+              "is_covid_lockdown_period",
+              "is_hot_day",
+              "is_heavy_rain"
+            ],
+            "feature_list": [
+              "bread_quantity",
+              "day_of_week",
+              "is_closed_monday",
+              "year",
+              "month",
+              "dow",
+              "week",
+              "doy",
+              "wx_Maximum_Temperature",
+              "wx_Minimum_Temperature",
+              "wx_Temperature",
+              "wx_Precipitation",
+              "wx_Snow_depth",
+              "wx_Wind_Speed",
+              "wx_Wind_Gust",
+              "wx_Cloud_Cover",
+              "wx_Relative_Humidity",
+              "comp_n_competitors_closed",
+              "comp_any_closed",
+              "comp_closure_density",
+              "comp_data_available",
+              "_fold_1",
+              "_fold_2",
+              "_fold_3",
+              "_split",
+              "days_until_next_holiday",
+              "year_trend",
+              "regime_x_monday",
+              "is_2014_sparse_period",
+              "is_sinterklaas_period",
+              "is_easter_period",
+              "is_covid_lockdown_period",
+              "naive_h7_seasonal_median_w4",
+              "naive_h7_seasonal_median_w13",
+              "naive_h7_seasonal_median_w26",
+              "bread_lag_7d",
+              "is_hot_day",
+              "is_heavy_rain"
+            ]
+          },
+          "14": {
+            "n_features": 36,
+            "naive_predictors": [
+              "naive_h14_seasonal_median_w4",
+              "naive_h14_seasonal_median_w13",
+              "naive_h14_seasonal_median_w26"
+            ],
+            "lag_column": "bread_lag_14d",
+            "weather_included": false,
+            "target_col": "bread_quantity_h14",
+            "evaluated_at_target": [
+              "days_until_next_holiday",
+              "year_trend",
+              "regime_x_monday",
+              "is_2014_sparse_period",
+              "is_sinterklaas_period",
+              "is_easter_period",
+              "is_covid_lockdown_period"
+            ],
+            "feature_list": [
+              "bread_quantity",
+              "day_of_week",
+              "is_closed_monday",
+              "year",
+              "month",
+              "dow",
+              "week",
+              "doy",
+              "wx_Maximum_Temperature",
+              "wx_Minimum_Temperature",
+              "wx_Temperature",
+              "wx_Precipitation",
+              "wx_Snow_depth",
+              "wx_Wind_Speed",
+              "wx_Wind_Gust",
+              "wx_Cloud_Cover",
+              "wx_Relative_Humidity",
+              "comp_n_competitors_closed",
+              "comp_any_closed",
+              "comp_closure_density",
+              "comp_data_available",
+              "_fold_1",
+              "_fold_2",
+              "_fold_3",
+              "_split",
+              "days_until_next_holiday",
+              "year_trend",
+              "regime_x_monday",
+              "is_2014_sparse_period",
+              "is_sinterklaas_period",
+              "is_easter_period",
+              "is_covid_lockdown_period",
+              "naive_h14_seasonal_median_w4",
+              "naive_h14_seasonal_median_w13",
+              "naive_h14_seasonal_median_w26",
+              "bread_lag_14d"
+            ]
+          },
+          "30": {
+            "n_features": 36,
+            "naive_predictors": [
+              "naive_h30_seasonal_median_w4",
+              "naive_h30_seasonal_median_w26",
+              "naive_h30_seasonal_median_w8"
+            ],
+            "lag_column": "bread_lag_35d",
+            "weather_included": false,
+            "target_col": "bread_quantity_h30",
+            "evaluated_at_target": [
+              "days_until_next_holiday",
+              "year_trend",
+              "regime_x_monday",
+              "is_2014_sparse_period",
+              "is_sinterklaas_period",
+              "is_easter_period",
+              "is_covid_lockdown_period"
+            ],
+            "feature_list": [
+              "bread_quantity",
+              "day_of_week",
+              "is_closed_monday",
+              "year",
+              "month",
+              "dow",
+              "week",
+              "doy",
+              "wx_Maximum_Temperature",
+              "wx_Minimum_Temperature",
+              "wx_Temperature",
+              "wx_Precipitation",
+              "wx_Snow_depth",
+              "wx_Wind_Speed",
+              "wx_Wind_Gust",
+              "wx_Cloud_Cover",
+              "wx_Relative_Humidity",
+              "comp_n_competitors_closed",
+              "comp_any_closed",
+              "comp_closure_density",
+              "comp_data_available",
+              "_fold_1",
+              "_fold_2",
+              "_fold_3",
+              "_split",
+              "days_until_next_holiday",
+              "year_trend",
+              "regime_x_monday",
+              "is_2014_sparse_period",
+              "is_sinterklaas_period",
+              "is_easter_period",
+              "is_covid_lockdown_period",
+              "naive_h30_seasonal_median_w4",
+              "naive_h30_seasonal_median_w26",
+              "naive_h30_seasonal_median_w8",
+              "bread_lag_35d"
+            ]
+          },
+          "60": {
+            "n_features": 36,
+            "naive_predictors": [
+              "naive_h60_seasonal_median_w26",
+              "naive_h60_seasonal_mean_w52",
+              "naive_h60_seasonal_median_w8"
+            ],
+            "lag_column": "bread_lag_63d",
+            "weather_included": false,
+            "target_col": "bread_quantity_h60",
+            "evaluated_at_target": [
+              "days_until_next_holiday",
+              "year_trend",
+              "regime_x_monday",
+              "is_2014_sparse_period",
+              "is_sinterklaas_period",
+              "is_easter_period",
+              "is_covid_lockdown_period"
+            ],
+            "feature_list": [
+              "bread_quantity",
+              "day_of_week",
+              "is_closed_monday",
+              "year",
+              "month",
+              "dow",
+              "week",
+              "doy",
+              "wx_Maximum_Temperature",
+              "wx_Minimum_Temperature",
+              "wx_Temperature",
+              "wx_Precipitation",
+              "wx_Snow_depth",
+              "wx_Wind_Speed",
+              "wx_Wind_Gust",
+              "wx_Cloud_Cover",
+              "wx_Relative_Humidity",
+              "comp_n_competitors_closed",
+              "comp_any_closed",
+              "comp_closure_density",
+              "comp_data_available",
+              "_fold_1",
+              "_fold_2",
+              "_fold_3",
+              "_split",
+              "days_until_next_holiday",
+              "year_trend",
+              "regime_x_monday",
+              "is_2014_sparse_period",
+              "is_sinterklaas_period",
+              "is_easter_period",
+              "is_covid_lockdown_period",
+              "naive_h60_seasonal_median_w26",
+              "naive_h60_seasonal_mean_w52",
+              "naive_h60_seasonal_median_w8",
+              "bread_lag_63d"
+            ]
+          },
+          "90": {
+            "n_features": 36,
+            "naive_predictors": [
+              "naive_h90_seasonal_median_w26",
+              "naive_h90_seasonal_mean_w52",
+              "naive_h90_seasonal_mean_w13"
+            ],
+            "lag_column": "bread_lag_91d",
+            "weather_included": false,
+            "target_col": "bread_quantity_h90",
+            "evaluated_at_target": [
+              "days_until_next_holiday",
+              "year_trend",
+              "regime_x_monday",
+              "is_2014_sparse_period",
+              "is_sinterklaas_period",
+              "is_easter_period",
+              "is_covid_lockdown_period"
+            ],
+            "feature_list": [
+              "bread_quantity",
+              "day_of_week",
+              "is_closed_monday",
+              "year",
+              "month",
+              "dow",
+              "week",
+              "doy",
+              "wx_Maximum_Temperature",
+              "wx_Minimum_Temperature",
+              "wx_Temperature",
+              "wx_Precipitation",
+              "wx_Snow_depth",
+              "wx_Wind_Speed",
+              "wx_Wind_Gust",
+              "wx_Cloud_Cover",
+              "wx_Relative_Humidity",
+              "comp_n_competitors_closed",
+              "comp_any_closed",
+              "comp_closure_density",
+              "comp_data_available",
+              "_fold_1",
+              "_fold_2",
+              "_fold_3",
+              "_split",
+              "days_until_next_holiday",
+              "year_trend",
+              "regime_x_monday",
+              "is_2014_sparse_period",
+              "is_sinterklaas_period",
+              "is_easter_period",
+              "is_covid_lockdown_period",
+              "naive_h90_seasonal_median_w26",
+              "naive_h90_seasonal_mean_w52",
+              "naive_h90_seasonal_mean_w13",
+              "bread_lag_91d"
+            ]
+          }
+        },
+        "why": "Training must use the subset for its horizon; using all cols would include invalid lags and cross-horizon naive predictors.",
+        "must_not_change": true
+      },
+      "naive_predictor_cols_all_horizons": {
+        "value": {
+          "1": [
+            "naive_h1_seasonal_median_w4",
+            "naive_h1_seasonal_median_w13",
+            "naive_h1_seasonal_median_w26"
+          ],
+          "7": [
+            "naive_h7_seasonal_median_w4",
+            "naive_h7_seasonal_median_w13",
+            "naive_h7_seasonal_median_w26"
+          ],
+          "14": [
+            "naive_h14_seasonal_median_w4",
+            "naive_h14_seasonal_median_w13",
+            "naive_h14_seasonal_median_w26"
+          ],
+          "30": [
+            "naive_h30_seasonal_median_w4",
+            "naive_h30_seasonal_median_w26",
+            "naive_h30_seasonal_median_w8"
+          ],
+          "60": [
+            "naive_h60_seasonal_median_w26",
+            "naive_h60_seasonal_mean_w52",
+            "naive_h60_seasonal_median_w8"
+          ],
+          "90": [
+            "naive_h90_seasonal_median_w26",
+            "naive_h90_seasonal_mean_w52",
+            "naive_h90_seasonal_mean_w13"
+          ]
+        },
+        "why": "Protected columns \u2014 Training must include all of them for their respective horizon model.",
+        "must_not_change": true
+      },
+      "protected_features": {
+        "value": [
+          "naive_h1_seasonal_median_w4",
+          "naive_h1_seasonal_median_w13",
+          "naive_h1_seasonal_median_w26",
+          "naive_h7_seasonal_median_w4",
+          "naive_h7_seasonal_median_w13",
+          "naive_h7_seasonal_median_w26",
+          "naive_h14_seasonal_median_w4",
+          "naive_h14_seasonal_median_w13",
+          "naive_h14_seasonal_median_w26",
+          "naive_h30_seasonal_median_w4",
+          "naive_h30_seasonal_median_w26",
+          "naive_h30_seasonal_median_w8",
+          "naive_h60_seasonal_median_w26",
+          "naive_h60_seasonal_mean_w52",
+          "naive_h60_seasonal_median_w8",
+          "naive_h90_seasonal_median_w26",
+          "naive_h90_seasonal_mean_w52",
+          "naive_h90_seasonal_mean_w13"
+        ],
+        "why": "Inherited from baseline; cannot be dropped without user approval.",
+        "must_not_change": true
+      },
+      "baseline_floor_per_horizon": {
+        "value": {
+          "1": {
+            "winner": "smedian_4",
+            "floor_mae": 31.263
+          },
+          "7": {
+            "winner": "smedian_4",
+            "floor_mae": 31.263
+          },
+          "14": {
+            "winner": "smedian_4",
+            "floor_mae": 32.846
+          },
+          "30": {
+            "winner": "smedian_4",
+            "floor_mae": 35.913
+          },
+          "60": {
+            "winner": "smedian_26",
+            "floor_mae": 40.042
+          },
+          "90": {
+            "winner": "smedian_26",
+            "floor_mae": 42.143
+          }
+        },
+        "why": "Every trained model must beat these MAEs per horizon before being accepted.",
+        "must_not_change": true
+      },
+      "weather_note": {
+        "value": "is_hot_day and is_heavy_rain are in the CSV evaluated at TARGET date. Use only for h<=7 models. See CQ-FE-001.",
+        "why": "Weather forecast only reliable 7 days ahead; beyond that, use weather_data_available instead.",
+        "must_not_change": false
+      }
+    },
+    "durable_rules": [
+      {
+        "rule": "Use horizon_feature_subsets exactly \u2014 do not give h=7 naive predictors to the h=30 model.",
+        "why": "naive_h7_* is computed at origin D-7; at h=30 it reads 23 days after the h=30 origin = leakage.",
+        "applies_to": [
+          "training"
+        ],
+        "cost_if_broken": "Model trains and scores on leakage; deployment produces silent errors."
+      },
+      {
+        "rule": "Target column for h-model is bread_quantity_h{h} (date-based join), not shift(-h).",
+        "why": "shift(-h) moves rows, not calendar days; on this series (non-trading days removed) it maps to wrong weekday.",
+        "applies_to": [
+          "training"
+        ],
+        "cost_if_broken": "Up to +5 weekday offset pre-regime; model predicts wrong DOW."
+      },
+      {
+        "rule": "Every trained h-model must report MAE vs baseline_floor for its horizon before acceptance.",
+        "why": "Inherited from baseline. The floor is the best trivial rule's MAE.",
+        "applies_to": [
+          "training",
+          "diagnosis"
+        ],
+        "cost_if_broken": "A model worse than the floor may be accepted without notice."
+      }
+    ],
+    "methodological_cautions": [
+      {
+        "caution": "is_official_public_holiday has 99% same-DOW overlap with zero-demand days. Training should not include it alongside DOW dummies without regularisation \u2014 they are near-collinear.",
+        "cost_if_ignored": "Inflated importance estimate for DOW; holiday coefficient absorbed into DOW."
+      },
+      {
+        "caution": "naive_h1_smedian_w4 and naive_h7_smedian_w4 are mathematically identical (same 4 same-DOW observations relative to target). Training can verify and treat h=1 and h=7 as sharing the same naive predictor.",
+        "cost_if_ignored": "Spurious distinction; wasted separate model if they perform identically."
+      }
+    ],
+    "content_carried_forward": {
+      "feature_engineering_output_path": "data/iteration_005_feature_engineering.csv",
+      "output_shape": [
+        2897,
+        65
+      ],
+      "target_column": "bread_quantity",
+      "n_features_total": 65,
+      "naive_predictor_cols": [
+        "naive_h1_seasonal_median_w4",
+        "naive_h1_seasonal_median_w13",
+        "naive_h1_seasonal_median_w26",
+        "naive_h7_seasonal_median_w4",
+        "naive_h7_seasonal_median_w13",
+        "naive_h7_seasonal_median_w26",
+        "naive_h14_seasonal_median_w4",
+        "naive_h14_seasonal_median_w13",
+        "naive_h14_seasonal_median_w26",
+        "naive_h30_seasonal_median_w4",
+        "naive_h30_seasonal_median_w26",
+        "naive_h30_seasonal_median_w8",
+        "naive_h60_seasonal_median_w26",
+        "naive_h60_seasonal_mean_w52",
+        "naive_h60_seasonal_median_w8",
+        "naive_h90_seasonal_median_w26",
+        "naive_h90_seasonal_mean_w52",
+        "naive_h90_seasonal_mean_w13"
+      ],
+      "calendar_cols": [
+        "days_until_next_holiday",
+        "year_trend",
+        "regime_x_monday",
+        "is_2014_sparse_period",
+        "is_sinterklaas_period",
+        "is_easter_period",
+        "is_covid_lockdown_period"
+      ],
+      "lag_cols": [
+        "bread_lag_7d",
+        "bread_lag_14d",
+        "bread_lag_35d",
+        "bread_lag_63d",
+        "bread_lag_91d"
+      ],
+      "horizon_feature_subsets": {
+        "1": {
+          "n_features": 38,
+          "naive_predictors": [
+            "naive_h1_seasonal_median_w4",
+            "naive_h1_seasonal_median_w13",
+            "naive_h1_seasonal_median_w26"
+          ],
+          "lag_column": "bread_lag_7d",
+          "weather_included": true,
+          "target_col": "bread_quantity_h1",
+          "evaluated_at_target": [
+            "days_until_next_holiday",
+            "year_trend",
+            "regime_x_monday",
+            "is_2014_sparse_period",
+            "is_sinterklaas_period",
+            "is_easter_period",
+            "is_covid_lockdown_period",
+            "is_hot_day",
+            "is_heavy_rain"
+          ],
+          "feature_list": [
+            "bread_quantity",
+            "day_of_week",
+            "is_closed_monday",
+            "year",
+            "month",
+            "dow",
+            "week",
+            "doy",
+            "wx_Maximum_Temperature",
+            "wx_Minimum_Temperature",
+            "wx_Temperature",
+            "wx_Precipitation",
+            "wx_Snow_depth",
+            "wx_Wind_Speed",
+            "wx_Wind_Gust",
+            "wx_Cloud_Cover",
+            "wx_Relative_Humidity",
+            "comp_n_competitors_closed",
+            "comp_any_closed",
+            "comp_closure_density",
+            "comp_data_available",
+            "_fold_1",
+            "_fold_2",
+            "_fold_3",
+            "_split",
+            "days_until_next_holiday",
+            "year_trend",
+            "regime_x_monday",
+            "is_2014_sparse_period",
+            "is_sinterklaas_period",
+            "is_easter_period",
+            "is_covid_lockdown_period",
+            "naive_h1_seasonal_median_w4",
+            "naive_h1_seasonal_median_w13",
+            "naive_h1_seasonal_median_w26",
+            "bread_lag_7d",
+            "is_hot_day",
+            "is_heavy_rain"
+          ]
+        },
+        "7": {
+          "n_features": 38,
+          "naive_predictors": [
+            "naive_h7_seasonal_median_w4",
+            "naive_h7_seasonal_median_w13",
+            "naive_h7_seasonal_median_w26"
+          ],
+          "lag_column": "bread_lag_7d",
+          "weather_included": true,
+          "target_col": "bread_quantity_h7",
+          "evaluated_at_target": [
+            "days_until_next_holiday",
+            "year_trend",
+            "regime_x_monday",
+            "is_2014_sparse_period",
+            "is_sinterklaas_period",
+            "is_easter_period",
+            "is_covid_lockdown_period",
+            "is_hot_day",
+            "is_heavy_rain"
+          ],
+          "feature_list": [
+            "bread_quantity",
+            "day_of_week",
+            "is_closed_monday",
+            "year",
+            "month",
+            "dow",
+            "week",
+            "doy",
+            "wx_Maximum_Temperature",
+            "wx_Minimum_Temperature",
+            "wx_Temperature",
+            "wx_Precipitation",
+            "wx_Snow_depth",
+            "wx_Wind_Speed",
+            "wx_Wind_Gust",
+            "wx_Cloud_Cover",
+            "wx_Relative_Humidity",
+            "comp_n_competitors_closed",
+            "comp_any_closed",
+            "comp_closure_density",
+            "comp_data_available",
+            "_fold_1",
+            "_fold_2",
+            "_fold_3",
+            "_split",
+            "days_until_next_holiday",
+            "year_trend",
+            "regime_x_monday",
+            "is_2014_sparse_period",
+            "is_sinterklaas_period",
+            "is_easter_period",
+            "is_covid_lockdown_period",
+            "naive_h7_seasonal_median_w4",
+            "naive_h7_seasonal_median_w13",
+            "naive_h7_seasonal_median_w26",
+            "bread_lag_7d",
+            "is_hot_day",
+            "is_heavy_rain"
+          ]
+        },
+        "14": {
+          "n_features": 36,
+          "naive_predictors": [
+            "naive_h14_seasonal_median_w4",
+            "naive_h14_seasonal_median_w13",
+            "naive_h14_seasonal_median_w26"
+          ],
+          "lag_column": "bread_lag_14d",
+          "weather_included": false,
+          "target_col": "bread_quantity_h14",
+          "evaluated_at_target": [
+            "days_until_next_holiday",
+            "year_trend",
+            "regime_x_monday",
+            "is_2014_sparse_period",
+            "is_sinterklaas_period",
+            "is_easter_period",
+            "is_covid_lockdown_period"
+          ],
+          "feature_list": [
+            "bread_quantity",
+            "day_of_week",
+            "is_closed_monday",
+            "year",
+            "month",
+            "dow",
+            "week",
+            "doy",
+            "wx_Maximum_Temperature",
+            "wx_Minimum_Temperature",
+            "wx_Temperature",
+            "wx_Precipitation",
+            "wx_Snow_depth",
+            "wx_Wind_Speed",
+            "wx_Wind_Gust",
+            "wx_Cloud_Cover",
+            "wx_Relative_Humidity",
+            "comp_n_competitors_closed",
+            "comp_any_closed",
+            "comp_closure_density",
+            "comp_data_available",
+            "_fold_1",
+            "_fold_2",
+            "_fold_3",
+            "_split",
+            "days_until_next_holiday",
+            "year_trend",
+            "regime_x_monday",
+            "is_2014_sparse_period",
+            "is_sinterklaas_period",
+            "is_easter_period",
+            "is_covid_lockdown_period",
+            "naive_h14_seasonal_median_w4",
+            "naive_h14_seasonal_median_w13",
+            "naive_h14_seasonal_median_w26",
+            "bread_lag_14d"
+          ]
+        },
+        "30": {
+          "n_features": 36,
+          "naive_predictors": [
+            "naive_h30_seasonal_median_w4",
+            "naive_h30_seasonal_median_w26",
+            "naive_h30_seasonal_median_w8"
+          ],
+          "lag_column": "bread_lag_35d",
+          "weather_included": false,
+          "target_col": "bread_quantity_h30",
+          "evaluated_at_target": [
+            "days_until_next_holiday",
+            "year_trend",
+            "regime_x_monday",
+            "is_2014_sparse_period",
+            "is_sinterklaas_period",
+            "is_easter_period",
+            "is_covid_lockdown_period"
+          ],
+          "feature_list": [
+            "bread_quantity",
+            "day_of_week",
+            "is_closed_monday",
+            "year",
+            "month",
+            "dow",
+            "week",
+            "doy",
+            "wx_Maximum_Temperature",
+            "wx_Minimum_Temperature",
+            "wx_Temperature",
+            "wx_Precipitation",
+            "wx_Snow_depth",
+            "wx_Wind_Speed",
+            "wx_Wind_Gust",
+            "wx_Cloud_Cover",
+            "wx_Relative_Humidity",
+            "comp_n_competitors_closed",
+            "comp_any_closed",
+            "comp_closure_density",
+            "comp_data_available",
+            "_fold_1",
+            "_fold_2",
+            "_fold_3",
+            "_split",
+            "days_until_next_holiday",
+            "year_trend",
+            "regime_x_monday",
+            "is_2014_sparse_period",
+            "is_sinterklaas_period",
+            "is_easter_period",
+            "is_covid_lockdown_period",
+            "naive_h30_seasonal_median_w4",
+            "naive_h30_seasonal_median_w26",
+            "naive_h30_seasonal_median_w8",
+            "bread_lag_35d"
+          ]
+        },
+        "60": {
+          "n_features": 36,
+          "naive_predictors": [
+            "naive_h60_seasonal_median_w26",
+            "naive_h60_seasonal_mean_w52",
+            "naive_h60_seasonal_median_w8"
+          ],
+          "lag_column": "bread_lag_63d",
+          "weather_included": false,
+          "target_col": "bread_quantity_h60",
+          "evaluated_at_target": [
+            "days_until_next_holiday",
+            "year_trend",
+            "regime_x_monday",
+            "is_2014_sparse_period",
+            "is_sinterklaas_period",
+            "is_easter_period",
+            "is_covid_lockdown_period"
+          ],
+          "feature_list": [
+            "bread_quantity",
+            "day_of_week",
+            "is_closed_monday",
+            "year",
+            "month",
+            "dow",
+            "week",
+            "doy",
+            "wx_Maximum_Temperature",
+            "wx_Minimum_Temperature",
+            "wx_Temperature",
+            "wx_Precipitation",
+            "wx_Snow_depth",
+            "wx_Wind_Speed",
+            "wx_Wind_Gust",
+            "wx_Cloud_Cover",
+            "wx_Relative_Humidity",
+            "comp_n_competitors_closed",
+            "comp_any_closed",
+            "comp_closure_density",
+            "comp_data_available",
+            "_fold_1",
+            "_fold_2",
+            "_fold_3",
+            "_split",
+            "days_until_next_holiday",
+            "year_trend",
+            "regime_x_monday",
+            "is_2014_sparse_period",
+            "is_sinterklaas_period",
+            "is_easter_period",
+            "is_covid_lockdown_period",
+            "naive_h60_seasonal_median_w26",
+            "naive_h60_seasonal_mean_w52",
+            "naive_h60_seasonal_median_w8",
+            "bread_lag_63d"
+          ]
+        },
+        "90": {
+          "n_features": 36,
+          "naive_predictors": [
+            "naive_h90_seasonal_median_w26",
+            "naive_h90_seasonal_mean_w52",
+            "naive_h90_seasonal_mean_w13"
+          ],
+          "lag_column": "bread_lag_91d",
+          "weather_included": false,
+          "target_col": "bread_quantity_h90",
+          "evaluated_at_target": [
+            "days_until_next_holiday",
+            "year_trend",
+            "regime_x_monday",
+            "is_2014_sparse_period",
+            "is_sinterklaas_period",
+            "is_easter_period",
+            "is_covid_lockdown_period"
+          ],
+          "feature_list": [
+            "bread_quantity",
+            "day_of_week",
+            "is_closed_monday",
+            "year",
+            "month",
+            "dow",
+            "week",
+            "doy",
+            "wx_Maximum_Temperature",
+            "wx_Minimum_Temperature",
+            "wx_Temperature",
+            "wx_Precipitation",
+            "wx_Snow_depth",
+            "wx_Wind_Speed",
+            "wx_Wind_Gust",
+            "wx_Cloud_Cover",
+            "wx_Relative_Humidity",
+            "comp_n_competitors_closed",
+            "comp_any_closed",
+            "comp_closure_density",
+            "comp_data_available",
+            "_fold_1",
+            "_fold_2",
+            "_fold_3",
+            "_split",
+            "days_until_next_holiday",
+            "year_trend",
+            "regime_x_monday",
+            "is_2014_sparse_period",
+            "is_sinterklaas_period",
+            "is_easter_period",
+            "is_covid_lockdown_period",
+            "naive_h90_seasonal_median_w26",
+            "naive_h90_seasonal_mean_w52",
+            "naive_h90_seasonal_mean_w13",
+            "bread_lag_91d"
+          ]
+        }
+      },
+      "baseline_floor": {
+        "1": 31.263,
+        "7": 31.263,
+        "14": 31.263,
+        "30": 35.913,
+        "60": 40.042,
+        "90": 42.143
+      }
+    },
+    "do_not_repeat": [
+      {
+        "tried": "Using row-shift (df.shift(-h)) for horizon target construction",
+        "outcome": "rejected",
+        "evidence": "Prior run_20260904T140437Z used shift(-h); produced wrong weekday targets on 6-day trading week. This run uses date-based lookup.",
+        "why_not_again": "shift(-h) on a non-gapless frame (missing non-trading days) maps to wrong calendar day."
+      },
+      {
+        "tried": "Evaluating weather at ORIGIN for all horizons",
+        "outcome": "rejected",
+        "evidence": "Prior run included 12 weather columns at all horizons; all scored ~0 MAE contribution. Weather at origin for h=90 is a 3-month-old observation.",
+        "why_not_again": "Origin weather for h>7 carries no signal; use target-date weather forecast for h<=7."
+      }
+    ]
+  }
+}

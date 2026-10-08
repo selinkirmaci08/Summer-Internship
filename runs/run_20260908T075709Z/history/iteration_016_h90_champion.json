@@ -1,0 +1,44 @@
+{
+  "iteration": 16,
+  "node": "training",
+  "timestamp": "2026-09-08",
+  "schema_version": "2026-09-04",
+  "type": "h90_champion_selection",
+  "summary": "Selected h=90 champion: lgbm_A_no_anc (LightGBM, feature set A, raw units target, inner-split early stopping). On fold-3 non-zero val rows (4 rows, excl Dec29 closure): val_mae=19.856 vs floor=45.0. Beats floor by 25.144 units. CAUTION: only 4 evaluation rows — result is high-variance. State updated with this champion. Multi-fold verification included in code but results are on 4 non-zero rows only for primary fold. Full multi-fold will be re-evaluated in end_model before final champion declaration.",
+  "champion": {
+    "key": "lgbm_A_no_anc",
+    "val_mae": 19.856,
+    "floor_mae_on_nz_rows": 45.0,
+    "margin_on_nz_rows": 25.144,
+    "n_val_rows_nz": 4,
+    "config": {"n_leaves": 16, "lr": 0.05, "n_trees": 68},
+    "inner_split_n_inner": "last 20% of train (~424 rows)"
+  },
+  "handoff": {
+    "written_by": "training",
+    "iteration": 16,
+    "context_clearable": true,
+    "read_this_first": "h=90 lgbm_A_no_anc beats floor on 4 non-zero fold-3 val rows (MAE=19.856 vs floor=45.0). High variance — end_model MUST re-evaluate multi-fold before declaring champion. Config: n_leaves=16, lr=0.05, n_trees=68, inner-split ES (last 20% of train).",
+    "durable_rules": [
+      {
+        "rule": "h=90 champion candidate lgbm_A_no_anc: n_leaves=16, lr=0.05, n_trees=68, max_depth=4, reg_alpha=2.0, reg_lambda=20.0, min_child_samples=max(5, n_train_inner//50). Train filter: fold-3 train, is_covid_lockdown_period==0. Inner split: last 20% of train rows for ES.",
+        "why": "These hyperparameters were found via fold-3 grid search with inner early stopping. Pinned because the stop point cannot be re-derived once val rows are included in refit.",
+        "applies_to": ["end_model"],
+        "cost_if_broken": "Refit uses wrong tree count — under or over-fits."
+      }
+    ],
+    "methodological_cautions": [
+      {
+        "caution": "h=90 fold-3 non-zero val has only 4 rows. MAE=19.856 on 4 rows has a standard error ~25 units. The floor=45.0 on those same 4 rows is also noisy. The multi-fold pooled result is the only reliable estimate.",
+        "why": "Dec29 closure removes one of 5 val rows. 4 rows means each point has a 25% weight on the MAE.",
+        "cost_if_ignored": "Deploying a model that appears to beat floor by 25 units but actually beats it by much less (or not at all) on a larger evaluation set."
+      }
+    ],
+    "do_not_repeat": [],
+    "content_carried_forward": {
+      "h90_champion_config": {"n_leaves": 16, "lr": 0.05, "n_trees": 68, "max_depth": 4, "reg_alpha": 2.0, "reg_lambda": 20.0},
+      "h90_target": "bread_quantity_h90 (raw units)",
+      "h90_feature_set": "feat_A: all numeric cols except targets, anchors, fold/split markers"
+    }
+  }
+}

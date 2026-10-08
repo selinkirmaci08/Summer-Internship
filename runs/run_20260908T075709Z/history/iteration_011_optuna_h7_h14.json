@@ -1,0 +1,120 @@
+{
+  "iteration": 11,
+  "node": "training",
+  "timestamp": "2026-09-08T21:43:24",
+  "schema_version": "2026-09-04",
+  "type": "hyperparameter_search",
+  "reads_from": "data\\iteration_009_feature_engineering.csv",
+  "horizons_searched": [
+    7,
+    14
+  ],
+  "n_trials_per_horizon": 75,
+  "hyperparameter_search_done": true,
+  "results": {
+    "7": {
+      "n_trials": 75,
+      "best_trial_num": 68,
+      "best_val_mae_optuna": 30.97,
+      "final_val_mae": 32.7194,
+      "n_trees_final": 522,
+      "beats_floor": false,
+      "baseline_floor": 31.263,
+      "margin": 1.4564,
+      "iter010_mae": 32.604,
+      "improvement_over_iter010": 0.1154,
+      "best_params": {
+        "learning_rate": 0.006877127419719767,
+        "n_estimators": 522,
+        "num_leaves": 57,
+        "max_depth": 4,
+        "min_child_samples": 17,
+        "reg_alpha": 0.0013484084650028782,
+        "reg_lambda": 0.43207502431970707,
+        "subsample": 0.7700453902176994,
+        "colsample_bytree": 0.7771525752084879,
+        "min_split_gain": 0.07538795587408981
+      }
+    },
+    "14": {
+      "n_trials": 75,
+      "best_trial_num": 66,
+      "best_val_mae_optuna": 34.8911,
+      "final_val_mae": 37.1014,
+      "n_trees_final": 123,
+      "beats_floor": false,
+      "baseline_floor": 32.846,
+      "margin": 4.2554,
+      "iter010_mae": 35.586,
+      "improvement_over_iter010": 1.5154,
+      "best_params": {
+        "learning_rate": 0.034510876907410504,
+        "n_estimators": 123,
+        "num_leaves": 59,
+        "max_depth": 6,
+        "min_child_samples": 27,
+        "reg_alpha": 0.024574747001438375,
+        "reg_lambda": 0.10731028143715907,
+        "subsample": 0.8779426680259291,
+        "colsample_bytree": 0.737863134118794,
+        "min_split_gain": 0.8634069520429282
+      }
+    }
+  },
+  "methodology": {
+    "optimizer": "Optuna TPE",
+    "objective": "minimize val MAE in units (pred_ratio x anchor)",
+    "early_stopping": "inner-fold (last 20% of clean train, 60 rounds patience)",
+    "covid_exclusion": "is_covid_lockdown_period==1 excluded from training",
+    "ratio_target": "ratio_h{h} = bread_quantity_h{h} / anchor_h{h}",
+    "feature_set": "51 features from iter009 FE CSV"
+  },
+  "handoff": {
+    "written_by": "training",
+    "iteration": 11,
+    "context_clearable": true,
+    "read_this_first": "Optuna complete for h=7 and h=14. h=7 final MAE=32.7194 (floor=31.263, gap=+1.4564). h=14 final MAE=37.1014 (floor=32.846, gap=+4.2554). hyperparameter_search_done=True.",
+    "parameters": {
+      "optuna_best_params_h7": {
+        "value": {
+          "learning_rate": 0.006877127419719767,
+          "n_estimators": 522,
+          "num_leaves": 57,
+          "max_depth": 4,
+          "min_child_samples": 17,
+          "reg_alpha": 0.0013484084650028782,
+          "reg_lambda": 0.43207502431970707,
+          "subsample": 0.7700453902176994,
+          "colsample_bytree": 0.7771525752084879,
+          "min_split_gain": 0.07538795587408981
+        },
+        "must_not_change": false
+      },
+      "optuna_best_params_h14": {
+        "value": {
+          "learning_rate": 0.034510876907410504,
+          "n_estimators": 123,
+          "num_leaves": 59,
+          "max_depth": 6,
+          "min_child_samples": 27,
+          "reg_alpha": 0.024574747001438375,
+          "reg_lambda": 0.10731028143715907,
+          "subsample": 0.8779426680259291,
+          "colsample_bytree": 0.737863134118794,
+          "min_split_gain": 0.8634069520429282
+        },
+        "must_not_change": false
+      }
+    },
+    "durable_rules": [
+      {
+        "rule": "pred_units = pred_ratio x anchor (always convert ratio to units for floor comparison)",
+        "why": "Baseline floor is in bread_quantity units",
+        "applies_to": [
+          "training",
+          "end_model"
+        ]
+      }
+    ]
+  }
+}

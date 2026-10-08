@@ -1,0 +1,705 @@
+{
+ "what_this_is": "every comparable run's chosen model scored on one identical set of h=1 rows",
+ "inventory": [
+  {
+   "run": "run_20260811T141909Z",
+   "has_state": true,
+   "feature_table": null,
+   "preprocess_table": null,
+   "n_models": 0,
+   "final_model": null,
+   "scorable": false,
+   "reason": "no trained model -- the run stopped before producing a scoreable model"
+  },
+  {
+   "run": "run_20260811T144500Z",
+   "has_state": true,
+   "feature_table": null,
+   "preprocess_table": null,
+   "n_models": 0,
+   "final_model": null,
+   "scorable": false,
+   "reason": "no trained model -- the run stopped before producing a scoreable model"
+  },
+  {
+   "run": "run_20260811T151500Z",
+   "has_state": true,
+   "feature_table": null,
+   "preprocess_table": null,
+   "n_models": 0,
+   "final_model": null,
+   "scorable": false,
+   "reason": "no trained model -- the run stopped before producing a scoreable model"
+  },
+  {
+   "run": "run_20260811T160000Z",
+   "has_state": true,
+   "feature_table": null,
+   "preprocess_table": null,
+   "n_models": 0,
+   "final_model": null,
+   "scorable": false,
+   "reason": "no trained model -- the run stopped before producing a scoreable model"
+  },
+  {
+   "run": "run_20260814T082956Z",
+   "has_state": true,
+   "feature_table": null,
+   "preprocess_table": "iteration_003_preprocess.csv",
+   "n_models": 0,
+   "final_model": null,
+   "scorable": false,
+   "reason": "no trained model -- the run stopped before producing a scoreable model"
+  },
+  {
+   "run": "run_20260814T131044Z",
+   "has_state": true,
+   "feature_table": null,
+   "preprocess_table": "iteration_002_preprocess.csv",
+   "n_models": 0,
+   "final_model": null,
+   "scorable": false,
+   "reason": "no trained model -- the run stopped before producing a scoreable model"
+  },
+  {
+   "run": "run_20260814T140822Z",
+   "has_state": true,
+   "feature_table": null,
+   "preprocess_table": "iteration_002_preprocess.csv",
+   "n_models": 0,
+   "final_model": null,
+   "scorable": false,
+   "reason": "no trained model -- the run stopped before producing a scoreable model"
+  },
+  {
+   "run": "run_20260818T000000Z",
+   "has_state": true,
+   "feature_table": null,
+   "preprocess_table": null,
+   "n_models": 0,
+   "final_model": null,
+   "scorable": false,
+   "reason": "no trained model -- the run stopped before producing a scoreable model"
+  },
+  {
+   "run": "run_20260818T082437Z",
+   "has_state": true,
+   "feature_table": null,
+   "preprocess_table": null,
+   "n_models": 0,
+   "final_model": null,
+   "scorable": false,
+   "reason": "no trained model -- the run stopped before producing a scoreable model"
+  },
+  {
+   "run": "run_20260818T121822Z",
+   "has_state": true,
+   "feature_table": null,
+   "preprocess_table": "iteration_002_preprocess.csv",
+   "n_models": 0,
+   "final_model": null,
+   "scorable": false,
+   "reason": "no trained model -- the run stopped before producing a scoreable model"
+  },
+  {
+   "run": "run_20260819T090000Z",
+   "has_state": true,
+   "feature_table": "iteration_005_feature_engineering.csv",
+   "preprocess_table": "iteration_002_preprocess.csv",
+   "n_models": 1,
+   "final_model": "iteration_006_training_model.pkl",
+   "scorable": true,
+   "reason": ""
+  },
+  {
+   "run": "run_20260820T090000Z",
+   "has_state": false,
+   "feature_table": null,
+   "preprocess_table": null,
+   "n_models": 0,
+   "final_model": null,
+   "scorable": false,
+   "reason": "no trained model -- the run stopped before producing a scoreable model"
+  },
+  {
+   "run": "run_20260820T110000Z",
+   "has_state": true,
+   "feature_table": "iteration_003_feature_engineering.csv",
+   "preprocess_table": "iteration_002_preprocess.csv",
+   "n_models": 1,
+   "final_model": "iteration_004_training_model.pkl",
+   "scorable": true,
+   "reason": ""
+  },
+  {
+   "run": "run_20260821T090000Z",
+   "has_state": true,
+   "feature_table": null,
+   "preprocess_table": null,
+   "n_models": 0,
+   "final_model": null,
+   "scorable": false,
+   "reason": "no trained model -- the run stopped before producing a scoreable model"
+  },
+  {
+   "run": "run_20260821T110000Z",
+   "has_state": true,
+   "feature_table": null,
+   "preprocess_table": null,
+   "n_models": 0,
+   "final_model": null,
+   "scorable": false,
+   "reason": "no trained model -- the run stopped before producing a scoreable model"
+  },
+  {
+   "run": "run_20260821T130000Z",
+   "has_state": true,
+   "feature_table": "iteration_013_feature_engineering.csv",
+   "preprocess_table": "iteration_007_preprocess.csv",
+   "n_models": 5,
+   "final_model": "iteration_014_training_model.pkl",
+   "scorable": true,
+   "reason": ""
+  },
+  {
+   "run": "run_20260821T140000Z",
+   "has_state": true,
+   "feature_table": "iteration_004_feature_engineering.csv",
+   "preprocess_table": "iteration_003_preprocess.csv",
+   "n_models": 2,
+   "final_model": "iteration_007_training_model.pkl",
+   "scorable": true,
+   "reason": ""
+  },
+  {
+   "run": "run_20260827T154407Z",
+   "has_state": true,
+   "feature_table": "iteration_008_feature_engineering.csv",
+   "preprocess_table": "iteration_004_preprocess.csv",
+   "n_models": 5,
+   "final_model": "iteration_014_training_model.pkl",
+   "scorable": true,
+   "reason": ""
+  },
+  {
+   "run": "run_20260901T095109Z",
+   "has_state": true,
+   "feature_table": "iteration_010_feature_engineering.csv",
+   "preprocess_table": "iteration_009_preprocess.csv",
+   "n_models": 4,
+   "final_model": "iteration_013_training_model.pkl",
+   "scorable": true,
+   "reason": ""
+  }
+ ],
+ "excluded_runs": {
+  "run_20260821T130000Z": "split is not chronological (train 2014-06-21..2023-02-08, validation 2015-04-28..2021-12-23, test 2015-05-29..2022-03-01) -- training rows sit inside and after the test window, so any score it produces is contaminated"
+ },
+ "frozen_index": {
+  "window": [
+   "2021-07-02",
+   "2023-02-08"
+  ],
+  "n_dates_in_all_test_partitions": 273,
+  "dropped_for_duplicate_rows": {
+   "run_20260820T110000Z": [
+    "2021-07-23",
+    "2021-07-24"
+   ]
+  },
+  "dates_with_some_missing_features": {
+   "run_20260821T140000Z": 117,
+   "run_20260901T095109Z": 106
+  },
+  "n_dates_dropped_for_disagreeing_truth": 1,
+  "disagreeing_dates": [
+   "2023-01-17"
+  ],
+  "n_scored_dates": 270
+ },
+ "leakage_check": {
+  "run_20260819T090000Z": {
+   "train_through": "2019-06-23",
+   "validation_through": "2020-12-09",
+   "gap_days_to_first_scored_date": 205
+  },
+  "run_20260820T110000Z": {
+   "train_through": "2019-06-22",
+   "validation_through": "2020-12-09",
+   "gap_days_to_first_scored_date": 205
+  },
+  "run_20260821T140000Z": {
+   "train_through": "2019-04-03",
+   "validation_through": "2020-11-14",
+   "gap_days_to_first_scored_date": 230
+  },
+  "run_20260827T154407Z": {
+   "train_through": "2019-05-30",
+   "validation_through": "2020-12-12",
+   "gap_days_to_first_scored_date": 202
+  },
+  "run_20260901T095109Z": {
+   "train_through": "2020-08-20",
+   "validation_through": "2021-07-01",
+   "gap_days_to_first_scored_date": 1
+  }
+ },
+ "runs_scored": {
+  "run_20260819T090000Z": {
+   "model": "iteration_006_training_model.pkl",
+   "estimator": "LGBMRegressor",
+   "n_features": 35,
+   "horizon_conditioned": false,
+   "feature_table": "iteration_005_feature_engineering.csv",
+   "features": [
+    "avg_order_value_log1p",
+    "bread_quantity_lag_1",
+    "bread_quantity_lag_7",
+    "bread_quantity_rolling_28d_mean",
+    "bread_quantity_rolling_7d_mean",
+    "competitor_available",
+    "competitor_on_leave_count",
+    "distinct_waitresses",
+    "dow_Friday",
+    "dow_Monday",
+    "dow_Saturday",
+    "dow_Sunday",
+    "dow_Thursday",
+    "dow_Tuesday",
+    "dow_Wednesday",
+    "month_cos",
+    "month_sin",
+    "num_distinct_payment_modes",
+    "num_orders",
+    "num_orders_lag_1",
+    "num_orders_with_reduction_log1p",
+    "num_orders_x_dow_monday",
+    "pct_ticket_printed",
+    "schema_order",
+    "schema_sale",
+    "store_open_7_7",
+    "time_index",
+    "top_payment_mode_count",
+    "total_revenue",
+    "weather_avg_cloud_cover",
+    "weather_avg_humidity",
+    "weather_avg_temp",
+    "weather_avg_temp_available",
+    "weather_had_rain",
+    "weather_precipitation_total_log1p"
+   ]
+  },
+  "run_20260820T110000Z": {
+   "model": "iteration_004_training_model.pkl",
+   "estimator": "LGBMRegressor",
+   "n_features": 21,
+   "horizon_conditioned": false,
+   "feature_table": "iteration_003_feature_engineering.csv",
+   "features": [
+    "year",
+    "distinct_waitresses",
+    "store_open_7_7",
+    "weather_avg_temp",
+    "weather_avg_cloud_cover",
+    "weather_avg_humidity",
+    "weather_had_rain",
+    "competitor_on_leave_count",
+    "weather_available",
+    "weather_precipitation_total_log",
+    "competitor_data_available",
+    "dow_sin",
+    "dow_cos",
+    "month_sin",
+    "month_cos",
+    "is_weekend",
+    "schema_is_sale",
+    "bread_qty_lag_1",
+    "bread_qty_lag_7",
+    "bread_qty_roll7d_mean",
+    "bread_qty_roll28d_mean"
+   ]
+  },
+  "run_20260821T140000Z": {
+   "model": "iteration_007_training_model.pkl",
+   "estimator": "LGBMRegressor",
+   "n_features": 22,
+   "horizon_conditioned": false,
+   "feature_table": "iteration_004_feature_engineering.csv",
+   "features": [
+    "year",
+    "weather_temp_max",
+    "weather_temp_min",
+    "weather_temp_avg",
+    "weather_precipitation",
+    "weather_wind_speed",
+    "weather_cloud_cover",
+    "weather_humidity",
+    "weather_available",
+    "schema_order",
+    "schema_sale",
+    "lag_1",
+    "lag_7",
+    "lag_14",
+    "rolling_mean_7",
+    "rolling_mean_28",
+    "rolling_std_7",
+    "dow_sin",
+    "dow_cos",
+    "month_sin",
+    "month_cos",
+    "days_since_start"
+   ]
+  },
+  "run_20260827T154407Z": {
+   "model": "iteration_011_training_model.pkl",
+   "estimator": "LGBMRegressor",
+   "n_features": 56,
+   "horizon_conditioned": true,
+   "feature_table": "iteration_008_feature_engineering.csv",
+   "features": [
+    "competitor_n_closed",
+    "store_open_7_7",
+    "is_historical_closing_day",
+    "competitor_log_active",
+    "weather_observed",
+    "wcond_Clear",
+    "wcond_Overcast",
+    "wcond_Partially_cloudy",
+    "wcond_Rain",
+    "wcond_Rain__Overcast",
+    "wcond_Rain__Partially_cloudy",
+    "wcond_Snow",
+    "wcond_Snow__Overcast",
+    "wcond_Snow__Partially_cloudy",
+    "wcond___unobserved__",
+    "dow_Friday",
+    "dow_Monday",
+    "dow_Saturday",
+    "dow_Sunday",
+    "dow_Thursday",
+    "dow_Tuesday",
+    "dow_Wednesday",
+    "h",
+    "h_lag_block",
+    "h_week_block",
+    "h_log",
+    "h_mod_7",
+    "lag_sw_1",
+    "lag_sw_2",
+    "lag_sw_3",
+    "lag_sw_4",
+    "lag_364",
+    "trailing_sw_mean_4",
+    "trailing_sw_std_4",
+    "trailing_level_28",
+    "trailing_level_91",
+    "days_since_last_obs",
+    "sw_vs_level",
+    "level_momentum",
+    "doy_sin_1",
+    "doy_cos_1",
+    "is_public_holiday",
+    "is_day_before_public_holiday",
+    "is_day_after_public_holiday",
+    "is_school_holiday",
+    "is_university_recess",
+    "is_exam_period",
+    "is_gentse_feesten",
+    "weather_forecastable",
+    "is_heavy_precipitation",
+    "is_snow_day",
+    "is_extreme_heat",
+    "temp_forecastable",
+    "trailing_sw_mean_2",
+    "level_ratio_short_long",
+    "sw_mean_2_vs_4"
+   ]
+  },
+  "run_20260901T095109Z": {
+   "model": "iteration_013_training_model.pkl",
+   "estimator": "LGBMRegressor",
+   "n_features": 32,
+   "horizon_conditioned": true,
+   "feature_table": "iteration_010_feature_engineering.csv",
+   "features": [
+    "h",
+    "k_lag_band",
+    "lag_k",
+    "lag_k_p7",
+    "lag_k_p14",
+    "lag_k_p21",
+    "lag_year",
+    "sw_mean_4w",
+    "sw_mean_8w",
+    "sw_mean_13w",
+    "level_ratio_4w_13w",
+    "doy_sin",
+    "doy_cos",
+    "mon_sin",
+    "mon_cos",
+    "dow_mon",
+    "dow_tue",
+    "dow_wed",
+    "dow_thu",
+    "dow_fri",
+    "dow_sat",
+    "dow_sun",
+    "is_public_holiday",
+    "is_day_before_public_holiday",
+    "is_day_after_public_holiday",
+    "is_bridge_day",
+    "days_to_next_public_holiday",
+    "is_flemish_community_day",
+    "is_summer_recess",
+    "is_gentse_feesten",
+    "competitor_n_closed",
+    "competitor_data_available"
+   ]
+  }
+ },
+ "automl_reference": {
+  "features": "target lags/rolling windows + calendar, no exogenous columns",
+  "trained_through": "2021-07-01",
+  "n_train_rows": 3109,
+  "budget_seconds": 600,
+  "search": {
+   "best_estimator": "lgbm",
+   "best_config": {
+    "n_estimators": 56,
+    "num_leaves": 20,
+    "min_child_samples": 41,
+    "learning_rate": 0.051523487558632355,
+    "log_max_bin": 9,
+    "colsample_bytree": 0.6383871728071009,
+    "reg_alpha": 0.08599334912058759,
+    "reg_lambda": 0.21340453378465454
+   },
+   "best_validation_loss": 31.89944433814754,
+   "search_metric": "mae",
+   "search_seconds": 602.11,
+   "n_train_rows": 3109,
+   "n_features": 56,
+   "cv_splits": 5,
+   "feature_order": [
+    "lag_1",
+    "lag_2",
+    "lag_3",
+    "lag_4",
+    "lag_5",
+    "lag_6",
+    "lag_7",
+    "lag_14",
+    "lag_21",
+    "lag_28",
+    "lag_56",
+    "lag_91",
+    "lag_182",
+    "lag_364",
+    "roll_mean_7",
+    "roll_std_7",
+    "roll_min_7",
+    "roll_max_7",
+    "roll_mean_14",
+    "roll_std_14",
+    "roll_min_14",
+    "roll_max_14",
+    "roll_mean_28",
+    "roll_std_28",
+    "roll_min_28",
+    "roll_max_28",
+    "roll_mean_91",
+    "roll_std_91",
+    "roll_min_91",
+    "roll_max_91",
+    "roll_mean_182",
+    "roll_std_182",
+    "roll_min_182",
+    "roll_max_182",
+    "diff_1",
+    "diff_7",
+    "ratio_lag1_roll7",
+    "expanding_mean",
+    "cal_dayofweek",
+    "cal_is_weekend",
+    "cal_day",
+    "cal_month",
+    "cal_quarter",
+    "cal_year",
+    "cal_weekofyear",
+    "cal_dayofyear",
+    "cal_is_month_start",
+    "cal_is_month_end",
+    "cal_sin_week_1",
+    "cal_cos_week_1",
+    "cal_sin_year_1",
+    "cal_cos_year_1",
+    "cal_sin_week_2",
+    "cal_cos_week_2",
+    "cal_sin_year_2",
+    "cal_cos_year_2"
+   ],
+   "estimators_tried": [
+    "extra_tree",
+    "lgbm",
+    "rf",
+    "sgd",
+    "xgb_limitdepth",
+    "xgboost"
+   ]
+  }
+ },
+ "naive_reference": {
+  "definition": "last observed same-weekday value at or before t-1",
+  "mase_denominator": 32.963
+ },
+ "scores": {
+  "seasonal_naive_h1": {
+   "mae": 32.963,
+   "rmse": 46.7141,
+   "mape_pct": 13.8502,
+   "smape_pct": 14.1118,
+   "wape_pct": 13.3606,
+   "mase": 1.0,
+   "r2": 0.0758,
+   "bias": -2.0222,
+   "n": 270.0
+  },
+  "run_20260819T090000Z": {
+   "mae": 77.2443,
+   "rmse": 84.3839,
+   "mape_pct": 33.3857,
+   "smape_pct": 27.68,
+   "wape_pct": 31.3087,
+   "mase": 2.3434,
+   "r2": -2.0157,
+   "bias": 77.1707,
+   "n": 270.0
+  },
+  "run_20260820T110000Z": {
+   "mae": 45.7805,
+   "rmse": 54.398,
+   "mape_pct": 20.2679,
+   "smape_pct": 17.6253,
+   "wape_pct": 18.5558,
+   "mase": 1.3888,
+   "r2": -0.2532,
+   "bias": 42.4063,
+   "n": 270.0
+  },
+  "run_20260821T140000Z": {
+   "mae": 52.2641,
+   "rmse": 66.2588,
+   "mape_pct": 23.2337,
+   "smape_pct": 19.5439,
+   "wape_pct": 21.1837,
+   "mase": 1.5855,
+   "r2": -0.8593,
+   "bias": 46.4106,
+   "n": 270.0
+  },
+  "run_20260827T154407Z": {
+   "mae": 48.667,
+   "rmse": 56.5188,
+   "mape_pct": 21.6701,
+   "smape_pct": 18.7513,
+   "wape_pct": 19.7257,
+   "mase": 1.4764,
+   "r2": -0.3528,
+   "bias": 46.594,
+   "n": 270.0
+  },
+  "run_20260901T095109Z": {
+   "mae": 36.6909,
+   "rmse": 44.166,
+   "mape_pct": 16.4007,
+   "smape_pct": 14.647,
+   "wape_pct": 14.8716,
+   "mase": 1.1131,
+   "r2": 0.1739,
+   "bias": 31.627,
+   "n": 270.0
+  },
+  "automl_common_h1": {
+   "mae": 40.6529,
+   "rmse": 51.9936,
+   "mape_pct": 18.4185,
+   "smape_pct": 15.9279,
+   "wape_pct": 16.4774,
+   "mase": 1.2333,
+   "r2": -0.1449,
+   "bias": 35.2733,
+   "n": 270.0
+  }
+ },
+ "ranking_by_mae": [
+  "seasonal_naive_h1",
+  "run_20260901T095109Z",
+  "automl_common_h1",
+  "run_20260820T110000Z",
+  "run_20260827T154407Z",
+  "run_20260821T140000Z",
+  "run_20260819T090000Z"
+ ],
+ "versus_automl": {
+  "seasonal_naive_h1": {
+   "mae": 32.963,
+   "gap_vs_automl": -7.6899,
+   "skill_vs_automl_pct": 18.92,
+   "skill_vs_naive_pct": 0.0,
+   "beats_automl": true
+  },
+  "run_20260819T090000Z": {
+   "mae": 77.2443,
+   "gap_vs_automl": 36.5914,
+   "skill_vs_automl_pct": -90.01,
+   "skill_vs_naive_pct": -134.34,
+   "beats_automl": false
+  },
+  "run_20260820T110000Z": {
+   "mae": 45.7805,
+   "gap_vs_automl": 5.1276,
+   "skill_vs_automl_pct": -12.61,
+   "skill_vs_naive_pct": -38.88,
+   "beats_automl": false
+  },
+  "run_20260821T140000Z": {
+   "mae": 52.2641,
+   "gap_vs_automl": 11.6112,
+   "skill_vs_automl_pct": -28.56,
+   "skill_vs_naive_pct": -58.55,
+   "beats_automl": false
+  },
+  "run_20260827T154407Z": {
+   "mae": 48.667,
+   "gap_vs_automl": 8.0141,
+   "skill_vs_automl_pct": -19.71,
+   "skill_vs_naive_pct": -47.64,
+   "beats_automl": false
+  },
+  "run_20260901T095109Z": {
+   "mae": 36.6909,
+   "gap_vs_automl": -3.962,
+   "skill_vs_automl_pct": 9.75,
+   "skill_vs_naive_pct": -11.31,
+   "beats_automl": true
+  },
+  "automl_common_h1": {
+   "mae": 40.6529,
+   "gap_vs_automl": 0.0,
+   "skill_vs_automl_pct": 0.0,
+   "skill_vs_naive_pct": -23.33,
+   "beats_automl": false
+  }
+ },
+ "excluded_runs_scored_anyway": {
+  "run_20260821T130000Z": {
+   "model": "iteration_014_training_model.pkl",
+   "n_scored": 270,
+   "n_scored_dates_the_model_trained_on": 221,
+   "mae": 21.4877,
+   "mae_on_dates_it_trained_on": 20.5281,
+   "mae_on_dates_it_did_not_train_on": 25.8158,
+   "excluded_because": "split is not chronological (train 2014-06-21..2023-02-08, validation 2015-04-28..2021-12-23, test 2015-05-29..2022-03-01) -- training rows sit inside and after the test window, so any score it produces is contaminated"
+  }
+ }
+}

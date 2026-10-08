@@ -1,0 +1,58 @@
+{
+  "original_model": "../runs/run_20260821T130000Z/artifacts/training/iteration_014_training_model.pkl",
+  "features_table": "../runs/run_20260821T130000Z/data/iteration_013_feature_engineering.csv",
+  "spec": {
+    "class": "lightgbm.sklearn.LGBMRegressor",
+    "params": {
+      "boosting_type": "gbdt",
+      "class_weight": null,
+      "colsample_bytree": 0.9,
+      "importance_type": "split",
+      "learning_rate": 0.03,
+      "max_depth": 3,
+      "min_child_samples": 20,
+      "min_child_weight": 0.001,
+      "min_split_gain": 0.0,
+      "n_estimators": 500,
+      "n_jobs": null,
+      "num_leaves": 63,
+      "objective": null,
+      "random_state": 42,
+      "reg_alpha": 0.0,
+      "reg_lambda": 0.0,
+      "subsample": 0.9,
+      "subsample_for_bin": 200000,
+      "subsample_freq": 0,
+      "verbosity": -1
+    },
+    "features": [
+      "year",
+      "store_open_7_7",
+      "dow_Monday",
+      "dow_Tuesday",
+      "dow_Wednesday",
+      "dow_Thursday",
+      "dow_Friday",
+      "dow_Saturday",
+      "dow_Sunday",
+      "bread_quantity_lag_1",
+      "bread_quantity_lag_7",
+      "bread_quantity_lag_14",
+      "bread_quantity_rolling_mean_28",
+      "days_since_start",
+      "is_belgian_public_holiday",
+      "is_school_summer_holiday",
+      "is_day_before_public_holiday"
+    ],
+    "fitted_trees_in_original": 298
+  },
+  "target": "bread_quantity",
+  "n_train_rows": 2152,
+  "leak_checks": {
+    "max_training_date": "2021-08-08",
+    "cutoff": "2021-08-08",
+    "training_rows_after_cutoff": 0,
+    "rows_excluded_by_cutoff": 275
+  },
+  "caveat": "The feature list and hyperparameters were selected by the original pipeline with visibility of the whole series. Refitting removes the split-level leaks, not the design-level one."
+}

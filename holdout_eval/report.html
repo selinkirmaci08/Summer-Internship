@@ -1,0 +1,468 @@
+<title>Aernoudt Holdout Evaluation</title>
+<style>
+:root{--bg:#fbfbfa;--surface:#fff;--ink:#1a1a19;--muted:#5c5c58;--line:#e3e2df;--accent:#2a78d6;
+--c1:#2a78d6;--c2:#eb6834;--c3:#1baf7a;--c4:#eda100;--c5:#e87ba4;--c6:#7a6bd6;--warn:#b3261e;--okbg:#eef6ef;--badbg:#fdf0ef;}
+@media (prefers-color-scheme:dark){:root{--bg:#16171a;--surface:#1e2024;--ink:#eceded;--muted:#a2a5ab;
+--line:#2f3238;--accent:#3987e5;--c1:#3987e5;--c2:#d95926;--c3:#199e70;--c4:#c98500;--c5:#d55181;--c6:#8b7ce8;
+--warn:#f2b8b5;--okbg:#1b2a20;--badbg:#2b1c1b;}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+font:15px/1.62 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;}
+.wrap{max-width:940px;margin:0 auto;padding:44px 22px 80px}
+h1{font-size:1.85rem;line-height:1.22;margin:0 0 6px;letter-spacing:-.02em}
+h2{font-size:1.22rem;margin:52px 0 6px;letter-spacing:-.01em;border-top:1px solid var(--line);padding-top:22px}
+h3{font-size:1rem;margin:28px 0 6px;color:var(--muted);font-weight:600}
+p{margin:10px 0}
+.sub{color:var(--muted);font-size:.86rem}
+.lede{color:var(--muted);margin-bottom:26px}
+.verdict{border:1px solid var(--line);border-left:3px solid var(--accent);background:var(--surface);
+padding:14px 18px;margin:14px 0;border-radius:0 7px 7px 0}
+.verdict b{display:block;margin-bottom:3px}
+.verdict.bad{border-left-color:var(--warn)}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:.9rem;
+font-variant-numeric:tabular-nums;background:var(--surface)}
+th,td{padding:7px 10px;text-align:right;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+thead th{font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:600}
+tr.champ{background:var(--badbg)}
+tr.naive{background:var(--okbg)}
+td.best{font-weight:700;color:var(--c3)}
+th.champ-col{color:var(--c1)}
+tr.pooled td{border-top:2px solid var(--line);font-weight:600}
+tbody tr td:first-child{white-space:nowrap}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:7px}
+.chart{width:100%;height:auto;margin:14px 0;background:var(--surface);
+border:1px solid var(--line);border-radius:7px;padding:6px}
+.grid{stroke:var(--line);stroke-width:1}
+.parity{stroke:var(--muted);stroke-width:2;stroke-dasharray:7 5}
+.parity-lbl{fill:var(--muted)}
+.tick{fill:var(--muted);font-size:11px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.axlab{fill:var(--muted);font-size:11px}
+.lbl{font-size:11.5px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;fill:var(--ink)}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.87em;
+background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:1px 5px;
+overflow-wrap:anywhere;word-break:break-word}
+.note{font-size:.88rem;color:var(--muted);border-left:2px solid var(--line);padding-left:14px;margin:14px 0}
+ul{margin:10px 0;padding-left:20px} li{margin:5px 0}
+@media print{:root{--bg:#fff;--surface:#fff;--ink:#000;--muted:#333;--line:#bbb;--okbg:#fff;--badbg:#fff}
+body{font-size:11pt} .wrap{padding:0} tr,img,svg{page-break-inside:avoid}
+h2{page-break-after:avoid} .chart{page-break-inside:avoid}}
+</style>
+<div class="wrap">
+<h1>Nothing learned beat the naive on the holdout</h1>
+<p class="lede">Agentic pipeline <code>run_20260904T140437Z</code>, two AutoML arms and two zero-parameter
+references, scored on the external holdout they were all withheld from. Primary window 2021
+(2,139 scored (target&nbsp;date,&nbsp;h) pairs); stress window
+2022&nbsp;–&nbsp;2023-02-08 (324 pairs).</p>
+
+<h2>1. Verdict</h2>
+
+<div class="verdict bad"><b>Against AutoML with no feature engineering — the pipeline loses.</b>
+The reference AutoML arm is the one that does no feature engineering at all: raw columns, a single
+<code>shift(h)</code>, no lags, no calendar terms, no rolling statistics. It is what the pipeline's
+whole EDA → preprocess → feature-engineering chain has to justify itself against. It scores MAE
+48.59 on 2021 against the agentic champion's 57.59 —
+the champion wins 1/6 horizons. On the stress window,
+54.42 against 68.62.
+Source: <code>automl-runs/automl-baseline/outputs/naive_automl/preds_holdout_primary.csv</code> and
+<code>holdout_eval/outputs/preds_holdout_primary__agentic_shipped_calendar.csv</code>.</div>
+
+<div class="verdict"><b>Matched on training data, that gap closes to a tie.</b>
+The shipped champion was fitted on origins to 2018-10-04; every AutoML arm was fitted on the whole
+training partition to 2020-12-31. Refitting the same six specifications on the same rows — no
+re-tuning, per <code>contracts/end_model.json</code> — gives 49.09
+against no-feature-engineering AutoML's 48.59 on 2021. That is a dead heat.
+Read together with the verdict above: most of the apparent gap to AutoML was training data, and what
+remains is that eight iterations of agent-directed feature engineering bought nothing measurable over
+doing none at all.</div>
+
+<div class="verdict bad"><b>Against naive — every learned system loses.</b>
+The seasonal naive scores 39.84 on 2021. No learned system reaches it:
+no-feature-engineering AutoML 48.59, the agentic champion
+57.59, the agentic refit 49.09. The champion
+beats naive at 0 of 6 horizons. A 52-week seasonal median — also zero parameters — beats everything at
+38.57, and on the stress window wins all 6 horizons at
+25.67.</div>
+
+<div class="verdict"><b>Why — the models forecast the right shape at the wrong level.</b>
+Removing each system's constant bias cuts the agentic champion's stress-window error from
+68.62 to 43.04, and the refit's from
+60.26 to 35.85 —
+at which point its day-to-day shape is as good as naive's (35.80).
+Bias grows every year (+32 → +54 →
++60) while naive's stays flat
+(+3 → -9 → -0).
+This is distribution shift, not a feature-engineering failure.</div>
+
+<h2>2. What was compared</h2>
+<div class="scroll"><table><thead><tr><th>System</th><th>What it is</th><th>features</th><th>estimator</th><th>search budget</th><th>rows on primary</th></tr></thead><tbody>
+<tr class="champ"><td>Agentic (as shipped)</td><td>the run's six frozen LightGBM boosters, one per horizon, fitted on origins to 2018-10-04</td><td>37</td><td>LightGBM</td><td>agent-directed</td><td>2,139</td></tr>
+<tr><td>Agentic (refit on train+val)</td><td>the same six specifications refit through 2020-12-31, both ends of every training pair inside the training partition; no re-tuning, n_estimators pinned</td><td>37</td><td>LightGBM</td><td>none (pinned)</td><td>2,139</td></tr>
+<tr><td>AutoML (no feature engineering)</td><td>FLAML on raw columns, shift(h) only — the floor</td><td>94</td><td>FLAML</td><td>150 s/horizon</td><td>2,154</td></tr>
+<tr><td>AutoML (fixed 403-feature recipe)</td><td>FLAML over a fixed generic feature recipe, fitted on the whole training partition</td><td>403</td><td>FLAML → lgbm</td><td>900 s</td><td>2,154</td></tr>
+<tr><td>Seasonal naive (m=7)</td><td>last observed same-weekday value at the origin</td><td>0</td><td>none</td><td>none</td><td>2,154</td></tr>
+<tr><td>Seasonal median (52wk)</td><td>median of the same weekday over the last year</td><td>0</td><td>none</td><td>none</td><td>2,154</td></tr>
+<tr><td>Agentic (as shipped, row-offset h)</td><td>the frozen boosters under the h convention they were trained on</td><td>37</td><td>LightGBM</td><td>—</td><td>2,154</td></tr>
+<tr><td>Agentic (refit, row-offset h)</td><td>the refit under the training h convention</td><td>37</td><td>LightGBM</td><td>—</td><td>2,154</td></tr></tbody></table></div>
+<p>All six systems were withheld from the holdout: the agentic run directory contains no path to it,
+and the AutoML training table stops at 2020-12-31 with zero rows after. The two agentic rows marked
+<em>row-offset h</em> are a sensitivity check, not separate systems — the boosters were trained
+against targets <em>h rows</em> ahead on a frame with pre-2020-06 Mondays deleted, so their native
+h=30 is 35 calendar days. Scoring them both ways costs 0.23 MAE,
+so the convention is not what decides this comparison.</p>
+
+<h3>Alignment record</h3>
+<ul>
+<li><b>Primary:</b> 362 target dates × 6 horizons =
+2,172 pairs; 18 excluded by the
+trading-day rule (actual&nbsp;=&nbsp;0 or absent); 2,154 scored;
+2,139 where every system produced a prediction. Largest single-system
+loss to the join is 15
+rows (0.7%), under the 5% threshold.</li>
+<li><b>Stress:</b> 786 scored pairs but only
+324 complete across systems — 2022 carries 92 of ~310 expected trading
+days, so for most (target, h) pairs the calendar origin is simply not an observed date. The stress
+table is therefore a smaller, gappier comparison and is reported separately for that reason.</li>
+<li><b>Horizon grids match exactly</b> (1, 7, 14, 30, 60, 90). No horizon was paired or dropped.</li>
+<li><b>One date lost:</b> 2021-11-02's only export is truncated mid-file. Parsing its intact prefix
+would under-count bread and bias the target low, so the date is excluded from every system.</li>
+</ul>
+
+<h2>3. Headline metrics — 2021</h2>
+<div class="scroll"><table><thead><tr><th>System</th><th>MAE</th><th>RMSE</th><th>bias</th><th>MAE debiased</th><th>MASE</th><th>horizons won</th><th>beats naive</th><th>n</th></tr></thead><tbody>
+<tr class="naive"><td>Seasonal median (52wk)</td><td>38.57</td><td>48.90</td><td>+23.4</td><td>33.01</td><td>0.97</td><td>2/6</td><td>4/6</td><td>2,139</td></tr>
+<tr class="naive"><td>Seasonal naive (m=7)</td><td>39.84</td><td>56.26</td><td>+3.1</td><td>39.61</td><td>1.00</td><td>2/6</td><td>0/6</td><td>2,139</td></tr>
+<tr><td>AutoML (fixed 403-feature recipe)</td><td>40.46</td><td>51.51</td><td>+8.4</td><td>39.04</td><td>1.02</td><td>2/6</td><td>3/6</td><td>2,139</td></tr>
+<tr><td>AutoML (no feature engineering)</td><td>48.59</td><td>61.65</td><td>+12.2</td><td>46.65</td><td>1.22</td><td>0/6</td><td>0/6</td><td>2,139</td></tr>
+<tr><td>Agentic (refit on train+val)</td><td>49.09</td><td>60.44</td><td>+26.2</td><td>42.43</td><td>1.23</td><td>0/6</td><td>0/6</td><td>2,139</td></tr>
+<tr><td>Agentic (refit, row-offset h)</td><td>49.89</td><td>61.38</td><td>+26.1</td><td>43.29</td><td>1.25</td><td>0/6</td><td>0/6</td><td>2,139</td></tr>
+<tr><td>Agentic (as shipped, row-offset h)</td><td>57.36</td><td>71.82</td><td>+31.4</td><td>50.42</td><td>1.44</td><td>0/6</td><td>0/6</td><td>2,139</td></tr>
+<tr class="champ"><td>Agentic (as shipped)</td><td>57.59</td><td>72.12</td><td>+31.7</td><td>50.57</td><td>1.45</td><td>0/6</td><td>0/6</td><td>2,139</td></tr></tbody></table></div>
+<p><b>MASE</b> is each system's error divided by the seasonal naive's error at the same horizon;
+below 1.00 beats naive. <b>MAE debiased</b> is the mean absolute error after each system's own
+constant bias is removed — it isolates day-to-day shape from level. Only the two zero-parameter
+references land at or below naive parity. The agentic champion's MASE of
+1.45 means it is 45% worse
+than doing nothing.</p>
+
+<h3>Stress window — 2022 to 2023-02-08</h3>
+<div class="scroll"><table><thead><tr><th>System</th><th>MAE</th><th>RMSE</th><th>bias</th><th>MAE debiased</th><th>MASE</th><th>horizons won</th><th>beats naive</th><th>n</th></tr></thead><tbody>
+<tr class="naive"><td>Seasonal median (52wk)</td><td>25.67</td><td>32.45</td><td>+14.9</td><td>22.18</td><td>0.72</td><td>6/6</td><td>6/6</td><td>324</td></tr>
+<tr class="naive"><td>Seasonal naive (m=7)</td><td>35.48</td><td>53.68</td><td>-5.3</td><td>35.80</td><td>1.00</td><td>0/6</td><td>0/6</td><td>324</td></tr>
+<tr><td>AutoML (fixed 403-feature recipe)</td><td>49.46</td><td>58.88</td><td>+24.7</td><td>37.81</td><td>1.39</td><td>0/6</td><td>0/6</td><td>324</td></tr>
+<tr><td>AutoML (no feature engineering)</td><td>54.42</td><td>67.08</td><td>+27.2</td><td>47.60</td><td>1.53</td><td>0/6</td><td>0/6</td><td>324</td></tr>
+<tr><td>Agentic (refit on train+val)</td><td>60.26</td><td>69.48</td><td>+49.5</td><td>35.85</td><td>1.70</td><td>0/6</td><td>0/6</td><td>324</td></tr>
+<tr><td>Agentic (refit, row-offset h)</td><td>61.95</td><td>71.91</td><td>+49.3</td><td>37.73</td><td>1.75</td><td>0/6</td><td>0/6</td><td>324</td></tr>
+<tr><td>Agentic (as shipped, row-offset h)</td><td>68.07</td><td>79.47</td><td>+56.7</td><td>41.13</td><td>1.92</td><td>0/6</td><td>0/6</td><td>324</td></tr>
+<tr class="champ"><td>Agentic (as shipped)</td><td>68.62</td><td>80.04</td><td>+56.4</td><td>43.04</td><td>1.93</td><td>0/6</td><td>0/6</td><td>324</td></tr></tbody></table></div>
+<p>The ordering is unchanged but the spread triples. The 52-week seasonal median wins every horizon
+here, and every learned system is worse than doing nothing by 39% to 93%. Read this window as a
+robustness probe rather than a headline: it rests on 324 pairs, and 2022's
+missing trading days are a data defect the split report flagged in advance.</p>
+
+<h2>4. Error by horizon — the pipeline degrades, the references do not</h2>
+<svg viewBox="0 0 720 330" role="img" aria-label="MAE by horizon, 2021" class="chart">
+<title>MAE by horizon, 2021</title>
+<line x1="58" y1="284.0" x2="552" y2="284.0" class="grid"/>
+<text x="50" y="288.0" class="tick" text-anchor="end">32</text>
+<line x1="58" y1="217.0" x2="552" y2="217.0" class="grid"/>
+<text x="50" y="221.0" class="tick" text-anchor="end">43</text>
+<line x1="58" y1="150.0" x2="552" y2="150.0" class="grid"/>
+<text x="50" y="154.0" class="tick" text-anchor="end">55</text>
+<line x1="58" y1="83.0" x2="552" y2="83.0" class="grid"/>
+<text x="50" y="87.0" class="tick" text-anchor="end">66</text>
+<line x1="58" y1="16.0" x2="552" y2="16.0" class="grid"/>
+<text x="50" y="20.0" class="tick" text-anchor="end">78</text>
+<text x="58.0" y="304" class="tick" text-anchor="middle">1</text>
+<text x="271.6" y="304" class="tick" text-anchor="middle">7</text>
+<text x="347.7" y="304" class="tick" text-anchor="middle">14</text>
+<text x="431.4" y="304" class="tick" text-anchor="middle">30</text>
+<text x="507.5" y="304" class="tick" text-anchor="middle">60</text>
+<text x="552.0" y="304" class="tick" text-anchor="middle">90</text>
+<text x="305" y="324" class="axlab" text-anchor="middle">forecast horizon, days (log scale)</text>
+<text x="12" y="20" class="axlab">MAE (units/day) — axis does not start at zero</text>
+<polyline points="58.0,225.6 271.6,156.8 347.7,113.8 431.4,41.9 507.5,102.1 552.0,157.9" fill="none" stroke="var(--c1)" stroke-width="2"/>
+<circle cx="58.0" cy="225.6" r="2.6" fill="var(--c1)"/>
+<circle cx="271.6" cy="156.8" r="2.6" fill="var(--c1)"/>
+<circle cx="347.7" cy="113.8" r="2.6" fill="var(--c1)"/>
+<circle cx="431.4" cy="41.9" r="2.6" fill="var(--c1)"/>
+<circle cx="507.5" cy="102.1" r="2.6" fill="var(--c1)"/>
+<circle cx="552.0" cy="157.9" r="2.6" fill="var(--c1)"/>
+<polyline points="58.0,258.1 271.6,257.5 347.7,237.1 431.4,217.3 507.5,221.4 552.0,224.0" fill="none" stroke="var(--c2)" stroke-width="2" stroke-dasharray="6 4"/>
+<circle cx="58.0" cy="258.1" r="2.6" fill="var(--c2)"/>
+<circle cx="271.6" cy="257.5" r="2.6" fill="var(--c2)"/>
+<circle cx="347.7" cy="237.1" r="2.6" fill="var(--c2)"/>
+<circle cx="431.4" cy="217.3" r="2.6" fill="var(--c2)"/>
+<circle cx="507.5" cy="221.4" r="2.6" fill="var(--c2)"/>
+<circle cx="552.0" cy="224.0" r="2.6" fill="var(--c2)"/>
+<polyline points="58.0,189.2 271.6,254.9 347.7,218.1 431.4,131.3 507.5,115.5 552.0,202.4" fill="none" stroke="var(--c3)" stroke-width="2"/>
+<circle cx="58.0" cy="189.2" r="2.6" fill="var(--c3)"/>
+<circle cx="271.6" cy="254.9" r="2.6" fill="var(--c3)"/>
+<circle cx="347.7" cy="218.1" r="2.6" fill="var(--c3)"/>
+<circle cx="431.4" cy="131.3" r="2.6" fill="var(--c3)"/>
+<circle cx="507.5" cy="115.5" r="2.6" fill="var(--c3)"/>
+<circle cx="552.0" cy="202.4" r="2.6" fill="var(--c3)"/>
+<polyline points="58.0,253.1 271.6,252.5 347.7,249.6 431.4,243.1 507.5,234.1 552.0,227.3" fill="none" stroke="var(--c4)" stroke-width="2"/>
+<circle cx="58.0" cy="253.1" r="2.6" fill="var(--c4)"/>
+<circle cx="271.6" cy="252.5" r="2.6" fill="var(--c4)"/>
+<circle cx="347.7" cy="249.6" r="2.6" fill="var(--c4)"/>
+<circle cx="431.4" cy="243.1" r="2.6" fill="var(--c4)"/>
+<circle cx="507.5" cy="234.1" r="2.6" fill="var(--c4)"/>
+<circle cx="552.0" cy="227.3" r="2.6" fill="var(--c4)"/>
+<polyline points="58.0,233.1 271.6,186.2 347.7,193.6 431.4,154.3 507.5,151.3 552.0,175.2" fill="none" stroke="var(--c5)" stroke-width="2"/>
+<circle cx="58.0" cy="233.1" r="2.6" fill="var(--c5)"/>
+<circle cx="271.6" cy="186.2" r="2.6" fill="var(--c5)"/>
+<circle cx="347.7" cy="193.6" r="2.6" fill="var(--c5)"/>
+<circle cx="431.4" cy="154.3" r="2.6" fill="var(--c5)"/>
+<circle cx="507.5" cy="151.3" r="2.6" fill="var(--c5)"/>
+<circle cx="552.0" cy="175.2" r="2.6" fill="var(--c5)"/>
+<text x="558" y="161.9" class="lbl" fill="var(--c1)">Agentic (as shipped)</text>
+<text x="558" y="179.2" class="lbl" fill="var(--c5)">Agentic (refit on train+val)</text>
+<text x="558" y="206.4" class="lbl" fill="var(--c3)">AutoML (no feature engineering)</text>
+<text x="558" y="228.0" class="lbl" fill="var(--c2)">Seasonal naive (m=7)</text>
+<path d="M 551.0 227.3 L 555.0 237.0" stroke="var(--c4)" stroke-width="1" fill="none" opacity="0.55"/>
+<text x="558" y="241.0" class="lbl" fill="var(--c4)">Seasonal median (52wk)</text>
+</svg>
+
+<h3>MAE by horizon and estimator — 2021</h3>
+<div class="scroll"><table><thead><tr><th>Horizon</th><th>Seasonal median (52wk)</th><th>Seasonal naive (m=7)</th><th>AutoML (fixed 403-feature recipe)</th><th>AutoML (no feature engineering)</th><th>Agentic (refit on train+val)</th><th>Agentic (refit, row-offset h)</th><th>Agentic (as shipped, row-offset h)</th><th class=champ-col>Agentic (as shipped)</th></tr></thead><tbody>
+<tr><td><b>h = 1</b> <span class="sub">n=357</span></td><td>36.87</td><td class=best>36.01</td><td>40.32</td><td>47.90</td><td>40.33</td><td>40.33</td><td>41.61</td><td>41.61</td></tr>
+<tr><td><b>h = 7</b> <span class="sub">n=356</span></td><td>36.98</td><td class=best>36.11</td><td>41.02</td><td>36.56</td><td>48.42</td><td>48.85</td><td>53.54</td><td>53.50</td></tr>
+<tr><td><b>h = 14</b> <span class="sub">n=356</span></td><td class=best>37.47</td><td>39.64</td><td>41.21</td><td>42.91</td><td>47.13</td><td>48.22</td><td>60.55</td><td>60.91</td></tr>
+<tr><td><b>h = 30</b> <span class="sub">n=356</span></td><td class=best>38.61</td><td>43.05</td><td>40.47</td><td>57.89</td><td>53.92</td><td>54.61</td><td>72.23</td><td>73.32</td></tr>
+<tr><td><b>h = 60</b> <span class="sub">n=357</span></td><td>40.15</td><td>42.35</td><td class=best>39.88</td><td>60.62</td><td>54.44</td><td>54.22</td><td>60.62</td><td>62.94</td></tr>
+<tr><td><b>h = 90</b> <span class="sub">n=357</span></td><td>41.32</td><td>41.89</td><td class=best>39.87</td><td>45.63</td><td>50.32</td><td>53.15</td><td>55.68</td><td>53.30</td></tr>
+<tr class="pooled"><td><b>pooled</b> <span class="sub">n=2,139</span></td><td class=best>38.57</td><td>39.84</td><td>40.46</td><td>48.59</td><td>49.09</td><td>49.89</td><td>57.36</td><td>57.59</td></tr></tbody></table></div>
+<p class="note">Rows are forecast horizons, columns are estimators ordered best to worst on pooled
+MAE. Bold green marks the best estimator at that horizon. Units are loaves per day; lower is better.</p>
+
+<h3>The same table on the stress window</h3>
+<div class="scroll"><table><thead><tr><th>Horizon</th><th>Seasonal median (52wk)</th><th>Seasonal naive (m=7)</th><th>AutoML (fixed 403-feature recipe)</th><th>AutoML (no feature engineering)</th><th>Agentic (refit on train+val)</th><th>Agentic (refit, row-offset h)</th><th>Agentic (as shipped, row-offset h)</th><th class=champ-col>Agentic (as shipped)</th></tr></thead><tbody>
+<tr><td><b>h = 1</b> <span class="sub">n=63</span></td><td class=best>22.83</td><td>30.48</td><td>51.68</td><td>61.16</td><td>54.64</td><td>54.64</td><td>53.32</td><td>53.32</td></tr>
+<tr><td><b>h = 7</b> <span class="sub">n=60</span></td><td class=best>23.80</td><td>31.68</td><td>50.06</td><td>39.25</td><td>62.24</td><td>63.33</td><td>68.46</td><td>66.52</td></tr>
+<tr><td><b>h = 14</b> <span class="sub">n=59</span></td><td class=best>24.00</td><td>39.29</td><td>47.79</td><td>48.27</td><td>55.19</td><td>58.51</td><td>72.12</td><td>69.50</td></tr>
+<tr><td><b>h = 30</b> <span class="sub">n=45</span></td><td class=best>24.49</td><td>33.62</td><td>43.14</td><td>71.48</td><td>66.88</td><td>68.97</td><td>75.35</td><td>83.59</td></tr>
+<tr><td><b>h = 60</b> <span class="sub">n=45</span></td><td class=best>27.84</td><td>40.18</td><td>47.50</td><td>69.96</td><td>63.91</td><td>65.59</td><td>72.58</td><td>79.01</td></tr>
+<tr><td><b>h = 90</b> <span class="sub">n=52</span></td><td class=best>32.34</td><td>39.12</td><td>55.16</td><td>42.53</td><td>61.65</td><td>63.89</td><td>70.67</td><td>66.65</td></tr>
+<tr class="pooled"><td><b>pooled</b> <span class="sub">n=324</span></td><td class=best>25.67</td><td>35.48</td><td>49.46</td><td>54.42</td><td>60.26</td><td>61.95</td><td>68.07</td><td>68.62</td></tr></tbody></table></div>
+<p class="note">2022 – 2023-02-08, 324 complete pairs. The 52-week
+seasonal median takes every horizon.</p>
+
+<h3>MASE by horizon and estimator — 2021</h3>
+<div class="scroll"><table><thead><tr><th>Horizon</th><th>Seasonal median (52wk)</th><th>Seasonal naive (m=7)</th><th>AutoML (fixed 403-feature recipe)</th><th>AutoML (no feature engineering)</th><th>Agentic (refit on train+val)</th><th>Agentic (refit, row-offset h)</th><th>Agentic (as shipped, row-offset h)</th><th class=champ-col>Agentic (as shipped)</th></tr></thead><tbody>
+<tr><td><b>h = 1</b> <span class="sub">n=357</span></td><td>1.02</td><td class=best>1.00</td><td>1.12</td><td>1.33</td><td>1.12</td><td>1.12</td><td>1.16</td><td>1.16</td></tr>
+<tr><td><b>h = 7</b> <span class="sub">n=356</span></td><td>1.02</td><td class=best>1.00</td><td>1.14</td><td>1.01</td><td>1.34</td><td>1.35</td><td>1.48</td><td>1.48</td></tr>
+<tr><td><b>h = 14</b> <span class="sub">n=356</span></td><td class=best>0.95</td><td>1.00</td><td>1.04</td><td>1.08</td><td>1.19</td><td>1.22</td><td>1.53</td><td>1.54</td></tr>
+<tr><td><b>h = 30</b> <span class="sub">n=356</span></td><td class=best>0.90</td><td>1.00</td><td>0.94</td><td>1.34</td><td>1.25</td><td>1.27</td><td>1.68</td><td>1.70</td></tr>
+<tr><td><b>h = 60</b> <span class="sub">n=357</span></td><td>0.95</td><td>1.00</td><td class=best>0.94</td><td>1.43</td><td>1.29</td><td>1.28</td><td>1.43</td><td>1.49</td></tr>
+<tr><td><b>h = 90</b> <span class="sub">n=357</span></td><td>0.99</td><td>1.00</td><td class=best>0.95</td><td>1.09</td><td>1.20</td><td>1.27</td><td>1.33</td><td>1.27</td></tr>
+<tr class="pooled"><td><b>pooled</b> <span class="sub">n=2,139</span></td><td class=best>0.97</td><td>1.00</td><td>1.02</td><td>1.22</td><td>1.23</td><td>1.25</td><td>1.44</td><td>1.45</td></tr></tbody></table></div>
+<p class="note">Each estimator's error divided by the seasonal naive's error at the same horizon.
+Below 1.00 beats naive; the naive column is 1.00 by construction.</p>
+
+<p>The naive references are nearly flat across lead times because they re-anchor on recent actuals
+at every origin. The agentic champion rises from 41.6 at
+one day to 73.3 at thirty, which is the signature of a model
+leaning on short lags that go stale. The no-feature-engineering AutoML is erratic rather than flat —
+36.6 at h=7 but
+60.6 at h=60 — which is what six
+independently fitted models with no shared structure look like. The fixed 403-feature recipe, kept in
+the tables as a secondary arm, is the flattest learned system: its long rolling windows behave much
+like the seasonal median.</p>
+
+<h2>5. Skill against naive — no learned system reaches parity</h2>
+<svg viewBox="0 0 720 330" role="img" aria-label="MASE by horizon, 2021" class="chart">
+<title>MASE by horizon, 2021</title>
+<line x1="58" y1="284.0" x2="552" y2="284.0" class="grid"/>
+<text x="50" y="288.0" class="tick" text-anchor="end">1</text>
+<line x1="58" y1="217.0" x2="552" y2="217.0" class="grid"/>
+<text x="50" y="221.0" class="tick" text-anchor="end">1</text>
+<line x1="58" y1="150.0" x2="552" y2="150.0" class="grid"/>
+<text x="50" y="154.0" class="tick" text-anchor="end">1</text>
+<line x1="58" y1="83.0" x2="552" y2="83.0" class="grid"/>
+<text x="50" y="87.0" class="tick" text-anchor="end">2</text>
+<line x1="58" y1="16.0" x2="552" y2="16.0" class="grid"/>
+<text x="50" y="20.0" class="tick" text-anchor="end">2</text>
+<text x="58.0" y="304" class="tick" text-anchor="middle">1</text>
+<text x="271.6" y="304" class="tick" text-anchor="middle">7</text>
+<text x="347.7" y="304" class="tick" text-anchor="middle">14</text>
+<text x="431.4" y="304" class="tick" text-anchor="middle">30</text>
+<text x="507.5" y="304" class="tick" text-anchor="middle">60</text>
+<text x="552.0" y="304" class="tick" text-anchor="middle">90</text>
+<text x="305" y="324" class="axlab" text-anchor="middle">forecast horizon, days (log scale)</text>
+<text x="12" y="20" class="axlab">MASE (1.00 = naive parity)</text>
+<line x1="58" y1="230.4" x2="552" y2="230.4" class="parity"/>
+<text x="558" y="234.4" class="lbl parity-lbl">naive parity</text>
+<polyline points="58.0,188.7 271.6,101.3 347.7,86.6 431.4,41.9 507.5,100.1 552.0,157.3" fill="none" stroke="var(--c1)" stroke-width="2"/>
+<circle cx="58.0" cy="188.7" r="2.6" fill="var(--c1)"/>
+<circle cx="271.6" cy="101.3" r="2.6" fill="var(--c1)"/>
+<circle cx="347.7" cy="86.6" r="2.6" fill="var(--c1)"/>
+<circle cx="431.4" cy="41.9" r="2.6" fill="var(--c1)"/>
+<circle cx="507.5" cy="100.1" r="2.6" fill="var(--c1)"/>
+<circle cx="552.0" cy="157.3" r="2.6" fill="var(--c1)"/>
+<polyline points="58.0,141.9 271.6,227.1 347.7,208.3 431.4,138.0 507.5,114.8 552.0,206.4" fill="none" stroke="var(--c3)" stroke-width="2"/>
+<circle cx="58.0" cy="141.9" r="2.6" fill="var(--c3)"/>
+<circle cx="271.6" cy="227.1" r="2.6" fill="var(--c3)"/>
+<circle cx="347.7" cy="208.3" r="2.6" fill="var(--c3)"/>
+<circle cx="431.4" cy="138.0" r="2.6" fill="var(--c3)"/>
+<circle cx="507.5" cy="114.8" r="2.6" fill="var(--c3)"/>
+<circle cx="552.0" cy="206.4" r="2.6" fill="var(--c3)"/>
+<polyline points="58.0,224.1 271.6,223.9 347.7,245.1 431.4,258.1 507.5,244.3 552.0,234.0" fill="none" stroke="var(--c4)" stroke-width="2"/>
+<circle cx="58.0" cy="224.1" r="2.6" fill="var(--c4)"/>
+<circle cx="271.6" cy="223.9" r="2.6" fill="var(--c4)"/>
+<circle cx="347.7" cy="245.1" r="2.6" fill="var(--c4)"/>
+<circle cx="431.4" cy="258.1" r="2.6" fill="var(--c4)"/>
+<circle cx="507.5" cy="244.3" r="2.6" fill="var(--c4)"/>
+<circle cx="552.0" cy="234.0" r="2.6" fill="var(--c4)"/>
+<polyline points="58.0,198.3 271.6,139.0 347.7,179.7 431.4,162.7 507.5,153.9 552.0,176.5" fill="none" stroke="var(--c5)" stroke-width="2"/>
+<circle cx="58.0" cy="198.3" r="2.6" fill="var(--c5)"/>
+<circle cx="271.6" cy="139.0" r="2.6" fill="var(--c5)"/>
+<circle cx="347.7" cy="179.7" r="2.6" fill="var(--c5)"/>
+<circle cx="431.4" cy="162.7" r="2.6" fill="var(--c5)"/>
+<circle cx="507.5" cy="153.9" r="2.6" fill="var(--c5)"/>
+<circle cx="552.0" cy="176.5" r="2.6" fill="var(--c5)"/>
+<text x="558" y="161.3" class="lbl" fill="var(--c1)">Agentic (as shipped)</text>
+<text x="558" y="180.5" class="lbl" fill="var(--c5)">Agentic (refit on train+val)</text>
+<text x="558" y="210.4" class="lbl" fill="var(--c3)">AutoML (no feature engineering)</text>
+<text x="558" y="238.0" class="lbl" fill="var(--c4)">Seasonal median (52wk)</text>
+</svg>
+<p>Every learned series sits above the parity line at every horizon on the primary window. The
+seasonal median dips below it from h=14 onward, which is the clearest statement the report can make:
+a one-line rule with no fitting is the best forecaster in this comparison.</p>
+
+<h2>6. Where the error comes from — level, not shape</h2>
+<div class="scroll"><table><thead><tr><th>System</th><th>h=1</th><th>h=7</th><th>h=14</th><th>h=30</th><th>h=60</th><th>h=90</th></tr></thead><tbody>
+<tr class="naive"><td>Seasonal median (52wk)</td><td>31.54</td><td>31.67</td><td>32.09</td><td>32.83</td><td>34.18</td><td>35.47</td></tr>
+<tr class="naive"><td>Seasonal naive (m=7)</td><td>36.09</td><td>36.19</td><td>39.66</td><td>42.93</td><td>41.53</td><td>40.20</td></tr>
+<tr><td>AutoML (fixed 403-feature recipe)</td><td>39.35</td><td>40.03</td><td>39.98</td><td>39.12</td><td>38.15</td><td>37.46</td></tr>
+<tr><td>AutoML (no feature engineering)</td><td>38.28</td><td>34.76</td><td>39.75</td><td>57.06</td><td>44.59</td><td>46.24</td></tr>
+<tr><td>Agentic (refit on train+val)</td><td>33.16</td><td>43.76</td><td>43.70</td><td>45.61</td><td>45.88</td><td>41.97</td></tr>
+<tr><td>Agentic (refit, row-offset h)</td><td>33.16</td><td>44.39</td><td>44.68</td><td>46.41</td><td>45.42</td><td>45.19</td></tr>
+<tr><td>Agentic (as shipped, row-offset h)</td><td>35.56</td><td>48.57</td><td>55.17</td><td>61.56</td><td>53.14</td><td>47.13</td></tr>
+<tr class="champ"><td>Agentic (as shipped)</td><td>35.56</td><td>48.42</td><td>55.76</td><td>61.85</td><td>56.23</td><td>44.20</td></tr></tbody></table></div>
+<p class="note">MAE after removing each system's constant bias, by horizon, 2021.</p>
+<svg viewBox="0 0 720 230" role="img" aria-label="Bias by year" class="chart">
+<line x1="58" y1="166.0" x2="552" y2="166.0" class="grid"/>
+<text x="50" y="170.0" class="tick" text-anchor="end">0</text>
+<rect x="78.6" y="97.6" width="33.8" height="68.5" fill="var(--c1)"/>
+<text x="95.5" y="93.6" class="tick" text-anchor="middle">+32</text>
+<rect x="119.7" y="139.7" width="33.8" height="26.3" fill="var(--c3)"/>
+<text x="136.6" y="135.7" class="tick" text-anchor="middle">+12</text>
+<rect x="160.9" y="159.4" width="33.8" height="6.6" fill="var(--c2)"/>
+<text x="177.8" y="155.4" class="tick" text-anchor="middle">+3</text>
+<text x="140.3" y="210" class="tick" text-anchor="middle">2021 (n=2139)</text>
+<rect x="243.2" y="49.2" width="33.8" height="116.9" fill="var(--c1)"/>
+<text x="260.1" y="45.2" class="tick" text-anchor="middle">+54</text>
+<rect x="284.4" y="108.5" width="33.8" height="57.5" fill="var(--c3)"/>
+<text x="301.3" y="104.5" class="tick" text-anchor="middle">+27</text>
+<rect x="325.6" y="166.0" width="33.8" height="19.1" fill="var(--c2)"/>
+<text x="342.5" y="162.0" class="tick" text-anchor="middle">-9</text>
+<text x="305.0" y="210" class="tick" text-anchor="middle">2022 (n=190)</text>
+<rect x="407.9" y="37.3" width="33.8" height="128.7" fill="var(--c1)"/>
+<text x="424.8" y="33.3" class="tick" text-anchor="middle">+60</text>
+<rect x="449.1" y="105.6" width="33.8" height="60.4" fill="var(--c3)"/>
+<text x="466.0" y="101.6" class="tick" text-anchor="middle">+28</text>
+<rect x="490.2" y="166.0" width="33.8" height="1.0" fill="var(--c2)"/>
+<text x="507.1" y="162.0" class="tick" text-anchor="middle">-0</text>
+<text x="469.7" y="210" class="tick" text-anchor="middle">2023 (n=134)</text>
+<text x="558" y="30" class="lbl" fill="var(--c1)">Agentic (as shipped)</text>
+<text x="558" y="48" class="lbl" fill="var(--c3)">AutoML (no feature engineering)</text>
+<text x="558" y="66" class="lbl" fill="var(--c2)">Seasonal naive (m=7)</text>
+<text x="12" y="22" class="axlab">mean signed error (predicted − actual), units/day</text>
+</svg>
+<div class="scroll"><table><thead><tr><th>System</th><th>2021<br><span class="sub">n=2,139</span></th><th>2022<br><span class="sub">n=190</span></th><th>2023<br><span class="sub">n=134</span></th></tr></thead><tbody>
+<tr class="naive"><td>mean actual demand</td><td>275</td><td>250</td><td>247</td></tr>
+<tr class="champ"><td>Agentic (as shipped)</td><td>+31.7</td><td>+54.2</td><td>+59.7</td></tr>
+<tr><td>Agentic (refit on train+val)</td><td>+26.2</td><td>+48.4</td><td>+51.1</td></tr>
+<tr><td>AutoML (no feature engineering)</td><td>+12.2</td><td>+26.7</td><td>+28.0</td></tr>
+<tr><td>AutoML (fixed 403-feature recipe)</td><td>+8.4</td><td>+19.0</td><td>+32.8</td></tr>
+<tr><td>Seasonal naive (m=7)</td><td>+3.1</td><td>-8.9</td><td>-0.4</td></tr>
+<tr><td>Seasonal median (52wk)</td><td>+23.4</td><td>+17.1</td><td>+11.7</td></tr></tbody></table></div>
+<p>Mean signed error, predicted minus actual. Three independently fitted systems — the agentic
+champion, its refit and AutoML — all carry a large positive bias that <em>grows every year</em>,
+while both zero-parameter references stay near zero. When several independently fitted models share
+the same bias sign and magnitude, the cause is distribution shift rather than any one model's
+mistake. Demand fell from a 2010–2018 training level to 247 units/day by 2023,
+and every model that froze a level at fit time carried the old one forward.</p>
+
+<h2>7. What the model uses — a day-of-week lookup</h2>
+<svg viewBox="0 0 720 234" role="img" aria-label="Grouped permutation importance" class="chart">
+<line x1="290.3" y1="14" x2="290.3" y2="226" class="grid"/>
+<rect x="290.3" y="22" width="240.5" height="15" fill="var(--c1)" opacity="0.95"/>
+<rect x="530.8" y="22" width="13.7" height="15" fill="var(--c1)" opacity="0.38"/>
+<text x="98" y="34" class="tick" text-anchor="end">fourier (6)</text>
+<text x="576" y="34" class="lbl">+2.46 MAE</text>
+<rect x="290.3" y="56" width="1.7" height="15" fill="var(--c1)" opacity="0.95"/>
+<rect x="292.0" y="56" width="0.1" height="15" fill="var(--c1)" opacity="0.38"/>
+<text x="98" y="68" class="tick" text-anchor="end">competitor (7)</text>
+<text x="576" y="68" class="lbl">+0.02 MAE</text>
+<rect x="290.3" y="90" width="0.0" height="15" fill="var(--c1)" opacity="0.95"/>
+<rect x="290.3" y="90" width="0.0" height="15" fill="var(--c1)" opacity="0.38"/>
+<text x="98" y="102" class="tick" text-anchor="end">trend (1)</text>
+<text x="576" y="102" class="lbl">+0.00 MAE</text>
+<rect x="278.7" y="124" width="0.0" height="15" fill="var(--c1)" opacity="0.95"/>
+<rect x="278.7" y="124" width="8.9" height="15" fill="var(--c1)" opacity="0.38"/>
+<text x="98" y="136" class="tick" text-anchor="end">weather (12)</text>
+<text x="576" y="136" class="lbl">-0.03 MAE</text>
+<rect x="237.5" y="158" width="0.0" height="15" fill="var(--c1)" opacity="0.95"/>
+<rect x="231.0" y="158" width="6.5" height="15" fill="var(--c1)" opacity="0.38"/>
+<text x="98" y="170" class="tick" text-anchor="end">calendar (4)</text>
+<text x="576" y="170" class="lbl">-0.57 MAE</text>
+<rect x="108.0" y="192" width="0.0" height="15" fill="var(--c1)" opacity="0.95"/>
+<rect x="108.0" y="192" width="33.6" height="15" fill="var(--c1)" opacity="0.38"/>
+<text x="98" y="204" class="tick" text-anchor="end">lags (7)</text>
+<text x="576" y="204" class="lbl">-1.44 MAE</text>
+<text x="339" y="232" class="axlab" text-anchor="middle">validation MAE increase when the group is permuted — solid = sum of solo, pale = masking gap</text>
+</svg>
+<div class="scroll"><table><thead><tr><th>Feature group</th><th>features</th><th>grouped ΔMAE</th><th>sd</th><th>Σ solo</th><th>masking gap</th><th>verdict</th></tr></thead><tbody>
+<tr><td>fourier</td><td>6</td><td>+2.46</td><td>0.41</td><td>+2.32</td><td>+0.13</td><td>carries the model</td></tr>
+<tr><td>competitor</td><td>7</td><td>+0.02</td><td>0.03</td><td>+0.02</td><td>-0.00</td><td>unused</td></tr>
+<tr><td>trend</td><td>1</td><td>+0.00</td><td>0.00</td><td>+0.00</td><td>+0.00</td><td>unused</td></tr>
+<tr><td>weather</td><td>12</td><td>-0.03</td><td>0.04</td><td>-0.11</td><td>+0.09</td><td>unused</td></tr>
+<tr><td>calendar</td><td>4</td><td>-0.57</td><td>0.07</td><td>-0.51</td><td>-0.06</td><td>actively harmful</td></tr>
+<tr><td>lags</td><td>7</td><td>-1.44</td><td>0.13</td><td>-1.76</td><td>+0.32</td><td>actively harmful</td></tr></tbody></table></div>
+<p>Grouped permutation importance, computed on the <b>validation</b> partition, never on the holdout —
+attribution on the test set would spend the one thing it is for. Each figure is the increase in
+validation MAE when the whole group is shuffled together; the masking gap is the grouped effect minus
+the sum of the members' solo effects.</p>
+<p>Only the Fourier calendar terms carry the model (+2.46 MAE when permuted).
+The seven lag features — the ones the run's EDA justified as the core signal — score
+-1.44: permuting them <em>improves</em> validation accuracy. Weather (12 features)
+and competitor (7 features) are indistinguishable from zero and can be dropped. <code>year_centered</code>,
+the only trend term, scores exactly 0.00 — the boosters never split on it once.</p>
+<p>That last number explains section 6. A model with no usable trend term cannot follow demand
+downward, so it reproduces the weekday shape at the level it was fitted on, and the bias grows with
+every year of drift. It also explains why the refit helps: three more years of rows moved the frozen
+level closer to the holdout, worth 8.50 MAE on 2021, without changing anything else.</p>
+
+<h2>8. Limits</h2>
+<ul>
+<li><b>The lag features are aliased.</b> The run measured autocorrelation in row offsets on a frame
+with Mondays deleted, where a week is six rows. Its "monthly signal at lag-30, r=0.601" is the weekly
+signal: on the calendar, lag-30-days has r=0.022 while every multiple of 7 sits near 0.6. Four of the
+seven lag features point at weekday-misaligned offsets. This is a defect in the run, not in the scoring.</li>
+<li><b>The stress window is thin.</b> 324 complete pairs, and 2022 is missing
+two-thirds of its expected trading days. Directionally consistent with 2021; not independently strong.</li>
+<li><b>The refit is not the shipped artifact.</b> It is what <code>contracts/end_model.json</code> now
+requires and what the run would have produced under the current contract. Reported alongside, never
+in place of, the model the run actually froze.</li>
+<li><b>No system was tuned for this holdout,</b> and none may be after seeing it. These numbers are
+spent the moment they inform a modelling change.</li>
+</ul>
+
+<h2>9. Reproduction</h2>
+<ul>
+<li><code>holdout_eval/build_frame.py</code> — replays the run's EDA→preprocess→FE chain over train +
+holdout. <code>verify()</code> asserts it reproduces the run's own
+<code>data/iteration_003_feature_engineering.csv</code> on all 2,897 training rows and all 37 features
+to 5.7e-14.</li>
+<li><code>holdout_eval/predict_agentic.py</code> — the four agentic prediction files and
+<code>outputs/agentic_manifest.json</code>.</li>
+<li><code>holdout_eval/score_all.py</code> — one scorer, all systems, <code>outputs/scores.json</code> and
+<code>outputs/scored_rows_*.csv</code>.</li>
+<li><code>holdout_eval/code/final_report.py</code> and <code>render_report.py</code> — metrics,
+importance and this page. Chart data: <code>holdout_eval/artifacts/final_report/*.csv</code>.
+Full metric set: <code>holdout_eval/final_report.json</code>.</li>
+<li>Python 3.12.10, lightgbm 4.7.0, pandas 2.3.3, numpy 2.5.2, flaml 2.6.0 (AutoML arms as originally fitted).</li>
+</ul>
+</div>

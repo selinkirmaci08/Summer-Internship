@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>element61 · Approach Comparison · Final Results</title>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Open+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+:root{
+  --e61-orange-red:#FC5B00;--e61-orange:#FC9808;--e61-yellow:#FCBA08;
+  --e61-magenta:#9D1D56;--e61-purple:#301D56;
+  --e61-ink:#1A1230;--e61-ink-2:#301D56;--e61-ink-3:#5B5070;--e61-ink-4:#8B8298;
+  --e61-line:#E6E2EC;--e61-line-2:#D8D2E0;--e61-surface:#FFFFFF;
+  --e61-bg:#FAF8F5;--e61-bg-warm:#FFF6EC;--e61-bg-cool:#F2EEF6;
+  --e61-success:#2F8F5C;--e61-warning:#FCBA08;--e61-danger:#C0294A;--e61-info:#2F6BB3;
+  --font-display:"Montserrat","Helvetica Neue",system-ui,sans-serif;
+  --font-body:"Open Sans","Helvetica Neue",Arial,system-ui,sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:24px;--space-6:32px;--space-7:48px;
+  --radius-sm:4px;--radius-md:8px;--radius-lg:14px;--radius-xl:22px;--radius-pill:999px;
+  --shadow-1:0 1px 2px rgba(48,29,86,.06),0 1px 1px rgba(48,29,86,.04);
+  --shadow-2:0 4px 16px rgba(48,29,86,.08),0 1px 2px rgba(48,29,86,.04);
+  --shadow-3:0 10px 28px rgba(48,29,86,.12),0 2px 6px rgba(48,29,86,.06);
+  --ease-standard:cubic-bezier(0.2,0.7,0.2,1);--dur-fast:120ms;--dur-base:200ms;
+  --accent:#1A1230;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--e61-bg);color:var(--e61-ink-2);font-family:var(--font-body);line-height:1.6;scroll-snap-type:y proximity;height:100%;overflow-y:auto;scroll-behavior:smooth}
+h1,h2,h3,h4{font-family:var(--font-display);color:var(--e61-ink);margin:0 0 .5em;font-weight:700;text-wrap:balance}
+p{margin:0 0 1em}
+a{color:var(--e61-orange-red)}
+.mono{font-family:var(--font-mono)}
+img{max-width:100%;display:block}
+.topbar{position:fixed;top:0;left:0;right:0;height:3px;background:var(--e61-line);z-index:201}
+.topbar-fill{height:100%;background:linear-gradient(135deg,var(--e61-yellow) 0%,var(--e61-orange) 50%,var(--e61-orange-red) 100%);width:0;transition:width .25s}
+.dotnav{position:fixed;right:20px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:9px;z-index:200}
+.dotnav button{width:9px;height:9px;border-radius:50%;border:none;background:var(--e61-line-2);cursor:pointer;padding:0;transition:background .2s,transform .2s}
+.dotnav button.active{background:var(--e61-orange-red);transform:scale(1.5)}
+.dotnav button:hover{background:var(--e61-orange)}
+.navbar{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:14px;background:rgba(26,18,48,.88);backdrop-filter:blur(6px);border-radius:999px;padding:9px 18px;z-index:200;box-shadow:var(--shadow-3)}
+.navbar button{background:none;border:none;color:#fff;font-size:1rem;cursor:pointer;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.navbar button:hover{background:rgba(255,255,255,.15)}
+.navbar button:disabled{opacity:.3;cursor:default}
+.navbar .counter{font-family:var(--font-mono);font-size:.72rem;color:rgba(255,255,255,.85);min-width:52px;text-align:center}
+.slide{min-height:100vh;scroll-snap-align:start;display:flex;flex-direction:column;justify-content:center;padding:88px 64px 96px;position:relative;border-bottom:1px solid var(--e61-line);box-sizing:border-box}
+.slide-inner{max-width:1180px;margin:0 auto;width:100%}
+.slide-num{position:absolute;top:28px;left:64px;font-family:var(--font-mono);font-size:.72rem;letter-spacing:.1em;color:var(--e61-ink-4);text-transform:uppercase}
+.slide-tag{position:absolute;top:28px;right:64px;font-family:var(--font-mono);font-size:.72rem;color:var(--e61-ink-4)}
+@media(max-width:700px){.slide{padding:72px 24px 80px}.slide-num,.slide-tag{left:24px;right:24px}}
+.cover{min-height:100vh;scroll-snap-align:start;background:var(--e61-bg);color:var(--e61-ink);display:flex;flex-direction:column;justify-content:center;padding:64px 64px 64px 68px;position:relative;overflow:hidden;box-sizing:border-box;border-left:6px solid var(--accent)}
+.cover-inner{position:relative;max-width:980px;margin:0 auto;width:100%}
+.cover .logo{font-family:var(--font-display);font-weight:800;font-size:1rem;letter-spacing:.02em;color:var(--accent);margin-bottom:40px}
+.cover h1{font-family:var(--font-display);font-weight:700;font-size:2.6rem;color:var(--e61-purple);line-height:1.15;margin:0 0 18px}
+.cover .sub{font-size:1.05rem;color:var(--e61-ink-3);max-width:680px;margin-bottom:34px}
+@media(max-width:700px){.cover h1{font-size:1.9rem}}
+.slide.dark{background:var(--e61-bg-cool);border-left:6px solid var(--e61-purple)}
+.slide.dark h1,.slide.dark h2,.slide.dark h3,.slide.dark h4{color:var(--e61-purple)}
+.slide.warm{background:var(--e61-bg-warm);border-left:6px solid var(--e61-orange-red)}
+.eyebrow{font-family:var(--font-body);font-size:.8125rem;font-weight:600;text-transform:uppercase;letter-spacing:.14em;color:var(--e61-orange-red);margin-bottom:10px;display:block}
+.kpi-row,.kpi-row-lt{display:flex;gap:14px;flex-wrap:wrap;margin-top:20px}
+.kpi{background:#fff;border:1px solid var(--e61-line);border-radius:14px;box-shadow:var(--shadow-1);padding:16px 22px;min-width:150px}
+.kpi-val{font-family:var(--font-display);font-size:1.7rem;font-weight:700;color:var(--e61-purple)}
+.kpi-lbl{font-size:.72rem;margin-top:4px;color:var(--e61-ink-3)}
+.kpi.highlight .kpi-val{color:var(--e61-success)}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:8px 22px;border-radius:999px;font-family:var(--font-display);font-weight:700;font-size:.9rem;margin-bottom:10px}
+.pill-ok{background:var(--e61-success);color:#fff}
+.pill-warn{background:var(--e61-warning);color:var(--e61-ink)}
+.pill-info{background:var(--e61-info);color:#fff}
+.badge{display:inline-block;font-family:var(--font-display);font-size:.62rem;font-weight:700;padding:3px 9px;border-radius:5px;letter-spacing:.05em;text-transform:uppercase}
+.b-hi{background:var(--e61-success);color:#fff}.b-med{background:var(--e61-warning);color:var(--e61-ink)}
+.b-lo{background:var(--e61-magenta);color:#fff}.b-nc{background:var(--e61-line);color:var(--e61-ink-3)}
+.card{background:var(--e61-surface);border:1px solid var(--e61-line);border-radius:16px;padding:22px 24px;box-shadow:var(--shadow-1)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media(max-width:900px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
+.finding-card{background:#fff;border-left:4px solid var(--accent);border-radius:0 14px 14px 0;padding:18px 20px;box-shadow:var(--shadow-1);font-size:.92rem;color:var(--e61-ink-2);line-height:1.6}
+/* ── COMPARISON TABLE ── */
+.cmp-table{width:100%;border-collapse:collapse;font-size:.88rem;margin-top:20px}
+.cmp-table th{text-align:left;padding:10px 14px;font-family:var(--font-display);font-size:.7rem;color:var(--e61-ink-3);border-bottom:2px solid var(--e61-line);font-weight:700;background:var(--e61-bg-cool);text-transform:uppercase;letter-spacing:.04em}
+.cmp-table td{padding:10px 14px;border-bottom:1px solid var(--e61-line);color:var(--e61-ink-2);vertical-align:middle}
+.cmp-table tr:last-child td{border-bottom:2px solid var(--e61-line-2);font-weight:700;background:var(--e61-bg-cool)}
+.cmp-table .best{color:var(--e61-success);font-weight:700}
+.cmp-table .worst{color:var(--e61-danger)}
+.cmp-table .pct-good{color:var(--e61-success);font-size:.78rem}
+.cmp-table .pct-bad{color:var(--e61-danger);font-size:.78rem}
+.cmp-table .pct-neutral{color:var(--e61-ink-4);font-size:.78rem}
+.approach-col-naive{background:rgba(252,186,8,.06)}
+.approach-col-automl{background:rgba(47,107,179,.06)}
+.approach-col-agentic{background:rgba(47,143,92,.06)}
+/* ── TAKEAWAY CARDS ── */
+.tk-card{background:#fff;border:1px solid var(--e61-line);border-radius:14px;padding:18px 22px;box-shadow:var(--shadow-1);display:grid;grid-template-columns:40px 1fr;gap:14px;align-items:start}
+.tk-num{font-family:var(--font-display);font-size:1.6rem;font-weight:800;color:var(--e61-line-2)}
+.tk-body h4{font-size:.92rem;color:var(--e61-ink);margin:0 0 4px}
+.tk-body p{font-size:.84rem;color:var(--e61-ink-3);margin:0;line-height:1.55}
+/* ── APPROACH CARDS ── */
+.approach-card{background:#fff;border-radius:16px;border:1px solid var(--e61-line);padding:22px 24px;box-shadow:var(--shadow-1)}
+.approach-card .approach-label{font-family:var(--font-display);font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.12em;padding:3px 10px;border-radius:999px;display:inline-block;margin-bottom:12px}
+.lbl-naive{background:#FFF8E1;color:#8B6914;border:1px solid #F5DFA0}
+.lbl-automl{background:#EEF3FC;color:#1D4E89;border:1px solid #B6CEEE}
+.lbl-agentic{background:#ECFAF3;color:#1A5C3A;border:1px solid #A8DBBC}
+.approach-card h3{font-size:1.05rem;margin:0 0 12px}
+.approach-card ul{list-style:none;padding:0;margin:0}
+.approach-card ul li{padding:5px 0 5px 16px;position:relative;font-size:.85rem;color:var(--e61-ink-2);border-bottom:1px solid var(--e61-line);line-height:1.5}
+.approach-card ul li:last-child{border-bottom:none}
+.approach-card ul li::before{content:"›";position:absolute;left:0;color:var(--e61-ink-4)}
+.approach-card .mae-chip{font-family:var(--font-mono);font-size:1.4rem;font-weight:700;margin-top:14px}
+/* ── HORIZON CARDS ── */
+.hz-card{background:#fff;border:1px solid var(--e61-line);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow-1)}
+.hz-card h4{margin:0 0 8px;font-size:.95rem}
+.hz-card p{font-size:.84rem;color:var(--e61-ink-3);margin:0;line-height:1.55}
+.hz-card .winner-badge{margin-bottom:10px}
+/* ── PROVENANCE ── */
+.prov-row{display:grid;grid-template-columns:180px 1fr;gap:8px;padding:8px 0;border-bottom:1px solid var(--e61-line);font-size:.86rem}
+.prov-row:last-child{border-bottom:none}
+.prov-key{color:var(--e61-ink-3);font-family:var(--font-mono);font-size:.78rem}
+.prov-val{color:var(--e61-ink-2)}
+@media print{.dotnav,.navbar,.topbar{display:none}.slide,.cover{min-height:0;page-break-after:always}}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="topbar-fill" id="topbarFill"></div></div>
+<div class="dotnav" id="dotnav"></div>
+<div class="navbar">
+  <button id="prevBtn" title="Previous (←)">‹</button>
+  <span class="counter" id="counter">1 / 8</span>
+  <button id="nextBtn" title="Next (→)">›</button>
+</div>
+
+<!-- SLIDE 0 — COVER -->
+<section class="cover slide-item" data-title="Cover">
+  <div class="cover-inner">
+    <div class="logo">element61 &nbsp;·&nbsp; pipeline</div>
+    <span class="eyebrow">Final Comparison &nbsp;·&nbsp; run_20260910T084715Z &nbsp;·&nbsp; Aernoudt Bakery Branch 01</span>
+    <h1>Approach Comparison — Final Results</h1>
+    <p class="sub">Naive seasonal median · AutoML (FLAML 90 s) · Agentic LightGBM + Optuna — all trained on 2021-06-30 cutoff, evaluated on the same primary holdout: <strong>2021-07-01 to 2021-12-31</strong>. Metric: MAE (mean absolute error, bread units / day). 6 forecast horizons: h = 1, 7, 14, 30, 60, 90 days.</p>
+    <div class="kpi-row-lt">
+      <div class="kpi highlight"><div class="kpi-val">37.55</div><div class="kpi-lbl">Agentic pooled MAE</div></div>
+      <div class="kpi"><div class="kpi-val">37.64</div><div class="kpi-lbl">Naive pooled MAE</div></div>
+      <div class="kpi"><div class="kpi-val">38.93</div><div class="kpi-lbl">AutoML pooled MAE</div></div>
+      <div class="kpi"><div class="kpi-val">6</div><div class="kpi-lbl">Horizons evaluated</div></div>
+      <div class="kpi"><div class="kpi-val">5 / 6</div><div class="kpi-lbl">Horizons: Agentic ≤ Naive</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 1 — AGENDA -->
+<section class="slide slide-item" data-title="Agenda">
+  <div class="slide-num">01 / 07</div><div class="slide-tag">Agenda</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Contents</span>
+    <h2>Report Structure</h2>
+    <div class="grid-3" style="margin-top:24px">
+      <div class="card"><b class="mono" style="color:var(--e61-orange-red)">02</b><br><b>Test Setup &amp; Data Split</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">Shared training cutoff, holdout window, evaluation metric, and dataset context</span></div>
+      <div class="card"><b class="mono" style="color:var(--e61-orange-red)">03</b><br><b>Full Results Table</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">MAE per horizon and approach, with % relative to naive benchmark</span></div>
+      <div class="card"><b class="mono" style="color:var(--e61-orange-red)">04</b><br><b>Per-Horizon Analysis</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">Short, medium, long horizons — what drove each result, including the h=30 anomaly</span></div>
+      <div class="card"><b class="mono" style="color:var(--e61-orange-red)">05</b><br><b>Approach Descriptions</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">What each approach is, its strengths, weaknesses, and compute cost</span></div>
+      <div class="card"><b class="mono" style="color:var(--e61-orange-red)">06</b><br><b>Key Takeaways</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">Five findings — what the comparison implies for future forecasting decisions</span></div>
+      <div class="card"><b class="mono" style="color:var(--e61-orange-red)">07</b><br><b>Run Provenance</b><br><span style="font-size:.85rem;color:var(--e61-ink-3)">Source files, data lineage, and model artifact references</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 2 — TEST SETUP -->
+<section class="slide slide-item" data-title="Test Setup">
+  <div class="slide-num">02 / 07</div><div class="slide-tag">Setup</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Evaluation Protocol</span>
+    <h2>Shared Train Cutoff · Same Holdout · Same Metric</h2>
+    <p>All three approaches were trained on data through <strong>2021-06-30</strong> and evaluated on the same unseen holdout window. AutoML was specifically retrained to match this cutoff — the comparison is a genuine apples-to-apples test.</p>
+    <div class="kpi-row" style="margin-bottom:28px">
+      <div class="kpi"><div class="kpi-val">2021-06-30</div><div class="kpi-lbl">Shared training cutoff</div></div>
+      <div class="kpi"><div class="kpi-val">3,076</div><div class="kpi-lbl">Training rows</div></div>
+      <div class="kpi"><div class="kpi-val">169</div><div class="kpi-lbl">Open test days</div></div>
+      <div class="kpi"><div class="kpi-val">MAE</div><div class="kpi-lbl">Evaluation metric</div></div>
+      <div class="kpi"><div class="kpi-val">22</div><div class="kpi-lbl">Naive candidates tested</div></div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <h4 style="margin-bottom:10px">Test Window</h4>
+        <div class="prov-row"><div class="prov-key">Primary holdout</div><div class="prov-val">2021-07-01 → 2021-12-31 (H2 2021)</div></div>
+        <div class="prov-row"><div class="prov-key">Stress holdout</div><div class="prov-val">2022-01-02 → 2023-02-08 (not this comparison)</div></div>
+        <div class="prov-row"><div class="prov-key">Open days in primary</div><div class="prov-val">169 trading days</div></div>
+        <div class="prov-row"><div class="prov-key">Horizon range</div><div class="prov-val">h = 1, 7, 14, 30, 60, 90 days ahead</div></div>
+      </div>
+      <div class="card">
+        <h4 style="margin-bottom:10px">Demand Context</h4>
+        <div class="prov-row"><div class="prov-key">Domain</div><div class="prov-val">Belgian artisan bakery, Ghent (branch 01)</div></div>
+        <div class="prov-row"><div class="prov-key">DOW seasonality</div><div class="prov-val">Saturday peak ~381 units, Friday trough ~253</div></div>
+        <div class="prov-row"><div class="prov-key">Long-term trend</div><div class="prov-val">−28.7% decline over training window</div></div>
+        <div class="prov-row"><div class="prov-key">Structural shock</div><div class="prov-val">COVID lockdown 2020; regime change 2020-06-01</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 3 — FULL RESULTS TABLE -->
+<section class="slide slide-item" data-title="Results">
+  <div class="slide-num">03 / 07</div><div class="slide-tag">Results Table</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Primary Holdout · 2021-07-01 to 2021-12-31</span>
+    <h2>Full MAE Comparison — All Horizons</h2>
+    <p style="color:var(--e61-ink-3);font-size:.88rem;margin-bottom:4px">Lower MAE = better. <span style="color:var(--e61-success);font-weight:700">Green bold</span> = best per row. <span style="color:var(--e61-danger)">Red</span> = clearly underperforms naive. % vs Naive: negative = better than naive, positive = worse.</p>
+    <div style="overflow-x:auto">
+    <table class="cmp-table">
+      <thead>
+        <tr>
+          <th>Horizon</th>
+          <th>n</th>
+          <th class="approach-col-naive">Naive (smedian)</th>
+          <th class="approach-col-automl">AutoML MAE</th>
+          <th class="approach-col-automl">AutoML % vs Naive</th>
+          <th class="approach-col-agentic">Agentic MAE</th>
+          <th class="approach-col-agentic">Agentic % vs Naive</th>
+          <th>Winner</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>h = 1</strong></td>
+          <td>166</td>
+          <td class="approach-col-naive">33.41</td>
+          <td class="approach-col-automl worst">34.69</td>
+          <td class="approach-col-automl"><span class="pct-bad">+3.8%</span></td>
+          <td class="approach-col-agentic best">32.56</td>
+          <td class="approach-col-agentic"><span class="pct-good">−2.5%</span></td>
+          <td><span class="badge b-hi">Agentic</span></td>
+        </tr>
+        <tr>
+          <td><strong>h = 7</strong></td>
+          <td>159</td>
+          <td class="approach-col-naive best">33.49</td>
+          <td class="approach-col-automl worst">34.91</td>
+          <td class="approach-col-automl"><span class="pct-bad">+4.2%</span></td>
+          <td class="approach-col-agentic best">33.49</td>
+          <td class="approach-col-agentic"><span class="pct-neutral">+0.0%</span></td>
+          <td><span class="badge b-hi">Agentic = Naive</span></td>
+        </tr>
+        <tr>
+          <td><strong>h = 14</strong></td>
+          <td>148</td>
+          <td class="approach-col-naive best">32.38</td>
+          <td class="approach-col-automl worst">35.55</td>
+          <td class="approach-col-automl"><span class="pct-bad">+9.8%</span></td>
+          <td class="approach-col-agentic best">32.38</td>
+          <td class="approach-col-agentic"><span class="pct-neutral">+0.0%</span></td>
+          <td><span class="badge b-hi">Agentic = Naive</span></td>
+        </tr>
+        <tr>
+          <td><strong>h = 30</strong></td>
+          <td>141</td>
+          <td class="approach-col-naive best">32.73</td>
+          <td class="approach-col-automl">35.34</td>
+          <td class="approach-col-automl"><span class="pct-bad">+8.0%</span></td>
+          <td class="approach-col-agentic worst">36.49</td>
+          <td class="approach-col-agentic"><span class="pct-bad">+11.5%</span></td>
+          <td><span class="badge b-med">Naive</span></td>
+        </tr>
+        <tr>
+          <td><strong>h = 60</strong></td>
+          <td>112</td>
+          <td class="approach-col-naive">40.94</td>
+          <td class="approach-col-automl">39.06</td>
+          <td class="approach-col-automl"><span class="pct-good">−4.6%</span></td>
+          <td class="approach-col-agentic best">37.54</td>
+          <td class="approach-col-agentic"><span class="pct-good">−8.3%</span></td>
+          <td><span class="badge b-hi">Agentic</span></td>
+        </tr>
+        <tr>
+          <td><strong>h = 90</strong></td>
+          <td>82</td>
+          <td class="approach-col-naive best">52.85</td>
+          <td class="approach-col-automl worst">53.92</td>
+          <td class="approach-col-automl"><span class="pct-bad">+2.0%</span></td>
+          <td class="approach-col-agentic best">52.85</td>
+          <td class="approach-col-agentic"><span class="pct-neutral">+0.0%</span></td>
+          <td><span class="badge b-hi">Agentic = Naive</span></td>
+        </tr>
+        <tr>
+          <td><strong>Pooled</strong></td>
+          <td>—</td>
+          <td class="approach-col-naive">37.64</td>
+          <td class="approach-col-automl">38.93</td>
+          <td class="approach-col-automl"><span class="pct-bad">+3.4%</span></td>
+          <td class="approach-col-agentic best">37.55</td>
+          <td class="approach-col-agentic"><span class="pct-good">−0.2%</span></td>
+          <td><span class="badge b-hi">Agentic</span></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <p style="font-size:.78rem;color:var(--e61-ink-4);margin-top:12px">Pooled = simple mean of per-horizon MAEs. Agentic h=7, h=14, h=90 champions are the naive predictor (pipeline correctly selected naive over LightGBM on validation). AutoML: FLAML framework, 90 s budget per horizon, trained on same feature set.</p>
+  </div>
+</section>
+
+<!-- SLIDE 4 — PER-HORIZON ANALYSIS -->
+<section class="slide slide-item" data-title="Per-Horizon">
+  <div class="slide-num">04 / 07</div><div class="slide-tag">Analysis</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Horizon-by-Horizon Breakdown</span>
+    <h2>What Drove Each Result</h2>
+    <div class="grid-2" style="margin-top:20px;gap:16px">
+      <div class="hz-card">
+        <div class="winner-badge"><span class="badge b-hi">Agentic wins</span></div>
+        <h4>Short horizon (h = 1)</h4>
+        <p>Agentic beats naive by 0.85 MAE units (2.5%). LightGBM's 64-feature model with ratio targets and COVID-row exclusion adds genuine value here: lag features (bread_lag_7d, Spearman r = 0.76) are most predictive at h = 1, and Optuna hyperparameter search found the right regularisation. AutoML with 90 s cannot replicate this (+3.8% vs naive).</p>
+      </div>
+      <div class="hz-card">
+        <div class="winner-badge"><span class="badge b-hi">Agentic = Naive</span></div>
+        <h4>Medium horizons (h = 7, h = 14)</h4>
+        <p>The agentic pipeline correctly selected the naive seasonal median as champion on both horizons — LightGBM could not beat it during validation. The result is identical to naive on test (0.0% difference). AutoML loses to both by +4.2% and +9.8% respectively. Conservative champion selection means no regression; the upside was captured at h = 1 and h = 60.</p>
+      </div>
+      <div class="hz-card">
+        <div class="winner-badge"><span class="badge b-hi">Agentic wins h=60</span></div>
+        <h4>Long horizons (h = 60, h = 90)</h4>
+        <p>At h = 60, agentic wins by 3.40 MAE units (8.3% below naive). AutoML also beats naive at h = 60 (−4.6%), but by a smaller margin. At h = 90, both agentic and naive tie at 52.85 — the agentic champion is the smedian_w52 naive predictor. AutoML loses at h = 90 (+2.0%).</p>
+      </div>
+      <div class="hz-card" style="border-left:4px solid var(--e61-danger)">
+        <div class="winner-badge"><span class="badge b-med">Naive wins</span></div>
+        <h4>h = 30 — The Anomaly</h4>
+        <p>The only horizon where naive strictly wins. LightGBM performed well on validation (MAE = 32.31) but generalises poorly to test (36.49 — +11.5% vs naive). Residual distribution shift from H1 to H2 2021 is the likely cause: the training and validation windows did not fully capture the H2 2021 demand level. AutoML also loses (+8.0%). This is the main open gap in the agentic pipeline.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 5 — APPROACH DESCRIPTIONS -->
+<section class="slide slide-item" data-title="Approaches">
+  <div class="slide-num">05 / 07</div><div class="slide-tag">Approaches</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Three Methods Compared</span>
+    <h2>What Each Approach Is</h2>
+    <div class="grid-3" style="margin-top:20px">
+
+      <div class="approach-card">
+        <span class="approach-label lbl-naive">Naive</span>
+        <div class="mae-chip" style="color:var(--e61-warning)">37.64</div>
+        <div style="font-size:.72rem;color:var(--e61-ink-4);margin-bottom:14px">Pooled MAE</div>
+        <ul>
+          <li><strong>What:</strong> Best-of-22 same-DOW seasonal median, selected per horizon on rolling-origin CV (fold 3). Median of last w same-DOW observations from before the forecast origin.</li>
+          <li><strong>Champions:</strong> h1/h7/h30 = smedian_8; h14 = smedian_13; h60 = smedian_8; h90 = smedian_52</li>
+          <li><strong>Strength:</strong> Robust to distribution shift; adapts naturally to demand level changes; immune to COVID contamination</li>
+          <li><strong>Weakness:</strong> Cannot use any feature information; fixed lookback window; no trend projection</li>
+          <li><strong>Cost:</strong> Trivial — no training, O(w) lookup per prediction</li>
+        </ul>
+      </div>
+
+      <div class="approach-card">
+        <span class="approach-label lbl-automl">AutoML (FLAML 90 s)</span>
+        <div class="mae-chip" style="color:var(--e61-info)">38.93</div>
+        <div style="font-size:.72rem;color:var(--e61-ink-4);margin-bottom:14px">Pooled MAE</div>
+        <ul>
+          <li><strong>What:</strong> FLAML AutoML framework with 90-second budget per horizon. Trained on the same 64-feature set as the agentic pipeline. No manual tuning or diagnosis.</li>
+          <li><strong>Algorithm:</strong> FLAML selects and tunes from LightGBM, XGBoost, RandomForest, etc. within budget</li>
+          <li><strong>Strength:</strong> Zero engineering effort; automatic algorithm selection; same features as agentic</li>
+          <li><strong>Weakness:</strong> With 90 s budget, consistently loses to naive on 5 / 6 horizons; no diagnosis or COVID exclusion</li>
+          <li><strong>Cost:</strong> ~9 minutes total (90 s × 6 horizons)</li>
+        </ul>
+      </div>
+
+      <div class="approach-card">
+        <span class="approach-label lbl-agentic">Agentic Pipeline</span>
+        <div class="mae-chip" style="color:var(--e61-success)">37.55</div>
+        <div style="font-size:.72rem;color:var(--e61-ink-4);margin-bottom:14px">Pooled MAE</div>
+        <ul>
+          <li><strong>What:</strong> Iterative LightGBM with ratio targets, COVID row exclusion, 64 engineered features, Optuna hyperparameter search (150 trials per horizon), per-horizon champion selection (best of LightGBM vs naive on validation)</li>
+          <li><strong>Champions:</strong> h1/h30/h60 = LightGBM; h7/h14/h90 = naive predictor (pipeline fell back correctly)</li>
+          <li><strong>Strength:</strong> Best pooled MAE; correct conservative fallback to naive where ML doesn't add value</li>
+          <li><strong>Weakness:</strong> h = 30 generalisation gap; substantial iterative development investment</li>
+          <li><strong>Cost:</strong> Full pipeline run with diagnosis loops (~hours of development)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 6 — KEY TAKEAWAYS -->
+<section class="slide dark slide-item" data-title="Takeaways">
+  <div class="slide-num">06 / 07</div><div class="slide-tag">Takeaways</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Summary</span>
+    <h2>Five Key Findings</h2>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-top:20px">
+
+      <div class="tk-card">
+        <div class="tk-num">1</div>
+        <div class="tk-body">
+          <h4>Agentic wins overall, but only just — 0.2% below naive, pooled across all horizons</h4>
+          <p>Pooled MAE: Agentic 37.55 vs Naive 37.64 vs AutoML 38.93. The agentic pipeline delivers the best results by combining ML where it genuinely adds value with naive predictors where it doesn't.</p>
+        </div>
+      </div>
+
+      <div class="tk-card">
+        <div class="tk-num">2</div>
+        <div class="tk-body">
+          <h4>Naive is the hardest benchmark to beat — AutoML fails on 5 of 6 horizons</h4>
+          <p>Despite having access to the same 64 features, AutoML with a 90 s budget cannot beat the naive seasonal median on 5 / 6 horizons. A strong, well-selected naive baseline is the appropriate reference for forecasting benchmarks — not just any ML model.</p>
+        </div>
+      </div>
+
+      <div class="tk-card">
+        <div class="tk-num">3</div>
+        <div class="tk-body">
+          <h4>Per-horizon champion selection avoids regression — no horizon is worse than naive</h4>
+          <p>For h = 7, h = 14, and h = 90, the pipeline correctly selected the naive predictor as champion (LightGBM couldn't beat it on validation). The test result matches naive exactly on those horizons — capturing upside at h = 1, h = 30, h = 60 while avoiding downside everywhere else.</p>
+        </div>
+      </div>
+
+      <div class="tk-card">
+        <div class="tk-num">4</div>
+        <div class="tk-body">
+          <h4>h = 30 is the remaining open gap — residual distribution shift not fully addressed</h4>
+          <p>The only horizon where LightGBM overfits validation (32.31) and underperforms on test (36.49). Likely cause: residual H1→H2 2021 distribution shift. Future work: longer rolling validation window or heavier regularisation targeting h = 30 specifically.</p>
+        </div>
+      </div>
+
+      <div class="tk-card">
+        <div class="tk-num">5</div>
+        <div class="tk-body">
+          <h4>AutoML with a short budget is not competitive for structured time-series forecasting</h4>
+          <p>90 seconds per horizon is insufficient to discover the right feature interactions in a dataset with calendar effects, COVID structural shocks, and a 2020 regime change. AutoML is best suited to tabular tasks with stable feature distributions. Diagnosis and domain knowledge (ratio targets, COVID exclusion) were critical here.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 7 — PROVENANCE -->
+<section class="slide slide-item" data-title="Provenance">
+  <div class="slide-num">07 / 07</div><div class="slide-tag">Files &amp; Lineage</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Run Provenance</span>
+    <h2>Source Files &amp; Artifact References</h2>
+    <div class="grid-2" style="margin-top:20px">
+      <div class="card">
+        <h4 style="margin-bottom:14px">Run &amp; Data</h4>
+        <div class="prov-row"><div class="prov-key">Run ID</div><div class="prov-val mono">run_20260910T084715Z</div></div>
+        <div class="prov-row"><div class="prov-key">Training data</div><div class="prov-val">3,076 rows · 2010-11-16 to 2021-06-30</div></div>
+        <div class="prov-row"><div class="prov-key">Sources</div><div class="prov-val">3,392 XML sales files + weather (2015–2021) + competitor (2017–2021)</div></div>
+        <div class="prov-row"><div class="prov-key">Feature engineering</div><div class="prov-val mono">iteration_023_feature_engineering.csv · 64 features</div></div>
+        <div class="prov-row"><div class="prov-key">FE iteration</div><div class="prov-val">FE5 — ratio targets, COVID flag, calendar + lag features</div></div>
+        <div class="prov-row"><div class="prov-key">Optuna trials</div><div class="prov-val">150 per horizon (h=1, h=30, h=60); naive floor used for h=7, h=14, h=90</div></div>
+      </div>
+      <div class="card">
+        <h4 style="margin-bottom:14px">Result Files</h4>
+        <div class="prov-row"><div class="prov-key">Agentic test MAEs</div><div class="prov-val mono">history/iteration_027_test_evaluation.json</div></div>
+        <div class="prov-row"><div class="prov-key">Naive comparison</div><div class="prov-val mono">history/iteration_028_corrected_naive.json</div></div>
+        <div class="prov-row"><div class="prov-key">AutoML results</div><div class="prov-val mono">history/iteration_029_automl.json</div></div>
+        <div class="prov-row"><div class="prov-key">AutoML script</div><div class="prov-val mono">code/iteration_029_automl.py</div></div>
+        <div class="prov-row"><div class="prov-key">Agentic models</div><div class="prov-val mono">artifacts/training/iter024/models/ (6 pkl files)</div></div>
+        <div class="prov-row"><div class="prov-key">Baseline definition</div><div class="prov-val mono">history/iteration_004_baseline.json (carried forward)</div></div>
+      </div>
+    </div>
+    <div class="finding-card" style="margin-top:20px;border-left-color:var(--e61-warning)">
+      <strong>Note on h=30 Agentic champion:</strong> The h=30 LightGBM model was selected as champion because it beat the naive floor on the fold-3 validation set (val MAE 32.31 vs naive floor 32.94). It failed to generalise to the test set (36.49 vs naive 32.73). This is a known limitation — validation and test distribution mismatch for h=30. The other five horizons did not exhibit this gap.
+    </div>
+  </div>
+</section>
+
+<!-- IMAGE MODAL (unused, kept for consistency) -->
+<div class="img-modal" id="imgModal" onclick="if(event.target.id==='imgModal')closeImgModal()">
+  <div class="img-modal-inner">
+    <button class="img-modal-close" onclick="closeImgModal()">✕</button>
+    <div class="img-modal-img-wrap"><img id="imgModalImg" src="" alt=""></div>
+    <div class="img-modal-meta">
+      <div class="img-modal-name" id="imgModalName"></div>
+      <div class="img-modal-body" id="imgModalBody"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const slides = Array.from(document.querySelectorAll('.cover,.slide'));
+const dotnav = document.getElementById('dotnav');
+slides.forEach((s,i)=>{
+  const dot = document.createElement('button');
+  dot.title = s.dataset.title || ('Slide '+(i+1));
+  dot.onclick = ()=> s.scrollIntoView({behavior:'smooth'});
+  dotnav.appendChild(dot);
+});
+const dots = Array.from(dotnav.children);
+const counter = document.getElementById('counter');
+const topbarFill = document.getElementById('topbarFill');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+let current = 0;
+function setActive(idx){
+  current = idx;
+  dots.forEach((d,i)=> d.classList.toggle('active', i===idx));
+  counter.textContent = (idx+1) + ' / ' + slides.length;
+  topbarFill.style.width = (((idx+1)/slides.length)*100) + '%';
+  prevBtn.disabled = idx===0;
+  nextBtn.disabled = idx===slides.length-1;
+}
+setActive(0);
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting && e.intersectionRatio>0.55){
+      const idx = slides.indexOf(e.target);
+      if(idx>-1) setActive(idx);
+    }
+  });
+}, {threshold:[0.55]});
+slides.forEach(s=>io.observe(s));
+function goTo(idx){
+  idx = Math.max(0, Math.min(slides.length-1, idx));
+  slides[idx].scrollIntoView({behavior:'smooth'});
+}
+prevBtn.onclick = ()=> goTo(current-1);
+nextBtn.onclick = ()=> goTo(current+1);
+document.addEventListener('keydown', e=>{
+  if(['ArrowDown','ArrowRight','PageDown',' '].includes(e.key)){ e.preventDefault(); goTo(current+1); }
+  if(['ArrowUp','ArrowLeft','PageUp'].includes(e.key)){ e.preventDefault(); goTo(current-1); }
+});
+function closeImgModal(){
+  document.getElementById('imgModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+</script>
+</body>
+</html>

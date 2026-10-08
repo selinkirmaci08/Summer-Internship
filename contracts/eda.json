@@ -1,0 +1,275 @@
+{
+  "input": {
+    "data_sources": [
+      {"path": "data/hospital_visits.csv", "format": "csv", "size_kb": 18400},
+      {"path": "data/provider_lookup.csv", "format": "csv", "size_kb": 12}
+    ],
+    "dataset_path": "path/to/data.csv",
+    "goal": "predict readmission risk",
+    "target_column": "outcome",
+    "iteration": 1,
+    "context": []
+  },
+  "output": {
+    "schema_version": "2026-08-11",
+    "dataset_overview": {
+      "rows": 250000,
+      "cols": 87,
+      "memory_mb": 340,
+      "duplicate_rows_pct": 0.3,
+      "duplicate_clustering_note": "duplicates concentrated in provider_id=104, worth investigating",
+      "dtype_breakdown": {"numeric": 52, "categorical": 28, "datetime": 3, "text": 2, "boolean": 2},
+      "overall_missing_pct": 4.1,
+      "grouping_structure": {
+        "group_column": "patient_id",
+        "avg_rows_per_group": 1.8,
+        "max_rows_per_group": 11,
+        "note": "readmission dataset — many patients appear across multiple admissions, so rows are not independent. Preprocess must split by patient_id (group-aware split), not by row, or the same patient could appear in both train and validation — a real leakage path even with an otherwise correct split"
+      },
+      "time_coverage": {
+        "range": "2019-01-01 to 2026-06-01",
+        "gaps": ["2020-03 to 2020-05 — near-zero records, likely collection gap"],
+        "collection_shift_note": "record volume roughly doubled after 2022-01, possible source/process change"
+      }
+    },
+    "feasibility": {
+      "trainable": true,
+      "reasoning": "250k rows, target has usable class balance, no blocking issues found"
+    },
+    "target": {
+      "name": "outcome",
+      "task_type": "binary_classification",
+      "class_distribution": {"0": 0.68, "1": 0.32},
+      "distribution_notes": "moderate imbalance, not severe enough to require resampling",
+      "definition_check": "single consistent encoding (0/1), no ambiguous or duplicate label meanings found",
+      "segment_breakdown": {
+        "metric": "positive_rate",
+        "segments": [
+          {"segment": "region=west", "value": 0.31, "n": 61000},
+          {"segment": "region=east", "value": 0.52, "n": 4200, "note": "notably higher than overall — possible subgroup bias; also low n relative to other segments"}
+        ]
+      },
+      "trivial_baseline": {
+        "baseline_type": "majority_class",
+        "rule": "always predict class 0 (68% of rows)",
+        "metric": "recall",
+        "value": 0.0,
+        "window": "all 250000 rows; provisional - no train/validation split exists yet",
+        "note": "a recall-optimised model must beat 0.0 trivially, so read the f1 figure alongside it; Training establishes the authoritative floor on the real split"
+      },
+      "temporal_drift": {"checked": true, "note": "target rate stable across time periods, no drift detected"},
+      "recommended_metric": {
+        "primary": "recall",
+        "secondary": ["f1", "roc_auc"],
+        "reasoning": "target is imbalanced (0.32) and goal is 'predict readmission risk' — missing a true readmission (false negative) is likely more costly than a false alarm, so recall should be prioritized over raw accuracy or precision. F1 tracked secondarily to keep an eye on precision, since optimizing recall alone risks too many false alarms. ROC-AUC included as a threshold-independent secondary check; at 0.32 positive rate the imbalance isn't severe enough to prefer PR-AUC over ROC-AUC the way it would be under a more extreme skew (e.g. <5% positive).",
+        "confidence": "high"
+      }
+    },
+    "source_inventory": [
+      {
+        "path": "data/hospital_visits.csv", "format": "csv", "rows": 250000, "columns": 87,
+        "key_columns": ["visit_id", "patient_id"], "granularity": "one row per patient visit",
+        "time_coverage": {"first": "2019-01-02", "last": "2024-11-30", "gaps": "none"},
+        "unique_contribution": "the visit-level outcome being predicted, and every clinical measurement",
+        "verdict": "used"
+      },
+      {
+        "path": "data/provider_lookup.csv", "format": "csv", "rows": 412, "columns": 6,
+        "key_columns": ["provider_id"], "granularity": "one row per attending provider",
+        "time_coverage": {"first": null, "last": null, "gaps": "not time-indexed"},
+        "unique_contribution": "provider speciality and years-in-post, absent from the visit table",
+        "verdict": "used"
+      }
+    ],
+    "join_plan": [
+      {
+        "left": "data/hospital_visits.csv", "right": "data/provider_lookup.csv",
+        "keys": {"left": "attending_provider_id", "right": "provider_id"},
+        "key_unique_on_right": true,
+        "granularity_alignment": "no aggregation needed - many visits to one provider",
+        "coverage_overlap": "provider table covers 100% of provider ids present in visits",
+        "estimated_match_rate": 0.997,
+        "adds": "provider speciality and years-in-post as visit-level attributes",
+        "risks": "0.3% of visits carry a provider_id absent from the lookup; left join leaves those null rather than dropping the visit"
+      }
+    ],
+    "feature_stats_summary": {
+      "numeric": {"count": 52, "avg_missing_pct": 3.2, "high_skew_count": 9, "outlier_detection_method": "iqr_1.5x"},
+      "categorical": {"count": 28, "avg_cardinality": 14, "high_cardinality_count": 4},
+      "datetime": {"count": 3, "range": "2019-01-01 to 2026-06-01"}
+    },
+    "top_features": [
+      {
+        "name": "blood_sugar", "dtype": "float", "missing_pct": 0.02, "skew": 1.4, "outliers": 12,
+        "target_corr": 0.41, "target_mi": 0.18,
+        "reasoning": "strongest target correlation of any feature and low missingness — likely to be a primary driver of predictions, not just a passenger correlate",
+        "confidence": "high"
+      },
+      {
+        "name": "bmi", "dtype": "float", "missing_pct": 0.5, "skew": 0.9, "outliers": 30,
+        "target_corr": 0.29, "target_mi": 0.12,
+        "reasoning": "moderate target correlation, but also correlates with blood_sugar (0.35) — some of its apparent signal may be redundant with blood_sugar rather than independent",
+        "confidence": "medium"
+      },
+      {
+        "name": "age", "dtype": "float", "missing_pct": 0.0, "skew": 0.3, "outliers": 0,
+        "target_corr": 0.15, "target_mi": 0.09,
+        "reasoning": "weak direct correlation, but flagged as multicollinear with years_since_first_visit — its true relevance is unclear until that redundancy is resolved",
+        "confidence": "low"
+      }
+    ],
+    "top_correlated_pairs": [
+      {"pair": ["blood_sugar", "outcome"], "corr": 0.41},
+      {"pair": ["bmi", "blood_sugar"], "corr": 0.35}
+    ],
+    "multicollinearity": {
+      "high_pairs": [
+        {"pair": ["age", "years_since_first_visit"], "corr": 0.93, "suggested_action": "likely redundant, consider dropping one"}
+      ]
+    },
+    "feature_interactions": [
+      {
+        "feature": "blood_sugar",
+        "segment_dimension": "region",
+        "method": "segment_conditional_target_correlation",
+        "shift": [
+          {"segment": "region=east", "target_corr": 0.58, "n": 4200},
+          {"segment": "region=west", "target_corr": 0.31, "n": 61000}
+        ],
+        "note": "blood_sugar's relationship with the target is notably stronger in region=east than elsewhere — both segments meet the n>=30 threshold, so this isn't purely small-sample noise, but it's still a coarse, model-free signal, not a confirmed interaction; worth a closer look via partial dependence once a model exists",
+        "confidence": "low"
+      }
+    ],
+    "missingness": {
+      "overall_missing_pct": 4.1,
+      "columns_with_missing": [
+        {
+          "name": "insurance_secondary",
+          "missing_pct": 62.0,
+          "mechanism": "MNAR",
+          "mechanism_evidence": "domain reasoning — most patients simply have no secondary insurance, so the value doesn't exist rather than being unobserved; no statistical test can confirm this since it depends on unobserved data by definition",
+          "suggested_action": "treat as category ('none'), not impute",
+          "confidence": "high"
+        },
+        {
+          "name": "blood_sugar",
+          "missing_pct": 2.0,
+          "mechanism": "MCAR",
+          "mechanism_evidence": "missingness indicator shows no meaningful correlation with other observed features or with the target",
+          "suggested_action": "impute with median",
+          "confidence": "medium"
+        },
+        {
+          "name": "discharge_notes",
+          "missing_pct": 8.5,
+          "mechanism": "MAR",
+          "mechanism_evidence": "missingness indicator correlates with region (east region missing discharge_notes 3x more often than west) — explainable by an observed variable, not random",
+          "suggested_action": "model-based imputation using region and other correlated fields rather than simple imputation; investigate joint missingness with follow_up_scheduled first",
+          "confidence": "medium"
+        }
+      ],
+      "correlated_missingness_pairs": [
+        {"pair": ["discharge_notes", "follow_up_scheduled"], "co_missing_rate": 0.81}
+      ]
+    },
+    "data_quality_issues": {
+      "inconsistent_categories": [
+        {"name": "gender", "variants_found": ["Male", "M", "male"], "suggested_action": "normalize before encoding", "confidence": "high"}
+      ],
+      "out_of_range_values": [
+        {"name": "age", "issue": "3 rows with negative values", "suggested_action": "treat as data entry error, drop or clip", "confidence": "high"},
+        {"name": "bmi", "issue": "values cluster suspiciously at multiples of 0.5 (e.g. 24.0, 24.5, 25.0) far more than a continuous measurement would naturally produce", "suggested_action": "likely human-rounded at data entry rather than a true continuous measurement — treat precision claims with caution, no correction needed beyond awareness", "confidence": "medium"}
+      ],
+      "mixed_units": [],
+      "duplicate_columns": [
+        {"columns": ["provider_id", "attending_provider_id"], "match_type": "exact", "match_pct": 100.0, "note": "identical values across all rows — possibly a renamed duplicate from a schema change", "confidence": "medium"}
+      ],
+      "label_noise": {
+        "checked": true,
+        "method": "grouped rows by proximity on top_features (numeric within 1 std, categorical exact match), checked for target disagreement within each group",
+        "conflict_rate": 0.4,
+        "note": "0.4% of rows share near-identical top-feature values but conflicting outcome labels — low enough to be normal noise, not a feasibility concern",
+        "confidence": "medium"
+      }
+    },
+    "flags": {
+      "high_cardinality": ["zipcode", "provider_id", "diagnosis_code", "procedure_code"],
+      "possible_leakage": ["visit_id"],
+      "possible_temporal_leakage": ["follow_up_scheduled — recorded after outcome"],
+      "high_missing": ["insurance_secondary"],
+      "near_constant": ["is_active"],
+      "dominant_value": [
+        {"name": "prior_procedures_count", "dominant_value": 0, "dominant_value_pct": 88.5, "note": "not missing, not fully constant, but 88.5% of rows share this value"}
+      ],
+      "underrepresented_categories": [
+        {"feature": "insurance_type", "category": "self_pay", "pct_of_rows": 0.6, "note": "too few samples to learn this category reliably, independent of its target balance"}
+      ],
+      "pii_sensitive": ["patient_name", "ssn", "home_address"]
+    },
+    "recommended_strategy": {
+      "narrative": "Wide dataset with several high-cardinality categorical fields — tree-based models and target/frequency encoding likely outperform one-hot + linear models. Normalize gender categories and drop PII/leakage columns before preprocessing. Start with blood_sugar given strongest target correlation. Given 87 candidate columns, an incremental (wrapper-style, forward-selection) posture is recommended over starting broad — one-at-a-time addition, evidence-driven by Diagnosis each iteration, is worth its cost at this width; a small dataset would favor starting with more features and pruning instead. Tree-based models chosen above will also apply embedded feature importance automatically during Training, complementing this incremental process rather than replacing it.",
+      "confidence": "medium"
+    },
+    "key_findings": [
+      "Target is imbalanced (0.32) — recall recommended as the primary metric",
+      "Region=east has a notably higher target rate (0.52) than other regions — possible subgroup bias worth investigating",
+      "87 columns available, but only a handful show strong target relevance — most predictive signal concentrated in a small feature subset"
+    ],
+    "limitations": [
+      "Collection gap in 2020-03 to 2020-05 means that period is underrepresented — findings may not generalize to that window",
+      "region=east segment has fewer rows than other regions; its 0.52 balance estimate is less reliable than the overall figure"
+    ],
+    "clarification_needed": [
+      {
+        "question": "visit_id correlates almost perfectly with the target — is this a genuine leakage risk, or expected in this domain?",
+        "context": "flagged as possible_leakage; domain knowledge would confirm whether it's safe to use or must be dropped",
+        "blocking": true,
+        "confidence": "low",
+        "recommendation": "drop visit_id from the feature set",
+        "recommendation_reasoning": "a near-unique identifier correlating at 0.98 with the target is far more often an artefact of how rows were assembled than a real signal; dropping it costs at most one weak feature, keeping it risks every metric the run produces",
+        "impact_if_wrong": "if the correlation were genuine the model loses one strong feature and can be retrained in a single pass - the reversible direction"
+      },
+      {
+        "question": "follow_up_scheduled is recorded after the outcome and flagged as possible temporal leakage — should it be excluded from modeling?",
+        "context": "using it would likely inflate performance metrics artificially if it's not actually available at prediction time",
+        "recommendation": "exclude follow_up_scheduled from modelling",
+        "recommendation_reasoning": "the column is recorded after the outcome it would be predicting; for any forward-looking use it cannot exist at decision time",
+        "impact_if_wrong": "if the deployment turns out to be retrospective explanation rather than prediction, the feature is re-addable at the cost of one FE and one Training pass",
+        "blocking": true,
+        "confidence": "medium"
+      },
+      {
+        "question": "provider_id and attending_provider_id appear to be exact duplicates — is this intentional (e.g. a renamed column kept for compatibility), and if not, which one should be kept?",
+        "context": "flagged in data_quality_issues.duplicate_columns; retaining both adds no signal and is just redundant, not harmful, so this doesn't block the run",
+        "blocking": false,
+        "confidence": "medium"
+      },
+      {
+        "question": "does this dataset include patients who were readmitted but died before a follow-up record could be created, or only those who survived to follow-up?",
+        "context": "the goal is predicting readmission risk — if non-surviving readmissions are systematically excluded from this table, the dataset may understate risk for the most severe cases (a form of survivorship bias); cannot be confirmed from the data alone, needs collection-methodology input",
+        "blocking": false,
+        "confidence": "low"
+      }
+    ],
+    "issues": [],
+    "artifact_paths": {
+      "plots": [
+        {
+          "path": "artifacts/eda/iteration_001_eda_hist_blood_sugar.png",
+          "data_path": "artifacts/eda/iteration_001_eda_hist_blood_sugar.csv",
+          "reason": "blood_sugar is the highest-correlating numeric feature (Spearman 0.41) — a histogram answers the specific question of whether its distribution is well-behaved enough for direct use or needs transformation before modeling. A scatter against the target would show the feature-target relationship, but not the marginal shape; the histogram is the right first check because skew and outliers here would affect both imputation strategy (median vs. mean) and whether a log transform is warranted before encoding the relationship.",
+          "insight": "The distribution is right-skewed with a long tail extending past 250 mg/dL, while the bulk of values cluster between 80–180 — a ~3:1 ratio between the IQR core and the tail. This shape is consistent with the 12 outliers already flagged by the IQR check. In clinical terms, values above ~200 represent overt hyperglycemia, a known readmission risk factor, so the tail is likely real signal rather than data entry error — clipping it would discard the exact cases where the feature is most predictive. The right skew means a log or square-root transform is worth trying before using this feature in distance-based or linear models; tree-based models are less sensitive to this. For imputation (2% missing, MCAR): median is the correct choice over mean given the skew — mean would be pulled up by the tail and would overestimate a typical missing value.",
+          "confidence": "high"
+        },
+        {
+          "path": "artifacts/eda/iteration_001_eda_class_balance.png",
+          "data_path": "artifacts/eda/iteration_001_eda_class_balance.csv",
+          "reason": "a class balance bar chart is mandatory for any classification task because it determines whether accuracy is a misleading metric and whether the model needs class-weight adjustment or resampling. A histogram of the target would show the same information but a bar chart is clearer for a two-class discrete outcome and is the standard reference a reviewer expects to see alongside the metric recommendation.",
+          "insight": "The positive class (readmission) makes up 32% of rows, leaving 68% as negative — a moderate imbalance, not a severe one. At this ratio, a model that always predicts negative would score 68% accuracy, making accuracy a misleading headline metric; this directly drives the recall-primary recommendation in `recommended_metric`. The imbalance is not severe enough (it would need to be below roughly 10% positive) to justify resampling techniques like SMOTE or undersampling, which introduce their own distortions. Instead, using class weights during training (setting the positive class weight to ~2.1×) is the right first adjustment — this is a flag for Training, not Preprocess. The region=east segment's 0.52 positive rate (vs. 0.32 overall) means the class balance looks meaningfully different by region; if the model is deployed nationally, per-region calibration may matter.",
+          "confidence": "high"
+        }
+      ],
+      "full_correlation_matrix": "artifacts/eda/iteration_001_eda_full_corr_matrix.csv"
+    }
+  }
+}

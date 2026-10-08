@@ -1,0 +1,84 @@
+{
+  "run": "automl_baseline_samerows",
+  "tool": "FLAML",
+  "flaml_version": "2.6.0",
+  "time_budget_per_horizon_s": 300,
+  "training_rows": "fold-3 train+val, COVID excluded (same as LightGBM pipeline)",
+  "features": [
+    "year",
+    "month",
+    "day",
+    "dayofweek",
+    "week",
+    "dayofyear",
+    "wx_Maximum_Temperature",
+    "wx_Minimum_Temperature",
+    "wx_Temperature",
+    "wx_Precipitation",
+    "wx_Snow_depth",
+    "wx_Wind_Speed",
+    "wx_Wind_Gust",
+    "wx_Cloud_Cover",
+    "wx_Relative_Humidity",
+    "comp_n_competitors_closed",
+    "comp_any_closed",
+    "comp_closure_density"
+  ],
+  "n_features": 18,
+  "results": {
+    "1": {
+      "best_model": "xgb_limitdepth",
+      "best_val_mae": 30.326481373880142,
+      "n_train": 2286,
+      "primary_mae": 53.74594192717401,
+      "primary_n": 359,
+      "stress_mae": 124.30997733610222,
+      "stress_n": 83
+    },
+    "7": {
+      "best_model": "xgboost",
+      "best_val_mae": 30.908306395387115,
+      "n_train": 2670,
+      "primary_mae": 48.91252834146673,
+      "primary_n": 352,
+      "stress_mae": 114.49454599403474,
+      "stress_n": 83
+    },
+    "14": {
+      "best_model": "xgb_limitdepth",
+      "best_val_mae": 31.51442498668873,
+      "n_train": 2649,
+      "primary_mae": 51.44839849057405,
+      "primary_n": 345,
+      "stress_mae": 114.04891744474085,
+      "stress_n": 82
+    },
+    "30": {
+      "best_model": "xgboost",
+      "best_val_mae": 32.42707236329647,
+      "n_train": 2202,
+      "primary_mae": 51.21098675481454,
+      "primary_n": 329,
+      "stress_mae": 125.36303317908084,
+      "stress_n": 66
+    },
+    "60": {
+      "best_model": "lgbm",
+      "best_val_mae": 33.55927040771181,
+      "n_train": 2164,
+      "primary_mae": 57.077912148948585,
+      "primary_n": 300,
+      "stress_mae": 140.1684309773255,
+      "stress_n": 55
+    },
+    "90": {
+      "best_model": "lgbm",
+      "best_val_mae": 30.96155488609694,
+      "n_train": 2129,
+      "primary_mae": 53.14736414632164,
+      "primary_n": 270,
+      "stress_mae": 124.50376147209597,
+      "stress_n": 47
+    }
+  }
+}

@@ -1,0 +1,643 @@
+{
+  "node": "domain_research",
+  "iteration": 2,
+  "run_id": "run_20260908T075709Z",
+  "skill_version": "2026-09-04",
+  "code_file": "code/iteration_002_domain_research.py",
+  "report_html": "reports/iteration_002_domain_research.html",
+  "skill_type": "domain_research",
+  "timestamp": "2026-09-08",
+  "cross_run_source": "run_20260907T131013Z_sonnet/history/iteration_002_domain_research.json — same split, same protocol; domain facts carried forward as cross_run evidence",
+
+  "triggered_by": {
+    "iteration": 1,
+    "skill": "eda",
+    "trigger_count": 4
+  },
+
+  "meta": {
+    "domain": "artisan_bakery_retail",
+    "location": "Ghent (Gent), Flanders, Belgium",
+    "dataset_date_range": "2010-11-16 to 2020-12-31",
+    "search_sources": ["knowledge_base", "cross_run"],
+    "triggers_addressed": 4,
+    "triggers_derived": 0,
+    "feature_recommendations": 15,
+    "open_questions": 5,
+    "data_sources_assessed": 2,
+    "categories_skipped": [],
+    "search_misses": [
+      {
+        "query": "Aernoudt bakery Ghent summer vacation closure August annual",
+        "note": "No public information found on Aernoudt branch 01 annual closure patterns. Raised as open_question OQ-3. Consistent with prior run search_miss."
+      }
+    ]
+  },
+
+  "eda_trigger_responses": [
+    {
+      "trigger_id": 1,
+      "trigger": "Belgian public holidays: identify all Belgian federal public holidays 2010-2020 (typically 10/year); map to zero-demand days in training data; provide date list",
+      "finding": "Belgium has 10 federal public holidays plus 1 Flemish Community holiday (July 11 — Day of the Flemish Community), totalling 11 official non-working days per year in Flanders. 8 of these are fixed calendar dates; 3 float with Easter (Easter Monday = Easter+1, Ascension = Easter+39, Whit Monday = Easter+50). Easter can fall anywhere from March 22 to April 25, causing the floating holidays to shift by up to 5 weeks between years. In addition: December 26 (Boxing Day / Tweede Kerstdag) is not an official public holiday but many Belgian artisan bakeries close as a bridge day. The full 11-day list is in content_carried_forward. Mapped against the EDA's 50 zero-demand trading days (approximately 5 per year after excluding pre-regime Mondays), the count is consistent with a shop that closes on most but not all official holidays, plus a small number of voluntary closures per year.",
+      "confidence": "high",
+      "source": "knowledge_base + cross_run",
+      "feature_implication": "Build `is_official_public_holiday` covering all 11 Belgian/Flemish holidays using a date-formula approach for floating holidays (Easter formula or calendar library), not a year-by-year lookup. Floating holidays must be computed, not hardcoded. Also build `days_until_next_holiday` (capped at 30) for anticipation effect."
+    },
+    {
+      "trigger_id": 2,
+      "trigger": "Gentse Feesten (Ghent festival, ~10 days mid-July): annual 10-day mid-July festival; check whether demand spikes or dips during this period; provide date ranges 2010-2020",
+      "finding": "Gentse Feesten is one of the largest annual street festivals in Europe: approximately 200,000 visitors per day, ~2 million total over 10 days. The festival runs for 10 days starting on the Friday before Belgian National Day (July 21). Specific dates per year are in content_carried_forward. The festival was CANCELLED in 2020 due to COVID-19 (announced early in the year; was planned July 17-26). Demand impact on branch 01 depends on its location: bakeries within the festival footprint (central Ghent) report elevated morning bread sales due to visitor foot traffic; residential-neighbourhood bakeries outside the footprint see minimal impact. This is unresolved without stakeholder confirmation of branch 01 location (OQ-4).",
+      "confidence": "medium",
+      "source": "knowledge_base + cross_run",
+      "feature_implication": "Build `is_gentse_feesten` binary using the year-specific dates in content_carried_forward; 2020 = 0 (cancelled). Priority depends on branch 01 location (OQ-4). Note: 2014 data is sparse (only 64 trading days) — the Gentse Feesten window in 2014 may be present or absent in the training data depending on which months are covered."
+    },
+    {
+      "trigger_id": 3,
+      "trigger": "COVID-19: Belgium lockdown from 2020-03-18 (strict) to approximately 2020-05-18 (phase 1 reopening); explains 24 zero-demand days in 2020; provide official Belgian lockdown phase dates",
+      "finding": "Belgium's first COVID-19 lockdown ran from March 18, 2020 (announcement March 17 evening) to May 4, 2020 (Phase 1 reopening: non-essential shops reopened). Artisan bakeries were classified as ESSENTIAL FOOD RETAIL and were PERMITTED to remain open throughout the lockdown. This creates an important discrepancy with the EDA: if bakeries were permitted to be open, why does 2020 have 24 zero-demand days (compared to 3-14 in prior years)? The likely explanations are: (a) Aernoudt branch 01 voluntarily closed some days during the lockdown period rather than operate with reduced customer flow; (b) Public holidays account for ~11 of the 24 (with some holiday overlap on pre-regime Mondays being excluded, approximately 8-11 of the zero-demand days are official holidays); (c) A small number may be data export gaps during the COVID disruption. The net COVID-attributable voluntary closures in 2020 are estimated at 5-13 days, concentrated in March-May 2020. An `is_covid_lockdown_period` binary spanning March 18 - May 3 is recommended to flag this structurally distinct window regardless of the underlying closure mechanism.",
+      "confidence": "high",
+      "source": "knowledge_base + cross_run",
+      "feature_implication": "Build `is_covid_lockdown_period` binary (1 for 2020-03-18 to 2020-05-03, 0 otherwise). The 24 zero-demand days in 2020 are a mix of standard public holidays (expected ~11) plus additional voluntary/COVID closures. All zero-demand days should be flagged with `is_zero_demand`; the COVID period provides an explanatory context but should not be used to remove or impute them."
+    },
+    {
+      "trigger_id": 4,
+      "trigger": "2014 sparse data: only 64 trading days in 2014 (should be ~250); investigate whether this is a data export gap, system migration, or branch-level event; recommend whether to exclude from CV folds",
+      "finding": "The sparse 2014 data (64 trading days vs ~250 expected) is almost certainly a consequence of the POS system migration documented in storedata/Winkelfile.csv. The migration changed the XML schema (pre-migration: order/orderdetail → post-migration: sale/saledetail), and incomplete coverage for the migration year is a standard data transition artifact. The 64 days likely represent a partial-year export from whichever half of 2014 was on the new system (or the old, depending on migration direction). The exact migration date is not directly confirmed in the EDA output, but the sparse coverage is protocol-confirmed in protocol.json. Implications: rolling statistics that span 2014 (e.g., lag-365 features or annual seasonal components) will encounter this sparsity and produce incorrect values. Rolling-origin CV folds that treat 2014 as a full year will undercount available training rows. The 64 days of data should remain in the series (do not impute or remove) but must be flagged with a binary `is_2014_sparse_period` to prevent features from treating sparse-2014 statistics as representative.",
+      "confidence": "high",
+      "source": "knowledge_base + cross_run",
+      "feature_implication": "Build `is_2014_sparse_period` binary (1 for all 2014 dates, 0 otherwise). Any rolling statistic or lag feature that would look back into 2014 from 2015 onward must either cap its lookback window to exclude 2014 or use the `is_2014_sparse_period` flag as a missingness indicator. Preprocess should document the 2014 window and recommend CV fold boundaries that do not straddle it without adjustment."
+    }
+  ],
+
+  "data_source_assessment": {
+    "weather_ghent": {
+      "columns_in_dataset": ["Temperature", "Precipitation", "Wind_Speed", "Humidity", "Date_time", "Wind_Chill (40.3% null)", "Heat_Index (94.9% null — drop)", "Location (100% null — drop)"],
+      "availability_window": "2015-01-01 to 2020-12-31; sales start 2010-11-16 — 5-year gap at start",
+      "domain_context": "Ghent has a maritime temperate climate (Köppen Cfb): mild winters (mean Jan ~4°C), cool summers (mean Jul ~18°C), frequent moderate precipitation year-round. No Belgian extreme heat events in the 2010-2020 training window comparable to the 2022 western European heatwave. The climate is stable and predictable.",
+      "signal_assessment_per_feature": {
+        "Temperature": "Expected weak secondary signal: hot summer days (>25°C) suppress foot traffic and eating of heavy foods; cold winter days may slightly increase comfort-food purchases. For a staple good with a loyal customer base, the marginal temperature effect is secondary to DOW/calendar. Signal expected stronger as an extreme indicator (is_hot_day) than as a raw continuous value.",
+        "Precipitation": "Small negative foot-traffic effect expected on heavy-rain days. Belgian consumers are habituated to rain (year-round moderate rainfall); bread is a staple purchase made regardless of mild rain. Signal expected weak but not zero.",
+        "Wind_Speed": "Minimal mechanism connecting wind speed to bread demand. Belgian wind conditions are not extreme. Low priority.",
+        "Humidity": "No direct mechanism. Low priority.",
+        "Wind_Chill": "40.3% null. Derived feature; not a direct demand driver. Drop in favour of raw Temperature.",
+        "Heat_Index": "94.9% null. Effectively unusable. Drop."
+      },
+      "known_confounds": [
+        "Pre-2015 period (2010-2014) has no weather data — 5 years of training data require imputation or a missingness indicator; filling with climatological DOY averages would create spurious smoothness for pre-2015 rows",
+        "Temperature seasonal autocorrelation is almost collinear with the is_school_holiday/month-of-year features; the marginal contribution of raw temperature is reduced by this collinearity"
+      ],
+      "overall_assessment": "CONDITIONALLY USEFUL",
+      "overall_reasoning": "Weather covers the important 2015-2020 window. Expected to provide secondary signal for extreme conditions. Include binary indicators (is_hot_day, is_heavy_rain) plus raw Temperature and Precipitation; always accompany with a `weather_data_available` indicator for pre-2015 rows. Drop Location, Heat_Index; evaluate Wind_Chill separately.",
+      "recommended_additional_features": [
+        "is_hot_day (Temperature > 25°C binary)",
+        "is_heavy_rain (Precipitation > 5mm binary)",
+        "temperature_zscore_seasonal (temperature deviation from that DOY climatological average — removes seasonal trend)",
+        "weather_data_available (binary: 1 from 2015-01-01 onward)"
+      ]
+    },
+    "competitor_closures": {
+      "columns_in_dataset": ["winkel (competitor ID)", "datum (date)", "closure indicator"],
+      "availability_window": "2017-07-01 to approximately 2020-09-15; 7-year gap at start, ~3.5-month gap at end of training period",
+      "domain_context": "23 Ghent-area artisan bakery competitors. Belgian artisan bakeries traditionally close on official public holidays and for 1-3 weeks summer vacation (typically August). When multiple competitors close simultaneously, a fraction of their regular customers redirect to nearby open bakeries — including Aernoudt branch 01. The demand redirection effect scales with the number of competitors simultaneously closed.",
+      "signal_assessment_per_feature": {
+        "n_competitors_closed": "Positive relationship expected: more simultaneous closures → more redirected demand. Dose-response: count or proportion better than binary. Strongest signal for August summer vacation period.",
+        "any_competitor_closed": "Weaker than count. Loses dose-response."
+      },
+      "known_confounds": [
+        "On official public holidays, Aernoudt itself may also be closed (zero demand) — holiday days create anti-correlated readings where high competitor closures coincide with zero Aernoudt demand",
+        "Pre-2017 zero-fill creates a structural discontinuity at 2017-07-01; the competitor_data_available indicator is essential",
+        "Post-2020-09-15 gap: last 3.5 months of training data have no competitor records"
+      ],
+      "overall_assessment": "REAL BUT SPARSE",
+      "overall_reasoning": "Genuine mechanism (demand redirection) but sparse coverage. Include with missingness indicator. Most useful for August vacation period. Not sufficient grounds to drop despite coverage gaps.",
+      "recommended_additional_features": [
+        "competitor_closure_density (n_competitors_closed / 23.0 — normalised proportion)",
+        "all_competitors_closed (binary: n_competitors_closed == 23)",
+        "competitor_data_available (binary: 1 within 2017-07-01 to 2020-09-15)"
+      ]
+    }
+  },
+
+  "structured_findings": {
+    "local_events": {
+      "gentse_feesten": {
+        "description": "Annual 10-day summer music and theatre festival in central Ghent. ~200,000 visitors/day, ~2 million total per edition. One of the largest street festivals in Europe.",
+        "typical_window": "Friday before Belgian National Day (July 21), running 10 days",
+        "dates_per_year": {
+          "2010": {"start": "2010-07-09", "end": "2010-07-18"},
+          "2011": {"start": "2011-07-15", "end": "2011-07-24"},
+          "2012": {"start": "2012-07-13", "end": "2012-07-22"},
+          "2013": {"start": "2013-07-12", "end": "2013-07-21"},
+          "2014": {"start": "2014-07-11", "end": "2014-07-20"},
+          "2015": {"start": "2015-07-17", "end": "2015-07-26"},
+          "2016": {"start": "2016-07-15", "end": "2016-07-24"},
+          "2017": {"start": "2017-07-14", "end": "2017-07-23"},
+          "2018": {"start": "2018-07-13", "end": "2018-07-22"},
+          "2019": {"start": "2019-07-12", "end": "2019-07-21"},
+          "2020": {"start": null, "end": null, "cancelled": true, "note": "cancelled COVID-19; was planned July 17-26"}
+        },
+        "demand_impact_note": "Impact depends on branch 01 location; unresolved without stakeholder confirmation (OQ-4)",
+        "confidence": "medium",
+        "source": "knowledge_base + cross_run"
+      }
+    },
+    "public_holidays": {
+      "national_and_flemish": {
+        "fixed_dates": [
+          {"date": "January 1", "name": "New Year's Day (Nieuwjaar)"},
+          {"date": "May 1", "name": "Labour Day (Dag van de Arbeid)"},
+          {"date": "July 11", "name": "Day of the Flemish Community (Flanders only — not a federal holiday)"},
+          {"date": "July 21", "name": "Belgian National Day (Nationale Feestdag)"},
+          {"date": "August 15", "name": "Assumption of Mary (OLV Hemelvaart)"},
+          {"date": "November 1", "name": "All Saints' Day (Allerheiligen)"},
+          {"date": "November 11", "name": "Armistice Day (Wapenstilstand)"},
+          {"date": "December 25", "name": "Christmas Day (Kerstmis)"}
+        ],
+        "floating_dates": [
+          {"formula": "Easter Sunday + 1", "name": "Easter Monday (Paasmaandag)"},
+          {"formula": "Easter Sunday + 39", "name": "Ascension Day (Hemelvaart) — always a Thursday"},
+          {"formula": "Easter Sunday + 50", "name": "Whit Monday / Pentecost Monday (Pinkstermaandag)"}
+        ],
+        "total": 11,
+        "source": "knowledge_base",
+        "bridge_day_note": "Ascension is a Thursday; many businesses also close the Friday bridge day (bruggingsdag), creating a 4-day weekend. December 26 is not official but common voluntary closure day for artisan bakeries."
+      },
+      "anticipation_effect": "Day BEFORE a public holiday typically shows elevated bread demand in Belgian retail: Good Friday (Easter), December 24 (Christmas Eve), October 31 (before All Saints') are the strongest anticipation days.",
+      "holiday_zero_demand_reconciliation": "EDA shows 50 zero-demand trading days over 10 years (~5/year). With 11 official holidays, some fall on pre-regime Mondays (excluded trading days) — so the expected number of zero-demand TRADING days per year from holidays alone is 8-11. The 2016-2018 counts (3-6/year) being below 8 suggests Aernoudt opens on some official holidays OR some official holidays fall on Sundays/already-excluded days. The 2019 count of 14 and 2020 count of 24 suggest additional non-holiday closures in recent years."
+    },
+    "school_holidays": {
+      "flanders_structure": {
+        "herfstvakantie": {
+          "length": "1 week",
+          "typical_timing": "Last week October / first week November, anchored to Nov 1",
+          "rule": "Monday of the week containing November 1"
+        },
+        "kerstvakantie": {
+          "length": "~2 weeks",
+          "typical_timing": "December 25 to January 6 approximately",
+          "rule": "Monday of the week containing December 25"
+        },
+        "krokusvakantie": {
+          "length": "1 week",
+          "typical_timing": "Late February / early March",
+          "rule": "7th Monday before Easter — FLOATS with Easter"
+        },
+        "paasvakantie": {
+          "length": "2 weeks",
+          "typical_timing": "Late March / April",
+          "rule": "First Monday of April (or Monday after Easter if Easter is in March; 2nd Monday before Easter if Easter is after April 15) — FLOATS with Easter"
+        },
+        "zomervakantie": {
+          "length": "~62 days",
+          "timing": "July 1 to August 31 — FIXED every year",
+          "note": "Largest school holiday window; Ghent's ~50,000 university students also largely absent during July-August, amplifying demand suppression"
+        }
+      },
+      "demand_impact": "Zomervakantie (July-August) creates the largest annual demand trough: school-age parents at home alters shopping schedules, university students absent from Ghent, tourists partially offset by resident vacation departures. Shorter school breaks (Herfst, Paas, Krokus) shift shopping timing within the week.",
+      "source": "knowledge_base + cross_run"
+    },
+    "structural_shocks": {
+      "covid_19": {
+        "first_lockdown_start": "2020-03-18",
+        "first_lockdown_end_phase1_reopening": "2020-05-04",
+        "bakery_status_during_lockdown": "OPEN — essential food retail classification; permitted to remain open throughout all lockdown phases",
+        "demand_impact": "Expected ELEVATED during lockdown: restaurant and cafe closures drove customers to cook all meals at home → more bread consumption; working from home increased weekday morning demand. Belgian supermarket scanner data confirms pantry-stocking behaviour in March 2020.",
+        "zero_demand_reconciliation": "The 24 zero-demand days in 2020 EDA cannot all be explained by bakery lockdown closures. Likely composition: ~11 official public holidays + some voluntary closures on non-holiday days in the March-May window (plausible if Aernoudt chose to close on specific days despite being permitted to open) + possibly 1-2 data export gaps. The is_covid_lockdown_period binary flags the 47-day window without requiring perfect attribution of individual days.",
+        "regime_change_link": "The 2020-06-01 regime change (7/7 opening) coincides exactly with post-lockdown recovery. The decision to open Mondays was almost certainly COVID-driven: home-working customers created Monday demand that previously did not exist (office workers previously bought bread near their workplace on weekdays). This is a COVID-demand-side response, not a pre-planned business change.",
+        "gentse_feesten_2020": "CANCELLED. July 2020 therefore lacks the festival footfall that all other years in the training set have. July 2020 is the only July without Gentse Feesten in the entire training period.",
+        "source": "knowledge_base + cross_run",
+        "confidence": "high"
+      },
+      "system_migration_2014": {
+        "period": "mid-2014 (exact date unknown from available sources)",
+        "description": "Till code change and XML schema migration; resulted in 64 of ~250 expected 2014 trading days having records in the training set",
+        "impact": "Rolling statistics crossing 2014 are unreliable. The 64 training days for 2014 prevent annual lag features from finding a same-week-prior-year value for most of 2015.",
+        "source": "knowledge_base (from protocol.json + EDA findings)"
+      }
+    },
+    "demand_drivers": {
+      "identified_demand_drivers_ranked": [
+        {
+          "driver": "Day of week (DOW) pattern",
+          "type": "calendar",
+          "strength": "very_high",
+          "evidence": "ACF lag-6 dominant at 0.582 (this run EDA); Saturday and Sunday highest DOW (~381/416); Friday lowest (~253); established Flemish Saturday bread-buying ritual"
+        },
+        {
+          "driver": "Long-term structural decline in Belgian bread consumption",
+          "type": "external_shock",
+          "strength": "very_high",
+          "evidence": "National consumption fell ~19% (2010-2018); branch 01 shows -28.7% decline in this run's EDA (prior run reported -36%); confirmed structural decline"
+        },
+        {
+          "driver": "Official public holidays — shop closure",
+          "type": "calendar",
+          "strength": "high",
+          "evidence": "50 zero-demand trading days in EDA; consistent with 11 official holidays per year (minus those on pre-regime Mondays already excluded)"
+        },
+        {
+          "driver": "Annual seasonal pattern (summer trough, winter peak)",
+          "type": "calendar",
+          "strength": "high",
+          "evidence": "YoY overlay in EDA shows consistent seasonal structure; ACF lag-30=0.500 (strong sub-annual seasonality); zomervakantie July-August is structural annual dip"
+        },
+        {
+          "driver": "COVID-19 structural shock (March 2020 onward)",
+          "type": "external_shock",
+          "strength": "high",
+          "evidence": "24 zero-demand days in 2020; 2020-06-01 regime change; COVID lockdown elevated food-retail demand; restaurant/cafe closures redirected customers"
+        },
+        {
+          "driver": "School holidays — Zomervakantie and other breaks",
+          "type": "calendar",
+          "strength": "medium",
+          "evidence": "July-August fixed annual window; ~50,000 Ghent university students absent; amplifies summer demand suppression"
+        },
+        {
+          "driver": "Holiday anticipation effect (day-before elevated demand)",
+          "type": "calendar",
+          "strength": "medium",
+          "evidence": "Well-established Belgian retail pattern; Christmas Eve, Oct 31, Good Friday are strongest anticipation days; not yet captured in feature set"
+        },
+        {
+          "driver": "Competitor closures (demand redirection)",
+          "type": "operational",
+          "strength": "medium",
+          "evidence": "VerlofConcurrent covers 23 Ghent competitors 2017-2020; mechanism plausible; coverage sparse"
+        },
+        {
+          "driver": "Gentse Feesten (10-day July festival, ~2M visitors)",
+          "type": "local_event",
+          "strength": "medium",
+          "evidence": "Impact depends on branch 01 location (OQ-4); 2020 cancelled (COVID)"
+        },
+        {
+          "driver": "Specialty demand periods (Sinterklaas Dec 1-6, Easter week, Christmas period)",
+          "type": "calendar",
+          "strength": "medium",
+          "evidence": "Established Flemish bakery retail calendar; specialty products drive elevated demand in these windows"
+        },
+        {
+          "driver": "Weather — extreme hot days",
+          "type": "environmental",
+          "strength": "low",
+          "evidence": "Belgian climate mild; effect expected secondary to calendar; weather data 2015-2020 only"
+        },
+        {
+          "driver": "Weather — heavy precipitation",
+          "type": "environmental",
+          "strength": "low",
+          "evidence": "Small foot-traffic effect for staple goods; minor compared to calendar effects"
+        }
+      ]
+    },
+    "city_demographics": {
+      "ghent": {
+        "population_approx": 260000,
+        "character": "University city (Ghent University, ~50,000 students); major tourist destination (medieval city centre); strong established resident base with high artisan bakery loyalty",
+        "bread_consumption_culture": "Flemish Belgium has one of the strongest artisan bread-buying cultures in Europe. Saturday morning bread purchase is a deeply embedded household ritual. Sunday is also a strong specialty bread day. Artisan bakeries command significant customer loyalty vs. supermarket bakeries.",
+        "student_population_effect": "~50,000 university students largely absent July 1 - August 31; amplifies summer demand suppression beyond school-holiday effect alone. Returns September 1.",
+        "source": "knowledge_base",
+        "confidence": "high"
+      }
+    }
+  },
+
+  "feature_engineering_recommendations": [
+    {
+      "feature": "year_trend",
+      "type": "continuous",
+      "description": "Numeric year index anchored at training start: (year - 2010) or (date - training_start_date).dt.days / 365.25. Captures the long-term structural demand decline.",
+      "priority": "high",
+      "rationale": "Belgian bread consumption declined ~19% nationally (2010-2018); branch 01 shows -28.7% in this run's EDA. A year_trend feature allows the model to project the declining level without requiring differencing (the series is trend-stationary, not unit-root).",
+      "data_source": "calendar"
+    },
+    {
+      "feature": "is_official_public_holiday",
+      "type": "binary",
+      "description": "1 if the date is one of the 11 Belgian/Flemish public holidays: Jan 1, Easter Mon, May 1, Ascension Thu, Whit Mon, Jul 11, Jul 21, Aug 15, Nov 1, Nov 11, Dec 25. 0 otherwise. Floating holidays (Easter Mon, Ascension, Whit Mon) must be computed from Easter formula (Oudin, Spencer, or calendar library) — NOT hardcoded by year.",
+      "priority": "high",
+      "rationale": "Official holidays create zero-demand days (confirmed by EDA: 50 zero-demand trading days over 10 years). This is the strongest single binary signal for demand = 0. Without this feature, holiday zeros appear as noise.",
+      "data_source": "calendar"
+    },
+    {
+      "feature": "days_until_next_holiday",
+      "type": "continuous",
+      "description": "Calendar days until the next official public holiday. Capped at 30. Value = 0 on holiday days.",
+      "priority": "high",
+      "rationale": "Anticipation effect: customers stock up on bread in 1-3 days before major holidays (especially Christmas Eve, Oct 31, Good Friday). The approach gradient drives a measurable demand increase.",
+      "data_source": "calendar"
+    },
+    {
+      "feature": "days_since_last_holiday",
+      "type": "continuous",
+      "description": "Calendar days since the most recent official public holiday. Capped at 14.",
+      "priority": "medium",
+      "rationale": "Post-holiday demand occasionally shows a mild suppression (customers pre-purchased extra). Smaller effect than anticipation but worth capturing.",
+      "data_source": "calendar"
+    },
+    {
+      "feature": "is_school_holiday_flanders",
+      "type": "binary",
+      "description": "1 if the date falls within any Flanders school holiday period (Herfstvakantie, Kerstvakantie, Krokusvakantie, Paasvakantie, Zomervakantie). 0 during term time. Compute floating holidays from Easter formula; use fixed July 1 - Aug 31 for Zomervakantie. See school_holidays_flanders_rules in content_carried_forward.",
+      "priority": "high",
+      "rationale": "School holidays shift household routines; summer vacation removes ~50,000 Ghent students for 2 months. This is one of the strongest annual-seasonality signals. Fixed-month-day approximations are incorrect for Krokusvakantie and Paasvakantie (they float with Easter).",
+      "data_source": "calendar"
+    },
+    {
+      "feature": "is_zomervakantie",
+      "type": "binary",
+      "description": "1 if date is July 1 through August 31 (inclusive). 0 otherwise. Fixed every year.",
+      "priority": "high",
+      "rationale": "Zomervakantie is the dominant seasonal suppression event: 62 consecutive days combining school closures, student departure from Ghent, resident vacations, and eating habit changes. Separating it from the generic is_school_holiday flag allows the model to estimate a larger coefficient for this period.",
+      "data_source": "calendar"
+    },
+    {
+      "feature": "is_gentse_feesten",
+      "type": "binary",
+      "description": "1 if date is within the year-specific Gentse Feesten window (see gentse_feesten_dates in content_carried_forward). 2020 = 0 (cancelled). Do not use a generic 'mid-July' rule — the festival start date moves by up to 6 days between years.",
+      "priority": "medium",
+      "rationale": "~200,000 daily visitors create elevated foot traffic in central Ghent. If branch 01 is in the festival footprint, morning bread sales increase. Impact is location-dependent.",
+      "data_source": "calendar",
+      "precondition": "Confirm branch 01 location relative to Ghent city centre / festival route (OQ-4). Can be upgraded to high priority if branch 01 is confirmed in central Ghent."
+    },
+    {
+      "feature": "is_sinterklaas_period",
+      "type": "binary",
+      "description": "1 if date is December 1 through December 6. 0 otherwise.",
+      "priority": "medium",
+      "rationale": "Sinterklaas (December 6) drives elevated specialty bread and bakery product demand (speculaas, boterletters). Not a public holiday — foot traffic is normal, specialty product demand increases.",
+      "data_source": "calendar"
+    },
+    {
+      "feature": "is_easter_period",
+      "type": "binary",
+      "description": "1 if date is Good Friday (Easter-2) through Easter Monday (Easter+1) — 4 days. Compute from Easter formula.",
+      "priority": "medium",
+      "rationale": "Easter specialty breads drive elevated demand around Easter weekend. Easter Monday is a public holiday (zero demand) but Good Friday and Easter Saturday typically show higher bread demand.",
+      "data_source": "calendar"
+    },
+    {
+      "feature": "is_covid_lockdown_period",
+      "type": "binary",
+      "description": "1 if date is 2020-03-18 through 2020-05-03 (47 days). 0 otherwise.",
+      "priority": "medium",
+      "rationale": "COVID lockdown is a unique structural event in the training data: bakeries open but demand pattern changed (restaurant closures → home cooking → more bread). 47 days is sufficient for the model to learn a different baseline if flagged. Without this flag, the model treats March-May 2020 as normal variation.",
+      "data_source": "domain_knowledge"
+    },
+    {
+      "feature": "regime_x_monday",
+      "type": "binary",
+      "description": "Interaction: 1 if (date >= 2020-06-01) AND (day_of_week == Monday). 0 otherwise.",
+      "priority": "high",
+      "rationale": "Monday bread-buying is not culturally established in Flemish Belgium (ritual is Saturday/Sunday-focused). Post-regime Monday demand must be learned from scratch from 7 months of data. This interaction is the ONLY signal available — there are no pre-regime Monday trading rows to anchor on. A plain DOW feature cannot represent this correctly.",
+      "data_source": "domain_knowledge"
+    },
+    {
+      "feature": "is_2014_sparse_period",
+      "type": "binary",
+      "description": "1 if year == 2014. 0 otherwise. Flags the POS migration year with only 64 trading days.",
+      "priority": "high",
+      "rationale": "Rolling statistics and lag features that look back to 2014 from 2015+ will encounter sparsity. This binary allows tree-based models and GLMs to learn a different intercept for the sparse period and prevents rolling stats from treating 2014 as a representative year.",
+      "data_source": "domain_knowledge"
+    },
+    {
+      "feature": "competitor_closure_density",
+      "type": "continuous",
+      "description": "n_competitors_closed / 23.0 (proportion of 23 tracked Ghent competitors closed on that date). 0.0 outside the data coverage window (pre-2017-07-01 and post-2020-09-15). Always accompany with competitor_data_available indicator.",
+      "priority": "medium",
+      "rationale": "Demand redirection from simultaneously-closed competitors is a genuine mechanism. Proportion better than binary for dose-response. Most useful for August vacation period.",
+      "data_source": "competitor"
+    },
+    {
+      "feature": "competitor_data_available",
+      "type": "binary",
+      "description": "1 if date is within 2017-07-01 to 2020-09-15 (VerlofConcurrent coverage). 0 otherwise.",
+      "priority": "medium",
+      "rationale": "Without this indicator, the model cannot distinguish 'no closures' from 'no data'. The zero-fill in unavailable periods creates a structural discontinuity that this indicator flags.",
+      "data_source": "competitor"
+    },
+    {
+      "feature": "is_hot_day",
+      "type": "binary",
+      "description": "1 if daily mean Temperature > 25°C. 0 otherwise. Requires weather join (available from 2015).",
+      "priority": "low",
+      "rationale": "Extreme heat suppresses foot traffic and shifts eating toward lighter foods. Binary form avoids overfitting on raw temperature.",
+      "data_source": "weather"
+    }
+  ],
+
+  "open_questions": [
+    {
+      "question": "Does the 2020-06-01 regime change to 7/7 represent a permanent operational change, or was it a temporary COVID-response measure that was later reversed? Was the shop open 7/7 before 2010?",
+      "reason": "If the change is permanent, the regime_x_monday interaction is essential for holdout (2021+) predictions. If the shop reverted to 6/7 after COVID normalised, the feature could harm holdout accuracy.",
+      "priority": "high"
+    },
+    {
+      "question": "Does Aernoudt branch 01 close for an annual summer vacation (typically 1-3 weeks in August)? If yes, are the closure dates consistent year-on-year?",
+      "reason": "If branch 01 has a fixed annual August closure window, those zero-demand days should be encoded as a predictable annual event (`is_planned_summer_closure`), not as demand-side suppression. Treating a voluntary regular closure as demand signal would corrupt summer predictions.",
+      "priority": "high"
+    },
+    {
+      "question": "What products does bread_quantity capture exactly? Is it all items in argcod=1 (278 catalog articles), or a subset? Does it include specialty holiday breads (kerstbrood, paasbollen, speculaas)?",
+      "reason": "If the target includes specialty holiday products, the Sinterklaas, Easter, and Christmas period features have direct causal relevance. If the target is standard daily bread only, these calendar features may have little genuine signal.",
+      "priority": "medium"
+    },
+    {
+      "question": "Is Aernoudt branch 01 located in or near central Ghent (within the Gentse Feesten festival footprint), or is it in a residential neighbourhood removed from festival routes?",
+      "reason": "is_gentse_feesten is currently rated medium priority conditional on branch 01 being near the festival. A residential location away from routes makes the feature low-priority; a central location (near festival stages) makes it high-priority.",
+      "priority": "medium"
+    },
+    {
+      "question": "What explains the 14 zero-demand trading days in 2019 (up from 3-6 in 2016-2018)? Is this an anomaly, a change in operating policy, or the beginning of COVID-related precautions?",
+      "reason": "If the 2019 spike in zero-demand days reflects a change in operating hours or a voluntary closure policy, an `is_planned_closure` feature with 2019+ activation might be warranted. If it is anomalous, no feature change is needed.",
+      "priority": "medium"
+    }
+  ],
+
+  "agent_initiated_findings": [
+    {
+      "finding": "The 24 zero-demand days in 2020 cannot all be attributed to COVID lockdown closures. If Aernoudt remained open as essential food retail (as permitted), the COVID contribution to zero-demand days is indirect (voluntary closures, isolated data gaps). The remaining zero-demand days are official public holidays. Important implication: the is_covid_lockdown_period feature captures the 47-day window of structural demand change, but does NOT directly explain the individual zero-demand days within that window.",
+      "evidence": "Belgian bakeries were officially classified as essential food retail (allowed to operate throughout all lockdown phases). EDA shows 24 zero-demand days in 2020 vs a baseline of ~11 official holidays per year. The excess ~13 days are likely a mix of voluntary closures and data export gaps.",
+      "implication": "Feature engineering: is_covid_lockdown_period and is_official_public_holiday are separate features with different mechanisms. Do not conflate them. Zero-demand days within the lockdown period are not all lockdown-caused."
+    },
+    {
+      "finding": "Krokusvakantie and Paasvakantie float with Easter by up to 3 weeks. Any feature implementation that uses fixed month-day windows (e.g., 'February 15-22 = Krokus') will misclassify approximately 1-2 weeks per year, diluting the school-holiday signal. This is a concrete implementation risk given that developers often approximate school holiday windows with fixed dates.",
+      "evidence": "Krokusvakantie rule: 7th Monday before Easter; Easter can fall March 22 to April 25; therefore Krokus can fall anywhere from late January to early March. Paasvakantie rule: first Monday of April (adjusted if Easter falls very early or very late). These are COMPUTED, not LOOKED UP.",
+      "implication": "Feature engineering must implement the Easter-anchored school holiday rules as computed formulas. Using a fixed table from memory or a generic 'winter break' window will be incorrect for multiple years in the training data."
+    },
+    {
+      "finding": "Gentse Feesten 2020 was cancelled. This makes July 2020 structurally different from all other Julys in the training set in TWO simultaneous ways: (1) no festival, (2) ongoing COVID behavioral changes and the first weeks of the post-regime period. The model will see July 2020 as an anomalous month that combines reduced foot traffic (no festival), continued COVID effects, and new Monday-trading patterns.",
+      "evidence": "Festival cancellation confirmed. 2020-06-01 regime change is in scope. July 2020 is the only July in the dataset without Gentse Feesten.",
+      "implication": "Feature engineering: is_gentse_feesten must explicitly set 2020 = 0. The interaction of is_covid_lockdown=0 (lockdown ended May 4) + no festival + new Monday regime makes July 2020 a unique month. Diagnosis should check whether the model's July 2020 predictions are systematically biased."
+    }
+  ],
+
+  "handoff": {
+    "written_by": "domain_research",
+    "iteration": 2,
+    "context_clearable": true,
+    "read_this_first": "Floating public holidays (Easter Monday, Ascension, Whit Monday) and floating school holidays (Krokusvakantie, Paasvakantie) move by up to 5 weeks between years — they MUST be computed from Easter formula, not hardcoded by month-day; any feature that uses a fixed window for these will be wrong roughly half the years in the training data.",
+
+    "parameters": {
+      "n_official_public_holidays_flanders": {
+        "value": 11,
+        "why": "10 federal + 1 Flemish Community (July 11); is_official_public_holiday must cover all 11",
+        "must_not_change": false
+      },
+      "covid_lockdown_start": {
+        "value": "2020-03-18",
+        "why": "Belgian first lockdown start; structural demand break point",
+        "must_not_change": true
+      },
+      "covid_lockdown_phase1_reopening": {
+        "value": "2020-05-04",
+        "why": "Phase 1 reopening date; use 2020-05-03 as last lockdown day (feature = 0 from May 4)",
+        "must_not_change": true
+      },
+      "zomervakantie_start_mmdd": {
+        "value": "07-01",
+        "why": "Fixed start of Flanders school summer holiday; same every year",
+        "must_not_change": true
+      },
+      "zomervakantie_end_mmdd": {
+        "value": "08-31",
+        "why": "Fixed end of Flanders school summer holiday; same every year",
+        "must_not_change": true
+      },
+      "regime_change_date": {
+        "value": "2020-06-01",
+        "why": "Carried forward from EDA; shop went 7/7; must_not_change inherited from EDA handoff",
+        "must_not_change": true
+      }
+    },
+
+    "durable_rules": [
+      {
+        "rule": "Floating holidays (Easter Monday, Ascension, Whit Monday) and floating school holidays (Krokusvakantie, Paasvakantie) must be computed from Easter formula, not approximated with fixed month-day windows",
+        "why": "Easter moves by up to 5 weeks between years; a fixed-date approximation will be wrong by 1-3 weeks in roughly half the training years; this dilutes holiday and school-break signal",
+        "applies_to": ["feature_engineering"],
+        "cost_if_broken": "is_official_public_holiday and is_school_holiday_flanders will be incorrect for a substantial fraction of training rows; holiday signal is diluted; model may learn spurious DOW or week-of-year patterns to compensate"
+      },
+      {
+        "rule": "Gentse Feesten 2020 must be explicitly set to 0 (cancelled) — do not infer from a generic 'mid-July' date rule",
+        "why": "The festival was officially cancelled due to COVID-19. A generic July-date rule would encode is_gentse_feesten=1 for July 17-26, 2020, claiming elevated foot traffic that did not occur",
+        "applies_to": ["feature_engineering"],
+        "cost_if_broken": "Model learns a spurious negative association between is_gentse_feesten and demand (2020 July shows COVID-depressed/no-festival demand but feature = 1), corrupting the coefficient for all other years"
+      },
+      {
+        "rule": "regime_x_monday is an independent feature and cannot be replaced by or derived from day_of_week alone",
+        "why": "All Monday training rows are post-2020-06-01. A plain DOW=Monday feature has no pre-regime Monday to learn from. Without the regime interaction, the model cannot distinguish regime-Monday from pre-regime Monday (which is a zero-demand closure, not a trading day)",
+        "applies_to": ["feature_engineering", "training"],
+        "cost_if_broken": "Monday predictions in holdout anchor to wrong baseline; systematic Monday mis-prediction post-regime"
+      },
+      {
+        "rule": "year_trend (continuous, anchored at training start) is required; do NOT difference the target series as a substitute",
+        "why": "The target is trend-stationary (ADF p=0.0005 from EDA); the -28.7% decline is structural; differencing removes the most predictable trend component and prevents the model from extrapolating the decline into the forecast window",
+        "applies_to": ["feature_engineering", "training"],
+        "cost_if_broken": "Model predicts at a fixed historical mean regardless of year; over-predicts by ~28.7% for late-series forecasts; longer horizons compounded"
+      }
+    ],
+
+    "methodological_cautions": [
+      {
+        "caution": "COVID lockdown period (2020-03-18 to 2020-05-03) likely saw ELEVATED demand at open bakeries (restaurant closures → all meals at home), not suppressed demand. Any rolling mean that includes this 47-day window will be biased HIGH.",
+        "why": "Belgian government classified bakeries as essential food retail; they were permitted to stay open. Restaurant/cafe closures redirected meal preparation to home. Rolling means computed over windows straddling March 18 or May 4 will mix normal demand with lockdown-elevated demand.",
+        "cost_if_ignored": "Rolling mean features computed over March-May 2020 windows will be inflated; model may interpret post-lockdown normalisation as a demand drop requiring explanation"
+      },
+      {
+        "caution": "Competitor closure data creates a holiday confound: the days with most competitors closed (public holidays) are also the days Aernoudt may be closed (zero demand). A naive correlation between competitor_closure_density and bread_quantity will be downward-biased.",
+        "why": "On public holidays, n_competitors_closed is high (most bakeries closed) AND Aernoudt demand may be zero. The positive redirection effect is masked by the zero-demand-on-holidays effect.",
+        "cost_if_ignored": "competitor_closure_density shows negative or near-zero importance in feature selection; the actual August summer vacation redirection signal (when Aernoudt is open) is buried under the holiday confound; feature may be incorrectly dropped"
+      },
+      {
+        "caution": "Zero-demand days (50 total) are NOT all public holidays. Some are voluntary closures (especially in 2019 with 14 zero-demand days). A feature that assumes all zeros are holidays will be incorrect for the voluntary-closure zero-demand days.",
+        "why": "EDA shows 2019 had 14 zero-demand trading days — the expected maximum from official holidays is ~11; the excess 3 days in 2019 are non-holiday closures. Similarly, 2020 excess beyond ~11 official holidays is estimated at 5-13 days.",
+        "cost_if_ignored": "Treating voluntary-closure zero-demand days as holiday days will cause the model to 'learn' the wrong anticipation-day demand pattern for those dates"
+      }
+    ],
+
+    "do_not_repeat": [
+      {
+        "tried": "Using VerlofConcurrent_2.csv as an additional competitor source",
+        "outcome": "rejected",
+        "evidence": "VC2 is an exact structural duplicate of VC1: same 2357 rows, same 5 original columns, plus one additional StoreKey identifier column. Confirmed in iteration_001_eda.json do_not_repeat entry.",
+        "why_not_again": "Zero unique signal; only adds identifier overhead",
+        "evidence_basis": "validation_only",
+        "reopen_if": "VC2 confirmed to contain different competitor schedules in a future data refresh"
+      }
+    ],
+
+    "content_carried_forward": {
+      "public_holidays_fixed": [
+        "January 1 — New Year's Day (Nieuwjaar)",
+        "May 1 — Labour Day (Dag van de Arbeid)",
+        "July 11 — Day of Flemish Community (Flanders only — NOT federal)",
+        "July 21 — Belgian National Day (Nationale Feestdag)",
+        "August 15 — Assumption of Mary (OLV Hemelvaart)",
+        "November 1 — All Saints' Day (Allerheiligen)",
+        "November 11 — Armistice Day (Wapenstilstand)",
+        "December 25 — Christmas Day (Kerstmis)"
+      ],
+      "public_holidays_floating_formulas": [
+        "Easter Monday = Easter Sunday + 1 day",
+        "Ascension Day = Easter Sunday + 39 days (always a Thursday)",
+        "Whit Monday = Easter Sunday + 50 days (always a Monday)"
+      ],
+      "school_holidays_flanders_rules": {
+        "herfstvakantie": "1 week: Monday of the week containing November 1",
+        "kerstvakantie": "~2 weeks: Monday of the week containing December 25 through approximately January 6",
+        "krokusvakantie": "1 week: 7th Monday before Easter — FLOATS WITH EASTER",
+        "paasvakantie": "2 weeks: first Monday of April (adjusted if Easter in March; adjusted if Easter after April 15) — FLOATS WITH EASTER",
+        "zomervakantie": "July 1 through August 31 — FIXED every year"
+      },
+      "gentse_feesten_dates": {
+        "2010": {"start": "2010-07-09", "end": "2010-07-18"},
+        "2011": {"start": "2011-07-15", "end": "2011-07-24"},
+        "2012": {"start": "2012-07-13", "end": "2012-07-22"},
+        "2013": {"start": "2013-07-12", "end": "2013-07-21"},
+        "2014": {"start": "2014-07-11", "end": "2014-07-20"},
+        "2015": {"start": "2015-07-17", "end": "2015-07-26"},
+        "2016": {"start": "2016-07-15", "end": "2016-07-24"},
+        "2017": {"start": "2017-07-14", "end": "2017-07-23"},
+        "2018": {"start": "2018-07-13", "end": "2018-07-22"},
+        "2019": {"start": "2019-07-12", "end": "2019-07-21"},
+        "2020": {"start": null, "end": null, "cancelled": true}
+      },
+      "covid_timeline": {
+        "lockdown_start": "2020-03-18",
+        "lockdown_end_phase1_reopening": "2020-05-04",
+        "lockdown_feature_window": "2020-03-18 to 2020-05-03 (inclusive)",
+        "bakery_status_during_lockdown": "OPEN — essential food retail; permitted throughout all phases",
+        "expected_demand_during_lockdown": "ELEVATED (restaurant closures drove customers to home cooking)",
+        "regime_change_date": "2020-06-01",
+        "gentse_feesten_2020_status": "CANCELLED"
+      },
+      "feature_recommendations_full_list": [
+        {"feature": "year_trend", "priority": "high", "type": "continuous"},
+        {"feature": "is_official_public_holiday", "priority": "high", "type": "binary"},
+        {"feature": "days_until_next_holiday", "priority": "high", "type": "continuous"},
+        {"feature": "days_since_last_holiday", "priority": "medium", "type": "continuous"},
+        {"feature": "is_school_holiday_flanders", "priority": "high", "type": "binary"},
+        {"feature": "is_zomervakantie", "priority": "high", "type": "binary"},
+        {"feature": "is_gentse_feesten", "priority": "medium", "type": "binary", "precondition": "confirm branch 01 location near festival"},
+        {"feature": "is_sinterklaas_period", "priority": "medium", "type": "binary"},
+        {"feature": "is_easter_period", "priority": "medium", "type": "binary"},
+        {"feature": "is_covid_lockdown_period", "priority": "medium", "type": "binary"},
+        {"feature": "regime_x_monday", "priority": "high", "type": "binary"},
+        {"feature": "is_2014_sparse_period", "priority": "high", "type": "binary"},
+        {"feature": "competitor_closure_density", "priority": "medium", "type": "continuous"},
+        {"feature": "competitor_data_available", "priority": "medium", "type": "binary"},
+        {"feature": "is_hot_day", "priority": "low", "type": "binary"}
+      ],
+      "open_questions_for_stakeholder": [
+        "OQ-1 (high): Is the 2020-06-01 regime change to 7/7 permanent? Was shop 7/7 before 2010?",
+        "OQ-2 (high): Does branch 01 close annually in August for summer vacation? Fixed window or variable?",
+        "OQ-3 (medium): What does bread_quantity capture — all argcod=1 (278 catalog articles) or a subset? Specialty holiday breads included?",
+        "OQ-4 (medium): Is branch 01 in/near central Ghent (Gentse Feesten festival route)?",
+        "OQ-5 (medium): What explains 14 zero-demand trading days in 2019 (up from 3-6 in 2016-2018)?"
+      ],
+      "data_quality_note": "Bread articles catalog count from EDA: 278 (argcod=1 in productdata.csv) vs 139 unique articles SOLD in branch 01 per prior runs. This discrepancy should be verified in Preprocess before using a count-based check on data loading."
+    }
+  }
+}

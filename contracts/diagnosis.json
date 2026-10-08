@@ -1,0 +1,288 @@
+{
+  "note": "Replaces the old readmission-risk example, which predated the current naming/storage conventions (it used paths like 'models/model_iter3.pkl') and had no stop/continue verdict at all — that lived in a separate 'evaluate' contract which was never built as a skill and has since been deleted — Diagnosis owns the stop/continue read directly. This example is grounded in the actual run run_20260821T130000Z: iteration_014_training is genuinely this run's best model so far (val MAE 21.09, good_fit), and this is the Diagnosis call that would follow it.",
+  "input": {
+    "training_output": {
+      "iteration": 14,
+      "mode": "incremental",
+      "model_class": "LGBMRegressor",
+      "deployment_scenario": "live_forecast",
+      "feature_subset_type": "pre_period_only",
+      "training_summary": {
+        "n_train_rows": 1762,
+        "n_val_rows": 331,
+        "n_features": 17
+      },
+      "metrics": {
+        "primary_metric": "MAE",
+        "train": {
+          "MAE": {
+            "value": 20.49
+          },
+          "MASE": {
+            "mase_value": 0.61
+          }
+        },
+        "validation": {
+          "MAE": {
+            "value": 21.09
+          },
+          "MASE": {
+            "mase_value": 0.672
+          }
+        },
+        "metric_assessment": "MAE of 21.09 bread units on validation represents 7.2% of the validation set mean demand (~293 units)."
+      },
+      "overfitting_check": {
+        "ratio": 1.029,
+        "assessment": "good_fit",
+        "note": "17 features on 1762 training rows (103.6x ratio) — no overfitting signal."
+      },
+      "baseline_model": {
+        "baseline_type": "Ridge(days_since_start, bread_quantity_lag_7)",
+        "val_MAE": 27.6,
+        "vs_primary_model": "primary_better"
+      },
+      "feature_importance": [
+        {
+          "feature": "days_since_start",
+          "importance": 0.2605,
+          "rank": 1,
+          "near_zero_flag": false
+        },
+        {
+          "feature": "bread_quantity_lag_14",
+          "importance": 0.16,
+          "rank": 2,
+          "near_zero_flag": false
+        },
+        {
+          "feature": "bread_quantity_lag_7",
+          "importance": 0.11,
+          "rank": 3,
+          "near_zero_flag": false
+        }
+      ],
+      "residuals_summary": {
+        "mean_residual": -2.08,
+        "std_residual": 28.07,
+        "residual_acf": {
+          "lag_1": {
+            "spearman": 0.098,
+            "flag": false
+          },
+          "lag_7": {
+            "spearman": -0.085,
+            "flag": false
+          },
+          "assessment": "Both within |r|<=0.2 — no uncaptured temporal structure at these lags."
+        }
+      },
+      "vs_prior_iteration": {
+        "prior_iteration": 12,
+        "prior_val_mae": 21.48,
+        "new_val_mae": 21.09,
+        "val_mae_delta": -0.39,
+        "prior_overfit_ratio": 1.125,
+        "new_overfit_ratio": 1.029,
+        "note": "Val MAE 21.48 -> 21.09 (-1.8% relative), overfit ratio improved from mild_overfit to good_fit — from combined lag_14 feature + first hyperparameter tuning pass this run."
+      },
+      "clarification_needed": [
+        {
+          "topic": "weather_forecast_feed",
+          "description": "deployment_scenario is confirmed live_forecast and 10 concurrent weather/operational features were removed accordingly. Whether a weather *forecast* feed (as opposed to observed weather) will be available at inference time is still unconfirmed — if not, no weather signal at all is usable for live forecasting.",
+          "blocking": false,
+          "confidence": "high"
+        }
+      ]
+    },
+    "goal": "forecast daily bread demand (bread_quantity units sold per day) for Aernoudt Bakery branch 01, no explicit numeric target given",
+    "context": [
+      {
+        "type": "previous_step",
+        "source_node": "training",
+        "source_iteration": 14,
+        "content": {
+          "reasoning": "RandomizedSearchCV (TimeSeriesSplit, 40 candidates) found max_depth=3, learning_rate=0.03, num_leaves=63 — first tuning pass this run, previously all iterations used untouched defaults.",
+          "metric_assessment": "MAE of 21.09 bread units on validation represents 7.2% of validation mean demand."
+        }
+      }
+    ],
+    "features_used_so_far": [
+      "days_since_start",
+      "bread_quantity_lag_1",
+      "bread_quantity_lag_7",
+      "bread_quantity_lag_14",
+      "bread_quantity_rolling_7d_mean",
+      "is_day_before_public_holiday",
+      "dow_Monday",
+      "..."
+    ],
+    "prior_hypotheses_tried": [
+      {
+        "iteration": 11,
+        "statement": "adding is_covid_lockdown would capture the 2020 demand disruption",
+        "suggested_action": {
+          "node": "feature_engineering",
+          "action": "add is_covid_lockdown flag"
+        },
+        "outcome": "rejected — confirmed dead in iteration_013, near-zero importance, dropped"
+      },
+      {
+        "iteration": 8,
+        "statement": "a 14-day lag would capture bi-weekly demand patterns lag_7 alone misses",
+        "suggested_action": {
+          "node": "feature_engineering",
+          "action": "add bread_quantity_lag_14"
+        },
+        "outcome": "confirmed — Spearman 0.657 vs target, now rank-2 feature, contributed to iteration_014's improvement"
+      }
+    ],
+    "run_history_summary": [
+      {
+        "iteration": 6,
+        "node": "training",
+        "summary": "first model, defaults, val MAE 26.37"
+      },
+      {
+        "iteration": 9,
+        "node": "training",
+        "summary": "val MAE 21.24, big drop after preprocess fix"
+      },
+      {
+        "iteration": 10,
+        "node": "training",
+        "summary": "val MAE 21.57, slight regression"
+      },
+      {
+        "iteration": 12,
+        "node": "training",
+        "summary": "val MAE 21.48, mild_overfit"
+      },
+      {
+        "iteration": 14,
+        "node": "training",
+        "summary": "val MAE 21.09, good_fit, best so far"
+      }
+    ],
+    "cross_run_history_index": null
+  },
+  "output": {
+    "schema_version": "2026-08-21",
+    "stop_recommendation": {
+      "recommendation": "continue",
+      "reasoning": "No explicit numeric target was given for this goal, so the read comes from trend and residual evidence rather than a fixed threshold. Val MAE has improved across the run (26.37 -> 21.24 -> 21.48 -> 21.09) and this iteration is confirmed best-so-far with a good_fit overfitting ratio — but the iteration_012 -> iteration_014 improvement was only -1.8% relative, a diminishing-returns signal, and one concrete untried hypothesis still exists (step below). Residual ACF is clean at lag_1/lag_7, so there's no leftover temporal structure pointing to a different problem. Recommend one more targeted iteration before considering this done.",
+      "confidence": "medium",
+      "binding_constraint": null,
+      "binding_constraint_note": "not required while the recommendation is 'continue'. A 'stop' recommendation must name the mechanism holding the model back - an unexplained structural break, a segment too small to learn from, signal absent from every source, irreducible noise at this granularity - and 'the metric plateaued' is not one.",
+      "checks": {
+        "explicit_target": "not given — judged on trend instead",
+        "diminishing_returns": "borderline — -1.8% relative improvement iteration_012 to iteration_014, but a specific untried hypothesis remains (see below), so not yet a reason to stop",
+        "residual_or_segment_flags": "none — both ACF lags within |r|<=0.2",
+        "baseline_comparison": "primary model beats baseline by a wide margin (21.09 vs 27.6 val MAE) — not a concern",
+        "baseline_floor": "reads training_output.vs_baseline_floor: model beats the seasonal-naive floor pooled and on 2 of 3 segments, losing on Sunday by 4.5 MAE — a segment loss blocks a stop on its own, and it is where the next hypothesis should point",
+        "ts_approach_coverage": "only ml_as_regression has been fitted; the classical (ARIMA-family) slot is still open, which blocks a stop independently of the metric trend",
+        "unresolved_clarifications": "weather_forecast_feed question from training iteration 14 remains open and materially affects whether the current pre_period_only feature set is even the right one long-term — carried forward below"
+      }
+    },
+    "diagnosis": {
+      "primary_issue": "A pure trend feature (days_since_start) carries more importance (0.26) than any lag or calendar feature, including the newly-added lag_14 (0.16) — the model may be leaning on a raw time index to compensate for demand structure the current feature set doesn't fully represent, rather than that structure being genuinely absent.",
+      "evidence": [
+        "days_since_start ranks 1st in feature importance (0.2605) despite being the least domain-specific feature available — a raw day counter, not a demand-informed signal",
+        "bread_quantity_lag_14 (added this iteration specifically to capture bi-weekly patterns) ranks 2nd (0.16), meaningfully behind the trend feature",
+        "no monthly-scale (~28 day) lag or rolling feature exists yet in feature_subset_used — the largest window is rolling_7d_mean",
+        "residual ACF is clean at lag_1 and lag_7, meaning weekly structure is well captured — the outsized trend-feature importance is more consistent with missing monthly/seasonal structure than missing weekly structure"
+      ],
+      "root_cause": "The engineered feature set has strong weekly-scale coverage (lag_1, lag_7, lag_14, rolling_7d_mean, day-of-week dummies) but no monthly-scale signal, so the model falls back on the raw trend feature to absorb whatever slower-moving pattern exists in demand — a coarser proxy than a purpose-built monthly-scale feature would be."
+    },
+    "hypothesis": {
+      "statement": "Adding a bread_quantity_lag_28 and/or a rolling_28d_mean feature should reduce reliance on days_since_start and modestly improve validation MAE, since it would give the model a monthly-scale demand signal instead of forcing the raw trend feature to stand in for it.",
+      "suggested_action": {
+        "node": "feature_engineering",
+        "action": "add bread_quantity_lag_28 (and/or rolling_28d_mean) alongside the existing lag_7/lag_14/rolling_7d_mean features",
+        "reasoning": "Directly targets the root cause — a monthly-scale gap in an otherwise well-covered weekly-scale feature set — with the same low-risk pattern that worked for lag_14 in iteration_008 (Spearman check first, then include only if it clears the same relevance bar Feature Engineering already applies)."
+      },
+      "confidence": "medium",
+      "alternative_if_wrong": "If lag_28/rolling_28d doesn't reduce days_since_start's importance or improve val MAE, the trend-feature reliance is more likely genuine (a real slow drift in demand, e.g. gradual customer-base growth) rather than a missing-feature artifact — in that case, consider a smoother trend decomposition (e.g. an STL trend component per references/model_selection_timeseries.md) to replace the raw day-index feature instead of adding more lags."
+    },
+    "clarification_needed": [
+      {
+        "topic": "weather_forecast_feed",
+        "description": "Carried forward from training iteration 14, still unresolved: will a weather *forecast* feed be available at live-forecast inference time, or only observed (post-hoc) weather? This determines whether any weather feature can ever be used for live_forecast, independent of the lag_28 hypothesis above.",
+        "blocking": false,
+        "confidence": "high"
+      }
+    ],
+    "agent_initiated_findings": [],
+    "issues": [],
+    "artifact_paths": {
+      "plots": [
+        {
+          "path": "artifacts/diagnosis/iteration_015_diagnosis_metric_trend_across_iterations.png",
+          "data_path": "artifacts/diagnosis/iteration_015_diagnosis_metric_trend_across_iterations.csv",
+          "reason": "validation MAE across all 5 training iterations this run (26.37 → 21.24 → 21.57 → 21.48 → 21.09) — makes the diminishing-returns read in stop_recommendation visible at a glance, a view no single Training call can produce on its own"
+        }
+      ]
+    },
+    "coverage_check": {
+      "_note": "Required whenever stop_recommendation is 'stop'. Records the evidence for each condition in the skill's Coverage (breadth) row, so the gate is auditable rather than asserted. tools/stop_check.py evaluates the same conditions mechanically from state/ and history/ and the Planner runs it before end_model - this block is what a reader checks it against.",
+      "node_visits": {
+        "eda": 2,
+        "preprocess": 2,
+        "feature_engineering": 3,
+        "training": 5,
+        "diagnosis": 4
+      },
+      "model_families": [
+        "seasonal_naive",
+        "Ridge",
+        "LightGBM",
+        "SARIMA"
+      ],
+      "hypotheses_proposed_untested": [],
+      "external_reference_run": true,
+      "hyperparameter_search_run": true,
+      "feature_engineering_revisions": 3,
+      "ts_approaches_tried": [
+        "ml_as_regression",
+        "classical_statistical"
+      ],
+      "blocks_stop": [],
+      "verdict": "no condition blocks a stop. Any non-empty blocks_stop makes stop_recommendation 'continue' regardless of how finished the metrics look, and the blocking item becomes one of this call's ranked hypotheses."
+    },
+    "_field_name_note": "stop_recommendation is the contract name. run_20260904T140437Z wrote stop_continue_verdict instead; tools/stop_check.py reads both and flags the drift, but the contract name is authoritative. A gate that reads one name silently passes when a node writes the other.",
+    "hypotheses_retired": {
+      "_note": "Required whenever stop_recommendation is 'stop'. One entry per hypothesis any Diagnosis call in this run ranked, INCLUDING earlier calls' lower-ranked ones. Every entry must be retired by one of three routes. An estimate of expected gain is not a route: predicting the result is what running the test replaces.",
+      "retired_by_values": [
+        "tested",
+        "answered_by_existing_measurement",
+        "infeasible"
+      ],
+      "example": [
+        {
+          "statement": "ratio targets would reduce level-shift bias",
+          "ranked_at_iteration": 7,
+          "rank": 2,
+          "retired_by": "tested",
+          "outcome": "confirmed - holdout MAE 57.59 -> 44.10",
+          "evidence": "history/iteration_009_training.json"
+        },
+        {
+          "statement": "a Monday-specific intercept would reduce post-regime Monday error",
+          "ranked_at_iteration": 7,
+          "rank": 3,
+          "retired_by": "answered_by_existing_measurement",
+          "outcome": "residual_by_segment in iteration_007 already shows post-regime Monday bias within the noise band",
+          "evidence": "artifacts/diagnosis/iteration_007_diag_residual_by_segment.png"
+        },
+        {
+          "statement": "competitor promotion intensity explains the residual spikes",
+          "ranked_at_iteration": 4,
+          "rank": 3,
+          "retired_by": "infeasible",
+          "outcome": "the Actie/Highsales columns are entirely empty in the source export",
+          "evidence": "iteration_001 eda column profile"
+        }
+      ]
+    }
+  }
+}

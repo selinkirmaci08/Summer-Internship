@@ -1,0 +1,544 @@
+{
+  "note": "Concrete example based on the bread-demand forecasting dataset. Illustrates time-series guardrails: chronological split only (no random CV), MASE with lag-7 naive baseline, residual ACF diagnostic, concurrent-feature audit, and the overfitting assessment scale.",
+  "input": {
+    "dataset_path": "runs/run_20260819T090000Z/data/iteration_005_feature_engineering.csv",
+    "target_column": "bread_quantity",
+    "task_type": "time_series_regression",
+    "feature_subset": [
+      "dow_Friday",
+      "dow_Monday",
+      "dow_Saturday",
+      "dow_Sunday",
+      "dow_Thursday",
+      "dow_Tuesday",
+      "dow_Wednesday",
+      "schema_order",
+      "schema_sale",
+      "store_open_7_7",
+      "weather_avg_temp",
+      "weather_avg_cloud_cover",
+      "weather_avg_humidity",
+      "weather_had_rain",
+      "weather_precipitation_total_log1p",
+      "weather_avg_temp_available",
+      "competitor_on_leave_count",
+      "competitor_available",
+      "avg_order_value_log1p",
+      "num_orders_with_reduction_log1p",
+      "num_orders",
+      "total_revenue",
+      "distinct_waitresses",
+      "pct_ticket_printed",
+      "num_distinct_payment_modes",
+      "top_payment_mode_count",
+      "bread_quantity_lag_1",
+      "bread_quantity_lag_7",
+      "bread_quantity_rolling_7d_mean",
+      "bread_quantity_rolling_28d_mean",
+      "time_index",
+      "month_sin",
+      "month_cos",
+      "num_orders_x_dow_monday",
+      "num_orders_lag_1"
+    ],
+    "deployment_scenario": "unspecified",
+    "context": [
+      {
+        "type": "previous_step",
+        "source_node": "feature_engineering",
+        "source_iteration": 5,
+        "content": {
+          "mode": "rebuild",
+          "engineered_dataset_path": "runs/run_20260819T090000Z/data/iteration_005_feature_engineering.csv",
+          "prediction_time_audit": {
+            "concurrent_features": [
+              "num_orders",
+              "total_revenue",
+              "distinct_waitresses",
+              "avg_order_value_log1p",
+              "num_orders_with_reduction_log1p",
+              "pct_ticket_printed",
+              "num_distinct_payment_modes",
+              "top_payment_mode_count"
+            ],
+            "proxy_created": "num_orders_lag_1"
+          }
+        }
+      },
+      {
+        "type": "planner_selected",
+        "source_node": "eda",
+        "source_iteration": 1,
+        "reason": "recommended_strategy and metric choices carry forward to Training",
+        "content": {
+          "recommended_strategy": {
+            "model_family": "gradient_boosted_trees",
+            "feature_selection_posture": "embedded",
+            "narrative": "Mixed feature types (OHE categoricals, sparse weather, lag numerics) favour tree-based models over linear. No scaling needed. Embedded selection via feature importance."
+          },
+          "recommended_metric": {
+            "primary": "MAE",
+            "secondary": [
+              "MASE"
+            ],
+            "mase_seasonal_period": 7,
+            "reasoning": "MAE is interpretable in units of bread loaves. MASE normalises against the lag-7 naive baseline so performance is benchmarked against the simplest seasonal forecast, not just an absolute number."
+          }
+        }
+      }
+    ],
+    "prior_model_path": null,
+    "mode": "initial",
+    "mode_reasoning": "First *learned* model this run. The floor was established at iteration 5 by the mode=baseline call; this is the first fit measured against it.",
+    "forecast_horizons": {
+      "unit": "days",
+      "values": [
+        1
+      ],
+      "source": "goal states day-ahead only"
+    },
+    "ts_approaches_tried": [
+      "ml_as_regression"
+    ],
+    "baseline_floor": {
+      "baseline_type": "seasonal_naive",
+      "seasonal_period": 7,
+      "pooled": {
+        "MAE": 52.3,
+        "RMSE": 71.4,
+        "SMAPE": 19.8
+      }
+    },
+    "protected_features": [
+      {
+        "column": "naive_h1_last_value",
+        "horizon": 1,
+        "max_horizon": 1,
+        "reason": "naive predictor selected for h=1 by baseline-skill Part B",
+        "rule": "last observed value at or before target_date - 1"
+      },
+      {
+        "column": "naive_h7_seasonal_median_w13",
+        "horizon": 7,
+        "max_horizon": 7,
+        "reason": "naive predictor selected for h=7 by baseline-skill Part B",
+        "rule": "median of the last 13 same-weekday observations at or before target_date - 7"
+      }
+    ],
+    "protected_features_note": "carried on every training call once the baseline has run. Each column stays in its own horizon's feature_subset whatever the selection posture says; evidence against one is raised as a blocking clarification, never acted on here. The >0.98 target-correlation leakage screen in step 1 records these as expected rather than as suspected leakage, provided max_horizon matches the horizon being trained.",
+    "iteration": 6
+  },
+  "output": {
+    "schema_version": "2026-08-19",
+    "trained_model_path": "runs/run_20260819T090000Z/artifacts/training/iteration_006_training_model.pkl",
+    "model_family": "gradient_boosted_trees",
+    "model_class": "LGBMRegressor",
+    "ts_approach": "ml_as_regression",
+    "ts_approach_gap": "classical_statistical",
+    "ts_approach_gap_note": "no ARIMA-family fit exists yet on this run; the classical slot is open and blocks a stop until an ARIMA/SARIMA/SARIMAX fit is scored on these same validation rows with MAE as primary",
+    "reasoning": "EDA recommended tree-based models given mixed feature types (OHE categoricals, sparse weather columns with NaN, lag numerics). LightGBM chosen over XGBoost for native NaN handling in remaining weather columns and faster iteration.",
+    "confidence": "high",
+    "feature_subset_used": [
+      "dow_Friday",
+      "dow_Monday",
+      "dow_Saturday",
+      "dow_Sunday",
+      "dow_Thursday",
+      "dow_Tuesday",
+      "dow_Wednesday",
+      "schema_order",
+      "schema_sale",
+      "store_open_7_7",
+      "weather_avg_temp",
+      "weather_avg_cloud_cover",
+      "weather_avg_humidity",
+      "weather_had_rain",
+      "weather_precipitation_total_log1p",
+      "weather_avg_temp_available",
+      "competitor_on_leave_count",
+      "competitor_available",
+      "avg_order_value_log1p",
+      "num_orders_with_reduction_log1p",
+      "num_orders",
+      "total_revenue",
+      "distinct_waitresses",
+      "pct_ticket_printed",
+      "num_distinct_payment_modes",
+      "top_payment_mode_count",
+      "bread_quantity_lag_1",
+      "bread_quantity_lag_7",
+      "bread_quantity_rolling_7d_mean",
+      "bread_quantity_rolling_28d_mean",
+      "time_index",
+      "month_sin",
+      "month_cos",
+      "num_orders_x_dow_monday",
+      "num_orders_lag_1"
+    ],
+    "feature_subset_type": "concurrent_included",
+    "deployment_scenario": "unspecified",
+    "hyperparameters": {
+      "n_estimators": {
+        "value": 500,
+        "reasoning": "default starting point; early stopping will find the effective number"
+      },
+      "max_depth": {
+        "value": 6,
+        "reasoning": "moderate depth prevents memorisation of weekly patterns without underfitting the regime interaction"
+      },
+      "learning_rate": {
+        "value": 0.05,
+        "reasoning": "slow enough to generalise across the 9-year trend"
+      },
+      "num_leaves": {
+        "value": 31,
+        "reasoning": "LightGBM default; revisit if Diagnosis finds underfitting"
+      },
+      "subsample": {
+        "value": 0.8,
+        "reasoning": "row subsampling adds regularisation for a dataset with known distribution shift (train vs val means differ)"
+      },
+      "colsample_bytree": {
+        "value": 0.8,
+        "reasoning": "feature subsampling; consistent with embedded posture — model will prune weak features via importance"
+      },
+      "min_child_samples": {
+        "value": 20,
+        "reasoning": "prevents leaf splits on tiny groups; particularly relevant for sparse Monday rows"
+      },
+      "early_stopping_rounds": {
+        "value": 50,
+        "reasoning": "stops before overfitting using val set as monitor; effective n_estimators recorded after fit"
+      }
+    },
+    "hyperparameter_search": null,
+    "training_summary": {
+      "n_train_rows": 2414,
+      "n_val_rows": 490,
+      "n_features": 35,
+      "rows_to_features_ratio": 69.0,
+      "effective_n_estimators_after_early_stopping": 312,
+      "training_time_seconds": 4.2
+    },
+    "metrics": {
+      "primary_metric": "MAE",
+      "train": {
+        "MAE": {
+          "value": 18.4,
+          "unit": "bread units"
+        },
+        "RMSE": {
+          "value": 27.1,
+          "unit": "bread units"
+        },
+        "R2": {
+          "value": 0.91
+        },
+        "MAPE": {
+          "value": 6.2,
+          "unit": "percent"
+        },
+        "SMAPE": {
+          "value": 6.0,
+          "unit": "percent",
+          "zero_handling": "rows where actual and predicted are both 0 defined as 0 error",
+          "rows_affected": 14
+        },
+        "MASE": {
+          "seasonal_period": 7,
+          "naive_baseline_mae_train": 52.3,
+          "mase_value": 0.352,
+          "interpretation": "train predictions 64.8% better than the lag-7 naive baseline on training data"
+        }
+      },
+      "validation": {
+        "MAE": {
+          "value": 31.7,
+          "unit": "bread units"
+        },
+        "RMSE": {
+          "value": 47.8,
+          "unit": "bread units"
+        },
+        "R2": {
+          "value": 0.74
+        },
+        "MAPE": {
+          "value": 11.9,
+          "unit": "percent"
+        },
+        "SMAPE": {
+          "value": 11.2,
+          "unit": "percent",
+          "zero_handling": "rows where actual and predicted are both 0 defined as 0 error",
+          "rows_affected": 3
+        },
+        "MASE": {
+          "seasonal_period": 7,
+          "naive_baseline_mae_train": 52.3,
+          "mase_value": 0.606,
+          "interpretation": "val predictions 39.4% better than the lag-7 naive baseline — model beats seasonal naive but gap is meaningful"
+        }
+      },
+      "metric_assessment": "MAE of 31.7 bread units on validation represents ~11.9% of the validation set mean demand (~266 units). MASE of 0.606 confirms the model beats the seasonal naive forecast, but the train-to-val MAE gap (18.4 vs 31.7, ratio 1.72) indicates moderate overfitting. Diagnosis should investigate whether feature count, the 8 concurrent features, or the train/val distribution shift (train mean 325.8 vs val mean 283.5) is the primary driver."
+    },
+    "vs_baseline_floor": {
+      "floor_type": "seasonal_naive",
+      "pooled": {
+        "metric": "MAE",
+        "model": 31.7,
+        "floor": 52.3,
+        "margin": -20.6,
+        "beats_floor": true
+      },
+      "per_segment": {
+        "weekday": {
+          "model": 28.9,
+          "floor": 48.1,
+          "beats_floor": true
+        },
+        "saturday": {
+          "model": 58.4,
+          "floor": 61.0,
+          "beats_floor": true
+        },
+        "sunday": {
+          "model": 44.2,
+          "floor": 39.7,
+          "beats_floor": false
+        }
+      },
+      "beats_floor_everywhere": false,
+      "note": "wins pooled and on two of three segments, loses on Sunday by 4.5 MAE - the pooled figure alone would have hidden this, and it blocks a stop until Sunday is addressed or explicitly accepted"
+    },
+    "overfitting_check": {
+      "metric": "MAE",
+      "train_value": 18.4,
+      "val_value": 31.7,
+      "ratio": 1.72,
+      "assessment": "moderate_overfit",
+      "note": "Ratio 1.72 falls in the 1.25-2.0 moderate range. Likely contributors: 8 concurrent same-day features give the model near-perfect retrospective signal on training days; the val set covers the 2019-2020 regime transition period which was underrepresented in training. Diagnosis should test: (1) remove concurrent features to see effect on val MAE, (2) increase min_child_samples."
+    },
+    "feature_importance": [
+      {
+        "feature": "bread_quantity_lag_7",
+        "importance": 0.213,
+        "rank": 1,
+        "near_zero_flag": false
+      },
+      {
+        "feature": "bread_quantity_rolling_7d_mean",
+        "importance": 0.187,
+        "rank": 2,
+        "near_zero_flag": false
+      },
+      {
+        "feature": "num_orders",
+        "importance": 0.142,
+        "rank": 3,
+        "near_zero_flag": false,
+        "note": "concurrent feature — high importance expected but not available at inference in live_forecast scenario"
+      },
+      {
+        "feature": "bread_quantity_lag_1",
+        "importance": 0.098,
+        "rank": 4,
+        "near_zero_flag": false
+      },
+      {
+        "feature": "time_index",
+        "importance": 0.071,
+        "rank": 5,
+        "near_zero_flag": false
+      },
+      {
+        "feature": "total_revenue",
+        "importance": 0.063,
+        "rank": 6,
+        "near_zero_flag": false,
+        "note": "concurrent"
+      },
+      {
+        "feature": "bread_quantity_rolling_28d_mean",
+        "importance": 0.052,
+        "rank": 7,
+        "near_zero_flag": false
+      },
+      {
+        "feature": "dow_Sunday",
+        "importance": 0.041,
+        "rank": 8,
+        "near_zero_flag": false
+      },
+      {
+        "feature": "store_open_7_7",
+        "importance": 0.034,
+        "rank": 9,
+        "near_zero_flag": false
+      },
+      {
+        "feature": "avg_order_value_log1p",
+        "importance": 0.028,
+        "rank": 10,
+        "near_zero_flag": false,
+        "note": "concurrent"
+      },
+      {
+        "feature": "num_orders_lag_1",
+        "importance": 0.021,
+        "rank": 11,
+        "near_zero_flag": false
+      },
+      {
+        "feature": "month_cos",
+        "importance": 0.014,
+        "rank": 12,
+        "near_zero_flag": false
+      },
+      {
+        "feature": "month_sin",
+        "importance": 0.009,
+        "rank": 13,
+        "near_zero_flag": false
+      },
+      {
+        "feature": "schema_sale",
+        "importance": 0.006,
+        "rank": 14,
+        "near_zero_flag": false
+      },
+      {
+        "feature": "weather_avg_temp",
+        "importance": 0.004,
+        "rank": 15,
+        "near_zero_flag": false
+      },
+      {
+        "feature": "num_orders_x_dow_monday",
+        "importance": 0.003,
+        "rank": 16,
+        "near_zero_flag": true,
+        "note": "< 0.5% of total importance — candidate for Diagnosis to drop"
+      },
+      {
+        "feature": "competitor_on_leave_count",
+        "importance": 0.002,
+        "rank": 17,
+        "near_zero_flag": true
+      }
+    ],
+    "residuals_summary": {
+      "val_residuals_path": "runs/run_20260819T090000Z/artifacts/training/iteration_006_training_val_residuals.csv",
+      "mean_residual": 3.2,
+      "std_residual": 39.1,
+      "p5_residual": -54.7,
+      "p95_residual": 62.3,
+      "bias_note": "Small positive mean residual (3.2) — model very slightly under-predicts on average on validation set.",
+      "temporal_bias_by_period": {
+        "2019-H2": {
+          "mean_residual": -8.4,
+          "note": "slightly over-predicts (negative = predicted > actual) in the post-train transition period"
+        },
+        "2020-H1": {
+          "mean_residual": 14.7,
+          "note": "under-predicts in early 2020 — likely regime transition effect (store opened Mondays mid-2020)"
+        },
+        "2020-H2": {
+          "mean_residual": 6.1,
+          "note": "under-predicts in regime-change period; model may not have fully captured Monday demand ramp-up"
+        }
+      },
+      "residual_acf": {
+        "lag_1": {
+          "spearman": 0.18,
+          "flag": false,
+          "note": "below 0.2 threshold — acceptable residual autocorrelation at lag-1"
+        },
+        "lag_7": {
+          "spearman": 0.11,
+          "flag": false,
+          "note": "low seasonal residual autocorrelation — lag-7 feature is absorbing the weekly cycle adequately"
+        },
+        "assessment": "Residual autocorrelation is within acceptable bounds. The temporal bias in early 2020 is the main signal: the model under-predicts during the regime transition. Diagnosis hypothesis: the regime transition captured by store_open_7_7 may need a more granular representation for the specific Monday ramp-up period."
+      }
+    },
+    "clarification_needed": [
+      {
+        "topic": "deployment_scenario",
+        "description": "The deployment scenario is unspecified. The current model was trained and evaluated including 8 concurrent same-day operational features (num_orders, total_revenue, distinct_waitresses, avg_order_value_log1p, num_orders_with_reduction_log1p, pct_ticket_printed, num_distinct_payment_modes, top_payment_mode_count). These features ranked 3rd, 6th, and 10th in feature importance. If this model is intended for live day-ahead forecasting, those features are unavailable at prediction time and the model should be retrained on pre_period features only. Please confirm: retrospective analysis or live day-ahead forecast?",
+        "blocking": false,
+        "confidence": "high"
+      }
+    ],
+    "agent_initiated_findings": [
+      {
+        "related_step": "8",
+        "title": "Train-val distribution shift contributes to moderate overfitting gap",
+        "method": "Comparison of split-level bread_quantity means from Preprocess report",
+        "findings": "Train mean=325.8, val mean=283.5 — a 13% drop. The model was trained on higher-demand years and evaluated on lower-demand years. Some of the train-val MAE gap (18.4 vs 31.7) reflects genuine distributional shift, not purely model overfitting.",
+        "reasoning": "A model trained on a higher mean and evaluated on a lower mean will tend to over-predict, widening the absolute MAE gap even if the model's relative fit is unchanged. The overfitting ratio of 1.72 is therefore an upper bound on true overfitting — the distributional shift is baked in. Diagnosis should account for this when interpreting the metric.",
+        "confidence": "high"
+      }
+    ],
+    "issues": [],
+    "artifact_paths": {
+      "plots": [
+        {
+          "path": "runs/run_20260819T090000Z/artifacts/training/iteration_006_training_feature_importance.png",
+          "data_path": "runs/run_20260819T090000Z/artifacts/training/iteration_006_training_feature_importance.csv",
+          "reason": "ranked feature importance — top driver of model predictions this iteration"
+        },
+        {
+          "path": "runs/run_20260819T090000Z/artifacts/training/iteration_006_training_actual_vs_predicted_val.png",
+          "data_path": "runs/run_20260819T090000Z/artifacts/training/iteration_006_training_actual_vs_predicted_val.csv",
+          "reason": "actual vs predicted on validation set — visual confirmation of fit quality and any systematic bias"
+        },
+        {
+          "path": "runs/run_20260819T090000Z/artifacts/training/iteration_006_training_residuals_over_time.png",
+          "data_path": "runs/run_20260819T090000Z/artifacts/training/iteration_006_training_residuals_over_time.csv",
+          "reason": "residuals in chronological order — reveals temporal bias pattern in the 2020 regime transition period"
+        },
+        {
+          "path": "runs/run_20260819T090000Z/artifacts/training/iteration_006_training_residuals_distribution.png",
+          "data_path": "runs/run_20260819T090000Z/artifacts/training/iteration_006_training_residuals_distribution.csv",
+          "reason": "residual distribution — confirms approximate normality and flags any extreme prediction errors"
+        },
+        {
+          "path": "runs/run_20260819T090000Z/artifacts/training/iteration_006_training_residual_acf.png",
+          "data_path": "runs/run_20260819T090000Z/artifacts/training/iteration_006_training_residual_acf.csv",
+          "reason": "residual autocorrelation function — confirms lag-7 feature absorbed the weekly cycle (low seasonal ACF)"
+        }
+      ]
+    },
+    "feature_subset_provenance": {
+      "_note": "Recorded per horizon so a reader can see which anchor each feature was read at and what the horizon lost. Training does not choose these - it takes horizon_feature_subsets from Feature Engineering and honours evaluated_at.",
+      "1": {
+        "n_features": 5,
+        "evaluated_at_target_date": [
+          "wx_temperature",
+          "dow_Monday"
+        ],
+        "evaluated_at_origin": [
+          "bread_quantity_lag_1",
+          "bread_quantity_lag_7",
+          "month_sin"
+        ],
+        "dropped_not_known_future": []
+      },
+      "90": {
+        "n_features": 3,
+        "evaluated_at_target_date": [
+          "dow_Monday"
+        ],
+        "evaluated_at_origin": [
+          "bread_quantity_lag_7",
+          "month_sin"
+        ],
+        "dropped_not_known_future": [
+          "wx_temperature",
+          "wx_precipitation"
+        ]
+      }
+    }
+  }
+}

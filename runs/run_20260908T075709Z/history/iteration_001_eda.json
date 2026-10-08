@@ -1,0 +1,410 @@
+{
+  "iteration": 1,
+  "node": "eda",
+  "skill_type": "eda",
+  "run_id": "run_20260908T075709Z",
+  "timestamp": "2026-09-08",
+  "report_html": "reports/iteration_001_eda.html",
+  "code_file": "code/iteration_001_eda.py",
+  "cross_run_source": "run_20260904T140437Z/artifacts/eda/iteration_001_eda_daily_data.csv (pre-parsed daily CSV; same 3212 XMLs, same dedup/filter protocol, 2897 trading-day rows — re-parsing skipped)",
+
+  "source_inventory": {
+    "salesdata": {
+      "status": "USED",
+      "loaded_via": "pre-parsed daily CSV from run_20260904T140437Z",
+      "rows": 2897,
+      "columns": 18,
+      "date_range": "2010-11-16 to 2020-12-31",
+      "xml_files_underlying": 3212,
+      "protocol_notes": "dual XML schema (pre-migration: order/orderdetail, post-migration: sale/saledetail); POS filter referencepointofsales=001; argcod=1 for bread; dedup by latest export_timestamp per salesdate (95 duplicate dates)"
+    },
+    "productdata": {
+      "status": "USED",
+      "files_scanned": ["productdata.csv", "AernoudtProductData.csv", "ProductGroupData.csv"],
+      "encoding": "latin-1",
+      "bread_articles_catalog_count": 278,
+      "note": "278 = count of rows with argcod=1 in productdata.csv catalog; prior runs report 139 unique bread articles SOLD in branch 01 — discrepancy not yet reconciled; see methodological_cautions"
+    },
+    "storedata": {
+      "status": "USED",
+      "file": "Winkelfile.csv",
+      "separator": ";",
+      "key_finding": "confirms regime change 2020-06-01 (shop went 7/7; Mondays closed before this date)"
+    },
+    "weatherdata": {
+      "status": "USED",
+      "format": "parquet",
+      "rows": 52608,
+      "columns": 16,
+      "temporal_column": "Date_time",
+      "coverage": "2015-2020 (no weather data for 2010-2014)",
+      "null_cols": {"Location": "100% null", "Heat_Index": "94.9% null", "Wind_Chill": "40.3% null"},
+      "note": "hourly data; daily aggregation required before feature engineering; Location and Heat_Index columns can be dropped"
+    },
+    "competitordata": {
+      "status": "USED (VC1 only)",
+      "files": {
+        "VerlofConcurrent.csv": {"rows": 2357, "columns": 5, "coverage": "2017-2020", "status": "USED"},
+        "VerlofConcurrent_2.csv": {"rows": 2357, "status": "NOT_USED", "reason": "exact duplicate of VC1 with one additional StoreKey column; zero unique signal"}
+      }
+    },
+    "deliverydata": {
+      "status": "NOT_USED",
+      "files": {
+        "Header.csv": {"rows": 33},
+        "Detail.csv": {"rows": 88532},
+        "Header_archive.csv": {"rows": 22566}
+      },
+      "reason": "wholesale delivery channel; no branch 01 retail sales tie-in confirmed; consistent with prior runs"
+    }
+  },
+
+  "target_analysis": {
+    "n_trading_days": 2897,
+    "date_range": {"start": "2010-11-16", "end": "2020-12-31"},
+    "target_stats": {
+      "mean": 315.89,
+      "std": 84.12,
+      "min": 0,
+      "max": 691,
+      "zero_demand_days": 50,
+      "zero_demand_by_year": {"2016": 3, "2017": 3, "2018": 6, "2019": 14, "2020": 24}
+    },
+    "trend": {
+      "slope_per_day": -0.039,
+      "total_decline_pct": -28.7,
+      "adf_pvalue": 0.0005,
+      "interpretation": "trend-stationary (not a random walk); persistent downward trend over 10-year period"
+    },
+    "acf_at_horizons": {
+      "lag_1": 0.325,
+      "lag_6": 0.582,
+      "lag_7": 0.308,
+      "lag_14": 0.087,
+      "lag_30": 0.500,
+      "lag_60": 0.465,
+      "lag_90": 0.418
+    },
+    "dow_breakdown": {
+      "Sunday": {"mean": 416.5, "n": 477},
+      "Monday": {"mean": 241.5, "n": 31, "note": "post-regime only (2020-06-01 onward)"},
+      "Tuesday": {"mean": 337.2, "n": 477},
+      "Wednesday": {"mean": 316.3, "n": 477},
+      "Thursday": {"mean": 305.8, "n": 478},
+      "Friday": {"mean": 252.5, "n": 460},
+      "Saturday": {"mean": 381.0, "n": 497}
+    },
+    "regime_change": {
+      "date": "2020-06-01",
+      "pre_mean": 318.3,
+      "post_mean": 285.0,
+      "level_delta_pct": -10.5,
+      "pre_rows": 2683,
+      "post_rows": 214,
+      "change_type": "structural — day-of-week pattern AND level both change; Mondays added as trading days post-2020-06-01",
+      "caution": "2020 post-regime period also overlaps with COVID-19 lockdown (Belgium lockdown from 2020-03-18); 24 zero-demand days in 2020 likely COVID closures; the -10.5% level drop may be partly COVID, not purely regime effect"
+    },
+    "data_quality_flags": {
+      "2014_sparse": {"trading_days": 64, "expected_approx": 250, "likely_cause": "data export gap or system event; confirmed in protocol.json"}
+    }
+  },
+
+  "feasibility": {
+    "verdict": "FEASIBLE",
+    "recommended_metric": "MAE",
+    "reasoning": "daily bread quantity is count-like positive integer; absolute error aligns with operational planning; MAPE unsafe given 50 zero-demand days; RMSE would penalise rare extreme days disproportionately",
+    "ts_suitability": "strong weekly seasonality (ACF lag-6=0.582 dominant); medium-horizon autocorrelation significant (lag-30=0.500, lag-60=0.465, lag-90=0.418); ADF confirms stationarity — ARIMA-family suitable alongside tree-based; rolling-origin CV required due to regime change",
+    "domain_research_flags": [
+      "Belgian public holidays: expected to explain zero-demand days (50 total); must be verified against calendar",
+      "Gentse Feesten (Ghent festival, ~10 days mid-July): spike or dip possible; annual event in training window",
+      "COVID-19: Belgium lockdown 2020-03-18; explains 24 zero-demand days in 2020; training model must not generalise lockdown pattern as normal",
+      "2014 sparse data: 64 trading days vs ~250 expected; cause unknown; may need to exclude 2014 from rolling-origin folds or flag as anomaly year"
+    ]
+  },
+
+  "provisional_baselines": {
+    "method": "same-DOW seasonal naive with horizon-specific lookback (k = 6 trading-days before regime change, 7 after)",
+    "mae_by_horizon": {
+      "h1": 38.01,
+      "h7": 40.73,
+      "h14": 42.67,
+      "h30": 44.14,
+      "h60": 45.14,
+      "h90": 47.54
+    },
+    "note": "PROVISIONAL ONLY — these are rough upper-bound baselines computed on full training series; authoritative baseline_floor comes from the baseline skill which scores all 6 fixed rules on the held-out validation rows"
+  },
+
+  "join_plan": {
+    "primary_key": "date (calendar date, daily grain)",
+    "sales_grain": "one row per trading day per branch; non-trading days absent from series",
+    "weather_join": "aggregate hourly Date_time rows to calendar date (daily aggregates: mean temp, max temp, min temp, total precipitation, etc.); left join on date; NaN for pre-2015 dates (feature engineering handles with imputation or lag truncation)",
+    "competitor_join": "left join VerlofConcurrent.csv on date; 0/null for pre-2017 dates",
+    "target_by_horizon": "DATE JOIN only — for horizon h, target = bread_quantity on (row.date + h); never positional shift; guarantees correct alignment across trading-day calendar"
+  },
+
+  "artifacts": {
+    "plots": [
+      "artifacts/eda/iteration_001_eda_target_and_acf.png",
+      "artifacts/eda/iteration_001_eda_dow_seasonality.png",
+      "artifacts/eda/iteration_001_eda_annual_trend.png",
+      "artifacts/eda/iteration_001_eda_target_hist.png",
+      "artifacts/eda/iteration_001_eda_yoy_overlay.png"
+    ],
+    "paired_csvs": [
+      "artifacts/eda/iteration_001_eda_target_and_acf.csv",
+      "artifacts/eda/iteration_001_eda_dow_seasonality.csv",
+      "artifacts/eda/iteration_001_eda_annual_trend.csv",
+      "artifacts/eda/iteration_001_eda_target_hist.csv",
+      "artifacts/eda/iteration_001_eda_yoy_overlay.csv"
+    ]
+  },
+
+  "agent_initiated_findings": [
+    {
+      "finding": "Bread articles catalog count discrepancy: 278 from productdata.csv argcod=1 filter vs 139 unique bread articles reported sold in branch 01 by prior runs. Likely explanation: productdata.csv catalogs all chain articles; 139 = articles with at least one sale in branch 01. Does not affect compiled daily CSV (already branch-01-filtered), but Preprocess should verify and document the exact set of article codes used.",
+      "action_taken": "flagged as methodological caution; noted in do_not_repeat that using catalog count (278) as ground truth would be incorrect"
+    },
+    {
+      "finding": "Weather parquet temporal column is 'Date_time' (not 'date', 'timestamp', or 'Date'). The EDA coverage detection code initially tested the wrong column (Location, 100% null) giving NaT. Corrected by explicitly specifying Date_time. Any downstream code must use 'Date_time' not a generic name.",
+      "action_taken": "added to join_plan and durable_rules"
+    },
+    {
+      "finding": "ACF lag-1 = 0.325 is lower than expected for a daily retail series (prior sonnet run reported ~0.73). The difference is likely due to within-week DOW variance dominating the lag-1 autocorrelation; the 50 zero-demand days may also suppress short-lag correlation. The dominant seasonality is weekly (lag-6=0.582 pre-regime), not daily carry-forward.",
+      "action_taken": "noted; does not change modeling approach"
+    },
+    {
+      "finding": "2020 zero-demand days (24 of 50 total) cluster in the COVID lockdown period (March-May 2020). The post-regime period begins 2020-06-01, so the 2020 post-regime rows (n=214) are relatively COVID-free (shop reopened). However, the 6-month pre-regime period of 2020 contains 24 zero-demand days. Rolling-origin CV folds must be constructed carefully so that COVID zero-demand days in train do not bias short-horizon naive predictor features.",
+      "action_taken": "added to methodological_cautions"
+    }
+  ],
+
+  "handoff": {
+    "written_by": "eda",
+    "iteration": 1,
+    "context_clearable": true,
+    "read_this_first": "Dominant seasonality is weekly (ACF lag-6=0.582 pre-regime, 7-day period post-regime); 50 zero-demand days exist (24 in 2020 COVID lockdown, rest likely public holidays); the 2020 pre-regime period is anomalous — these zero-demand days MUST be treated with domain knowledge from the domain_research step before any naive predictor features are built.",
+
+    "parameters": {
+      "trading_day_rule": {
+        "value": "exclude Monday when date < 2020-06-01; include all 7 days (Mon-Sun) from 2020-06-01 onward",
+        "why": "storedata Winkelfile.csv confirms shop was closed Mondays before regime change; including pre-regime Mondays would add spurious zeros",
+        "must_not_change": true
+      },
+      "dedup_rule": {
+        "value": "keep row with latest export_timestamp per salesdate; 95 duplicate dates exist in raw XML",
+        "why": "re-exports contain corrections; earlier export for same date is superseded",
+        "must_not_change": true
+      },
+      "zero_demand_handling": {
+        "value": "include zero-demand days in the target series; add binary flag is_zero_demand; do NOT drop from the series",
+        "why": "zero-demand days are real (closures/holidays) and affect multi-day ahead forecasts; dropping would create gaps that break date-join target construction",
+        "must_not_change": true
+      },
+      "regime_change_date": {
+        "value": "2020-06-01",
+        "why": "storedata-confirmed structural break; seasonal period changes from 6 to 7 trading days/week; rolling-origin CV must span this boundary",
+        "must_not_change": true
+      },
+      "pre_parsed_csv_path": {
+        "value": "C:/Users/selin/OneDrive/Desktop/All/KU Leuven/internship-project/General Plan/runs/run_20260904T140437Z/artifacts/eda/iteration_001_eda_daily_data.csv",
+        "why": "pre-parsed from 3212 XMLs with identical protocol; 2897 trading-day rows; re-parsing unnecessary",
+        "must_not_change": true
+      },
+      "target_column": {
+        "value": "bread_quantity",
+        "why": "user-specified target; daily sum of units sold for argcod=1 articles at branch 01",
+        "must_not_change": true
+      },
+      "recommended_metric": {
+        "value": "MAE",
+        "why": "MAPE unsafe (50 zero-demand days); MAE aligns with operational planning; consistent with provisional baselines already in MAE units",
+        "must_not_change": false
+      },
+      "forecast_horizons": {
+        "value": [1, 7, 14, 30, 60, 90],
+        "why": "user-specified; one champion model per horizon",
+        "must_not_change": true
+      },
+      "weather_temporal_column": {
+        "value": "Date_time",
+        "why": "parquet uses 'Date_time' not 'date' or 'timestamp'; other column names give NaT on coverage detection",
+        "must_not_change": true
+      }
+    },
+
+    "durable_rules": [
+      {
+        "rule": "Per-horizon targets must be created by DATE JOIN (row.date + h calendar days), never by positional shift",
+        "why": "trading-day calendar has gaps (non-trading days absent); positional shift row[i+h] would align to a different calendar date than expected when gaps fall in the lookahead window",
+        "applies_to": ["preprocess", "feature_engineering", "training"],
+        "cost_if_broken": "model trains on wrong future date's demand; validation metrics will look plausible but reflect misaligned targets — silent corruption"
+      },
+      {
+        "rule": "Seasonal period is 6 trading days per week before 2020-06-01 and 7 trading days per week from 2020-06-01",
+        "why": "Monday closed pre-regime; lag and rolling window features must use k=6 pre-regime and k=7 post-regime for same-DOW lookbacks",
+        "applies_to": ["feature_engineering", "training"],
+        "cost_if_broken": "same-DOW lag features cross DOW boundaries; a 'lag-7' pre-regime picks up a different DOW than intended"
+      },
+      {
+        "rule": "Rolling-origin CV folds must include and straddle the 2020-06-01 regime change boundary",
+        "why": "regime change is structural; CV restricted to pre-regime only would not test generalisation to post-regime period; planner.md requires rolling-origin CV where regime change exists",
+        "applies_to": ["preprocess", "training"],
+        "cost_if_broken": "validation metrics are optimistic for post-regime; champion may not generalise to the forecast window"
+      },
+      {
+        "rule": "Weather aggregation: aggregate hourly 'Date_time' rows to daily grain before feature construction; join on date; impute or truncate pre-2015 weather NaN rather than forward-fill from 2015 boundary",
+        "why": "weather coverage starts 2015; 5 of 10 training years are weather-NaN; imputing across the 2010-2015 gap with 2015 values would inject false signal",
+        "applies_to": ["feature_engineering"],
+        "cost_if_broken": "imputed weather values would be uncorrelated with actual 2010-2014 weather; may appear to reduce MAE if the model over-indexes on a 2015 boundary artifact"
+      },
+      {
+        "rule": "Competitor features: use VerlofConcurrent.csv ONLY (not VerlofConcurrent_2.csv); join on date; pre-2017 rows get 0/null",
+        "why": "VC2 is an exact duplicate of VC1 with one extra identifier column; using both would duplicate the signal and could cause multicollinearity issues",
+        "applies_to": ["feature_engineering"],
+        "cost_if_broken": "duplicate feature inflates feature importance scores; may not measurably hurt MAE but produces misleading diagnostics"
+      },
+      {
+        "rule": "Deliverydata (all three files) must not be used as features",
+        "why": "wholesale delivery channel; no branch 01 retail sales tie-in; confirmed NOT_USED in this run and prior runs",
+        "applies_to": ["feature_engineering", "training"],
+        "cost_if_broken": "delivery quantities are lagged and aggregated differently from retail demand; using them would introduce noise or data leakage (delivery anticipates demand)"
+      }
+    ],
+
+    "methodological_cautions": [
+      {
+        "caution": "Zero-demand days (50 total) are a mixture of public holidays, COVID closures, and possibly system outages — they are NOT randomly distributed and must be treated differently",
+        "why": "2020 has 24 zero-demand days (COVID lockdown March-May 2020); prior years have 3-14 per year (likely Belgian public holidays and sporadic closures); building naive predictor features on same-DOW lookbacks will pick up these zeros as signal if not flagged",
+        "cost_if_ignored": "naive features built on windows containing zero-demand days will under-predict on adjacent days; model may learn a spurious 'post-holiday dip' pattern"
+      },
+      {
+        "caution": "2014 has only 64 trading days (should be ~250); cause unknown but confirmed by protocol.json",
+        "why": "rolling-origin CV folds that include 2014 as a 'full year' will have biased train set sizes; any annual seasonality feature computed on 2014 will be sparse",
+        "cost_if_ignored": "annual seasonality features that look back to 2014 may pick up the sparse year as low-demand period; CV fold boundaries that straddle 2013-2015 will have uneven time coverage"
+      },
+      {
+        "caution": "Post-regime level drop of -10.5% (pre-mean 318.3, post-mean 285.0) is confounded by COVID closures in early 2020",
+        "why": "2020-01-01 to 2020-05-31 has 24 zero-demand days (COVID); if those are excluded, the pre-regime non-zero mean for 2020 would be higher; the regime change also happens at the same time as post-lockdown recovery; the structural break is real but its magnitude is uncertain",
+        "cost_if_ignored": "models that estimate a regime-level shift using raw means will over-estimate the magnitude of the drop; post-regime demand may recover toward pre-regime levels as COVID effect dissipates in 2021 (outside training set)"
+      },
+      {
+        "caution": "Weather temporal column is 'Date_time'; do not assume standard column names",
+        "why": "weather parquet file uses a non-standard column name; using 'date' or 'timestamp' will raise KeyError or silently produce NaT-filled series",
+        "cost_if_ignored": "weather aggregation code fails silently or produces all-null weather features, removing weather signal without an error"
+      },
+      {
+        "caution": "Bread articles catalog count (278) is NOT the count of articles sold in branch 01 (139 per prior runs); do not use catalog count as validation of data loading",
+        "why": "productdata.csv contains the full chain catalog; 139 is the count of argcod=1 articles with at least one sale recorded in branch 01 XML files; using 278 as a check would never catch missing articles",
+        "cost_if_ignored": "Preprocess may accept a data load that is missing up to half the bread article lines without triggering a count mismatch warning"
+      },
+      {
+        "caution": "ACF at lag-1 is lower (0.325) than expected for daily retail; dominant seasonality is the weekly pattern (lag-6=0.582); short-lag features alone are insufficient",
+        "why": "within-week DOW variance is the primary structure; day-to-day carry-forward is secondary; ARIMA(1,0,0) or pure AR(1) models will miss the dominant pattern",
+        "cost_if_ignored": "AR-only time series models will under-perform relative to DOW-aware models; training skill must include at least one model with explicit DOW features or seasonal AR terms"
+      }
+    ],
+
+    "do_not_repeat": [
+      {
+        "tried": "Using VerlofConcurrent_2.csv as an additional competitor source",
+        "outcome": "rejected",
+        "evidence": "VC2 is an exact structural duplicate of VC1: same 2357 rows, same 5 original columns, plus one additional StoreKey identifier column with no competitive schedule content",
+        "why_not_again": "zero unique signal; only adds identifier overhead",
+        "evidence_basis": "validation_only",
+        "reopen_if": "VC2 is confirmed to contain different competitor schedules in a future data refresh"
+      },
+      {
+        "tried": "Using Deliverydata files as features or signals",
+        "outcome": "rejected",
+        "evidence": "delivery data covers wholesale operations; header file has only 33 rows; no linkage to branch 01 retail sales in any CSV column; confirmed NOT_USED in run_20260904T140437Z and run_20260901T095109Z",
+        "why_not_again": "wholesale channel; no branch 01 retail signal; sparse header",
+        "evidence_basis": "cross_run",
+        "reopen_if": "A branch 01 join key is discovered in a future data audit"
+      }
+    ],
+
+    "content_carried_forward": {
+      "n_trading_days": 2897,
+      "date_range": {"start": "2010-11-16", "end": "2020-12-31"},
+      "target_mean": 315.89,
+      "target_std": 84.12,
+      "target_min": 0,
+      "target_max": 691,
+      "zero_demand_days_total": 50,
+      "zero_demand_days_by_year": {"2016": 3, "2017": 3, "2018": 6, "2019": 14, "2020": 24},
+      "trend_total_pct": -28.7,
+      "adf_pvalue": 0.0005,
+      "acf_at_horizons": {
+        "lag_1": 0.325,
+        "lag_6": 0.582,
+        "lag_7": 0.308,
+        "lag_14": 0.087,
+        "lag_30": 0.500,
+        "lag_60": 0.465,
+        "lag_90": 0.418
+      },
+      "dow_means": {
+        "Sunday": 416.5,
+        "Monday": 241.5,
+        "Tuesday": 337.2,
+        "Wednesday": 316.3,
+        "Thursday": 305.8,
+        "Friday": 252.5,
+        "Saturday": 381.0
+      },
+      "regime_change": {
+        "date": "2020-06-01",
+        "pre_mean": 318.3,
+        "post_mean": 285.0,
+        "level_delta_pct": -10.5,
+        "pre_rows": 2683,
+        "post_rows": 214
+      },
+      "data_quality_flags": {
+        "2014_sparse": 64,
+        "covid_zero_demand_2020": 24
+      },
+      "provisional_naive_mae": {
+        "h1": 38.01,
+        "h7": 40.73,
+        "h14": 42.67,
+        "h30": 44.14,
+        "h60": 45.14,
+        "h90": 47.54
+      },
+      "source_verdicts": {
+        "salesdata": "USED — pre-parsed CSV (2897 rows)",
+        "productdata": "USED — bread articles argcod=1; 278 catalog rows (139 sold in branch 01 per prior runs)",
+        "storedata": "USED — confirms regime_change_date 2020-06-01",
+        "weatherdata": "USED — hourly parquet 52608 rows; temporal_col=Date_time; coverage 2015-2020 only",
+        "VerlofConcurrent.csv": "USED — 2357 rows, competitor holiday flags 2017-2020",
+        "VerlofConcurrent_2.csv": "NOT_USED — exact VC1 duplicate + StoreKey column",
+        "deliverydata_all": "NOT_USED — wholesale channel, no branch 01 retail tie-in"
+      },
+      "weather_temporal_column": "Date_time",
+      "weather_null_columns_to_drop": ["Location", "Heat_Index"],
+      "weather_high_null_columns": ["Wind_Chill"],
+      "competitor_coverage_start": "2017-01-01",
+      "weather_coverage_start": "2015-01-01",
+      "join_key": "date (calendar date)",
+      "target_construction_rule": "DATE JOIN: target for horizon h = bread_quantity on date = row.date + h calendar days; never positional shift",
+      "seasonal_period_pre_regime": 6,
+      "seasonal_period_post_regime": 7,
+      "pre_parsed_csv_path": "C:/Users/selin/OneDrive/Desktop/All/KU Leuven/internship-project/General Plan/runs/run_20260904T140437Z/artifacts/eda/iteration_001_eda_daily_data.csv",
+      "domain_research_flags": [
+        "Belgian public holidays: map to zero-demand days in training data",
+        "Gentse Feesten: mid-July Ghent festival; check for demand spike or dip pattern",
+        "COVID-19: Belgium lockdown 2020-03-18; 24 zero-demand days in 2020 are lockdown closures",
+        "2014 sparse data: only 64 trading days; cause unknown; may need exclusion from some CV folds"
+      ],
+      "plot_artifacts": [
+        "artifacts/eda/iteration_001_eda_target_and_acf.png",
+        "artifacts/eda/iteration_001_eda_dow_seasonality.png",
+        "artifacts/eda/iteration_001_eda_annual_trend.png",
+        "artifacts/eda/iteration_001_eda_target_hist.png",
+        "artifacts/eda/iteration_001_eda_yoy_overlay.png"
+      ]
+    }
+  }
+}

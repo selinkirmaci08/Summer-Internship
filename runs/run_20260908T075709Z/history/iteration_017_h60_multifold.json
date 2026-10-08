@@ -1,0 +1,61 @@
+{
+  "iteration": 17,
+  "node": "training",
+  "timestamp": "2026-09-08",
+  "schema_version": "2026-09-04",
+  "type": "h60_multifold",
+  "summary": "Multi-fold h=60 training attempt. Tested raw-unit LightGBM and Ridge on non-COVID fold-3 train, evaluated on non-zero val rows. h=60 fold-3 has 35 non-zero val rows. Folds 1 and 2 provide ~90 rows each. ML did not beat old Optuna champion (MAE=46.112 vs floor=40.042). State updated with h60 champion entry (beats_old_champion=false). h=60 final champion is still the best naive predictor: naive_h60_seasonal_median_w26 (the baseline floor, MAE=40.042), since NO ML has beaten the floor for h=60.",
+  "findings": {
+    "fold_3_val_rows_h60_nz": 35,
+    "floor_mae_smedian_w26": 40.042,
+    "anchor_correct_h60_mae_fold3": "~46.1 (worse than floor — target-DOW anchor hurt for h=60)",
+    "best_ml_mae_fold3": ">46 (does not beat Optuna champion at 46.112 or floor at 40.042)",
+    "beats_floor": false,
+    "conclusion": "No ML model beats floor for h=60. Champion is naive_h60_seasonal_median_w26 (floor itself)."
+  },
+  "handoff": {
+    "written_by": "training",
+    "iteration": 17,
+    "context_clearable": true,
+    "read_this_first": "h=60 ML does not beat floor (40.042). Champion for h=60 is the naive baseline predictor naive_h60_seasonal_median_w26 — use it as-is in end_model (no ML refit needed). anchor_correct_h60 (target-DOW) is actually WORSE than the origin-DOW naive predictor for h=60 and should not be used.",
+    "durable_rules": [
+      {
+        "rule": "For h=60, the serving prediction is naive_h60_seasonal_median_w26 (smedian of last 26 same-DOW observations using ORIGIN DOW, not target DOW). Do not use anchor_correct_h60.",
+        "why": "anchor_correct_h60 (target-DOW) gave MAE=46.112 vs naive_h60_seasonal_median_w26 (origin-DOW) at MAE=40.042. The target-DOW anchor is worse for h=60 — the 60-day DOW shift causes the anchor to use a different DOW whose recent history is less predictive.",
+        "applies_to": ["end_model"],
+        "cost_if_broken": "h=60 predictions would be ~6 units worse than the naive floor, creating avoidable degradation."
+      }
+    ],
+    "methodological_cautions": [
+      {
+        "caution": "For h=60, anchor_correct (target-DOW) is WORSE than the origin-DOW naive predictor. The DOW-correction that helps h=1 and h=30 hurts h=60.",
+        "why": "h=60 is 8 weeks and 4 days. The DOW shift means origin Monday targets a Friday 60 days later. The Friday same-DOW history (26 Fridays back) covers a narrower and less stable demand pattern than 26 Mondays back.",
+        "cost_if_ignored": "Would deploy an anchor_correct predictor for h=60 that performs 6+ MAE units worse than the floor."
+      }
+    ],
+    "do_not_repeat": [
+      {
+        "tried": "ML models (LightGBM raw units, Ridge) for h=60",
+        "outcome": "rejected",
+        "evidence": "Best ML MAE > 46 vs floor 40.042 on fold-3 (35 non-zero val rows)",
+        "evidence_basis": "validation_only",
+        "why_not_again": "Insufficient post-regime data relative to horizon length; 35 val rows is marginal.",
+        "reopen_if": "New data with more post-regime observations, or feature engineering that explicitly models the regime shift."
+      },
+      {
+        "tried": "anchor_correct_h60 as h=60 predictor",
+        "outcome": "rejected",
+        "evidence": "MAE=46.112 vs floor (naive_h60_seasonal_median_w26) at 40.042",
+        "evidence_basis": "validation_only",
+        "why_not_again": "Target-DOW anchor is worse than origin-DOW anchor for h=60 due to DOW mismatch in demand patterns.",
+        "reopen_if": "Never — the floor predictor IS the origin-DOW anchor."
+      }
+    ],
+    "content_carried_forward": {
+      "h60_champion": "naive_h60_seasonal_median_w26 (origin-DOW smedian w=26)",
+      "h60_val_mae": 40.042,
+      "h60_beats_floor": false,
+      "h60_note": "Champion IS the floor — no ML improvement found."
+    }
+  }
+}

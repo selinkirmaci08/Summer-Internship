@@ -1,0 +1,30 @@
+{
+  "iteration": 23,
+  "node": "feature_engineering",
+  "timestamp": "2026-09-09",
+  "schema_version": "2026-09-04",
+  "type": "feature_engineering_5",
+  "summary": "FE iteration 5. Adds 2 remaining documented gaps from iter002 domain research: days_since_last_holiday (capped at 14, post-holiday demand suppression) and temperature_zscore_seasonal (temperature deviation from same-DOY climatological average; 0.0 for pre-2015 rows where weather unavailable). Output: iteration_023_feature_engineering.csv (2897 x 92 cols).",
+  "new_features": [
+    "days_since_last_holiday",
+    "temperature_zscore_seasonal"
+  ],
+  "source_gaps": [
+    "iter002 FR-04: days_since_last_holiday (medium priority, capped at 14)",
+    "iter002 weather assessment: temperature_zscore_seasonal (removes collinearity with month/season)"
+  ],
+  "output_csv": "data/iteration_023_feature_engineering.csv",
+  "handoff": {
+    "written_by": "feature_engineering",
+    "iteration": 23,
+    "context_clearable": true,
+    "parameters": {
+      "total_cols": 92,
+      "model_features": 64
+    },
+    "durable_rules": [
+      "temperature_zscore_seasonal is 0.0 for pre-2015 rows (no weather data). This is intentional \u2014 do NOT impute with DOY average for pre-2015."
+    ]
+  },
+  "report_html": "reports/iteration_023_feature_engineering_5.html"
+}

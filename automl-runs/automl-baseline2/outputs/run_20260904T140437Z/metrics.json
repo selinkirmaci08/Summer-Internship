@@ -1,0 +1,345 @@
+{
+  "agentic_run": {
+    "run_dir": "..\\runs\\run_20260904T140437Z",
+    "run_id": "run_20260904T140437Z",
+    "target": "bread_quantity",
+    "horizons": [
+      1,
+      7,
+      14,
+      30,
+      60,
+      90
+    ],
+    "splits": {
+      "train": {
+        "name": "train",
+        "date_min": "2010-11-17",
+        "date_max": "2017-07-29",
+        "n_rows": 8731,
+        "n_dates": 1790
+      },
+      "validation": {
+        "name": "validation",
+        "date_min": "2017-05-03",
+        "date_max": "2019-01-02",
+        "n_rows": 2256,
+        "n_dates": 505
+      },
+      "test": {
+        "name": "test",
+        "date_min": "2019-01-03",
+        "date_max": "2020-12-31",
+        "n_rows": 3473,
+        "n_dates": 655
+      }
+    },
+    "feature_table": "iteration_003b_long_feature_engineering.csv",
+    "preprocess_table": "iteration_002_preprocess.csv",
+    "final_model": "artifacts\\training\\lgbm_h1_training_model.pkl",
+    "chosen_iteration": "LightGBM_h1_preliminary",
+    "seasonal_naive_column": "lag_sw_1",
+    "mase_denominators": {
+      "train_denominator": 36.148767276258454,
+      "test_denominator": 63.51515692484884,
+      "definition": "mean |y - lag_sw_1|; lag_sw_1 is the last observed same-weekday value at or before the origin"
+    },
+    "reported_test_metrics": {
+      "mae": 53.15993193114091
+    }
+  },
+  "systems": {
+    "n_features": {
+      "agentic": 37,
+      "naive": 1,
+      "B1_agent_features": 37
+    },
+    "estimator": {
+      "agentic": "LGBMRegressor",
+      "naive": "seasonal naive",
+      "B1_agent_features": "lgbm"
+    },
+    "budget": {
+      "agentic": "agent-directed",
+      "naive": "none",
+      "B1_agent_features": "120s"
+    },
+    "search": {
+      "B1_agent_features": {
+        "estimator": "lgbm",
+        "config": {
+          "n_estimators": 9.0,
+          "num_leaves": 5.0,
+          "min_child_samples": 6.0,
+          "learning_rate": 0.5030179446729841,
+          "log_max_bin": 6.0,
+          "colsample_bytree": 0.9067729205866737,
+          "reg_alpha": 22.352719261690197,
+          "reg_lambda": 0.030216733863988213
+        },
+        "validation_loss": 42.841053353987974,
+        "metric": "mae",
+        "search_seconds": 120.0,
+        "budget_seconds": 120,
+        "n_train_rows": 8731,
+        "n_val_rows": 2256,
+        "n_features": 37,
+        "feature_names": [
+          "year",
+          "doy",
+          "wx_Maximum_Temperature",
+          "wx_Minimum_Temperature",
+          "wx_Temperature",
+          "wx_Wind_Chill",
+          "wx_Heat_Index",
+          "wx_Precipitation",
+          "wx_Snow_depth",
+          "wx_Wind_Speed",
+          "wx_Wind_Gust",
+          "wx_Cloud_Cover",
+          "wx_Relative_Humidity",
+          "wx_Forecast",
+          "comp_verlof_concurrent_1",
+          "comp_verlof_concurrent_2",
+          "comp_verlof_concurrent_3",
+          "comp_verlof_concurrent_4",
+          "comp_verlof_concurrent_5",
+          "comp_n_holidays",
+          "comp_any_holiday",
+          "bq_lag1",
+          "bq_lag7",
+          "bq_lag14",
+          "bq_lag28",
+          "bq_lag30",
+          "bq_lag91",
+          "bq_lag364",
+          "dow_sin",
+          "dow_cos",
+          "month_sin",
+          "month_cos",
+          "doy_sin",
+          "doy_cos",
+          "is_weekend",
+          "is_public_holiday",
+          "year_centered"
+        ],
+        "estimator_list": "flaml default",
+        "selection": "explicit holdout on the agentic run's validation partition"
+      }
+    },
+    "protocol_notes": [
+      "Rows: the 3473 (target date, horizon) pairs in the agentic run's test partition, checked pair-by-pair against every tier before scoring.",
+      "Split: the agentic run's own chronological 70/15/15 by target date. Train ends 2017-07-29, validation ends 2019-01-02, test runs 2019-01-03 to 2020-12-31.",
+      "Tuning: every AutoML tier selects hyperparameters on the run's validation partition, never on test, and never on a split of its own choosing.",
+      "No recursion: each row predicts t+h in one jump from data at the origin t = t+h minus h days, so long horizons do not inherit accumulated one-step error.",
+      "Trading days: the 2821 dates the agentic run kept. The 242 sub-10-unit non-trading days it filtered are excluded from every system, and unexported dates stay absent on the calendar so a lag of 7 still means seven days.",
+      "Exogenous columns are lagged unless the run declared them knowable in advance (calendar terms, opening pattern, competitor closures). Weather is lagged for the AutoML tiers, where the agentic features used observed weather as a forecast proxy at h&nbsp;&le;&nbsp;7 - a small advantage to the agentic side on a feature the run measured at Spearman -0.076.",
+      "B3 drops the run's must_drop_columns (same-day revenue, transaction and line counts). Lagging them instead would give the AutoML tier information the agentic model was denied, and the gap would stop meaning what it appears to mean.",
+      "MASE denominators: train 36.149, test 63.515, both from the run's own seasonal-naive column.",
+      "AutoML engine: FLAML, 120s per tier, optimising mae."
+    ]
+  },
+  "scores": {
+    "n_scored_rows": 3473,
+    "n_rows_in_grid": 3473,
+    "scored_window": [
+      "2019-01-03",
+      "2020-12-31"
+    ],
+    "mase_denominators": {
+      "train_denominator": 36.148767276258454,
+      "test_denominator": 63.51515692484884,
+      "definition": "mean |y - lag_sw_1|; lag_sw_1 is the last observed same-weekday value at or before the origin"
+    },
+    "coverage": {
+      "agentic": {
+        "predicted_rows": 3473,
+        "missing_rows": 0,
+        "complete": true
+      },
+      "naive": {
+        "predicted_rows": 3473,
+        "missing_rows": 0,
+        "complete": true
+      },
+      "B1_agent_features": {
+        "predicted_rows": 3473,
+        "missing_rows": 0,
+        "complete": true
+      }
+    },
+    "overall": {
+      "agentic": {
+        "n": 3473,
+        "MAE": 72.7388,
+        "RMSE": 106.289,
+        "R2": -0.3185,
+        "SMAPE_pct": 30.1611,
+        "WAPE_pct": 26.2243,
+        "bias": 37.8188,
+        "MASE_train_denom": 2.0122,
+        "MASE_test_denom": 1.1452
+      },
+      "naive": {
+        "n": 3473,
+        "MAE": 63.5152,
+        "RMSE": 106.5906,
+        "R2": -0.326,
+        "SMAPE_pct": 35.0046,
+        "WAPE_pct": 22.899,
+        "bias": 0.6326,
+        "MASE_train_denom": 1.757,
+        "MASE_test_denom": 1.0
+      },
+      "B1_agent_features": {
+        "n": 3473,
+        "MAE": 59.659,
+        "RMSE": 92.4577,
+        "R2": 0.0023,
+        "SMAPE_pct": 26.8136,
+        "WAPE_pct": 21.5087,
+        "bias": 12.5187,
+        "MASE_train_denom": 1.6504,
+        "MASE_test_denom": 0.9393
+      }
+    },
+    "per_horizon": [
+      {
+        "h": 1,
+        "n": 583,
+        "y_mean": 279.08,
+        "MAE_agentic": 53.16,
+        "MAE_naive": 61.429,
+        "MAE_B1_agent_features": 61.421
+      },
+      {
+        "h": 7,
+        "n": 650,
+        "y_mean": 278.52,
+        "MAE_agentic": 61.485,
+        "MAE_naive": 63.096,
+        "MAE_B1_agent_features": 55.929
+      },
+      {
+        "h": 14,
+        "n": 643,
+        "y_mean": 279.02,
+        "MAE_agentic": 61.152,
+        "MAE_naive": 62.778,
+        "MAE_B1_agent_features": 55.238
+      },
+      {
+        "h": 30,
+        "n": 558,
+        "y_mean": 280.72,
+        "MAE_agentic": 82.852,
+        "MAE_naive": 63.036,
+        "MAE_B1_agent_features": 67.276
+      },
+      {
+        "h": 60,
+        "n": 532,
+        "y_mean": 282.66,
+        "MAE_agentic": 97.005,
+        "MAE_naive": 64.769,
+        "MAE_B1_agent_features": 63.658
+      },
+      {
+        "h": 90,
+        "n": 507,
+        "y_mean": 262.61,
+        "MAE_agentic": 87.781,
+        "MAE_naive": 66.599,
+        "MAE_B1_agent_features": 55.443
+      }
+    ],
+    "per_band": [
+      {
+        "band": "h1-7 (within the week)",
+        "n": 1233,
+        "horizons": [
+          1,
+          7
+        ],
+        "MAE_agentic": 57.549,
+        "MAE_naive": 62.308,
+        "MAE_B1_agent_features": 58.526
+      },
+      {
+        "band": "h8-30 (within the month)",
+        "n": 1201,
+        "horizons": [
+          14,
+          30
+        ],
+        "MAE_agentic": 71.234,
+        "MAE_naive": 62.898,
+        "MAE_B1_agent_features": 60.831
+      },
+      {
+        "band": "h31-90 (within the quarter)",
+        "n": 1039,
+        "horizons": [
+          60,
+          90
+        ],
+        "MAE_agentic": 92.504,
+        "MAE_naive": 65.662,
+        "MAE_B1_agent_features": 59.649
+      }
+    ],
+    "per_year": [
+      {
+        "year": 2019,
+        "n": 1517,
+        "y_mean": 282.69,
+        "MAE_agentic": 61.977,
+        "MAE_naive": 47.909,
+        "MAE_B1_agent_features": 50.423
+      },
+      {
+        "year": 2020,
+        "n": 1956,
+        "y_mean": 273.24,
+        "MAE_agentic": 81.086,
+        "MAE_naive": 75.619,
+        "MAE_B1_agent_features": 66.822
+      }
+    ]
+  },
+  "verdict": {
+    "ranking_by_MAE": [
+      "B1_agent_features",
+      "naive",
+      "agentic"
+    ],
+    "best": "B1_agent_features",
+    "champion": "agentic",
+    "champion_is_best": false,
+    "versus_champion": {
+      "naive": {
+        "MAE": 63.5152,
+        "MAE_gap_vs_agentic": -9.2236,
+        "pct_worse_than_agentic": -12.68,
+        "beats_agentic": true
+      },
+      "B1_agent_features": {
+        "MAE": 59.659,
+        "MAE_gap_vs_agentic": -13.0798,
+        "pct_worse_than_agentic": -17.98,
+        "beats_agentic": true
+      }
+    },
+    "horizons_won": {
+      "agentic": 1,
+      "naive": 1,
+      "B1_agent_features": 4
+    },
+    "skill_vs_naive_pct": {
+      "agentic": -14.52,
+      "naive": 0.0,
+      "B1_agent_features": 6.07
+    },
+    "skill_definition": "1 - MAE_system / MAE_naive, in percent, on the identical scored rows. Positive means better than naive."
+  }
+}

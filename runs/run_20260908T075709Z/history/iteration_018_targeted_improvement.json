@@ -1,0 +1,156 @@
+{
+  "iteration": 18,
+  "node": "training",
+  "timestamp": "2026-09-09",
+  "schema_version": "2026-09-04",
+  "type": "targeted_improvement",
+  "summary": "Targeted improvement pass before end_model. Key findings: (1) h=14 raw-units LightGBM dramatically beats prior champion (28.865 vs 34.891 on fold-3 nz val) and beats floor on all 3 folds. (2) h=7 Optuna champion verified robustly across all 3 folds. (3) h=90 lgbm_A_no_anc confirmed on multi-fold (pooled 40.796 vs pooled floor 59.165) — prior 4-row result was genuine, not noise. (4) h=60 ML model (Optuna) beats floor on non-zero val rows all 3 folds, but floor values here are much higher than baseline (60.773 vs 40.042) due to non-zero row filtering — end_model MUST reconcile using consistent all-rows evaluation before declaring h=60 champion.",
+  "results": {
+    "h14": {
+      "ratio_optuna_150_fold3_mae": 30.1157,
+      "ratio_optuna_150_pooled_mae": 27.576,
+      "raw_units_fold3_mae": 28.8654,
+      "raw_units_pooled_mae": 25.747,
+      "raw_units_config": {"n_leaves": 16, "lr": 0.03, "n_trees": 292, "max_depth": 5, "reg_alpha": 1.0, "reg_lambda": 10.0},
+      "prior_champion_mae": 34.891,
+      "floor_fold3_nz": 31.068,
+      "baseline_floor": 32.846,
+      "winner": "raw_units",
+      "winner_fold3_mae": 28.8654,
+      "beats_floor_fold3": true,
+      "beats_floor_multifold": true,
+      "model_path": "artifacts/training/iter018/lgbm_h14_raw.pkl",
+      "per_fold": {
+        "1": {"mae": 25.007, "floor": 28.247, "n": 75, "beats": true},
+        "2": {"mae": 23.202, "floor": 24.960, "n": 75, "beats": true},
+        "3": {"mae": 28.865, "floor": 31.068, "n": 79, "beats": true}
+      }
+    },
+    "h7": {
+      "multifold_config": "Optuna params: n_estimators=522, lr=0.006877, num_leaves=57, max_depth=4, ratio_h7 target",
+      "per_fold": {
+        "1": {"mae": 44.862, "floor": 45.821, "n": 81, "beats": true},
+        "2": {"mae": 45.517, "floor": 47.975, "n": 81, "beats": true},
+        "3": {"mae": 31.188, "floor": 34.125, "n": 88, "beats": true}
+      },
+      "pooled_mae": 40.261,
+      "pooled_floor": 42.402,
+      "beats_floor_multifold": true,
+      "champion_confirmed": true,
+      "note": "Champion robust across all folds. Fold-3 primary MAE=31.188 vs fold-3 floor=34.125. Baseline floor 31.263 computed differently (all rows); end_model must use consistent row selection."
+    },
+    "h90": {
+      "config": {"n_leaves": 16, "lr": 0.05, "n_trees": 68},
+      "per_fold": {
+        "1": {"mae": 24.405, "floor": 47.669, "n": 65, "beats": true},
+        "2": {"mae": 59.949, "floor": 72.562, "n": 60, "beats": true},
+        "3": {"mae": 19.856, "floor": 45.000, "n": 4, "beats": true}
+      },
+      "pooled_mae": 40.796,
+      "pooled_floor": 59.165,
+      "beats_floor_multifold": true,
+      "model_path": "artifacts/training/iter018/lgbm_h90_multifold_confirmed.pkl",
+      "optuna_75_fold3_mae": 19.957,
+      "optuna_75_pooled_mae": 42.645,
+      "note": "Prior config (n_leaves=16, lr=0.05, n_trees=68) wins over fresh Optuna (worse pooled). Floor values are on non-zero val rows per fold; end_model must reconcile with baseline floor (42.143, all rows pooled 3 folds)."
+    },
+    "h60": {
+      "optuna_fold3_mae": 34.964,
+      "floor_fold3_nz": 60.773,
+      "per_fold": {
+        "1": {"mae": 30.444, "floor": 69.672, "n": 64, "beats": true},
+        "2": {"mae": 61.299, "floor": 76.817, "n": 60, "beats": true},
+        "3": {"mae": 35.289, "floor": 60.773, "n": 33, "beats": true}
+      },
+      "pooled_mae": 43.254,
+      "pooled_floor": 70.532,
+      "beats_floor_on_nz_rows": true,
+      "baseline_floor_all_rows": 40.042,
+      "warning": "Floor of 60.773 on non-zero rows MUCH higher than baseline floor 40.042 on all rows. The 2 excluded zero-demand val rows appear to be easy predictions for the naive predictor (near-zero error), inflating the nz-only floor. End_model MUST evaluate h=60 on ALL fold-3 val rows (same as baseline) before declaring ML beats floor."
+    }
+  },
+  "handoff": {
+    "written_by": "training",
+    "iteration": 18,
+    "context_clearable": true,
+    "read_this_first": "h=14 has a new champion: raw-units LightGBM (28.865 fold-3, beats floor on all 3 folds). h=7 and h=90 confirmed. h=60 ML beats floor on non-zero rows but end_model MUST re-evaluate h=60 on all val rows against the 40.042 baseline before declaring champion.",
+    "parameters": {
+      "h14_champion_model": {
+        "value": "artifacts/training/iter018/lgbm_h14_raw.pkl",
+        "why": "Raw-units target, inner-split refit (last 20% of fold-3 train as inner val). Config: n_leaves=16, lr=0.03, n_trees=292. Must refit on train+val in end_model.",
+        "must_not_change": true
+      },
+      "h14_feature_set": {
+        "value": "FEAT_RAW: all numeric cols excluding targets, ratio cols, anchor cols, fold/split markers",
+        "why": "Raw-units model does not use ratio_h14 or anchor columns.",
+        "must_not_change": true
+      },
+      "h14_config": {
+        "value": {"n_leaves": 16, "lr": 0.03, "n_trees": 292, "max_depth": 5, "reg_alpha": 1.0, "reg_lambda": 10.0, "inner_pct": 0.20},
+        "why": "Pinned from inner-fold early stopping — cannot re-derive once val rows are in refit.",
+        "must_not_change": true
+      },
+      "h90_champion_model": {
+        "value": "artifacts/training/iter018/lgbm_h90_multifold_confirmed.pkl",
+        "why": "lgbm_A_no_anc, n_leaves=16, lr=0.05, n_trees=68, inner-split. Multi-fold confirmed.",
+        "must_not_change": true
+      },
+      "h90_config": {
+        "value": {"n_leaves": 16, "lr": 0.05, "n_trees": 68, "max_depth": 4, "reg_alpha": 2.0, "reg_lambda": 20.0},
+        "why": "Pinned from inner-fold early stopping across multi-fold check.",
+        "must_not_change": true
+      }
+    },
+    "durable_rules": [
+      {
+        "rule": "h=14 champion uses RAW UNITS target (bread_quantity_h14), NOT ratio_h14. Feature set excludes ratio and anchor columns. Refit must use FEAT_RAW.",
+        "why": "Raw-units target outperformed ratio target (28.865 vs 30.116) on fold-3, and outperformed on all 3 folds. The anchor for h=14 is same-DOW (DOW shift=0) but ratio compression did not help.",
+        "applies_to": ["end_model"],
+        "cost_if_broken": "Shipping the ratio model which is 1.3 MAE units worse, or the wrong feature set."
+      },
+      {
+        "rule": "h=60: evaluate on ALL val rows (including zero-demand days) against baseline floor 40.042. Do NOT use non-zero-only evaluation to declare h=60 beats floor.",
+        "why": "Non-zero-only floor for h=60 is 60.773 (much higher than baseline 40.042) because the 2 excluded zero-demand rows have near-zero error for the naive predictor. The comparison is only valid against the full-row baseline.",
+        "applies_to": ["end_model"],
+        "cost_if_broken": "Incorrectly declaring h=60 ML beats baseline floor when it may not."
+      },
+      {
+        "rule": "h=90: Use pooled multi-fold MAE for champion declaration, not fold-3 alone (only 4 rows in fold-3).",
+        "why": "4 fold-3 val rows is statistically unreliable; multi-fold (129 rows) gives reliable estimate.",
+        "applies_to": ["end_model"],
+        "cost_if_broken": "Selecting h=90 champion based on noise."
+      }
+    ],
+    "methodological_cautions": [
+      {
+        "caution": "h=60 floor values computed on non-zero val rows are much higher than the baseline floor computed on all val rows. The two metrics are NOT interchangeable.",
+        "why": "Zero-demand val days (closed days) are easy for the naive predictor if it correctly predicts near-zero, lowering the all-rows floor. Excluding them inflates the apparent floor.",
+        "cost_if_ignored": "Declaring h=60 ML beats floor on non-zero rows, but the actual baseline comparison (all rows) might show the ML does NOT beat the 40.042 baseline."
+      }
+    ],
+    "do_not_repeat": [
+      {
+        "tried": "Ratio target for h=14 (ratio_h14 = bread_quantity_h14 / naive_h14_seasonal_median_w4)",
+        "outcome": "inferior to raw-units target",
+        "evidence": "fold-3 ratio=30.116 vs raw=28.865; pooled ratio=27.576 vs raw=25.747",
+        "evidence_basis": "validation_only",
+        "why_not_again": "For h=14 (DOW shift=0), raw units outperforms ratio consistently across all 3 folds.",
+        "reopen_if": "FE produces a more accurate anchor column for h=14."
+      }
+    ],
+    "content_carried_forward": {
+      "h14_winner": "raw_units LightGBM: n_leaves=16, lr=0.03, n_trees=292, max_depth=5, reg_alpha=1.0, reg_lambda=10.0",
+      "h14_fold3_mae": 28.8654,
+      "h14_baseline_floor": 32.846,
+      "h7_multifold_confirmed": true,
+      "h7_fold3_mae": 31.188,
+      "h90_multifold_mae": 40.796,
+      "h90_pooled_floor": 59.165,
+      "h90_fold3_nz_mae": 19.856,
+      "h60_fold3_nz_mae": 35.289,
+      "h60_baseline_floor_all_rows": 40.042,
+      "h60_floor_nz_rows": 60.773,
+      "h60_action": "end_model must evaluate h=60 on all val rows to determine if ML beats 40.042 baseline"
+    }
+  }
+}

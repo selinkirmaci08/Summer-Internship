@@ -1,0 +1,47 @@
+[run]    run_20260827T154407Z | target 'bread_quantity' | 21 horizons [1, 2, 3, 4, 5, 6, 7, 10, 14, 21, 28, 35, 42, 56, 70, 84, 90, 120, 180, 270, 364]
+[split]  train      2010-11-16 -> 2019-05-30 | 50169 rows across 2389 dates
+[split]  validation 2019-05-31 -> 2020-12-12 | 10752 rows across 512 dates
+[split]  test       2020-12-13 -> 2023-02-08 | 10752 rows across 512 dates
+[model]  agentic choice: iteration_011_training (iteration_011_training_model.pkl)
+[B1_agent_features] searching 900s over 50169 train rows x 56 features
+[B1_agent_features] picked lgbm | validation mae 24.825 | 900s
+[B2_preprocessed] searching 900s over 50169 train rows x 156 features
+[B2_preprocessed] picked lgbm | validation mae 26.832 | 900s
+[B3_assembled] searching 900s over 50169 train rows x 114 features
+[B3_assembled] picked lgbm | validation mae 26.649 | 900s
+[check]  agentic MAE reported 43.509 | recomputed 43.509 | match
+
+{
+  "scored_rows": 10752,
+  "MAE": {
+    "agentic": 43.5093,
+    "naive": 45.1729,
+    "B1_agent_features": 43.7045,
+    "B2_preprocessed": 47.565,
+    "B3_assembled": 46.2443
+  },
+  "MASE_test_denom": {
+    "agentic": 0.9632,
+    "naive": 1.0,
+    "B1_agent_features": 0.9675,
+    "B2_preprocessed": 1.053,
+    "B3_assembled": 1.0237
+  },
+  "ranking": [
+    "agentic",
+    "B1_agent_features",
+    "naive",
+    "B3_assembled",
+    "B2_preprocessed"
+  ],
+  "horizons_won": {
+    "agentic": 6,
+    "naive": 7,
+    "B1_agent_features": 6,
+    "B2_preprocessed": 0,
+    "B3_assembled": 2
+  }
+}
+
+report: outputs\run_20260827T154407Z\report.html
+elapsed: 2713s

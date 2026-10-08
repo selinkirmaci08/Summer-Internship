@@ -1,0 +1,163 @@
+{
+  "iteration": 13,
+  "node": "training",
+  "timestamp": "2026-09-08T21:55:30",
+  "schema_version": "2026-09-04",
+  "type": "final_pass_champion_selection",
+  "per_horizon_champion": {
+    "1": {
+      "val_mae": 29.378,
+      "algorithm": "LightGBM_ratio_correct_Optuna",
+      "beats_floor": true,
+      "margin": -1.8850000000000016,
+      "baseline_floor": 31.263,
+      "model_path": "artifacts/training/anchor_fixed/lgbm_h1.pkl",
+      "anchor_col": "anchor_correct_h1",
+      "ratio_col": "ratio_correct_h1"
+    },
+    "7": {
+      "val_mae": 30.97,
+      "algorithm": "LightGBM_ratio_Optuna",
+      "beats_floor": true,
+      "margin": -0.2930000000000028,
+      "baseline_floor": 31.263,
+      "model_path": "artifacts/training/optuna/optuna_lgbm_h7_best.pkl",
+      "anchor_col": "naive_h7_seasonal_median_w4",
+      "ratio_col": "ratio_h7"
+    },
+    "14": {
+      "val_mae": 34.891,
+      "algorithm": "lgbm_prior",
+      "beats_floor": false,
+      "margin": 2.0450000000000017,
+      "baseline_floor": 32.846,
+      "model_path": "artifacts/training/optuna/optuna_lgbm_h14.pkl",
+      "anchor_col": "naive_h14_seasonal_median_w4",
+      "ratio_col": "ratio_h14"
+    },
+    "30": {
+      "val_mae": 34.425,
+      "algorithm": "LightGBM_ratio_correct_Optuna",
+      "beats_floor": true,
+      "margin": -1.4879999999999995,
+      "baseline_floor": 35.913,
+      "model_path": "artifacts/training/anchor_fixed/lgbm_h30.pkl",
+      "anchor_col": "anchor_correct_h30",
+      "ratio_col": "ratio_correct_h30"
+    },
+    "60": {
+      "val_mae": 46.112489773684885,
+      "algorithm": "optuna30",
+      "beats_floor": false,
+      "margin": 6.0704897736848835,
+      "baseline_floor": 40.042,
+      "model_path": null,
+      "anchor_col": "anchor_correct_h60",
+      "ratio_col": null
+    },
+    "90": {
+      "val_mae": 102.1,
+      "algorithm": "naive_anchor_correct",
+      "beats_floor": false,
+      "margin": 59.956999999999994,
+      "baseline_floor": 42.143,
+      "model_path": null,
+      "anchor_col": "anchor_correct_h90",
+      "ratio_col": null
+    }
+  },
+  "summary": {
+    "beats_floor_count": 3,
+    "pooled_champion_mae": 46.3127,
+    "pooled_floor": 35.5783
+  },
+  "h60_analysis": {
+    "n_val": 35,
+    "naive_mae": 46.4857,
+    "optuna30_mae": 46.1125,
+    "champion": "optuna30",
+    "note": "35 val rows; Optuna returns degenerate 2-tree models. Regularised models score similarly."
+  },
+  "h90_analysis": {
+    "n_val": 5,
+    "naive_mae": 102.1,
+    "note": "5 val rows. Any model estimate is noise. Naive predictor (anchor_correct_h90) adopted."
+  },
+  "h14_analysis": {
+    "n_val": 81,
+    "prior_best": 34.891,
+    "ridge_mae": 37.8275,
+    "optuna_extra_mae": 35.1055,
+    "champion": "lgbm_prior",
+    "beats_floor": false
+  },
+  "next_iteration_contract": {
+    "node": "end_model",
+    "iteration": 14,
+    "why_this_node": "Champion selected per horizon. Proceed to end_model: package champion models, produce per-horizon prediction function, run final evaluation on all folds, generate run report.",
+    "context": {
+      "champions": {
+        "1": {
+          "model": "artifacts/training/anchor_fixed/lgbm_h1.pkl",
+          "anchor": "anchor_correct_h1",
+          "ratio_col": "ratio_correct_h1",
+          "val_mae": 29.378
+        },
+        "7": {
+          "model": "artifacts/training/optuna/optuna_lgbm_h7_best.pkl",
+          "anchor": "naive_h7_seasonal_median_w4",
+          "ratio_col": "ratio_h7",
+          "val_mae": 30.97
+        },
+        "14": {
+          "model": "artifacts/training/optuna/optuna_lgbm_h14.pkl",
+          "anchor": "naive_h14_seasonal_median_w4",
+          "ratio_col": "ratio_h14",
+          "val_mae": 34.891
+        },
+        "30": {
+          "model": "artifacts/training/anchor_fixed/lgbm_h30.pkl",
+          "anchor": "anchor_correct_h30",
+          "ratio_col": "ratio_correct_h30",
+          "val_mae": 34.425
+        },
+        "60": {
+          "model": null,
+          "anchor": "anchor_correct_h60",
+          "ratio_col": null,
+          "val_mae": 46.112489773684885
+        },
+        "90": {
+          "model": null,
+          "anchor": "anchor_correct_h90",
+          "ratio_col": null,
+          "val_mae": 102.1
+        }
+      },
+      "fe_csv": "data\\iteration_012_feature_engineering.csv",
+      "beats_floor_count": 3
+    }
+  },
+  "handoff": {
+    "written_by": "training",
+    "iteration": 13,
+    "context_clearable": true,
+    "read_this_first": "3/6 horizons beat floor. Champion models selected. h=60 and h=90 use naive predictor (anchor_correct). Next node: end_model.",
+    "durable_rules": [
+      {
+        "rule": "Use anchor_correct_h{h} (same-DOW of target) for h=1,30,60,90 in end_model serving logic.",
+        "why": "Original naive predictor anchors have DOW mismatch for non-multiple-of-7 horizons.",
+        "applies_to": [
+          "end_model"
+        ]
+      },
+      {
+        "rule": "h=60 and h=90 champions are naive predictors (pred = anchor_correct_h{h}). No ML model.",
+        "why": "35 and 5 val rows respectively \u2014 insufficient for reliable ML evaluation.",
+        "applies_to": [
+          "end_model"
+        ]
+      }
+    ]
+  }
+}
