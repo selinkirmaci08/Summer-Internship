@@ -1,6 +1,7 @@
 ﻿# Whitelist: ignore everything at the top level, then re-include the published parts
 /*
 !/.gitignore
+!/README.md
 !/skills/
 !/tools/
 !/automl-runs/
